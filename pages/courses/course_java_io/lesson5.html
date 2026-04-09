@@ -1,0 +1,1109 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第五章java-aio-详解真正的异步">第五章：Java AIO 详解——真正的异步</h1>
+<blockquote>
+<p><strong>学习目标</strong>：理解 AIO 的&quot;订阅-通知&quot;模型，掌握 CompletionHandler 回调机制，以及它与 NIO 的本质区别。</p>
+</blockquote>
+<hr />
+<h2 id="前言">前言</h2>
+<p>前面我们学了：</p>
+<ul>
+<li>BIO：两个阶段都阻塞，一连接一线程</li>
+<li>NIO：通过 Selector 实现 IO 多路复用，一个线程管理多个连接，但 <code>select()</code> 仍然要阻塞等待</li>
+</ul>
+<p>它们都属于<strong>同步 IO</strong>——应用程序需要主动去检查/等待 IO 是否完成。</p>
+<p>AIO 则是另一种思路：<strong>你别来问我，我做完了主动通知你。</strong></p>
+<hr />
+<h2 id="51-什么是-aio">5.1 什么是 AIO</h2>
+<p>AIO = <strong>A</strong>synchronous <strong>IO</strong>，JDK 1.7 引入，也叫 NIO.2。</p>
+<h3 id="核心思想订阅-通知模式">核心思想：订阅-通知模式</h3>
+<pre><code>NIO 的思路（轮询模式）：
+应用程序 ──→ &quot;数据好了吗？&quot; ──→ 操作系统
+应用程序 ──→ &quot;数据好了吗？&quot; ──→ 操作系统
+应用程序 ──→ &quot;数据好了吗？&quot; ──→ 操作系统
+应用程序 ←── &quot;好了！&quot;       ←── 操作系统
+
+AIO 的思路（订阅-通知模式）：
+应用程序 ──→ &quot;数据好了叫我&quot; ──→ 操作系统
+应用程序去做其他事...
+应用程序 ←── &quot;搞定了！数据在这&quot; ←── 操作系统主动通知
+</code></pre>
+<h3 id="nio-vs-aio-的核心区别">NIO vs AIO 的核心区别</h3>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>NIO</th>
+<th>AIO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>谁来检查 IO 完成</td>
+<td>应用程序（通过 Selector 轮询）</td>
+<td>操作系统（完成后回调通知）</td>
+</tr>
+<tr>
+<td>是否需要 Selector</td>
+<td>需要</td>
+<td>不需要</td>
+</tr>
+<tr>
+<td>IO 模型</td>
+<td>同步非阻塞（IO 多路复用）</td>
+<td>异步</td>
+</tr>
+<tr>
+<td>编程模式</td>
+<td>事件循环</td>
+<td>回调/Future</td>
+</tr>
+</tbody>
+</table>
+<p>一句话总结：<strong>NIO 是&quot;我去问&quot;，AIO 是&quot;你来告诉我&quot;。</strong></p>
+<hr />
+<h2 id="52-aio-的操作系统支持">5.2 AIO 的操作系统支持</h2>
+<p>AIO 是否真正异步，取决于操作系统的支持：</p>
+<table>
+<thead>
+<tr>
+<th>操作系统</th>
+<th>实现方式</th>
+<th>是否真正异步</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Windows</td>
+<td>IOCP（IO Completion Port）</td>
+<td>是</td>
+</tr>
+<tr>
+<td>Linux</td>
+<td>epoll 模拟</td>
+<td>不是（伪异步）</td>
+</tr>
+<tr>
+<td>macOS</td>
+<td>kqueue 模拟</td>
+<td>不是（伪异步）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>这一点非常重要</strong>：在 Linux 上，Java AIO 底层仍然是 epoll（和 NIO 一样），只是 JDK 帮你封装了回调的&quot;语法糖&quot;。真正的异步性能优势只有在 Windows 的 IOCP 上才能体现。</p>
+<p>这也是为什么 AIO 在 Java 服务器开发中没有大规模流行——大多数服务器运行在 Linux 上，AIO 并没有比 NIO 快。</p>
+<hr />
+<h2 id="53-aio-核心-api">5.3 AIO 核心 API</h2>
+<h3 id="核心类">核心类</h3>
+<pre><code>AsynchronousServerSocketChannel  # 异步服务器监听通道（类比 NIO 的 ServerSocketChannel）
+AsynchronousSocketChannel        # 异步套接字通道（类比 NIO 的 SocketChannel）
+AsynchronousFileChannel          # 异步文件通道（类比 NIO 的 FileChannel）
+AsynchronousChannelGroup         # 通道组，管理一组异步通道共享的线程池
+CompletionHandler&lt;V, A&gt;          # 回调接口
+</code></pre>
+<h3 id="completionhandler-接口">CompletionHandler 接口</h3>
+<p>这是 AIO 编程的核心——所有异步操作完成后，都通过这个接口回调：</p>
+<pre><code class="language-java">public interface CompletionHandler&lt;V, A&gt; {
+    // IO 操作成功完成时调用
+    // V: 操作结果（如 read 返回读取的字节数）
+    // A: 附件对象（可以传递上下文信息）
+    void completed(V result, A attachment);
+    
+    // IO 操作失败时调用
+    void failed(Throwable exc, A attachment);
+}
+</code></pre>
+<h3 id="两种异步操作方式">两种异步操作方式</h3>
+<p><strong>方式一：CompletionHandler 回调</strong></p>
+<pre><code class="language-java">channel.read(buffer, attachment, new CompletionHandler&lt;Integer, Object&gt;() {
+    @Override
+    public void completed(Integer bytesRead, Object attachment) {
+        // 读取完成，处理数据
+    }
+    
+    @Override
+    public void failed(Throwable exc, Object attachment) {
+        // 读取失败，处理异常
+    }
+});
+</code></pre>
+<p><strong>方式二：Future</strong></p>
+<pre><code class="language-java">Future&lt;Integer&gt; future = channel.read(buffer);
+// 做其他事...
+Integer bytesRead = future.get();  // 需要结果时再阻塞获取
+</code></pre>
+<p>实际开发中 CompletionHandler 方式更常用，因为 Future.get() 会阻塞，失去了异步的意义。</p>
+<hr />
+<h2 id="54-aio-服务器完整实战">5.4 AIO 服务器完整实战</h2>
+<h3 id="服务器端">服务器端</h3>
+<pre><code class="language-java">import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousChannelGroup;
+import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class AioServer {
+    
+    public static void main(String[] args) throws Exception {
+        // 创建线程池给异步通道使用
+        ExecutorService threadPool = Executors.newFixedThreadPool(4);
+        AsynchronousChannelGroup group = AsynchronousChannelGroup.withThreadPool(threadPool);
+        
+        // 创建异步服务器通道
+        AsynchronousServerSocketChannel serverChannel = 
+            AsynchronousServerSocketChannel.open(group);
+        serverChannel.bind(new InetSocketAddress(8080));
+        System.out.println(&quot;AIO 服务器启动，监听 8080 端口...&quot;);
+        
+        // 注册 accept 监听（异步！不阻塞！）
+        serverChannel.accept(null, new AcceptHandler(serverChannel));
+        
+        // 主线程不退出
+        Thread.currentThread().join();
+    }
+}
+
+/**
+ * 处理新连接到达的回调
+ */
+class AcceptHandler implements CompletionHandler&lt;AsynchronousSocketChannel, Void&gt; {
+    
+    private AsynchronousServerSocketChannel serverChannel;
+    
+    public AcceptHandler(AsynchronousServerSocketChannel serverChannel) {
+        this.serverChannel = serverChannel;
+    }
+    
+    @Override
+    public void completed(AsynchronousSocketChannel clientChannel, Void attachment) {
+        // 重要！每次回调后必须重新注册，因为 AIO 是&quot;一次注册，一次响应&quot;
+        serverChannel.accept(null, this);
+        
+        try {
+            System.out.println(&quot;新客户端连接：&quot; + clientChannel.getRemoteAddress());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        // 为这个客户端连接注册读事件
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        clientChannel.read(buffer, buffer, new ReadHandler(clientChannel));
+    }
+    
+    @Override
+    public void failed(Throwable exc, Void attachment) {
+        System.err.println(&quot;接受连接失败：&quot; + exc.getMessage());
+    }
+}
+
+/**
+ * 处理数据读取的回调
+ */
+class ReadHandler implements CompletionHandler&lt;Integer, ByteBuffer&gt; {
+    
+    private AsynchronousSocketChannel clientChannel;
+    
+    public ReadHandler(AsynchronousSocketChannel clientChannel) {
+        this.clientChannel = clientChannel;
+    }
+    
+    @Override
+    public void completed(Integer bytesRead, ByteBuffer buffer) {
+        if (bytesRead == -1) {
+            try {
+                clientChannel.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        
+        // 读取数据
+        buffer.flip();
+        byte[] data = new byte[buffer.remaining()];
+        buffer.get(data);
+        String message = new String(data);
+        System.out.println(&quot;收到消息：&quot; + message);
+        
+        // 回写响应
+        ByteBuffer writeBuffer = ByteBuffer.wrap((&quot;Echo: &quot; + message).getBytes());
+        clientChannel.write(writeBuffer, null, new CompletionHandler&lt;Integer, Void&gt;() {
+            @Override
+            public void completed(Integer result, Void attachment) {
+                // 响应写入完成，继续监听读事件
+                ByteBuffer newBuffer = ByteBuffer.allocate(1024);
+                clientChannel.read(newBuffer, newBuffer, ReadHandler.this);
+            }
+            
+            @Override
+            public void failed(Throwable exc, Void attachment) {
+                try { clientChannel.close(); } catch (IOException e) { }
+            }
+        });
+    }
+    
+    @Override
+    public void failed(Throwable exc, ByteBuffer attachment) {
+        System.err.println(&quot;读取数据失败：&quot; + exc.getMessage());
+        try { clientChannel.close(); } catch (IOException e) { }
+    }
+}
+</code></pre>
+<h3 id="关键要点分析">关键要点分析</h3>
+<p><strong>1. &quot;一次注册，一次响应&quot;</strong></p>
+<p>AIO 的每次异步操作（accept、read、write）都是一次性的——回调触发后，如果还想继续监听，必须重新注册：</p>
+<pre><code class="language-java">@Override
+public void completed(AsynchronousSocketChannel clientChannel, Void attachment) {
+    // 必须重新注册 accept，否则不会再接收新连接
+    serverChannel.accept(null, this);
+    // ...
+}
+</code></pre>
+<p><strong>2. 没有 Selector</strong></p>
+<p>注意 AIO 代码中完全没有 Selector 的身影。因为不需要轮询了——操作系统会在 IO 完成时直接回调你的 CompletionHandler。</p>
+<p><strong>3. 回调地狱</strong></p>
+<p>观察上面的代码，你会发现回调嵌套回调（accept → read → write → read → ...），代码结构变得复杂。这就是所谓的&quot;回调地狱&quot;（Callback Hell），也是 AIO 编程复杂的原因之一。</p>
+<p><strong>4. 线程池的用途</strong></p>
+<p>AIO 中的线程池不是用来处理业务的，而是用来<strong>执行回调</strong>的。操作系统通知 IO 完成后，JDK 从线程池中取一个线程来执行你的 CompletionHandler。</p>
+<hr />
+<h2 id="55-aio-文件操作">5.5 AIO 文件操作</h2>
+<p>AIO 也支持异步文件操作：</p>
+<pre><code class="language-java">import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.CompletionHandler;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
+public class AioFileDemo {
+    public static void main(String[] args) throws Exception {
+        AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(
+            Paths.get(&quot;test.txt&quot;), StandardOpenOption.READ
+        );
+        
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        
+        // 异步读取文件，从位置0开始
+        fileChannel.read(buffer, 0, buffer, new CompletionHandler&lt;Integer, ByteBuffer&gt;() {
+            @Override
+            public void completed(Integer bytesRead, ByteBuffer buf) {
+                buf.flip();
+                byte[] data = new byte[buf.remaining()];
+                buf.get(data);
+                System.out.println(&quot;文件内容：&quot; + new String(data));
+            }
+            
+            @Override
+            public void failed(Throwable exc, ByteBuffer buf) {
+                System.err.println(&quot;读取失败：&quot; + exc.getMessage());
+            }
+        });
+        
+        // 主线程可以做其他事
+        System.out.println(&quot;主线程继续执行...&quot;);
+        Thread.sleep(1000);
+    }
+}
+</code></pre>
+<hr />
+<h2 id="56-为什么-aio-没有大规模流行">5.6 为什么 AIO 没有大规模流行？</h2>
+<p>面试中经常会问到这个问题。原因有四：</p>
+<h3 id="1-linux-上没有真正的异步-io">1. Linux 上没有真正的异步 IO</h3>
+<p>Java AIO 在 Linux 上底层仍然是 epoll，只是 JDK 封装了回调接口。跟直接用 NIO + Selector 相比，性能没有本质提升，反而多了一层封装的开销。</p>
+<h3 id="2-编程模型复杂">2. 编程模型复杂</h3>
+<p>回调嵌套回调，代码可读性差，调试困难。NIO 的事件循环模型虽然也不简单，但至少代码是线性的。</p>
+<h3 id="3-netty-放弃了-aio">3. Netty 放弃了 AIO</h3>
+<p>Netty（最流行的 Java 网络框架）曾在 4.0 版本尝试支持 AIO，但最终移除了。Netty 的作者 Trustin Lee 认为，在 Linux 上 AIO 没有带来性能提升，反而增加了复杂性。</p>
+<h3 id="4-epoll-已经足够好">4. epoll 已经足够好</h3>
+<p>IO 多路复用（NIO + epoll）在 Linux 上已经能够处理百万级并发连接（C10M 问题），对于绝大多数场景来说性能足够。</p>
+<h3 id="面试回答模板">面试回答模板</h3>
+<blockquote>
+<p><strong>Q：为什么 AIO 没有大规模使用？</strong></p>
+<p>A：主要有两个原因。第一，Linux 上没有原生的异步 IO 支持，Java AIO 底层还是 epoll 模拟的，性能和 NIO 差不多。第二，AIO 的回调编程模型比较复杂，代码可读性和可维护性不如 NIO 的事件循环模式。所以 Netty 最终也选择了 NIO 而不是 AIO。</p>
+</blockquote>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>面试考察频率</th>
+<th>关键记忆</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AIO 核心思想</td>
+<td>⭐⭐⭐⭐</td>
+<td>订阅-通知模式，操作系统主动回调</td>
+</tr>
+<tr>
+<td>CompletionHandler</td>
+<td>⭐⭐⭐</td>
+<td>completed + failed 两个方法</td>
+</tr>
+<tr>
+<td>AIO vs NIO</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>NIO 是&quot;我去问&quot;，AIO 是&quot;你来告诉我&quot;</td>
+</tr>
+<tr>
+<td>Linux 上的 AIO 实现</td>
+<td>⭐⭐⭐⭐</td>
+<td>底层还是 epoll 模拟</td>
+</tr>
+<tr>
+<td>为什么 AIO 不流行</td>
+<td>⭐⭐⭐⭐</td>
+<td>Linux 无原生支持 + 回调复杂 + Netty 放弃</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>下一章预告</strong>：三种 IO 模型都学完了！下一章我们把 BIO、NIO、AIO 放在一起做全面对比，用一个比喻、一张表格、多个维度帮你彻底理清它们的关系。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

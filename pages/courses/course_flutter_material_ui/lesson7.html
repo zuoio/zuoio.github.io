@@ -1,0 +1,3156 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第07课-material-动效规范">第07课 Material 动效规范</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter Material Design 系统学习<br />
+<strong>前置条件</strong>：已掌握隐式动画（AnimatedContainer、TweenAnimationBuilder 等）和显式动画（AnimationController、Tween、CurvedAnimation 等）<br />
+<strong>课程目标</strong>：理解 Material Motion 设计原则与四大转场模式，掌握 <code>animations</code> 包的使用，学会为 App 配置符合 Material 规范的动效方案</p>
+</blockquote>
+<hr />
+<h2 id="1-为什么动效规范很重要">1. 为什么动效规范很重要？</h2>
+<p>在 Material Design 体系中，动效（Motion）并非锦上添花的装饰，而是<strong>设计语言的核心组成部分</strong>。一个没有动效规范的 App，就像一本没有段落和标点的书——虽然内容都在，但阅读体验大打折扣。</p>
+<p>动效在 UI 中承担三大职责：</p>
+<ul>
+<li><strong>引导用户注意力</strong>：让用户知道界面发生了什么变化</li>
+<li><strong>建立空间关系</strong>：帮助用户理解页面之间的层级和导航结构</li>
+<li><strong>传达品牌个性</strong>：通过缓动曲线和时长传达 App 的气质</li>
+</ul>
+<hr />
+<h2 id="2-material-motion-设计原则">2. Material Motion 设计原则</h2>
+<p>Material Motion 建立在三个核心设计原则之上：</p>
+<h3 id="21-informative信息性">2.1 Informative（信息性）</h3>
+<p>动效应该帮助用户理解界面的空间关系和层级结构。例如：</p>
+<ul>
+<li>一个列表项展开为详情页时，用户能直观看到&quot;详情从列表项中展开&quot;，理解两者的从属关系</li>
+<li>页面前进/后退时沿同一轴线滑动，暗示它们处于同一导航层级</li>
+</ul>
+<h3 id="22-focused聚焦性">2.2 Focused（聚焦性）</h3>
+<p>动效应该引导用户的注意力到最重要的内容上，避免不必要的视觉干扰。例如：</p>
+<ul>
+<li>同一时刻只有一个主要的过渡动画在进行</li>
+<li>次要元素以淡入淡出的方式过渡，不与主要动画争夺注意力</li>
+</ul>
+<h3 id="23-expressive表达性">2.3 Expressive（表达性）</h3>
+<p>动效应该传达品牌个性和操作的重要程度。例如：</p>
+<ul>
+<li>重要的转场（如打开新页面）使用较长的持续时间和显眼的缓动曲线</li>
+<li>微小的状态变化（如按钮按下）使用短暂而细腻的动画</li>
+</ul>
+<blockquote>
+<p><strong>最佳实践</strong>：设计动效时，先问自己三个问题：</p>
+<ol>
+<li>这个动效传达了什么信息？（Informative）</li>
+<li>用户的注意力应该被引导到哪里？（Focused）</li>
+<li>这个动效是否与 App 的整体气质一致？（Expressive）</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="3-animations-包安装与导入">3. animations 包安装与导入</h2>
+<p>Material Motion 的四大转场模式由 Google 官方提供的 <code>animations</code> 包实现。</p>
+<h3 id="31-安装">3.1 安装</h3>
+<p>在项目根目录执行：</p>
+<pre><code class="language-bash">flutter pub add animations
+</code></pre>
+<p>或者在 <code>pubspec.yaml</code> 中添加依赖：</p>
+<pre><code class="language-yaml">dependencies:
+  flutter:
+    sdk: flutter
+  animations: ^2.0.11
+</code></pre>
+<p>然后运行 <code>flutter pub get</code>。</p>
+<h3 id="32-导入">3.2 导入</h3>
+<pre><code class="language-dart">import 'package:animations/animations.dart';
+</code></pre>
+<p>这个包提供了以下核心组件：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>对应的转场模式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OpenContainer</code></td>
+<td>Container Transform（容器变形）</td>
+</tr>
+<tr>
+<td><code>SharedAxisTransition</code></td>
+<td>Shared Axis（共享轴过渡）</td>
+</tr>
+<tr>
+<td><code>FadeThroughTransition</code></td>
+<td>Fade Through（淡入穿透）</td>
+</tr>
+<tr>
+<td><code>FadeScaleTransition</code></td>
+<td>Fade（淡入淡出）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-material-motion-四大转场模式">4. Material Motion 四大转场模式</h2>
+<h3 id="41-container-transform容器变形">4.1 Container Transform（容器变形）</h3>
+<p>Container Transform 是四大转场中<strong>最具表现力</strong>的一种。它让一个元素（源容器）平滑变形为另一个元素（目标容器），在视觉上建立了两者之间的强关联。</p>
+<p><strong>典型使用场景</strong>：</p>
+<ul>
+<li>列表项展开为详情页</li>
+<li>FAB 展开为新页面</li>
+<li>卡片展开为全屏内容</li>
+<li>搜索框展开为搜索结果页</li>
+</ul>
+<h4 id="411-opencontainer-核心属性">4.1.1 OpenContainer 核心属性</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>closedBuilder</code></td>
+<td><code>CloseContainerBuilder</code></td>
+<td>收起状态（源容器）的构建器</td>
+</tr>
+<tr>
+<td><code>openBuilder</code></td>
+<td><code>OpenContainerBuilder</code></td>
+<td>展开状态（目标容器）的构建器</td>
+</tr>
+<tr>
+<td><code>transitionType</code></td>
+<td><code>ContainerTransitionType</code></td>
+<td>过渡类型：<code>fade</code> 或 <code>fadeThroughColor</code></td>
+</tr>
+<tr>
+<td><code>transitionDuration</code></td>
+<td><code>Duration</code></td>
+<td>过渡持续时间，默认 300ms</td>
+</tr>
+<tr>
+<td><code>closedElevation</code></td>
+<td><code>double</code></td>
+<td>收起状态的阴影高度</td>
+</tr>
+<tr>
+<td><code>openElevation</code></td>
+<td><code>double</code></td>
+<td>展开状态的阴影高度</td>
+</tr>
+<tr>
+<td><code>closedShape</code></td>
+<td><code>ShapeBorder</code></td>
+<td>收起状态的形状</td>
+</tr>
+<tr>
+<td><code>openShape</code></td>
+<td><code>ShapeBorder</code></td>
+<td>展开状态的形状</td>
+</tr>
+<tr>
+<td><code>closedColor</code></td>
+<td><code>Color</code></td>
+<td>收起状态的背景色</td>
+</tr>
+<tr>
+<td><code>openColor</code></td>
+<td><code>Color</code></td>
+<td>展开状态的背景色</td>
+</tr>
+<tr>
+<td><code>onClosed</code></td>
+<td><code>ClosedCallback</code></td>
+<td>从展开状态返回时的回调</td>
+</tr>
+</tbody>
+</table>
+<h4 id="412-完整代码示例列表项展开为详情页">4.1.2 完整代码示例：列表项展开为详情页</h4>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:animations/animations.dart';
+
+void main() =&gt; runApp(const ContainerTransformApp());
+
+class ContainerTransformApp extends StatelessWidget {
+  const ContainerTransformApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+      ),
+      home: const ContainerTransformDemo(),
+    );
+  }
+}
+
+class ContainerTransformDemo extends StatelessWidget {
+  const ContainerTransformDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Container Transform 演示')),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          return _buildListItem(context, index);
+        },
+      ),
+      // FAB 也可以使用 Container Transform
+      floatingActionButton: OpenContainer(
+        transitionDuration: const Duration(milliseconds: 500),
+        openBuilder: (context, closeContainer) {
+          return const _CreateItemPage();
+        },
+        closedElevation: 6,
+        closedShape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+        closedColor: Theme.of(context).colorScheme.primaryContainer,
+        closedBuilder: (context, openContainer) {
+          return SizedBox(
+            width: 56,
+            height: 56,
+            child: Center(
+              child: Icon(
+                Icons.add,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildListItem(BuildContext context, int index) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: OpenContainer&lt;bool&gt;(
+        // 过渡类型：fade 表示内容渐变切换
+        transitionType: ContainerTransitionType.fade,
+        transitionDuration: const Duration(milliseconds: 400),
+        // 收起状态的外观
+        closedElevation: 1,
+        closedShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        closedColor: Theme.of(context).colorScheme.surface,
+        // 展开状态的外观
+        openElevation: 0,
+        openColor: Theme.of(context).colorScheme.surface,
+        // 收起状态：列表项
+        closedBuilder: (context, openContainer) {
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.primaries[index % Colors.primaries.length],
+              child: Text('${index + 1}'),
+            ),
+            title: Text('项目 ${index + 1}'),
+            subtitle: const Text('点击查看详情'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: openContainer, // 点击时触发容器变形
+          );
+        },
+        // 展开状态：详情页
+        openBuilder: (context, closeContainer) {
+          return _DetailPage(
+            index: index,
+            onBack: () =&gt; closeContainer(returnValue: true),
+          );
+        },
+        // 从详情页返回时的回调
+        onClosed: (returnValue) {
+          if (returnValue == true) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('从项目 ${index + 1} 返回')),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+/// 详情页
+class _DetailPage extends StatelessWidget {
+  final int index;
+  final VoidCallback onBack;
+
+  const _DetailPage({required this.index, required this.onBack});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Colors.primaries[index % Colors.primaries.length];
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('项目 ${index + 1} 详情'),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: onBack,
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          // 顶部大图区域
+          Container(
+            height: 200,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Center(
+              child: Icon(Icons.image, size: 64, color: color),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            '项目 ${index + 1}',
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '这是项目 ${index + 1} 的详细描述。Container Transform 让列表项平滑'
+            '变形为详情页，建立了两者之间的视觉关联，用户能清晰地理解导航关系。',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          const SizedBox(height: 16),
+          // 模拟更多内容
+          ...List.generate(5, (i) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Card(
+                child: ListTile(
+                  leading: const Icon(Icons.info_outline),
+                  title: Text('详情信息 ${i + 1}'),
+                  subtitle: const Text('这里展示更多关于该项目的内容'),
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
+/// 新建项目页面（FAB 展开目标）
+class _CreateItemPage extends StatelessWidget {
+  const _CreateItemPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('新建项目')),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                labelText: '项目名称',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              maxLines: 4,
+              decoration: const InputDecoration(
+                labelText: '项目描述',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: () =&gt; Navigator.of(context).pop(),
+              icon: const Icon(Icons.check),
+              label: const Text('创建'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>OpenContainer</code> 会自动处理导航跳转，不需要手动调用 <code>Navigator.push</code></li>
+<li><code>closedBuilder</code> 中的 <code>openContainer</code> 回调用于触发展开动作，通常绑定到 <code>onTap</code></li>
+<li><code>openBuilder</code> 中的 <code>closeContainer</code> 回调用于触发收起动作（返回），可以携带返回值</li>
+<li><code>OpenContainer</code> 本身是一个有尺寸的容器，它的收起状态会占据布局空间</li>
+</ol>
+</blockquote>
+<hr />
+<h3 id="42-shared-axis共享轴过渡">4.2 Shared Axis（共享轴过渡）</h3>
+<p>Shared Axis 过渡适用于具有<strong>空间或导航关系</strong>的元素之间的切换。两个页面/元素沿着共享的 X、Y 或 Z 轴进行过渡，暗示它们处于同一导航层级。</p>
+<p><strong>典型使用场景</strong>：</p>
+<ul>
+<li>步骤前进/后退（如注册流程、向导页）</li>
+<li>Tab 切换</li>
+<li>同级页面之间的导航</li>
+</ul>
+<h4 id="421-sharedaxistransition-核心属性">4.2.1 SharedAxisTransition 核心属性</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>animation</code></td>
+<td><code>Animation&lt;double&gt;</code></td>
+<td>主动画（控制进入动画）</td>
+</tr>
+<tr>
+<td><code>secondaryAnimation</code></td>
+<td><code>Animation&lt;double&gt;</code></td>
+<td>次级动画（控制退出动画）</td>
+</tr>
+<tr>
+<td><code>transitionType</code></td>
+<td><code>SharedAxisTransitionType</code></td>
+<td>轴方向：<code>horizontal</code>(X)、<code>vertical</code>(Y)、<code>scaled</code>(Z)</td>
+</tr>
+<tr>
+<td><code>child</code></td>
+<td><code>Widget</code></td>
+<td>当前显示的子组件</td>
+</tr>
+<tr>
+<td><code>fillColor</code></td>
+<td><code>Color?</code></td>
+<td>过渡期间的背景填充色</td>
+</tr>
+</tbody>
+</table>
+<h4 id="422-sharedaxistransitiontype-三种轴向">4.2.2 SharedAxisTransitionType 三种轴向</h4>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>方向</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>horizontal</code></td>
+<td>水平（X 轴）</td>
+<td>左右导航、步骤流程</td>
+</tr>
+<tr>
+<td><code>vertical</code></td>
+<td>垂直（Y 轴）</td>
+<td>上下导航、垂直列表展开</td>
+</tr>
+<tr>
+<td><code>scaled</code></td>
+<td>缩放（Z 轴）</td>
+<td>层级导航、父子页面切换</td>
+</tr>
+</tbody>
+</table>
+<h4 id="423-完整代码示例步骤向导页">4.2.3 完整代码示例：步骤向导页</h4>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:animations/animations.dart';
+
+void main() =&gt; runApp(const SharedAxisApp());
+
+class SharedAxisApp extends StatelessWidget {
+  const SharedAxisApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.teal,
+      ),
+      home: const SharedAxisDemo(),
+    );
+  }
+}
+
+class SharedAxisDemo extends StatefulWidget {
+  const SharedAxisDemo({super.key});
+
+  @override
+  State&lt;SharedAxisDemo&gt; createState() =&gt; _SharedAxisDemoState();
+}
+
+class _SharedAxisDemoState extends State&lt;SharedAxisDemo&gt; {
+  int _currentStep = 0;
+  // 控制前进或后退方向
+  bool _isForward = true;
+  // 可切换的轴向类型
+  SharedAxisTransitionType _transitionType =
+      SharedAxisTransitionType.horizontal;
+
+  static const _totalSteps = 4;
+
+  // 每一步的内容
+  final List&lt;_StepContent&gt; _steps = const [
+    _StepContent(
+      title: '第 1 步：基本信息',
+      description: '请填写您的姓名和邮箱地址',
+      icon: Icons.person_outline,
+      color: Colors.blue,
+    ),
+    _StepContent(
+      title: '第 2 步：选择偏好',
+      description: '选择您感兴趣的主题类别',
+      icon: Icons.category_outlined,
+      color: Colors.orange,
+    ),
+    _StepContent(
+      title: '第 3 步：设置密码',
+      description: '请设置一个安全的登录密码',
+      icon: Icons.lock_outline,
+      color: Colors.purple,
+    ),
+    _StepContent(
+      title: '第 4 步：完成注册',
+      description: '恭喜！您的账号已创建成功',
+      icon: Icons.check_circle_outline,
+      color: Colors.green,
+    ),
+  ];
+
+  void _goToStep(int step) {
+    setState(() {
+      _isForward = step &gt; _currentStep;
+      _currentStep = step;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Shared Axis 演示'),
+        actions: [
+          // 切换轴向类型的菜单
+          PopupMenuButton&lt;SharedAxisTransitionType&gt;(
+            onSelected: (type) =&gt; setState(() =&gt; _transitionType = type),
+            itemBuilder: (context) =&gt; [
+              const PopupMenuItem(
+                value: SharedAxisTransitionType.horizontal,
+                child: Text('X 轴（水平）'),
+              ),
+              const PopupMenuItem(
+                value: SharedAxisTransitionType.vertical,
+                child: Text('Y 轴（垂直）'),
+              ),
+              const PopupMenuItem(
+                value: SharedAxisTransitionType.scaled,
+                child: Text('Z 轴（缩放）'),
+              ),
+            ],
+            icon: const Icon(Icons.swap_horiz),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // 步骤指示器
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: List.generate(_totalSteps, (index) {
+                final isActive = index == _currentStep;
+                final isCompleted = index &lt; _currentStep;
+                return Expanded(
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 16,
+                        backgroundColor: isActive
+                            ? Theme.of(context).colorScheme.primary
+                            : isCompleted
+                                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)
+                                : Theme.of(context).colorScheme.surfaceContainerHighest,
+                        child: isCompleted
+                            ? const Icon(Icons.check, size: 16, color: Colors.white)
+                            : Text(
+                                '${index + 1}',
+                                style: TextStyle(
+                                  color: isActive ? Colors.white : null,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                      ),
+                      if (index &lt; _totalSteps - 1)
+                        Expanded(
+                          child: Container(
+                            height: 2,
+                            color: isCompleted
+                                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)
+                                : Theme.of(context).colorScheme.outlineVariant,
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              }),
+            ),
+          ),
+          // 步骤内容区域 —— 使用 PageTransitionSwitcher 驱动 SharedAxisTransition
+          Expanded(
+            child: PageTransitionSwitcher(
+              duration: const Duration(milliseconds: 400),
+              reverse: !_isForward, // 后退时反转动画方向
+              transitionBuilder: (child, animation, secondaryAnimation) {
+                return SharedAxisTransition(
+                  animation: animation,
+                  secondaryAnimation: secondaryAnimation,
+                  transitionType: _transitionType,
+                  child: child,
+                );
+              },
+              child: _StepPage(
+                key: ValueKey(_currentStep), // Key 变化触发过渡
+                step: _steps[_currentStep],
+              ),
+            ),
+          ),
+          // 底部导航按钮
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // 上一步按钮
+                _currentStep &gt; 0
+                    ? OutlinedButton.icon(
+                        onPressed: () =&gt; _goToStep(_currentStep - 1),
+                        icon: const Icon(Icons.arrow_back),
+                        label: const Text('上一步'),
+                      )
+                    : const SizedBox(width: 120),
+                // 下一步 / 完成按钮
+                _currentStep &lt; _totalSteps - 1
+                    ? FilledButton.icon(
+                        onPressed: () =&gt; _goToStep(_currentStep + 1),
+                        icon: const Icon(Icons.arrow_forward),
+                        label: const Text('下一步'),
+                      )
+                    : FilledButton.icon(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('注册完成！')),
+                          );
+                        },
+                        icon: const Icon(Icons.check),
+                        label: const Text('完成'),
+                      ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 步骤内容数据
+class _StepContent {
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color color;
+
+  const _StepContent({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.color,
+  });
+}
+
+/// 步骤页面
+class _StepPage extends StatelessWidget {
+  final _StepContent step;
+
+  const _StepPage({super.key, required this.step});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(step.icon, size: 80, color: step.color),
+            const SizedBox(height: 24),
+            Text(
+              step.title,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              step.description,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            // 模拟表单输入
+            SizedBox(
+              width: 300,
+              child: TextField(
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: '示例输入框',
+                  prefixIcon: Icon(step.icon),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>SharedAxisTransition</code> 本身只是过渡动画组件，需要配合 <code>PageTransitionSwitcher</code> 来提供 <code>animation</code> 和 <code>secondaryAnimation</code></li>
+<li><code>PageTransitionSwitcher</code> 的 <code>reverse</code> 参数控制动画方向，前进时正向播放，后退时反向播放</li>
+<li>务必为 <code>child</code> 设置不同的 <code>Key</code>（如 <code>ValueKey</code>），否则 Flutter 不会认为子组件发生了变化，不会触发过渡动画</li>
+</ol>
+</blockquote>
+<hr />
+<h3 id="43-fade-through淡入穿透">4.3 Fade Through（淡入穿透）</h3>
+<p>Fade Through 用于<strong>没有强关联关系</strong>的两个页面或组件之间的切换。旧元素先淡出并略微缩小，然后新元素淡入并略微放大，形成一个&quot;穿透&quot;效果。</p>
+<p><strong>典型使用场景</strong>：</p>
+<ul>
+<li>底部导航栏切换页面</li>
+<li>抽屉导航切换页面</li>
+<li>同层级但无顺序关系的内容切换</li>
+</ul>
+<h4 id="431-fadethroughtransition-核心属性">4.3.1 FadeThroughTransition 核心属性</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>animation</code></td>
+<td><code>Animation&lt;double&gt;</code></td>
+<td>主动画</td>
+</tr>
+<tr>
+<td><code>secondaryAnimation</code></td>
+<td><code>Animation&lt;double&gt;</code></td>
+<td>次级动画</td>
+</tr>
+<tr>
+<td><code>child</code></td>
+<td><code>Widget</code></td>
+<td>当前显示的子组件</td>
+</tr>
+<tr>
+<td><code>fillColor</code></td>
+<td><code>Color?</code></td>
+<td>过渡期间的背景填充色</td>
+</tr>
+</tbody>
+</table>
+<h4 id="432-完整代码示例底部导航页面切换">4.3.2 完整代码示例：底部导航页面切换</h4>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:animations/animations.dart';
+
+void main() =&gt; runApp(const FadeThroughApp());
+
+class FadeThroughApp extends StatelessWidget {
+  const FadeThroughApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.indigo,
+      ),
+      home: const FadeThroughDemo(),
+    );
+  }
+}
+
+class FadeThroughDemo extends StatefulWidget {
+  const FadeThroughDemo({super.key});
+
+  @override
+  State&lt;FadeThroughDemo&gt; createState() =&gt; _FadeThroughDemoState();
+}
+
+class _FadeThroughDemoState extends State&lt;FadeThroughDemo&gt; {
+  int _currentIndex = 0;
+
+  // 底部导航对应的页面
+  final List&lt;Widget&gt; _pages = const [
+    _HomePage(),
+    _SearchPage(),
+    _FavoritesPage(),
+    _ProfilePage(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Fade Through 演示')),
+      // 使用 PageTransitionSwitcher + FadeThroughTransition
+      body: PageTransitionSwitcher(
+        duration: const Duration(milliseconds: 300),
+        transitionBuilder: (child, animation, secondaryAnimation) {
+          return FadeThroughTransition(
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            child: child,
+          );
+        },
+        child: _pages[_currentIndex],
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentIndex,
+        onDestinationSelected: (index) {
+          setState(() =&gt; _currentIndex = index);
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: '首页',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.search_outlined),
+            selectedIcon: Icon(Icons.search),
+            label: '搜索',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.favorite_outline),
+            selectedIcon: Icon(Icons.favorite),
+            label: '收藏',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: '我的',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HomePage extends StatelessWidget {
+  const _HomePage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.home,
+            size: 80,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          const SizedBox(height: 16),
+          Text('首页', style: Theme.of(context).textTheme.headlineMedium),
+          const SizedBox(height: 8),
+          Text(
+            '底部导航切换使用 Fade Through 过渡',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SearchPage extends StatelessWidget {
+  const _SearchPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search,
+            size: 80,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          const SizedBox(height: 16),
+          Text('搜索', style: Theme.of(context).textTheme.headlineMedium),
+        ],
+      ),
+    );
+  }
+}
+
+class _FavoritesPage extends StatelessWidget {
+  const _FavoritesPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.favorite,
+            size: 80,
+            color: Theme.of(context).colorScheme.error,
+          ),
+          const SizedBox(height: 16),
+          Text('收藏', style: Theme.of(context).textTheme.headlineMedium),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfilePage extends StatelessWidget {
+  const _ProfilePage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.person,
+            size: 80,
+            color: Theme.of(context).colorScheme.tertiary,
+          ),
+          const SizedBox(height: 16),
+          Text('我的', style: Theme.of(context).textTheme.headlineMedium),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>FadeThroughTransition</code> 的各页面组件<strong>不需要</strong>设置 Key，<code>PageTransitionSwitcher</code> 会通过 <code>child</code> 引用判断是否发生变化</li>
+<li>但如果多个页面使用相同的 Widget 类型（如都是 <code>Container</code>），则必须设置不同的 Key</li>
+<li>Fade Through 适合<strong>平级关系</strong>的页面切换，如果页面之间有明确的前进/后退关系，应使用 Shared Axis</li>
+</ol>
+</blockquote>
+<hr />
+<h3 id="44-fade淡入淡出--缩放淡入淡出">4.4 Fade（淡入淡出 / 缩放淡入淡出）</h3>
+<p>Fade 是最简单的转场模式，用于元素的<strong>出现和消失</strong>。在 <code>animations</code> 包中对应的是 <code>FadeScaleTransition</code>，它在淡入淡出的基础上增加了微妙的缩放效果。</p>
+<p><strong>典型使用场景</strong>：</p>
+<ul>
+<li>对话框的弹出/关闭</li>
+<li>菜单的出现/消失</li>
+<li>浮动按钮的显示/隐藏</li>
+<li>提示信息的出现/消失</li>
+</ul>
+<h4 id="441-fadescaletransition-核心属性">4.4.1 FadeScaleTransition 核心属性</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>animation</code></td>
+<td><code>Animation&lt;double&gt;</code></td>
+<td>控制淡入淡出和缩放的动画</td>
+</tr>
+<tr>
+<td><code>child</code></td>
+<td><code>Widget</code></td>
+<td>需要应用过渡效果的子组件</td>
+</tr>
+</tbody>
+</table>
+<h4 id="442-完整代码示例弹出元素动画">4.4.2 完整代码示例：弹出元素动画</h4>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:animations/animations.dart';
+
+void main() =&gt; runApp(const FadeScaleApp());
+
+class FadeScaleApp extends StatelessWidget {
+  const FadeScaleApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.deepPurple,
+      ),
+      home: const FadeScaleDemo(),
+    );
+  }
+}
+
+class FadeScaleDemo extends StatefulWidget {
+  const FadeScaleDemo({super.key});
+
+  @override
+  State&lt;FadeScaleDemo&gt; createState() =&gt; _FadeScaleDemoState();
+}
+
+class _FadeScaleDemoState extends State&lt;FadeScaleDemo&gt;
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _toggle() {
+    if (_controller.isCompleted || _controller.velocity &gt; 0) {
+      _controller.reverse();
+    } else {
+      _controller.forward();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Fade Scale 演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 使用 FadeScaleTransition 控制元素的出现/消失
+            SizedBox(
+              height: 200,
+              child: FadeScaleTransition(
+                animation: _controller,
+                child: Card(
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.notifications_active,
+                          size: 48,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          '新消息通知',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 8),
+                        const Text('您有 3 条未读消息'),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            FilledButton.icon(
+              onPressed: _toggle,
+              icon: const Icon(Icons.visibility),
+              label: const Text('切换显示/隐藏'),
+            ),
+            const SizedBox(height: 16),
+            // 使用 showModal 来展示符合 Fade 规范的对话框
+            OutlinedButton.icon(
+              onPressed: () {
+                showModal&lt;void&gt;(
+                  context: context,
+                  // showModal 内置了 FadeScaleTransition 效果
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('确认操作'),
+                      content: const Text(
+                        '此对话框使用 showModal 弹出，自动应用了 '
+                        'FadeScaleTransition 效果，符合 Material Motion 规范。',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () =&gt; Navigator.of(context).pop(),
+                          child: const Text('取消'),
+                        ),
+                        FilledButton(
+                          onPressed: () =&gt; Navigator.of(context).pop(),
+                          child: const Text('确认'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              icon: const Icon(Icons.open_in_new),
+              label: const Text('弹出对话框（showModal）'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>FadeScaleTransition</code> 需要手动提供 <code>AnimationController</code>，不像前面的组件可以通过 <code>PageTransitionSwitcher</code> 自动驱动</li>
+<li><code>animations</code> 包还提供了 <code>showModal</code> 函数，它是 <code>showDialog</code> 的增强版，自动应用 FadeScale 过渡效果</li>
+<li>Fade 过渡适合<strong>独立出现/消失</strong>的元素，如果两个元素是<strong>替换关系</strong>（一个消失另一个出现），应使用 Fade Through</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="5-material-3-easing-曲线">5. Material 3 Easing 曲线</h2>
+<p>Easing（缓动）曲线决定了动画的加速和减速方式，是动效&quot;手感&quot;的关键。Material 3 定义了一套标准的 Easing 曲线，Flutter 通过 <code>Easing</code> 类提供。</p>
+<h3 id="51-easing-曲线一览">5.1 Easing 曲线一览</h3>
+<table>
+<thead>
+<tr>
+<th>曲线</th>
+<th>说明</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Easing.emphasized</code></td>
+<td>默认缓动，先快后慢，有明显的减速感</td>
+<td>大多数过渡动画的首选</td>
+</tr>
+<tr>
+<td><code>Easing.emphasizedDecelerate</code></td>
+<td>强调减速进入，元素从快速运动到缓慢停下</td>
+<td>元素进入屏幕</td>
+</tr>
+<tr>
+<td><code>Easing.emphasizedAccelerate</code></td>
+<td>强调加速退出，元素从静止加速离开</td>
+<td>元素离开屏幕</td>
+</tr>
+<tr>
+<td><code>Easing.standard</code></td>
+<td>标准缓动，比 emphasized 更对称</td>
+<td>屏幕内的属性变化（颜色、大小）</td>
+</tr>
+<tr>
+<td><code>Easing.standardDecelerate</code></td>
+<td>标准减速</td>
+<td>屏幕内元素的进入</td>
+</tr>
+<tr>
+<td><code>Easing.standardAccelerate</code></td>
+<td>标准加速</td>
+<td>屏幕内元素的退出</td>
+</tr>
+<tr>
+<td><code>Easing.legacy</code></td>
+<td>兼容旧版 Material 的缓动曲线</td>
+<td>向后兼容</td>
+</tr>
+<tr>
+<td><code>Easing.legacyDecelerate</code></td>
+<td>旧版减速曲线</td>
+<td>向后兼容</td>
+</tr>
+<tr>
+<td><code>Easing.legacyAccelerate</code></td>
+<td>旧版加速曲线</td>
+<td>向后兼容</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-如何选择缓动曲线">5.2 如何选择缓动曲线</h3>
+<pre><code>动画类型判断流程：
+
+1. 元素是否在屏幕上移动（位移、页面转场）？
+   → 是：使用 Easing.emphasized 系列
+     - 完整过渡 → Easing.emphasized
+     - 仅进入 → Easing.emphasizedDecelerate
+     - 仅退出 → Easing.emphasizedAccelerate
+
+2. 元素是否在原地变化属性（颜色、大小、透明度）？
+   → 是：使用 Easing.standard 系列
+     - 完整变化 → Easing.standard
+     - 属性渐入 → Easing.standardDecelerate
+     - 属性渐出 → Easing.standardAccelerate
+
+3. 需要兼容 Material 2？
+   → 是：使用 Easing.legacy 系列
+</code></pre>
+<h3 id="53-代码示例对比不同-easing-曲线">5.3 代码示例：对比不同 Easing 曲线</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const EasingDemoApp());
+
+class EasingDemoApp extends StatelessWidget {
+  const EasingDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
+      home: const EasingDemo(),
+    );
+  }
+}
+
+class EasingDemo extends StatefulWidget {
+  const EasingDemo({super.key});
+
+  @override
+  State&lt;EasingDemo&gt; createState() =&gt; _EasingDemoState();
+}
+
+class _EasingDemoState extends State&lt;EasingDemo&gt;
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  // Material 3 中所有可用的 Easing 曲线
+  final List&lt;_EasingInfo&gt; _easings = [
+    _EasingInfo('Easing.emphasized', Easing.emphasized, Colors.blue),
+    _EasingInfo('Easing.emphasizedDecelerate', Easing.emphasizedDecelerate, Colors.lightBlue),
+    _EasingInfo('Easing.emphasizedAccelerate', Easing.emphasizedAccelerate, Colors.indigo),
+    _EasingInfo('Easing.standard', Easing.standard, Colors.green),
+    _EasingInfo('Easing.standardDecelerate', Easing.standardDecelerate, Colors.lightGreen),
+    _EasingInfo('Easing.standardAccelerate', Easing.standardAccelerate, Colors.teal),
+    _EasingInfo('Easing.legacy', Easing.legacy, Colors.orange),
+    _EasingInfo('Easing.legacyDecelerate', Easing.legacyDecelerate, Colors.amber),
+    _EasingInfo('Easing.legacyAccelerate', Easing.legacyAccelerate, Colors.deepOrange),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _playAnimation() {
+    _controller.reset();
+    _controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Easing 曲线对比')),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: FilledButton.icon(
+              onPressed: _playAnimation,
+              icon: const Icon(Icons.play_arrow),
+              label: const Text('播放动画'),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: _easings.length,
+              itemBuilder: (context, index) {
+                final easing = _easings[index];
+                // 为每条曲线创建独立的 CurvedAnimation
+                final curvedAnimation = CurvedAnimation(
+                  parent: _controller,
+                  curve: easing.curve,
+                );
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        easing.name,
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        height: 32,
+                        child: AnimatedBuilder(
+                          animation: curvedAnimation,
+                          builder: (context, child) {
+                            return Align(
+                              alignment: Alignment(
+                                // 从左侧（-1）移动到右侧（1）
+                                -1 + 2 * curvedAnimation.value,
+                                0,
+                              ),
+                              child: child,
+                            );
+                          },
+                          child: Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: easing.color,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EasingInfo {
+  final String name;
+  final Curve curve;
+  final Color color;
+
+  _EasingInfo(this.name, this.curve, this.color);
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li><strong>优先使用 <code>Easing.emphasized</code></strong>：它是 Material 3 的默认缓动曲线，适用于大多数场景</li>
+<li><strong>不要使用 <code>Curves.linear</code></strong>：线性动画在 UI 中几乎总是显得机械和不自然</li>
+<li><strong>进入和退出使用不同曲线</strong>：进入用 Decelerate（减速），退出用 Accelerate（加速），模拟真实物理运动</li>
+<li><strong>新项目避免 legacy 系列</strong>：它们仅为 Material 2 向后兼容而保留</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="6-material-3-duration-tokens时长标记">6. Material 3 Duration Tokens（时长标记）</h2>
+<p>动画时长与缓动曲线同样重要。Material 3 定义了一套标准的持续时间规范：</p>
+<h3 id="61-时长分类">6.1 时长分类</h3>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>时长范围</th>
+<th>适用场景</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>短动画</strong></td>
+<td>&lt; 100ms</td>
+<td>简单的状态变化、微交互</td>
+<td>按钮按下反馈、开关切换、图标变化</td>
+</tr>
+<tr>
+<td><strong>中动画</strong></td>
+<td>200–300ms</td>
+<td>大多数过渡和转场</td>
+<td>页面切换、卡片展开、菜单弹出</td>
+</tr>
+<tr>
+<td><strong>长动画</strong></td>
+<td>&gt; 400ms</td>
+<td>复杂的全屏转场、引导动画</td>
+<td>Container Transform、首次引导页</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-durations-常量参考">6.2 Durations 常量参考</h3>
+<p>Flutter 的 Material 3 实现中，<code>Durations</code> 类提供了标准化的持续时间常量：</p>
+<pre><code class="language-dart">// Flutter 内置的 Durations 常量
+Durations.short1   // 50ms
+Durations.short2   // 100ms
+Durations.short3   // 150ms
+Durations.short4   // 200ms
+Durations.medium1  // 250ms
+Durations.medium2  // 300ms
+Durations.medium3  // 350ms
+Durations.medium4  // 400ms
+Durations.long1    // 450ms
+Durations.long2    // 500ms
+Durations.long3    // 550ms
+Durations.long4    // 600ms
+Durations.extralong1 // 700ms
+Durations.extralong2 // 800ms
+Durations.extralong3 // 900ms
+Durations.extralong4 // 1000ms
+</code></pre>
+<h3 id="63-选择时长的原则">6.3 选择时长的原则</h3>
+<pre><code class="language-dart">// 在代码中使用标准化时长
+AnimationController(
+  vsync: this,
+  // 推荐使用 Durations 常量，而非硬编码的 Duration
+  duration: Durations.medium2, // 300ms，适合大多数过渡
+);
+
+// 根据动画类型选择时长
+final fadeController = AnimationController(
+  vsync: this,
+  duration: Durations.short4, // 200ms，简单淡入淡出
+);
+
+final transformController = AnimationController(
+  vsync: this,
+  duration: Durations.long1, // 450ms，容器变形
+);
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li><strong>动画不宜过长</strong>：用户不应该&quot;等待&quot;动画完成。如果动画让人觉得慢，说明时长过长</li>
+<li><strong>一致性</strong>：同类动画使用相同的时长，避免 App 内动效风格混乱</li>
+<li><strong>优先使用 Durations 常量</strong>：比硬编码 <code>Duration(milliseconds: 300)</code> 更规范、更易维护</li>
+<li><strong>考虑无障碍</strong>：部分用户可能开启了&quot;减少动画&quot;选项，应通过 <code>MediaQuery.disableAnimationsOf(context)</code> 检测并跳过动画</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="7-页面路由转场定制">7. 页面路由转场定制</h2>
+<p>除了使用 <code>animations</code> 包的高级组件，你还可以通过 Flutter 路由系统全局定制页面转场效果。</p>
+<h3 id="71-pagetransitionstheme">7.1 PageTransitionsTheme</h3>
+<p><code>PageTransitionsTheme</code> 允许你在 <code>ThemeData</code> 中为不同平台配置默认的页面转场风格：</p>
+<pre><code class="language-dart">MaterialApp(
+  theme: ThemeData(
+    useMaterial3: true,
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        // 为不同平台指定不同的过渡效果
+        TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
+      },
+    ),
+  ),
+);
+</code></pre>
+<h3 id="72-内置-pagetransitionsbuilder">7.2 内置 PageTransitionsBuilder</h3>
+<p>Flutter 提供了以下内置的 <code>PageTransitionsBuilder</code>：</p>
+<table>
+<thead>
+<tr>
+<th>Builder</th>
+<th>效果</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FadeUpwardsPageTransitionsBuilder</code></td>
+<td>向上淡入</td>
+<td>Material 2 默认（Android）</td>
+</tr>
+<tr>
+<td><code>ZoomPageTransitionsBuilder</code></td>
+<td>缩放过渡</td>
+<td>Material 3 默认（Android）</td>
+</tr>
+<tr>
+<td><code>CupertinoPageTransitionsBuilder</code></td>
+<td>左右滑动</td>
+<td>iOS 风格</td>
+</tr>
+<tr>
+<td><code>OpenUpwardsPageTransitionsBuilder</code></td>
+<td>从底部打开</td>
+<td>另一种 Material 风格</td>
+</tr>
+</tbody>
+</table>
+<h3 id="73-自定义-pageroute-的-transitionsbuilder">7.3 自定义 PageRoute 的 transitionsBuilder</h3>
+<p>当你需要为<strong>特定路由</strong>定制转场动画时，可以使用 <code>PageRouteBuilder</code>：</p>
+<pre><code class="language-dart">// 自定义路由转场：Shared Axis 风格的页面跳转
+Navigator.of(context).push(
+  PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return const TargetPage();
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      // 使用 SharedAxisTransition 作为路由转场
+      return SharedAxisTransition(
+        animation: animation,
+        secondaryAnimation: secondaryAnimation,
+        transitionType: SharedAxisTransitionType.horizontal,
+        child: child,
+      );
+    },
+    transitionDuration: const Duration(milliseconds: 400),
+    reverseTransitionDuration: const Duration(milliseconds: 400),
+  ),
+);
+</code></pre>
+<h3 id="74-封装可复用的路由转场">7.4 封装可复用的路由转场</h3>
+<p>为了避免每次跳转都写一堆样板代码，推荐封装通用的路由方法：</p>
+<pre><code class="language-dart">/// 封装 Material Motion 路由转场
+class MotionPageRoute {
+  /// Shared Axis 转场（水平方向）
+  static Route&lt;T&gt; sharedAxisHorizontal&lt;T&gt;({
+    required WidgetBuilder builder,
+    Duration duration = const Duration(milliseconds: 400),
+  }) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return builder(context);
+      },
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SharedAxisTransition(
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          transitionType: SharedAxisTransitionType.horizontal,
+          child: child,
+        );
+      },
+      transitionDuration: duration,
+      reverseTransitionDuration: duration,
+    );
+  }
+
+  /// Fade Through 转场
+  static Route&lt;T&gt; fadeThrough&lt;T&gt;({
+    required WidgetBuilder builder,
+    Duration duration = const Duration(milliseconds: 300),
+  }) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return builder(context);
+      },
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeThroughTransition(
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          child: child,
+        );
+      },
+      transitionDuration: duration,
+      reverseTransitionDuration: duration,
+    );
+  }
+
+  /// Fade Scale 转场
+  static Route&lt;T&gt; fadeScale&lt;T&gt;({
+    required WidgetBuilder builder,
+    Duration duration = const Duration(milliseconds: 300),
+  }) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return builder(context);
+      },
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeScaleTransition(
+          animation: animation,
+          child: child,
+        );
+      },
+      transitionDuration: duration,
+      reverseTransitionDuration: duration,
+    );
+  }
+}
+
+// 使用方式
+Navigator.of(context).push(
+  MotionPageRoute.sharedAxisHorizontal(
+    builder: (context) =&gt; const TargetPage(),
+  ),
+);
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>PageTransitionsTheme</code> 只影响 <code>MaterialPageRoute</code> 的默认转场，自定义 <code>PageRouteBuilder</code> 不受其影响</li>
+<li>自定义路由转场时，<code>transitionDuration</code> 和 <code>reverseTransitionDuration</code> 建议设置为相同值</li>
+<li>使用 <code>animations</code> 包的 Transition 组件作为 <code>transitionsBuilder</code> 时，需要正确传递 <code>animation</code> 和 <code>secondaryAnimation</code></li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="8-实战多页面-material-motion-app">8. 实战：多页面 Material Motion App</h2>
+<p>下面我们构建一个综合运用四种转场模式的完整 App —— &quot;任务管理器&quot;，体现 Material Motion 在真实项目中的应用方式。</p>
+<h3 id="81-项目结构">8.1 项目结构</h3>
+<pre><code>lib/
+├── main.dart           // 入口 + MaterialApp 配置
+├── app_shell.dart      // App 外壳（底部导航 + Fade Through）
+├── pages/
+│   ├── task_list_page.dart    // 任务列表（Container Transform → 详情）
+│   ├── task_detail_page.dart  // 任务详情
+│   ├── stats_page.dart        // 统计页面
+│   └── settings_page.dart     // 设置页面
+└── widgets/
+    └── setup_wizard.dart      // 设置向导（Shared Axis 步骤）
+</code></pre>
+<h3 id="82-完整代码">8.2 完整代码</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:animations/animations.dart';
+
+void main() =&gt; runApp(const TaskManagerApp());
+
+// ============================================================
+// 1. App 入口与主题配置
+// ============================================================
+
+class TaskManagerApp extends StatelessWidget {
+  const TaskManagerApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '任务管理器',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+        // 全局页面转场配置
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: ZoomPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          },
+        ),
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        colorSchemeSeed: Colors.blue,
+      ),
+      home: const AppShell(),
+    );
+  }
+}
+
+// ============================================================
+// 2. App 外壳 — 底部导航使用 Fade Through
+// ============================================================
+
+class AppShell extends StatefulWidget {
+  const AppShell({super.key});
+
+  @override
+  State&lt;AppShell&gt; createState() =&gt; _AppShellState();
+}
+
+class _AppShellState extends State&lt;AppShell&gt; {
+  int _currentIndex = 0;
+
+  // 底部导航对应的页面列表
+  final List&lt;Widget&gt; _pages = const [
+    TaskListPage(),
+    StatsPage(),
+    SettingsPage(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // Fade Through：底部导航页面切换
+      body: PageTransitionSwitcher(
+        duration: Durations.medium2, // 300ms
+        transitionBuilder: (child, animation, secondaryAnimation) {
+          return FadeThroughTransition(
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            child: child,
+          );
+        },
+        child: _pages[_currentIndex],
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentIndex,
+        onDestinationSelected: (index) {
+          setState(() =&gt; _currentIndex = index);
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.task_outlined),
+            selectedIcon: Icon(Icons.task),
+            label: '任务',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.bar_chart_outlined),
+            selectedIcon: Icon(Icons.bar_chart),
+            label: '统计',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: '设置',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// 3. 任务列表页 — Container Transform 展开为详情
+// ============================================================
+
+/// 任务数据模型
+class Task {
+  final int id;
+  final String title;
+  final String description;
+  final String category;
+  final Color color;
+  final bool isCompleted;
+
+  const Task({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.category,
+    required this.color,
+    this.isCompleted = false,
+  });
+}
+
+class TaskListPage extends StatelessWidget {
+  const TaskListPage({super.key});
+
+  static final List&lt;Task&gt; _tasks = [
+    const Task(
+      id: 1,
+      title: '完成 Flutter 动效课程',
+      description: '学习 Material Motion 四大转场模式，掌握 animations 包的使用。'
+          '需要理解 Container Transform、Shared Axis、Fade Through 和 Fade 四种模式的适用场景。',
+      category: '学习',
+      color: Colors.blue,
+    ),
+    const Task(
+      id: 2,
+      title: '设计 App 原型',
+      description: '使用 Figma 设计新项目的 UI 原型，包含首页、详情页、设置页等核心页面。',
+      category: '设计',
+      color: Colors.purple,
+    ),
+    const Task(
+      id: 3,
+      title: '代码审查',
+      description: '审查团队提交的 PR，重点关注状态管理和性能优化方面的代码质量。',
+      category: '工作',
+      color: Colors.orange,
+    ),
+    const Task(
+      id: 4,
+      title: '编写单元测试',
+      description: '为核心业务逻辑编写单元测试，确保代码覆盖率达到 80% 以上。',
+      category: '工作',
+      color: Colors.green,
+    ),
+    const Task(
+      id: 5,
+      title: '阅读技术文章',
+      description: '阅读本周收藏的 5 篇 Flutter 相关技术博客，做好学习笔记。',
+      category: '学习',
+      color: Colors.teal,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('我的任务'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: _tasks.length,
+        itemBuilder: (context, index) {
+          return _TaskCard(task: _tasks[index]);
+        },
+      ),
+      // FAB 使用 Container Transform 展开为新建任务页
+      floatingActionButton: OpenContainer(
+        transitionDuration: Durations.long1, // 450ms
+        closedElevation: 6,
+        closedShape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+        closedColor: Theme.of(context).colorScheme.primaryContainer,
+        closedBuilder: (context, openContainer) {
+          return SizedBox(
+            width: 56,
+            height: 56,
+            child: Center(
+              child: Icon(
+                Icons.add,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+            ),
+          );
+        },
+        openBuilder: (context, closeContainer) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('新建任务'),
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () =&gt; closeContainer(),
+              ),
+            ),
+            body: const Padding(
+              padding: EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: '任务标题',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  TextField(
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      labelText: '任务描述',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// 任务卡片 — 使用 OpenContainer 实现 Container Transform
+class _TaskCard extends StatelessWidget {
+  final Task task;
+
+  const _TaskCard({required this.task});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: OpenContainer&lt;void&gt;(
+        transitionType: ContainerTransitionType.fade,
+        transitionDuration: Durations.long1, // 450ms
+        closedElevation: 1,
+        closedShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        closedColor: Theme.of(context).colorScheme.surface,
+        openElevation: 0,
+        openColor: Theme.of(context).colorScheme.surface,
+        closedBuilder: (context, openContainer) {
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundColor: task.color,
+              child: Icon(
+                task.isCompleted ? Icons.check : Icons.circle_outlined,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+            title: Text(task.title),
+            subtitle: Text(task.category),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: openContainer,
+          );
+        },
+        openBuilder: (context, closeContainer) {
+          return TaskDetailPage(task: task);
+        },
+      ),
+    );
+  }
+}
+
+// ============================================================
+// 4. 任务详情页
+// ============================================================
+
+class TaskDetailPage extends StatelessWidget {
+  final Task task;
+
+  const TaskDetailPage({super.key, required this.task});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(task.category),
+        actions: [
+          IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.delete_outline), onPressed: () {}),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          // 顶部彩色区域
+          Container(
+            height: 120,
+            decoration: BoxDecoration(
+              color: task.color.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Center(
+              child: Icon(Icons.task_alt, size: 56, color: task.color),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            task.title,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 8),
+          Chip(
+            label: Text(task.category),
+            avatar: CircleAvatar(
+              backgroundColor: task.color,
+              radius: 10,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            task.description,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          const SizedBox(height: 24),
+          // 操作按钮
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.check),
+                  label: const Text('标记完成'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.schedule),
+                  label: const Text('设置提醒'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// 5. 统计页面
+// ============================================================
+
+class StatsPage extends StatelessWidget {
+  const StatsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('统计')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.bar_chart,
+              size: 80,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(height: 16),
+            Text('任务统计', style: Theme.of(context).textTheme.headlineMedium),
+            const SizedBox(height: 8),
+            const Text('已完成 3 / 5 个任务'),
+            const SizedBox(height: 24),
+            const SizedBox(
+              width: 200,
+              child: LinearProgressIndicator(value: 0.6),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ============================================================
+// 6. 设置页面 — 包含 Shared Axis 向导和 Fade 弹出
+// ============================================================
+
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('设置')),
+      body: ListView(
+        children: [
+          // 点击进入设置向导 — 使用 Shared Axis 路由转场
+          ListTile(
+            leading: const Icon(Icons.tune),
+            title: const Text('初始设置向导'),
+            subtitle: const Text('使用 Shared Axis 步骤导航'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) {
+                    return const SetupWizard();
+                  },
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return SharedAxisTransition(
+                      animation: animation,
+                      secondaryAnimation: secondaryAnimation,
+                      transitionType: SharedAxisTransitionType.horizontal,
+                      child: child,
+                    );
+                  },
+                  transitionDuration: Durations.medium4,
+                  reverseTransitionDuration: Durations.medium4,
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          // 弹出关于对话框 — 使用 showModal (Fade Scale)
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: const Text('关于'),
+            subtitle: const Text('使用 Fade Scale 弹出'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              showModal&lt;void&gt;(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('关于任务管理器'),
+                    content: const Text(
+                      '这是一个演示 Material Motion 四大转场模式的示例应用。\n\n'
+                      '• 列表→详情：Container Transform\n'
+                      '• 底部导航切换：Fade Through\n'
+                      '• 设置向导步骤：Shared Axis\n'
+                      '• 此对话框：Fade (FadeScale)',
+                    ),
+                    actions: [
+                      FilledButton(
+                        onPressed: () =&gt; Navigator.of(context).pop(),
+                        child: const Text('知道了'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.dark_mode_outlined),
+            title: const Text('深色模式'),
+            trailing: Switch(value: false, onChanged: (v) {}),
+          ),
+          ListTile(
+            leading: const Icon(Icons.language),
+            title: const Text('语言'),
+            subtitle: const Text('简体中文'),
+            trailing: const Icon(Icons.chevron_right),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// 7. 设置向导 — 内部步骤使用 Shared Axis
+// ============================================================
+
+class SetupWizard extends StatefulWidget {
+  const SetupWizard({super.key});
+
+  @override
+  State&lt;SetupWizard&gt; createState() =&gt; _SetupWizardState();
+}
+
+class _SetupWizardState extends State&lt;SetupWizard&gt; {
+  int _currentStep = 0;
+  bool _isForward = true;
+
+  static const _totalSteps = 3;
+
+  final _stepData = const [
+    (
+      title: '选择主题色',
+      description: '选择你喜欢的主题颜色，应用会根据你的选择生成配色方案。',
+      icon: Icons.palette_outlined,
+    ),
+    (
+      title: '通知偏好',
+      description: '设置任务提醒的通知方式和频率。',
+      icon: Icons.notifications_outlined,
+    ),
+    (
+      title: '准备就绪',
+      description: '一切就绪！开始使用任务管理器提高你的工作效率吧。',
+      icon: Icons.rocket_launch_outlined,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('设置向导 (${_currentStep + 1}/$_totalSteps)'),
+      ),
+      body: Column(
+        children: [
+          // 线性进度指示
+          LinearProgressIndicator(
+            value: (_currentStep + 1) / _totalSteps,
+          ),
+          // 步骤内容 — Shared Axis 过渡
+          Expanded(
+            child: PageTransitionSwitcher(
+              duration: Durations.medium4, // 400ms
+              reverse: !_isForward,
+              transitionBuilder: (child, animation, secondaryAnimation) {
+                return SharedAxisTransition(
+                  animation: animation,
+                  secondaryAnimation: secondaryAnimation,
+                  transitionType: SharedAxisTransitionType.horizontal,
+                  child: child,
+                );
+              },
+              child: _WizardStepContent(
+                key: ValueKey(_currentStep),
+                title: _stepData[_currentStep].title,
+                description: _stepData[_currentStep].description,
+                icon: _stepData[_currentStep].icon,
+              ),
+            ),
+          ),
+          // 底部导航
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _currentStep &gt; 0
+                    ? OutlinedButton(
+                        onPressed: () {
+                          setState(() {
+                            _isForward = false;
+                            _currentStep--;
+                          });
+                        },
+                        child: const Text('上一步'),
+                      )
+                    : const SizedBox(width: 88),
+                _currentStep &lt; _totalSteps - 1
+                    ? FilledButton(
+                        onPressed: () {
+                          setState(() {
+                            _isForward = true;
+                            _currentStep++;
+                          });
+                        },
+                        child: const Text('下一步'),
+                      )
+                    : FilledButton(
+                        onPressed: () =&gt; Navigator.of(context).pop(),
+                        child: const Text('开始使用'),
+                      ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WizardStepContent extends StatelessWidget {
+  final String title;
+  final String description;
+  final IconData icon;
+
+  const _WizardStepContent({
+    super.key,
+    required this.title,
+    required this.description,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 80,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              description,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="83-四种转场在实战中的对应关系">8.3 四种转场在实战中的对应关系</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>转场模式</th>
+<th>实现方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>任务列表 → 任务详情</td>
+<td>Container Transform</td>
+<td><code>OpenContainer</code> 包裹列表项</td>
+</tr>
+<tr>
+<td>FAB → 新建任务页</td>
+<td>Container Transform</td>
+<td><code>OpenContainer</code> 包裹 FAB</td>
+</tr>
+<tr>
+<td>底部导航页面切换</td>
+<td>Fade Through</td>
+<td><code>PageTransitionSwitcher</code> + <code>FadeThroughTransition</code></td>
+</tr>
+<tr>
+<td>设置向导步骤前进/后退</td>
+<td>Shared Axis</td>
+<td><code>PageTransitionSwitcher</code> + <code>SharedAxisTransition</code></td>
+</tr>
+<tr>
+<td>关于对话框弹出</td>
+<td>Fade (FadeScale)</td>
+<td><code>showModal</code> 函数</td>
+</tr>
+<tr>
+<td>设置 → 向导页面路由</td>
+<td>Shared Axis</td>
+<td><code>PageRouteBuilder</code> + <code>SharedAxisTransition</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="9-无障碍与动效">9. 无障碍与动效</h2>
+<h3 id="91-尊重用户的动效偏好">9.1 尊重用户的动效偏好</h3>
+<p>部分用户可能因为前庭障碍等原因对动画敏感，系统提供了&quot;减少动画&quot;的选项。你的 App 应当尊重这个设置：</p>
+<pre><code class="language-dart">@override
+Widget build(BuildContext context) {
+  // 检查用户是否启用了&quot;减少动画&quot;
+  final disableAnimations = MediaQuery.disableAnimationsOf(context);
+
+  return AnimatedContainer(
+    // 如果用户禁用动画，持续时间设为 0（立即完成）
+    duration: disableAnimations ? Duration.zero : Durations.medium2,
+    curve: Easing.emphasized,
+    color: _isSelected ? Colors.blue : Colors.grey,
+    child: child,
+  );
+}
+</code></pre>
+<h3 id="92-封装动效感知的-duration-工具">9.2 封装动效感知的 Duration 工具</h3>
+<pre><code class="language-dart">/// 根据用户偏好返回实际的动画时长
+Duration motionDuration(BuildContext context, Duration duration) {
+  return MediaQuery.disableAnimationsOf(context) ? Duration.zero : duration;
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li>始终检查 <code>disableAnimations</code> 并提供零动画的回退方案</li>
+<li>关键信息不应该只通过动画传达——即使没有动画，用户也应能理解界面变化</li>
+<li>测试时在系统设置中开启&quot;减少动画&quot;，确认 App 在无动画模式下依然可用</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="本课小结">本课小结</h2>
+<p>本课系统讲解了 Material Motion 动效规范，涵盖以下核心知识点：</p>
+<ol>
+<li>
+<p><strong>设计原则</strong>：Material Motion 遵循 Informative（信息性）、Focused（聚焦性）、Expressive（表达性）三大原则，动效是设计语言的一部分而非装饰。</p>
+</li>
+<li>
+<p><strong>四大转场模式</strong>：</p>
+<ul>
+<li><strong>Container Transform</strong>：源元素变形为目标元素，适用于有从属关系的导航（列表→详情、FAB→新页面）</li>
+<li><strong>Shared Axis</strong>：沿共享轴过渡，适用于有顺序关系的同级导航（步骤、Tab）</li>
+<li><strong>Fade Through</strong>：淡出旧内容、淡入新内容，适用于无强关联的同级切换（底部导航）</li>
+<li><strong>Fade (FadeScale)</strong>：元素的出现和消失，适用于弹出元素（对话框、菜单）</li>
+</ul>
+</li>
+<li>
+<p><strong>Easing 曲线</strong>：Material 3 提供 emphasized、standard、legacy 三套曲线，优先使用 <code>Easing.emphasized</code> 系列。进入用 Decelerate，退出用 Accelerate。</p>
+</li>
+<li>
+<p><strong>Duration Tokens</strong>：短动画 &lt; 100ms、中动画 200–300ms、长动画 &gt; 400ms。优先使用 <code>Durations</code> 常量确保一致性。</p>
+</li>
+<li>
+<p><strong>路由转场定制</strong>：通过 <code>PageTransitionsTheme</code> 全局配置，或通过 <code>PageRouteBuilder</code> 为特定路由定制转场。</p>
+</li>
+<li>
+<p><strong>无障碍</strong>：通过 <code>MediaQuery.disableAnimationsOf</code> 尊重用户的&quot;减少动画&quot;偏好。</p>
+</li>
+</ol>
+<hr />
+<h2 id="课后练习">课后练习</h2>
+<h3 id="练习1container-transform-变体基础">练习1：Container Transform 变体（基础）</h3>
+<p>修改实战项目，将任务列表改为<strong>网格布局</strong>（<code>GridView</code>），每个网格卡片使用 <code>OpenContainer</code> 展开为详情页。注意调整 <code>closedShape</code> 和 <code>closedElevation</code> 使卡片外观符合 Material 规范。</p>
+<h3 id="练习2自定义-sharedaxistransition中级">练习2：自定义 SharedAxisTransition（中级）</h3>
+<p>创建一个多步骤问卷调查页面（至少 5 步），要求：</p>
+<ul>
+<li>步骤前进使用 <code>SharedAxisTransitionType.horizontal</code></li>
+<li>提交后跳转到结果页使用 <code>SharedAxisTransitionType.scaled</code>（暗示层级变化）</li>
+<li>顶部显示当前步骤的进度条，带动画效果</li>
+<li>&quot;上一步&quot;时动画反向播放</li>
+</ul>
+<h3 id="练习3混合使用-fade-through-和-container-transform中级">练习3：混合使用 Fade Through 和 Container Transform（中级）</h3>
+<p>创建一个照片浏览 App：</p>
+<ul>
+<li>底部有三个 Tab（全部、收藏、最近），Tab 切换使用 Fade Through</li>
+<li>每个 Tab 内是照片网格，点击照片使用 Container Transform 展开为全屏预览</li>
+<li>全屏预览页有一个&quot;更多信息&quot;按钮，点击使用 <code>showModal</code>（Fade Scale）弹出照片详情</li>
+</ul>
+<h3 id="练习4easing-曲线可视化工具进阶">练习4：Easing 曲线可视化工具（进阶）</h3>
+<p>构建一个 Easing 曲线可视化工具：</p>
+<ul>
+<li>使用 <code>CustomPaint</code> 绘制所有 Material 3 Easing 曲线的图形</li>
+<li>提供一个动画球体，选择不同曲线后播放动画，直观对比不同曲线的运动感觉</li>
+<li>显示每条曲线在不同时间点的速度变化</li>
+</ul>
+<h3 id="练习5综合思考题">练习5：综合思考题</h3>
+<p>回答以下问题：</p>
+<ol>
+<li>为什么底部导航切换推荐使用 Fade Through 而非 Shared Axis？如果底部导航的 Tab 有明确的先后顺序（如&quot;第1步&quot;→&quot;第2步&quot;），应该改用什么转场？</li>
+<li><code>OpenContainer</code> 的 <code>transitionType</code> 有 <code>fade</code> 和 <code>fadeThroughColor</code> 两种选项，它们的视觉差异是什么？分别适合什么场景？</li>
+<li>如果用户开启了系统的&quot;减少动画&quot;选项，<code>OpenContainer</code> 是否会自动响应？如果不会，你打算如何处理？</li>
+</ol>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：<a href="lesson08_adaptive_layout.md">第08课 自适应布局与跨平台 Material</a> —— 学习 Material Design 的响应式布局规范，构建能自动适配手机、平板和桌面的 App。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

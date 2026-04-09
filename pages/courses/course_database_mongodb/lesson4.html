@@ -1,0 +1,2845 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第04章-spring-boot-集成-mongodb">第04章 Spring Boot 集成 MongoDB</h1>
+<blockquote>
+<p>本章将系统学习如何在 Spring Boot 项目中集成 MongoDB。从依赖配置、实体映射注解，到 MongoRepository 的开箱即用 CRUD、方法名派生查询，再到 @Query 自定义查询，带你用 Java 代码实现上一章在 Shell 中完成的所有操作。</p>
+<p>本章示例基于 <strong>Spring Boot 3.x</strong> + <strong>Java 17+</strong> + <strong>Spring Data MongoDB 4.x</strong>。</p>
+</blockquote>
+<hr />
+<h2 id="41-spring-boot-starter-data-mongodb-配置详解">4.1 spring-boot-starter-data-mongodb 配置详解</h2>
+<h3 id="411-引入依赖">4.1.1 引入依赖</h3>
+<p>在 <code>pom.xml</code> 中添加 Spring Data MongoDB 的 Starter 依赖：</p>
+<pre><code class="language-xml">&lt;parent&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;3.3.0&lt;/version&gt;
+    &lt;relativePath/&gt;
+&lt;/parent&gt;
+
+&lt;dependencies&gt;
+    &lt;!-- Spring Data MongoDB --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-data-mongodb&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    &lt;!-- Spring Web（提供 REST 接口能力） --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    &lt;!-- Lombok（简化实体类代码，可选） --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+        &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+
+    &lt;!-- 测试 --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<blockquote>
+<p><code>spring-boot-starter-data-mongodb</code> 会自动引入 <code>spring-data-mongodb</code>、<code>mongodb-driver-sync</code> 等核心依赖，无需手动管理版本。</p>
+</blockquote>
+<h3 id="412-自动配置原理简述">4.1.2 自动配置原理简述</h3>
+<p>Spring Boot 通过 <code>MongoAutoConfiguration</code> 和 <code>MongoDataAutoConfiguration</code> 完成 MongoDB 的自动配置，核心流程如下：</p>
+<pre><code>application.yml 中的 spring.data.mongodb.* 配置
+        ↓
+MongoProperties 读取配置属性
+        ↓
+MongoAutoConfiguration 创建 MongoClient（底层连接客户端）
+        ↓
+MongoDataAutoConfiguration 创建 MongoTemplate / MongoDatabaseFactory
+        ↓
+@EnableMongoRepositories 扫描并生成 Repository 代理对象
+        ↓
+开发者注入 MongoTemplate 或 Repository 即可使用
+</code></pre>
+<p>关键的自动配置类：</p>
+<table>
+<thead>
+<tr>
+<th>配置类</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MongoAutoConfiguration</code></td>
+<td>创建 <code>MongoClient</code> 实例</td>
+</tr>
+<tr>
+<td><code>MongoDataAutoConfiguration</code></td>
+<td>创建 <code>MongoDatabaseFactory</code>、<code>MongoTemplate</code>、<code>MongoConverter</code></td>
+</tr>
+<tr>
+<td><code>MongoRepositoriesAutoConfiguration</code></td>
+<td>启用 <code>@EnableMongoRepositories</code>，扫描 Repository 接口</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>只要引入 Starter 依赖并配置连接信息，上述 Bean 都会自动创建，开发者无需手动声明。</p>
+</blockquote>
+<h3 id="413-基础连接配置">4.1.3 基础连接配置</h3>
+<p><strong>方式一：使用连接字符串（推荐）</strong></p>
+<pre><code class="language-yaml"># application.yml
+spring:
+  data:
+    mongodb:
+      uri: mongodb://root:123456@localhost:27017/blog?authSource=admin
+</code></pre>
+<p>连接字符串格式：</p>
+<pre><code>mongodb://[username:password@]host[:port]/database[?options]
+</code></pre>
+<p><strong>方式二：分别指定各项配置</strong></p>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: blog
+      username: root
+      password: 123456
+      authentication-database: admin
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>uri</code> 和 <code>host/port/database</code> 两种方式不能混用。如果同时配置了 <code>uri</code>，则 <code>host</code>、<code>port</code>、<code>database</code> 等属性会被忽略。</p>
+</blockquote>
+<p><strong>方式三：无认证的本地连接（开发环境）</strong></p>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/blog
+</code></pre>
+<h3 id="414-连接池配置">4.1.4 连接池配置</h3>
+<p>MongoDB Java 驱动内部使用连接池管理与服务端的连接。Spring Boot 中可以通过自定义 <code>MongoClientSettings</code> 来调整连接池参数：</p>
+<pre><code class="language-java">package com.example.mongo.config;
+
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.connection.ConnectionPoolSettings;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.concurrent.TimeUnit;
+
+@Configuration
+public class MongoConfig {
+
+    @Bean
+    public MongoClientSettings mongoClientSettings() {
+        return MongoClientSettings.builder()
+            .applyConnectionString(new ConnectionString(
+                &quot;mongodb://root:123456@localhost:27017/blog?authSource=admin&quot;
+            ))
+            .applyToConnectionPoolSettings(builder -&gt;
+                builder.maxSize(50)                                     // 最大连接数（默认 100）
+                       .minSize(5)                                      // 最小连接数（默认 0）
+                       .maxWaitTime(5000, TimeUnit.MILLISECONDS)        // 获取连接的最大等待时间
+                       .maxConnectionIdleTime(60000, TimeUnit.MILLISECONDS) // 连接最大空闲时间
+                       .maxConnectionLifeTime(300000, TimeUnit.MILLISECONDS) // 连接最大存活时间
+            )
+            .applyToSocketSettings(builder -&gt;
+                builder.connectTimeout(5000, TimeUnit.MILLISECONDS)     // 连接超时
+                       .readTimeout(15000, TimeUnit.MILLISECONDS)       // 读取超时
+            )
+            .build();
+    }
+}
+</code></pre>
+<p>常用连接池参数说明：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>maxSize</code></td>
+<td>100</td>
+<td>连接池最大连接数</td>
+</tr>
+<tr>
+<td><code>minSize</code></td>
+<td>0</td>
+<td>连接池最小连接数（空闲时保持的连接）</td>
+</tr>
+<tr>
+<td><code>maxWaitTime</code></td>
+<td>120s</td>
+<td>等待可用连接的最大时间</td>
+</tr>
+<tr>
+<td><code>maxConnectionIdleTime</code></td>
+<td>0（无限制）</td>
+<td>连接最大空闲时间，超时后关闭</td>
+</tr>
+<tr>
+<td><code>maxConnectionLifeTime</code></td>
+<td>0（无限制）</td>
+<td>连接最大生存时间</td>
+</tr>
+</tbody>
+</table>
+<h3 id="415-多数据源配置">4.1.5 多数据源配置</h3>
+<p>在微服务架构或复杂业务场景中，可能需要连接多个 MongoDB 实例或数据库。Spring Boot 默认只支持单数据源，多数据源需要手动配置。</p>
+<p><strong>场景</strong>：主库 <code>blog</code> 用于业务数据，日志库 <code>logs</code> 用于操作日志。</p>
+<p><strong>第一步：配置文件中定义多个数据源</strong></p>
+<pre><code class="language-yaml"># application.yml
+mongodb:
+  primary:
+    uri: mongodb://root:123456@localhost:27017/blog?authSource=admin
+  secondary:
+    uri: mongodb://root:123456@localhost:27017/logs?authSource=admin
+</code></pre>
+<p><strong>第二步：创建主数据源配置</strong></p>
+<pre><code class="language-java">package com.example.mongo.config;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+
+@Configuration
+@EnableMongoRepositories(
+    basePackages = &quot;com.example.mongo.repository.primary&quot;,
+    mongoTemplateRef = &quot;primaryMongoTemplate&quot;
+)
+public class PrimaryMongoConfig {
+
+    @Value(&quot;${mongodb.primary.uri}&quot;)
+    private String primaryUri;
+
+    @Primary
+    @Bean(name = &quot;primaryMongoClient&quot;)
+    public MongoClient primaryMongoClient() {
+        return MongoClients.create(primaryUri);
+    }
+
+    @Primary
+    @Bean(name = &quot;primaryMongoDatabaseFactory&quot;)
+    public MongoDatabaseFactory primaryMongoDatabaseFactory() {
+        return new SimpleMongoClientDatabaseFactory(primaryMongoClient(), &quot;blog&quot;);
+    }
+
+    @Primary
+    @Bean(name = &quot;primaryMongoTemplate&quot;)
+    public MongoTemplate primaryMongoTemplate() {
+        return new MongoTemplate(primaryMongoDatabaseFactory());
+    }
+}
+</code></pre>
+<p><strong>第三步：创建第二数据源配置</strong></p>
+<pre><code class="language-java">package com.example.mongo.config;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+
+@Configuration
+@EnableMongoRepositories(
+    basePackages = &quot;com.example.mongo.repository.secondary&quot;,
+    mongoTemplateRef = &quot;secondaryMongoTemplate&quot;
+)
+public class SecondaryMongoConfig {
+
+    @Value(&quot;${mongodb.secondary.uri}&quot;)
+    private String secondaryUri;
+
+    @Bean(name = &quot;secondaryMongoClient&quot;)
+    public MongoClient secondaryMongoClient() {
+        return MongoClients.create(secondaryUri);
+    }
+
+    @Bean(name = &quot;secondaryMongoDatabaseFactory&quot;)
+    public MongoDatabaseFactory secondaryMongoDatabaseFactory() {
+        return new SimpleMongoClientDatabaseFactory(secondaryMongoClient(), &quot;logs&quot;);
+    }
+
+    @Bean(name = &quot;secondaryMongoTemplate&quot;)
+    public MongoTemplate secondaryMongoTemplate() {
+        return new MongoTemplate(secondaryMongoDatabaseFactory());
+    }
+}
+</code></pre>
+<p><strong>第四步：使用时注入对应的 MongoTemplate</strong></p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Service;
+
+@Service
+public class LogService {
+
+    private final MongoTemplate secondaryMongoTemplate;
+
+    public LogService(@Qualifier(&quot;secondaryMongoTemplate&quot;) MongoTemplate secondaryMongoTemplate) {
+        this.secondaryMongoTemplate = secondaryMongoTemplate;
+    }
+
+    public void saveLog(OperationLog log) {
+        secondaryMongoTemplate.insert(log);
+    }
+}
+</code></pre>
+<p><strong>项目包结构参考：</strong></p>
+<pre><code>com.example.mongo
+├── config
+│   ├── PrimaryMongoConfig.java
+│   └── SecondaryMongoConfig.java
+├── entity
+│   ├── User.java
+│   └── OperationLog.java
+├── repository
+│   ├── primary
+│   │   └── UserRepository.java          ← 使用 primaryMongoTemplate
+│   └── secondary
+│       └── OperationLogRepository.java   ← 使用 secondaryMongoTemplate
+└── service
+    ├── UserService.java
+    └── LogService.java
+</code></pre>
+<hr />
+<h2 id="42-实体映射注解详解">4.2 实体映射注解详解</h2>
+<p>Spring Data MongoDB 提供了一组注解，用于将 Java 实体类映射到 MongoDB 文档。以下逐一讲解每个核心注解。</p>
+<h3 id="421-document--标记文档实体">4.2.1 @Document —— 标记文档实体</h3>
+<p><code>@Document</code> 将一个 Java 类标记为 MongoDB 文档实体，并指定其对应的集合名称。</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.mongodb.core.mapping.Document;
+
+// 映射到 MongoDB 中名为 &quot;users&quot; 的集合
+@Document(collection = &quot;users&quot;)
+public class User {
+    // 如果不指定 collection，默认使用类名的小写形式：&quot;user&quot;
+}
+
+// 也可以使用 value 属性（和 collection 等效）
+@Document(&quot;articles&quot;)
+public class Article {
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>collection</code> / <code>value</code></td>
+<td>指定集合名称，不指定则默认为类名首字母小写</td>
+</tr>
+<tr>
+<td><code>language</code></td>
+<td>文本索引的语言，默认为 <code>&quot;&quot;</code></td>
+</tr>
+<tr>
+<td><code>collation</code></td>
+<td>排序规则（用于大小写不敏感查询等场景）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="422-id--主键映射">4.2.2 @Id —— 主键映射</h3>
+<p><code>@Id</code> 将字段映射为文档的 <code>_id</code> 主键。</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = &quot;users&quot;)
+public class User {
+
+    @Id
+    private String id;  // 映射为 MongoDB 的 _id 字段
+
+    private String username;
+
+    // getter / setter
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+}
+</code></pre>
+<p><strong><code>_id</code> 的生成规则：</strong></p>
+<table>
+<thead>
+<tr>
+<th>id 字段类型</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>String</code></td>
+<td>插入时如果为 null，自动生成 ObjectId 的十六进制字符串</td>
+</tr>
+<tr>
+<td><code>ObjectId</code></td>
+<td>插入时如果为 null，自动生成 ObjectId</td>
+</tr>
+<tr>
+<td><code>Long</code> / <code>Integer</code></td>
+<td>不会自动生成，需要手动赋值</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>建议</strong>：id 字段使用 <code>String</code> 类型最为通用，MongoDB 会自动生成 24 位十六进制字符串的 ObjectId。</p>
+</blockquote>
+<h3 id="423-field--字段名映射">4.2.3 @Field —— 字段名映射</h3>
+<p><code>@Field</code> 用于指定 Java 字段在 MongoDB 文档中对应的字段名。当 Java 属性名与 MongoDB 字段名不一致时使用。</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Document(collection = &quot;articles&quot;)
+public class Article {
+
+    @Id
+    private String id;
+
+    private String title;
+
+    // Java 中用驼峰命名，MongoDB 中用下划线命名
+    @Field(&quot;author_name&quot;)
+    private String authorName;
+
+    @Field(&quot;view_count&quot;)
+    private Integer viewCount;
+
+    @Field(&quot;created_at&quot;)
+    private LocalDateTime createdAt;
+
+    // 使用 targetType 指定 BSON 存储类型（适合金额等精度敏感场景）
+    @Field(targetType = FieldType.DECIMAL128)
+    private BigDecimal price;
+
+    // getter / setter
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public String getAuthorName() { return authorName; }
+    public void setAuthorName(String authorName) { this.authorName = authorName; }
+    public Integer getViewCount() { return viewCount; }
+    public void setViewCount(Integer viewCount) { this.viewCount = viewCount; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public BigDecimal getPrice() { return price; }
+    public void setPrice(BigDecimal price) { this.price = price; }
+}
+</code></pre>
+<blockquote>
+<p>如果不使用 <code>@Field</code> 注解，Spring Data MongoDB 默认使用 Java 属性名作为 MongoDB 字段名（区分大小写）。</p>
+</blockquote>
+<h3 id="424-indexed--compoundindex--索引注解">4.2.4 @Indexed / @CompoundIndex —— 索引注解</h3>
+<p><strong>@Indexed：单字段索引</strong></p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = &quot;users&quot;)
+public class User {
+
+    @Id
+    private String id;
+
+    // 创建唯一索引（用户名不可重复）
+    @Indexed(unique = true)
+    private String username;
+
+    // 创建普通索引（加速按邮箱查询）
+    @Indexed
+    private String email;
+
+    // TTL 索引：文档在 expireAt 时间点后自动删除
+    @Indexed(expireAfterSeconds = 0)
+    private java.util.Date expireAt;
+
+    // TTL 索引：文档在创建后 3600 秒（1小时）自动删除
+    @Indexed(expireAfterSeconds = 3600)
+    private java.util.Date createdAt;
+
+    // getter / setter 省略
+}
+</code></pre>
+<p><code>@Indexed</code> 常用属性：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unique</code></td>
+<td>是否唯一索引，默认 <code>false</code></td>
+</tr>
+<tr>
+<td><code>direction</code></td>
+<td>索引方向，<code>ASCENDING</code>（默认）或 <code>DESCENDING</code></td>
+</tr>
+<tr>
+<td><code>expireAfterSeconds</code></td>
+<td>TTL 索引的过期时间（秒）</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>索引名称</td>
+</tr>
+<tr>
+<td><code>sparse</code></td>
+<td>稀疏索引，<code>true</code> 时仅对存在该字段的文档建立索引</td>
+</tr>
+<tr>
+<td><code>background</code></td>
+<td>是否后台创建索引</td>
+</tr>
+</tbody>
+</table>
+<p><strong>@CompoundIndex：复合索引</strong></p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Document(collection = &quot;articles&quot;)
+@CompoundIndexes({
+    // 复合索引：按 author 和 status 联合查询
+    @CompoundIndex(name = &quot;idx_author_status&quot;, def = &quot;{'author': 1, 'status': 1}&quot;),
+    // 复合索引：按 category 升序 + createdAt 降序（适合分类列表分页查询）
+    @CompoundIndex(name = &quot;idx_category_created&quot;, def = &quot;{'category': 1, 'created_at': -1}&quot;)
+})
+public class Article {
+
+    @Id
+    private String id;
+
+    private String title;
+
+    private String author;
+
+    private String category;
+
+    private String status;
+
+    private List&lt;String&gt; tags;
+
+    @Field(&quot;view_count&quot;)
+    private Integer viewCount;
+
+    @Field(&quot;created_at&quot;)
+    private LocalDateTime createdAt;
+
+    // getter / setter 省略
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：Spring Boot 3.x 默认<strong>不自动创建</strong>注解声明的索引。需要在配置中手动开启：</p>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      auto-index-creation: true
+</code></pre>
+<p>或者通过 Java 配置：</p>
+<pre><code class="language-java">@Configuration
+public class MongoConfig extends AbstractMongoClientConfiguration {
+    @Override
+    protected boolean autoIndexCreation() {
+        return true;
+    }
+}
+</code></pre>
+</blockquote>
+<h3 id="425-dbref--文档引用">4.2.5 @DBRef —— 文档引用</h3>
+<p><code>@DBRef</code> 用于在文档之间建立引用关系，类似于关系型数据库的外键。MongoDB 会存储被引用文档的 <code>$ref</code>（集合名）和 <code>$id</code>，在查询时自动加载引用的文档。</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Document(collection = &quot;articles&quot;)
+public class Article {
+
+    @Id
+    private String id;
+
+    private String title;
+
+    private String content;
+
+    // 引用 User 文档：查询 Article 时会自动加载关联的 User
+    @DBRef
+    private User author;
+
+    // 引用 Comment 文档列表
+    @DBRef(lazy = true)  // lazy = true：延迟加载，访问时才查询
+    private List&lt;Comment&gt; comments;
+
+    @Field(&quot;created_at&quot;)
+    private LocalDateTime createdAt;
+
+    // getter / setter
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+    public User getAuthor() { return author; }
+    public void setAuthor(User author) { this.author = author; }
+    public List&lt;Comment&gt; getComments() { return comments; }
+    public void setComments(List&lt;Comment&gt; comments) { this.comments = comments; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+}
+</code></pre>
+<p>存储到 MongoDB 中的文档结构：</p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;article_001&quot;,
+  &quot;title&quot;: &quot;MongoDB 入门指南&quot;,
+  &quot;author&quot;: {
+    &quot;$ref&quot;: &quot;users&quot;,
+    &quot;$id&quot;: &quot;user_001&quot;
+  },
+  &quot;comments&quot;: [
+    { &quot;$ref&quot;: &quot;comments&quot;, &quot;$id&quot;: &quot;comment_001&quot; },
+    { &quot;$ref&quot;: &quot;comments&quot;, &quot;$id&quot;: &quot;comment_002&quot; }
+  ]
+}
+</code></pre>
+<blockquote>
+<p><strong>实际开发建议</strong>：<code>@DBRef</code> 的本质是额外发起查询来加载引用文档，存在 <strong>N+1 查询问题</strong>。在大多数场景中，推荐使用<strong>内嵌文档</strong>或<strong>手动存储 ID + 应用层关联</strong>来代替 <code>@DBRef</code>，性能更好。</p>
+</blockquote>
+<h3 id="426-transient--忽略字段">4.2.6 @Transient —— 忽略字段</h3>
+<p><code>@Transient</code> 标记的字段不会被持久化到 MongoDB，仅在 Java 内存中存在。</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = &quot;users&quot;)
+public class User {
+
+    @Id
+    private String id;
+
+    private String username;
+
+    private String password;
+
+    // 该字段不会存储到 MongoDB 中
+    @Transient
+    private String confirmPassword;
+
+    // 计算属性，不需要存储
+    @Transient
+    private String displayName;
+
+    public String getDisplayName() {
+        return this.username + &quot; (ID: &quot; + this.id + &quot;)&quot;;
+    }
+
+    // 也可以用 Java 的 transient 关键字达到同样效果
+    // transient String tempData;
+
+    // getter / setter
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+    public String getConfirmPassword() { return confirmPassword; }
+    public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>@Transient</code> 来自 <code>org.springframework.data.annotation</code> 包，不是 <code>jakarta.persistence.Transient</code>（JPA 的注解）。</p>
+</blockquote>
+<h3 id="427-createddate--lastmodifieddate--审计功能">4.2.7 @CreatedDate / @LastModifiedDate —— 审计功能</h3>
+<p>Spring Data 提供审计注解，可以自动填充文档的创建时间和最后修改时间。</p>
+<p><strong>第一步：启用审计功能</strong></p>
+<pre><code class="language-java">package com.example.mongo.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
+
+@Configuration
+@EnableMongoAuditing  // 启用 MongoDB 审计功能
+public class MongoAuditConfig {
+}
+</code></pre>
+<p><strong>第二步：在实体类中使用审计注解</strong></p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
+
+@Document(collection = &quot;articles&quot;)
+public class Article {
+
+    @Id
+    private String id;
+
+    private String title;
+
+    private String content;
+
+    private String author;
+
+    // 自动填充：文档首次保存时设置，后续更新不会改变
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    // 自动填充：每次保存（包括更新）时都会刷新
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    // 自动填充操作人（需要配合 AuditorAware 接口使用）
+    @CreatedBy
+    private String createdBy;
+
+    @LastModifiedBy
+    private String updatedBy;
+
+    // 乐观锁版本号：每次 save 时自动递增
+    @Version
+    private Long version;
+
+    // getter / setter
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+    public String getAuthor() { return author; }
+    public void setAuthor(String author) { this.author = author; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+    public String getUpdatedBy() { return updatedBy; }
+    public void setUpdatedBy(String updatedBy) { this.updatedBy = updatedBy; }
+    public Long getVersion() { return version; }
+    public void setVersion(Long version) { this.version = version; }
+}
+</code></pre>
+<p><strong>第三步（可选）：实现 AuditorAware 接口，自动填充操作人</strong></p>
+<pre><code class="language-java">package com.example.mongo.config;
+
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
+
+@Component
+public class MongoAuditorAware implements AuditorAware&lt;String&gt; {
+
+    @Override
+    public Optional&lt;String&gt; getCurrentAuditor() {
+        // 实际项目中从 SecurityContext 或 ThreadLocal 中获取当前登录用户
+        // 这里简化为返回固定值
+        return Optional.of(&quot;system&quot;);
+    }
+}
+</code></pre>
+<h3 id="428-注解速查表">4.2.8 注解速查表</h3>
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>来源</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@Document</code></td>
+<td>spring-data-mongodb</td>
+<td>标记文档实体，指定集合名</td>
+</tr>
+<tr>
+<td><code>@Id</code></td>
+<td>spring-data-commons</td>
+<td>映射 <code>_id</code> 主键</td>
+</tr>
+<tr>
+<td><code>@Field</code></td>
+<td>spring-data-mongodb</td>
+<td>自定义字段名映射</td>
+</tr>
+<tr>
+<td><code>@Indexed</code></td>
+<td>spring-data-mongodb</td>
+<td>单字段索引</td>
+</tr>
+<tr>
+<td><code>@CompoundIndex</code></td>
+<td>spring-data-mongodb</td>
+<td>复合索引</td>
+</tr>
+<tr>
+<td><code>@TextIndexed</code></td>
+<td>spring-data-mongodb</td>
+<td>全文索引字段</td>
+</tr>
+<tr>
+<td><code>@DBRef</code></td>
+<td>spring-data-mongodb</td>
+<td>文档引用（类似外键）</td>
+</tr>
+<tr>
+<td><code>@Transient</code></td>
+<td>spring-data-commons</td>
+<td>不持久化该字段</td>
+</tr>
+<tr>
+<td><code>@CreatedDate</code></td>
+<td>spring-data-commons</td>
+<td>自动填充创建时间</td>
+</tr>
+<tr>
+<td><code>@LastModifiedDate</code></td>
+<td>spring-data-commons</td>
+<td>自动填充修改时间</td>
+</tr>
+<tr>
+<td><code>@CreatedBy</code></td>
+<td>spring-data-commons</td>
+<td>自动填充创建人</td>
+</tr>
+<tr>
+<td><code>@LastModifiedBy</code></td>
+<td>spring-data-commons</td>
+<td>自动填充修改人</td>
+</tr>
+<tr>
+<td><code>@Version</code></td>
+<td>spring-data-commons</td>
+<td>乐观锁版本号</td>
+</tr>
+</tbody>
+</table>
+<h3 id="429-完整的实体类示例使用-lombok-简化">4.2.9 完整的实体类示例（使用 Lombok 简化）</h3>
+<p>在实际项目中，通常使用 Lombok 简化 getter/setter 和构造方法：</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Document(collection = &quot;users&quot;)
+@CompoundIndex(name = &quot;idx_role_status&quot;, def = &quot;{'role': 1, 'status': 1}&quot;)
+public class User {
+
+    @Id
+    private String id;
+
+    @Indexed(unique = true)
+    private String username;
+
+    @Indexed
+    private String email;
+
+    private String password;
+
+    private String nickname;
+
+    private Integer age;
+
+    private String role;
+
+    private String status;
+
+    private List&lt;String&gt; tags;
+
+    private Profile profile;
+
+    @CreatedDate
+    @Field(&quot;created_at&quot;)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Field(&quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+
+    @Version
+    private Long version;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Profile {
+        private String bio;
+        private String avatar;
+        private String location;
+    }
+}
+</code></pre>
+<hr />
+<h2 id="43-mongorepository-接口开箱即用的-crud">4.3 MongoRepository 接口：开箱即用的 CRUD</h2>
+<h3 id="431-mongorepository-接口继承体系">4.3.1 MongoRepository 接口继承体系</h3>
+<pre><code>Repository&lt;T, ID&gt;                         ← 标记接口
+    └── CrudRepository&lt;T, ID&gt;             ← 基础 CRUD
+        └── ListCrudRepository&lt;T, ID&gt;     ← 返回 List 而非 Iterable
+            └── PagingAndSortingRepository&lt;T, ID&gt;  ← 分页和排序
+                └── MongoRepository&lt;T, ID&gt;          ← MongoDB 特有方法
+</code></pre>
+<p><code>MongoRepository</code> 自带的方法：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>save(S entity)</code></td>
+<td>保存（id 为 null 时插入，有值时更新）</td>
+</tr>
+<tr>
+<td><code>saveAll(Iterable&lt;S&gt;)</code></td>
+<td>批量保存</td>
+</tr>
+<tr>
+<td><code>findById(ID id)</code></td>
+<td>根据 ID 查询</td>
+</tr>
+<tr>
+<td><code>findAll()</code></td>
+<td>查询所有</td>
+</tr>
+<tr>
+<td><code>findAll(Sort sort)</code></td>
+<td>查询所有（带排序）</td>
+</tr>
+<tr>
+<td><code>findAll(Pageable pageable)</code></td>
+<td>分页查询</td>
+</tr>
+<tr>
+<td><code>findAllById(Iterable&lt;ID&gt;)</code></td>
+<td>根据多个 ID 查询</td>
+</tr>
+<tr>
+<td><code>count()</code></td>
+<td>统计总数</td>
+</tr>
+<tr>
+<td><code>existsById(ID id)</code></td>
+<td>判断是否存在</td>
+</tr>
+<tr>
+<td><code>deleteById(ID id)</code></td>
+<td>根据 ID 删除</td>
+</tr>
+<tr>
+<td><code>delete(S entity)</code></td>
+<td>根据实体删除</td>
+</tr>
+<tr>
+<td><code>deleteAll()</code></td>
+<td>删除所有</td>
+</tr>
+<tr>
+<td><code>deleteAllById(Iterable&lt;ID&gt;)</code></td>
+<td>批量删除</td>
+</tr>
+<tr>
+<td><code>insert(S entity)</code></td>
+<td>插入（id 冲突时抛异常）</td>
+</tr>
+<tr>
+<td><code>insert(Iterable&lt;S&gt;)</code></td>
+<td>批量插入</td>
+</tr>
+</tbody>
+</table>
+<h3 id="432-定义-repository-接口">4.3.2 定义 Repository 接口</h3>
+<p>只需创建一个接口继承 <code>MongoRepository</code>，Spring Data 会自动生成实现类：</p>
+<pre><code class="language-java">package com.example.mongo.repository;
+
+import com.example.mongo.entity.User;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends MongoRepository&lt;User, String&gt; {
+    // MongoRepository&lt;实体类, 主键类型&gt;
+    // 继承后自动拥有 save、findById、findAll、deleteById 等方法
+    // 还可以在这里声明自定义的查询方法（下一节详细讲解）
+}
+</code></pre>
+<pre><code class="language-java">package com.example.mongo.repository;
+
+import com.example.mongo.entity.Article;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ArticleRepository extends MongoRepository&lt;Article, String&gt; {
+}
+</code></pre>
+<h3 id="433-完整的-repository--service--controller-示例">4.3.3 完整的 Repository + Service + Controller 示例</h3>
+<p><strong>实体类（User）：</strong></p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Document(collection = &quot;users&quot;)
+public class User {
+
+    @Id
+    private String id;
+
+    @Indexed(unique = true)
+    private String username;
+
+    @Indexed
+    private String email;
+
+    private String nickname;
+
+    private Integer age;
+
+    private String role;
+
+    private String status;
+
+    private List&lt;String&gt; tags;
+
+    @CreatedDate
+    @Field(&quot;created_at&quot;)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Field(&quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+}
+</code></pre>
+<p><strong>Repository 接口：</strong></p>
+<pre><code class="language-java">package com.example.mongo.repository;
+
+import com.example.mongo.entity.User;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface UserRepository extends MongoRepository&lt;User, String&gt; {
+
+    Optional&lt;User&gt; findByUsername(String username);
+
+    Optional&lt;User&gt; findByEmail(String email);
+
+    boolean existsByUsername(String username);
+}
+</code></pre>
+<p><strong>Service 层：</strong></p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import com.example.mongo.entity.User;
+import com.example.mongo.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    // ========== 创建 ==========
+
+    public User createUser(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new RuntimeException(&quot;用户名已存在: &quot; + user.getUsername());
+        }
+        user.setStatus(&quot;ACTIVE&quot;);
+        return userRepository.insert(user);
+    }
+
+    public List&lt;User&gt; batchCreateUsers(List&lt;User&gt; users) {
+        return userRepository.insert(users);
+    }
+
+    // ========== 查询 ==========
+
+    public Optional&lt;User&gt; findById(String id) {
+        return userRepository.findById(id);
+    }
+
+    public Optional&lt;User&gt; findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public List&lt;User&gt; findAllUsers() {
+        return userRepository.findAll(Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));
+    }
+
+    public Page&lt;User&gt; findUsersPage(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));
+        return userRepository.findAll(pageRequest);
+    }
+
+    public long countUsers() {
+        return userRepository.count();
+    }
+
+    // ========== 更新 ==========
+
+    public User updateUser(String id, User updatedUser) {
+        User existingUser = userRepository.findById(id)
+            .orElseThrow(() -&gt; new RuntimeException(&quot;用户不存在: &quot; + id));
+
+        existingUser.setNickname(updatedUser.getNickname());
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setAge(updatedUser.getAge());
+        existingUser.setTags(updatedUser.getTags());
+
+        // save 会触发 @LastModifiedDate 自动更新
+        return userRepository.save(existingUser);
+    }
+
+    // ========== 删除 ==========
+
+    public void deleteUser(String id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException(&quot;用户不存在: &quot; + id);
+        }
+        userRepository.deleteById(id);
+    }
+
+    public void deleteAllUsers() {
+        userRepository.deleteAll();
+    }
+}
+</code></pre>
+<p><strong>Controller 层：</strong></p>
+<pre><code class="language-java">package com.example.mongo.controller;
+
+import com.example.mongo.entity.User;
+import com.example.mongo.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/users&quot;)
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;User&gt; createUser(@RequestBody User user) {
+        User created = userService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PostMapping(&quot;/batch&quot;)
+    public ResponseEntity&lt;List&lt;User&gt;&gt; batchCreate(@RequestBody List&lt;User&gt; users) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.batchCreateUsers(users));
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;User&gt; getUser(@PathVariable String id) {
+        return userService.findById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(&quot;/username/{username}&quot;)
+    public ResponseEntity&lt;User&gt; getUserByUsername(@PathVariable String username) {
+        return userService.findByUsername(username)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity&lt;Page&lt;User&gt;&gt; listUsers(
+            @RequestParam(defaultValue = &quot;0&quot;) int page,
+            @RequestParam(defaultValue = &quot;10&quot;) int size) {
+        return ResponseEntity.ok(userService.findUsersPage(page, size));
+    }
+
+    @GetMapping(&quot;/count&quot;)
+    public ResponseEntity&lt;Long&gt; countUsers() {
+        return ResponseEntity.ok(userService.countUsers());
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;User&gt; updateUser(@PathVariable String id, @RequestBody User user) {
+        return ResponseEntity.ok(userService.updateUser(id, user));
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; deleteUser(@PathVariable String id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+}
+</code></pre>
+<p><strong>测试接口（使用 curl 或 Postman）：</strong></p>
+<pre><code class="language-bash"># 创建用户
+curl -X POST http://localhost:8080/api/users \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{&quot;username&quot;:&quot;zhangsan&quot;,&quot;email&quot;:&quot;zhangsan@example.com&quot;,&quot;nickname&quot;:&quot;张三&quot;,&quot;age&quot;:28,&quot;role&quot;:&quot;author&quot;,&quot;tags&quot;:[&quot;Java&quot;,&quot;MongoDB&quot;]}'
+
+# 查询用户
+curl http://localhost:8080/api/users/665a1b2c3d4e5f6a7b8c9d0e
+
+# 分页查询
+curl &quot;http://localhost:8080/api/users?page=0&amp;size=5&quot;
+
+# 更新用户
+curl -X PUT http://localhost:8080/api/users/665a1b2c3d4e5f6a7b8c9d0e \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{&quot;nickname&quot;:&quot;张三丰&quot;,&quot;email&quot;:&quot;zhangsan_new@example.com&quot;,&quot;age&quot;:30,&quot;tags&quot;:[&quot;Java&quot;,&quot;Spring Boot&quot;,&quot;MongoDB&quot;]}'
+
+# 删除用户
+curl -X DELETE http://localhost:8080/api/users/665a1b2c3d4e5f6a7b8c9d0e
+</code></pre>
+<hr />
+<h2 id="44-方法名派生查询derived-query规则">4.4 方法名派生查询（Derived Query）规则</h2>
+<p>Spring Data MongoDB 能够根据 Repository 接口中的<strong>方法名</strong>自动生成查询实现，无需编写任何查询代码。这一机制称为<strong>方法名派生查询（Derived Query Method）</strong>。</p>
+<h3 id="441-命名规则">4.4.1 命名规则</h3>
+<p>方法名由以下部分组成：</p>
+<pre><code>&lt;操作关键字&gt;By&lt;条件字段&gt;&lt;条件关键字&gt;[And|Or&lt;条件字段&gt;&lt;条件关键字&gt;...][OrderBy&lt;排序字段&gt;&lt;方向&gt;]
+</code></pre>
+<p>操作关键字前缀：</p>
+<table>
+<thead>
+<tr>
+<th>前缀</th>
+<th>返回类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>findBy</code> / <code>getBy</code> / <code>queryBy</code> / <code>readBy</code></td>
+<td><code>List&lt;T&gt;</code> 或 <code>T</code> 或 <code>Optional&lt;T&gt;</code></td>
+<td>查询</td>
+</tr>
+<tr>
+<td><code>countBy</code></td>
+<td><code>long</code></td>
+<td>统计数量</td>
+</tr>
+<tr>
+<td><code>existsBy</code></td>
+<td><code>boolean</code></td>
+<td>是否存在</td>
+</tr>
+<tr>
+<td><code>deleteBy</code> / <code>removeBy</code></td>
+<td><code>long</code> 或 <code>List&lt;T&gt;</code></td>
+<td>删除</td>
+</tr>
+</tbody>
+</table>
+<h3 id="442-条件关键字详细表">4.4.2 条件关键字详细表</h3>
+<table>
+<thead>
+<tr>
+<th>关键字</th>
+<th>方法名示例</th>
+<th>等价 MongoDB 查询</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>（无 / Is / Equals）</td>
+<td><code>findByUsername(String name)</code></td>
+<td><code>{ username: name }</code></td>
+</tr>
+<tr>
+<td><code>Not</code></td>
+<td><code>findByStatusNot(String status)</code></td>
+<td><code>{ status: { $ne: status } }</code></td>
+</tr>
+<tr>
+<td><code>Between</code></td>
+<td><code>findByAgeBetween(int min, int max)</code></td>
+<td><code>{ age: { $gte: min, $lte: max } }</code></td>
+</tr>
+<tr>
+<td><code>LessThan</code></td>
+<td><code>findByAgeLessThan(int age)</code></td>
+<td><code>{ age: { $lt: age } }</code></td>
+</tr>
+<tr>
+<td><code>LessThanEqual</code></td>
+<td><code>findByAgeLessThanEqual(int age)</code></td>
+<td><code>{ age: { $lte: age } }</code></td>
+</tr>
+<tr>
+<td><code>GreaterThan</code></td>
+<td><code>findByAgeGreaterThan(int age)</code></td>
+<td><code>{ age: { $gt: age } }</code></td>
+</tr>
+<tr>
+<td><code>GreaterThanEqual</code></td>
+<td><code>findByAgeGreaterThanEqual(int age)</code></td>
+<td><code>{ age: { $gte: age } }</code></td>
+</tr>
+<tr>
+<td><code>Before</code></td>
+<td><code>findByCreatedAtBefore(LocalDateTime time)</code></td>
+<td><code>{ createdAt: { $lt: time } }</code></td>
+</tr>
+<tr>
+<td><code>After</code></td>
+<td><code>findByCreatedAtAfter(LocalDateTime time)</code></td>
+<td><code>{ createdAt: { $gt: time } }</code></td>
+</tr>
+<tr>
+<td><code>Like</code> / <code>Containing</code></td>
+<td><code>findByNicknameLike(String name)</code></td>
+<td><code>{ nickname: /name/ }</code></td>
+</tr>
+<tr>
+<td><code>StartingWith</code></td>
+<td><code>findByUsernameStartingWith(String prefix)</code></td>
+<td><code>{ username: /^prefix/ }</code></td>
+</tr>
+<tr>
+<td><code>EndingWith</code></td>
+<td><code>findByEmailEndingWith(String suffix)</code></td>
+<td><code>{ email: /suffix$/ }</code></td>
+</tr>
+<tr>
+<td><code>Regex</code></td>
+<td><code>findByUsernameRegex(String regex)</code></td>
+<td><code>{ username: { $regex: regex } }</code></td>
+</tr>
+<tr>
+<td><code>In</code></td>
+<td><code>findByStatusIn(Collection&lt;String&gt; statuses)</code></td>
+<td><code>{ status: { $in: statuses } }</code></td>
+</tr>
+<tr>
+<td><code>NotIn</code></td>
+<td><code>findByStatusNotIn(Collection&lt;String&gt; statuses)</code></td>
+<td><code>{ status: { $nin: statuses } }</code></td>
+</tr>
+<tr>
+<td><code>IsNull</code> / <code>Null</code></td>
+<td><code>findByEmailIsNull()</code></td>
+<td><code>{ email: null }</code></td>
+</tr>
+<tr>
+<td><code>IsNotNull</code> / <code>NotNull</code></td>
+<td><code>findByEmailIsNotNull()</code></td>
+<td><code>{ email: { $ne: null } }</code></td>
+</tr>
+<tr>
+<td><code>Exists</code></td>
+<td><code>findByProfileExists(boolean exists)</code></td>
+<td><code>{ profile: { $exists: exists } }</code></td>
+</tr>
+<tr>
+<td><code>True</code></td>
+<td><code>findByActiveTrue()</code></td>
+<td><code>{ active: true }</code></td>
+</tr>
+<tr>
+<td><code>False</code></td>
+<td><code>findByActiveFalse()</code></td>
+<td><code>{ active: false }</code></td>
+</tr>
+<tr>
+<td><code>Near</code></td>
+<td><code>findByLocationNear(Point p, Distance d)</code></td>
+<td>地理空间近距离查询</td>
+</tr>
+<tr>
+<td><code>OrderBy</code></td>
+<td><code>findByStatusOrderByCreatedAtDesc(String s)</code></td>
+<td><code>{ status: s }</code> + sort</td>
+</tr>
+<tr>
+<td><code>And</code></td>
+<td><code>findByUsernameAndEmail(String u, String e)</code></td>
+<td><code>{ username: u, email: e }</code></td>
+</tr>
+<tr>
+<td><code>Or</code></td>
+<td><code>findByUsernameOrEmail(String u, String e)</code></td>
+<td><code>{ $or: [{username: u}, {email: e}] }</code></td>
+</tr>
+<tr>
+<td><code>First</code> / <code>Top</code></td>
+<td><code>findFirstByOrderByCreatedAtDesc()</code></td>
+<td>返回排序后的第一条</td>
+</tr>
+<tr>
+<td><code>TopN</code></td>
+<td><code>findTop5ByStatusOrderByAgeDesc(String s)</code></td>
+<td>返回前 N 条</td>
+</tr>
+<tr>
+<td><code>Distinct</code></td>
+<td><code>findDistinctByRole(String role)</code></td>
+<td>去重查询</td>
+</tr>
+</tbody>
+</table>
+<h3 id="443-派生查询方法示例至少-15-个">4.4.3 派生查询方法示例（至少 15 个）</h3>
+<p>以下给出一个完整的 Repository 接口，包含丰富的派生查询方法：</p>
+<pre><code class="language-java">package com.example.mongo.repository;
+
+import com.example.mongo.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface UserRepository extends MongoRepository&lt;User, String&gt; {
+
+    // ===== 1. 精确匹配 =====
+    // 按用户名查询（返回 Optional）
+    Optional&lt;User&gt; findByUsername(String username);
+
+    // ===== 2. 精确匹配 =====
+    // 按邮箱查询
+    Optional&lt;User&gt; findByEmail(String email);
+
+    // ===== 3. AND 组合条件 =====
+    // 按角色和状态查询
+    List&lt;User&gt; findByRoleAndStatus(String role, String status);
+
+    // ===== 4. OR 条件 =====
+    // 按用户名或邮箱查询（适合登录场景）
+    Optional&lt;User&gt; findByUsernameOrEmail(String username, String email);
+
+    // ===== 5. 范围查询 Between =====
+    // 按年龄范围查询
+    List&lt;User&gt; findByAgeBetween(int minAge, int maxAge);
+
+    // ===== 6. 大于 GreaterThan =====
+    // 查询年龄大于指定值的用户
+    List&lt;User&gt; findByAgeGreaterThan(int age);
+
+    // ===== 7. 小于等于 LessThanEqual =====
+    // 查询年龄小于等于指定值的用户
+    List&lt;User&gt; findByAgeLessThanEqual(int age);
+
+    // ===== 8. 模糊查询 Like =====
+    // 按昵称模糊查询
+    List&lt;User&gt; findByNicknameLike(String nickname);
+
+    // ===== 9. 前缀匹配 StartingWith =====
+    // 查询用户名以指定前缀开头的用户
+    List&lt;User&gt; findByUsernameStartingWith(String prefix);
+
+    // ===== 10. 正则匹配 Regex =====
+    // 正则查询邮箱
+    List&lt;User&gt; findByEmailRegex(String regex);
+
+    // ===== 11. IN 查询 =====
+    // 查询状态在指定集合中的用户
+    List&lt;User&gt; findByStatusIn(Collection&lt;String&gt; statuses);
+
+    // ===== 12. NOT + IN =====
+    // 查询状态不在指定集合中的用户
+    List&lt;User&gt; findByStatusNotIn(Collection&lt;String&gt; statuses);
+
+    // ===== 13. IsNull =====
+    // 查询邮箱为空的用户
+    List&lt;User&gt; findByEmailIsNull();
+
+    // ===== 14. IsNotNull =====
+    // 查询邮箱不为空的用户
+    List&lt;User&gt; findByEmailIsNotNull();
+
+    // ===== 15. Exists（字段是否存在） =====
+    // 查询 tags 字段存在的用户
+    List&lt;User&gt; findByTagsExists(boolean exists);
+
+    // ===== 16. True / False =====
+    // （假设有 active 布尔字段）查询激活状态的用户
+    // List&lt;User&gt; findByActiveTrue();
+    // List&lt;User&gt; findByActiveFalse();
+
+    // ===== 17. 排序 OrderBy =====
+    // 按状态查询，结果按创建时间降序排列
+    List&lt;User&gt; findByStatusOrderByCreatedAtDesc(String status);
+
+    // ===== 18. 排序 + 多字段 =====
+    // 按角色查询，先按年龄升序再按用户名升序
+    List&lt;User&gt; findByRoleOrderByAgeAscUsernameAsc(String role);
+
+    // ===== 19. Top / First =====
+    // 查询最新注册的一个用户
+    Optional&lt;User&gt; findFirstByOrderByCreatedAtDesc();
+
+    // ===== 20. TopN =====
+    // 查询年龄最大的前 5 个活跃用户
+    List&lt;User&gt; findTop5ByStatusOrderByAgeDesc(String status);
+
+    // ===== 21. 分页 Pageable =====
+    // 按角色查询，支持分页
+    Page&lt;User&gt; findByRole(String role, Pageable pageable);
+
+    // ===== 22. 日期范围 Before / After =====
+    // 查询在指定日期之后注册的用户
+    List&lt;User&gt; findByCreatedAtAfter(LocalDateTime dateTime);
+
+    // ===== 23. 日期范围 Before =====
+    // 查询在指定日期之前注册的用户
+    List&lt;User&gt; findByCreatedAtBefore(LocalDateTime dateTime);
+
+    // ===== 24. Not =====
+    // 查询状态不是指定值的用户
+    List&lt;User&gt; findByStatusNot(String status);
+
+    // ===== 25. 统计 count =====
+    // 统计指定角色的用户数量
+    long countByRole(String role);
+
+    // ===== 26. 统计 + 条件组合 =====
+    // 统计指定状态且年龄大于指定值的用户数量
+    long countByStatusAndAgeGreaterThan(String status, int age);
+
+    // ===== 27. 存在性判断 exists =====
+    // 判断用户名是否已存在
+    boolean existsByUsername(String username);
+
+    // ===== 28. 删除 deleteBy =====
+    // 按状态删除用户，返回删除数量
+    long deleteByStatus(String status);
+
+    // ===== 29. 带排序参数 =====
+    // 按状态查询，排序由参数动态指定
+    List&lt;User&gt; findByStatus(String status, Sort sort);
+
+    // ===== 30. 包含 Containing =====
+    // 查询 tags 数组包含指定值的用户
+    List&lt;User&gt; findByTagsContaining(String tag);
+}
+</code></pre>
+<p><strong>Service 层使用示例：</strong></p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import com.example.mongo.entity.User;
+import com.example.mongo.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class UserQueryService {
+
+    private final UserRepository userRepository;
+
+    public UserQueryService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    // 登录查询：用户名或邮箱匹配
+    public User login(String usernameOrEmail) {
+        return userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+            .orElseThrow(() -&gt; new RuntimeException(&quot;用户不存在&quot;));
+    }
+
+    // 查询活跃的年轻用户
+    public List&lt;User&gt; findYoungActiveUsers() {
+        return userRepository.findByRoleAndStatus(&quot;author&quot;, &quot;ACTIVE&quot;);
+    }
+
+    // 查询最近一周注册的用户
+    public List&lt;User&gt; findRecentUsers() {
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        return userRepository.findByCreatedAtAfter(oneWeekAgo);
+    }
+
+    // 按标签查询用户（带分页）
+    public List&lt;User&gt; findJavaUsers() {
+        return userRepository.findByTagsContaining(&quot;Java&quot;);
+    }
+
+    // 动态排序查询
+    public List&lt;User&gt; findActiveUsersSorted(String sortField, String direction) {
+        Sort sort = Sort.by(
+            &quot;desc&quot;.equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC,
+            sortField
+        );
+        return userRepository.findByStatus(&quot;ACTIVE&quot;, sort);
+    }
+
+    // 分页查询指定角色的用户
+    public Page&lt;User&gt; findAuthorsByPage(int page, int size) {
+        return userRepository.findByRole(&quot;author&quot;, PageRequest.of(page, size));
+    }
+
+    // 查询 Top 5 高龄活跃用户
+    public List&lt;User&gt; findSeniorActiveUsers() {
+        return userRepository.findTop5ByStatusOrderByAgeDesc(&quot;ACTIVE&quot;);
+    }
+}
+</code></pre>
+<hr />
+<h2 id="45-query-注解自定义查询语句">4.5 @Query 注解：自定义查询语句</h2>
+<p>方法名派生查询虽然方便，但面对复杂条件时方法名会变得冗长且可读性差。<code>@Query</code> 注解允许你直接编写 MongoDB JSON 查询语句，既灵活又清晰。</p>
+<h3 id="451-基本用法">4.5.1 基本用法</h3>
+<p><code>@Query</code> 注解写在 Repository 方法上，值为 MongoDB JSON 查询语句：</p>
+<pre><code class="language-java">package com.example.mongo.repository;
+
+import com.example.mongo.entity.Article;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface ArticleRepository extends MongoRepository&lt;Article, String&gt; {
+
+    // 示例1：基本 @Query —— 查询指定作者的所有文章
+    @Query(&quot;{ 'author': ?0 }&quot;)
+    List&lt;Article&gt; findByAuthor(String author);
+
+    // 示例2：多条件查询 —— 查询指定作者和状态的文章
+    @Query(&quot;{ 'author': ?0, 'status': ?1 }&quot;)
+    List&lt;Article&gt; findByAuthorAndStatus(String author, String status);
+}
+</code></pre>
+<blockquote>
+<p><code>?0</code>、<code>?1</code> 分别对应方法的第 1 个、第 2 个参数（从 0 开始编号）。</p>
+</blockquote>
+<h3 id="452-位置参数-0-1">4.5.2 位置参数 ?0 ?1</h3>
+<pre><code class="language-java">@Repository
+public interface ArticleRepository extends MongoRepository&lt;Article, String&gt; {
+
+    // 示例3：使用比较操作符 —— 查询阅读量大于指定值的文章
+    @Query(&quot;{ 'view_count': { $gt: ?0 } }&quot;)
+    List&lt;Article&gt; findByViewCountGreaterThan(int minViewCount);
+
+    // 示例4：多参数 + 范围查询 —— 查询指定分类且阅读量在某范围内的文章
+    @Query(&quot;{ 'category': ?0, 'view_count': { $gte: ?1, $lte: ?2 } }&quot;)
+    List&lt;Article&gt; findByCategoryAndViewCountRange(String category, int minCount, int maxCount);
+
+    // 示例5：$or 查询 —— 查询标题或内容包含关键词的文章
+    @Query(&quot;{ $or: [ { 'title': { $regex: ?0, $options: 'i' } }, { 'content': { $regex: ?0, $options: 'i' } } ] }&quot;)
+    List&lt;Article&gt; searchByKeyword(String keyword);
+}
+</code></pre>
+<h3 id="453-spel-表达式-paramname">4.5.3 SpEL 表达式 :#{#paramName}</h3>
+<p>当方法参数较多或需要更灵活的表达式时，可以使用 SpEL（Spring Expression Language）引用参数名：</p>
+<pre><code class="language-java">import org.springframework.data.repository.query.Param;
+
+@Repository
+public interface ArticleRepository extends MongoRepository&lt;Article, String&gt; {
+
+    // 示例6：使用 SpEL 表达式引用命名参数
+    @Query(&quot;{ 'author': :#{#author}, 'status': :#{#status} }&quot;)
+    List&lt;Article&gt; findArticles(@Param(&quot;author&quot;) String author, @Param(&quot;status&quot;) String status);
+
+    // 示例7：SpEL + 条件表达式 —— 如果参数为 null 则不加该条件
+    // 注意：这种写法需要使用 ?#{} 语法
+    @Query(&quot;{ 'category': ?0, 'view_count': { $gte: ?#{[1] ?: 0} } }&quot;)
+    List&lt;Article&gt; findByCategoryWithMinViews(String category, Integer minViews);
+
+    // 示例8：SpEL 引用复杂对象的属性
+    @Query(&quot;{ 'author': :#{#filter.author}, 'category': :#{#filter.category} }&quot;)
+    List&lt;Article&gt; findByFilter(@Param(&quot;filter&quot;) ArticleFilter filter);
+}
+</code></pre>
+<p><code>ArticleFilter</code> 参数对象：</p>
+<pre><code class="language-java">package com.example.mongo.dto;
+
+import lombok.Data;
+
+@Data
+public class ArticleFilter {
+    private String author;
+    private String category;
+    private String status;
+}
+</code></pre>
+<h3 id="454-投影查询--指定返回字段">4.5.4 投影查询 —— 指定返回字段</h3>
+<p>通过 <code>@Query</code> 的 <code>fields</code> 属性指定只返回哪些字段，减少数据传输量：</p>
+<pre><code class="language-java">@Repository
+public interface ArticleRepository extends MongoRepository&lt;Article, String&gt; {
+
+    // 示例9：只返回 title 和 author 字段
+    @Query(value = &quot;{ 'status': 'published' }&quot;, fields = &quot;{ 'title': 1, 'author': 1 }&quot;)
+    List&lt;Article&gt; findPublishedTitles();
+
+    // 示例10：排除 content 字段（文章内容可能很大）
+    @Query(value = &quot;{ 'author': ?0 }&quot;, fields = &quot;{ 'content': 0 }&quot;)
+    List&lt;Article&gt; findByAuthorWithoutContent(String author);
+
+    // 示例11：只返回嵌套文档的某些字段
+    @Query(value = &quot;{ 'status': 'published' }&quot;, fields = &quot;{ 'title': 1, 'author': 1, 'view_count': 1, '_id': 0 }&quot;)
+    List&lt;Article&gt; findPublishedArticleSummaries();
+}
+</code></pre>
+<blockquote>
+<p><strong>投影规则</strong>（与 Shell 中一致）：</p>
+<ul>
+<li><code>{ 'title': 1, 'author': 1 }</code> —— 只返回 title、author 和 _id</li>
+<li><code>{ 'content': 0 }</code> —— 返回除 content 外的所有字段</li>
+<li>包含（1）和排除（0）不能混用，<code>_id</code> 除外</li>
+</ul>
+</blockquote>
+<h3 id="455-分页与排序">4.5.5 分页与排序</h3>
+<p><code>@Query</code> 方法可以通过添加 <code>Pageable</code> 和 <code>Sort</code> 参数实现分页和排序：</p>
+<pre><code class="language-java">import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+@Repository
+public interface ArticleRepository extends MongoRepository&lt;Article, String&gt; {
+
+    // 示例12：@Query + 分页
+    @Query(&quot;{ 'status': ?0 }&quot;)
+    Page&lt;Article&gt; findByStatusWithPage(String status, Pageable pageable);
+
+    // 示例13：@Query + 排序
+    @Query(&quot;{ 'category': ?0, 'status': 'published' }&quot;)
+    List&lt;Article&gt; findPublishedByCategory(String category, Sort sort);
+
+    // 示例14：@Query + 投影 + 分页
+    @Query(value = &quot;{ 'author': ?0 }&quot;, fields = &quot;{ 'title': 1, 'view_count': 1, 'created_at': 1 }&quot;)
+    Page&lt;Article&gt; findArticleSummaryByAuthor(String author, Pageable pageable);
+}
+</code></pre>
+<p><strong>Service 层调用示例：</strong></p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import com.example.mongo.entity.Article;
+import com.example.mongo.repository.ArticleRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ArticleService {
+
+    private final ArticleRepository articleRepository;
+
+    public ArticleService(ArticleRepository articleRepository) {
+        this.articleRepository = articleRepository;
+    }
+
+    // 分页查询已发布文章，按创建时间倒序
+    public Page&lt;Article&gt; findPublishedArticles(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, &quot;created_at&quot;));
+        return articleRepository.findByStatusWithPage(&quot;published&quot;, pageRequest);
+    }
+
+    // 查询指定分类的文章，按阅读量排序
+    public List&lt;Article&gt; findArticlesByCategory(String category) {
+        return articleRepository.findPublishedByCategory(category, Sort.by(Sort.Direction.DESC, &quot;view_count&quot;));
+    }
+
+    // 查询作者的文章摘要（分页）
+    public Page&lt;Article&gt; findAuthorArticleSummary(String author, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, &quot;created_at&quot;));
+        return articleRepository.findArticleSummaryByAuthor(author, pageRequest);
+    }
+}
+</code></pre>
+<h3 id="456-query-的其他用法">4.5.6 @Query 的其他用法</h3>
+<p><strong>count 查询：</strong></p>
+<pre><code class="language-java">@Repository
+public interface ArticleRepository extends MongoRepository&lt;Article, String&gt; {
+
+    // 示例15：统计查询 —— 统计指定作者的已发布文章数
+    @Query(value = &quot;{ 'author': ?0, 'status': 'published' }&quot;, count = true)
+    long countPublishedByAuthor(String author);
+}
+</code></pre>
+<p><strong>exists 查询：</strong></p>
+<pre><code class="language-java">@Repository
+public interface ArticleRepository extends MongoRepository&lt;Article, String&gt; {
+
+    // 示例16：存在性查询 —— 判断某篇标题的文章是否存在
+    @Query(value = &quot;{ 'title': ?0 }&quot;, exists = true)
+    boolean existsByTitle(String title);
+}
+</code></pre>
+<p><strong>delete 查询：</strong></p>
+<pre><code class="language-java">import org.springframework.data.mongodb.repository.DeleteQuery;
+
+@Repository
+public interface ArticleRepository extends MongoRepository&lt;Article, String&gt; {
+
+    // 示例17：删除查询 —— 删除指定状态的文章
+    @DeleteQuery(&quot;{ 'status': ?0 }&quot;)
+    long deleteByArticleStatus(String status);
+
+    // 示例18：删除查询 —— 删除指定作者的所有草稿
+    @DeleteQuery(&quot;{ 'author': ?0, 'status': 'draft' }&quot;)
+    long deleteDraftsByAuthor(String author);
+}
+</code></pre>
+<h3 id="457-综合示例完整的-articlerepository">4.5.7 综合示例：完整的 ArticleRepository</h3>
+<p>将上面所有的 <code>@Query</code> 示例汇总到一个完整的 Repository 接口中：</p>
+<pre><code class="language-java">package com.example.mongo.repository;
+
+import com.example.mongo.dto.ArticleFilter;
+import com.example.mongo.entity.Article;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.repository.DeleteQuery;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface ArticleRepository extends MongoRepository&lt;Article, String&gt; {
+
+    // ========== 基本查询 ==========
+
+    // 1. 按作者查询
+    @Query(&quot;{ 'author': ?0 }&quot;)
+    List&lt;Article&gt; findByAuthor(String author);
+
+    // 2. 按作者和状态查询
+    @Query(&quot;{ 'author': ?0, 'status': ?1 }&quot;)
+    List&lt;Article&gt; findByAuthorAndStatus(String author, String status);
+
+    // 3. 阅读量大于指定值
+    @Query(&quot;{ 'view_count': { $gt: ?0 } }&quot;)
+    List&lt;Article&gt; findByViewCountGreaterThan(int minViewCount);
+
+    // 4. 分类 + 阅读量范围
+    @Query(&quot;{ 'category': ?0, 'view_count': { $gte: ?1, $lte: ?2 } }&quot;)
+    List&lt;Article&gt; findByCategoryAndViewCountRange(String category, int minCount, int maxCount);
+
+    // ========== 正则 / 模糊查询 ==========
+
+    // 5. 全文关键词搜索（标题或内容）
+    @Query(&quot;{ $or: [ { 'title': { $regex: ?0, $options: 'i' } }, { 'content': { $regex: ?0, $options: 'i' } } ] }&quot;)
+    List&lt;Article&gt; searchByKeyword(String keyword);
+
+    // ========== SpEL 表达式 ==========
+
+    // 6. 使用命名参数
+    @Query(&quot;{ 'author': :#{#author}, 'status': :#{#status} }&quot;)
+    List&lt;Article&gt; findArticles(@Param(&quot;author&quot;) String author, @Param(&quot;status&quot;) String status);
+
+    // ========== 投影查询 ==========
+
+    // 7. 只返回标题和作者
+    @Query(value = &quot;{ 'status': 'published' }&quot;, fields = &quot;{ 'title': 1, 'author': 1 }&quot;)
+    List&lt;Article&gt; findPublishedTitles();
+
+    // 8. 排除大字段
+    @Query(value = &quot;{ 'author': ?0 }&quot;, fields = &quot;{ 'content': 0 }&quot;)
+    List&lt;Article&gt; findByAuthorWithoutContent(String author);
+
+    // ========== 分页 + 排序 ==========
+
+    // 9. 分页查询
+    @Query(&quot;{ 'status': ?0 }&quot;)
+    Page&lt;Article&gt; findByStatusWithPage(String status, Pageable pageable);
+
+    // 10. 排序查询
+    @Query(&quot;{ 'category': ?0, 'status': 'published' }&quot;)
+    List&lt;Article&gt; findPublishedByCategory(String category, Sort sort);
+
+    // 11. 投影 + 分页
+    @Query(value = &quot;{ 'author': ?0 }&quot;, fields = &quot;{ 'title': 1, 'view_count': 1, 'created_at': 1 }&quot;)
+    Page&lt;Article&gt; findArticleSummaryByAuthor(String author, Pageable pageable);
+
+    // ========== 统计 / 存在性 ==========
+
+    // 12. 统计某作者的已发布文章数
+    @Query(value = &quot;{ 'author': ?0, 'status': 'published' }&quot;, count = true)
+    long countPublishedByAuthor(String author);
+
+    // 13. 判断标题是否存在
+    @Query(value = &quot;{ 'title': ?0 }&quot;, exists = true)
+    boolean existsByTitle(String title);
+
+    // ========== 数组查询 ==========
+
+    // 14. 查询包含指定标签的已发布文章
+    @Query(&quot;{ 'tags': { $all: ?0 }, 'status': 'published' }&quot;)
+    List&lt;Article&gt; findByAllTags(List&lt;String&gt; tags);
+
+    // 15. 查询标签中包含任意一个指定值的文章
+    @Query(&quot;{ 'tags': { $in: ?0 } }&quot;)
+    List&lt;Article&gt; findByAnyTag(List&lt;String&gt; tags);
+
+    // ========== 嵌套文档查询 ==========
+
+    // 16. 查询有特定用户评论的文章
+    @Query(&quot;{ 'comments.user': ?0 }&quot;)
+    List&lt;Article&gt; findByCommentUser(String username);
+
+    // ========== 删除查询 ==========
+
+    // 17. 删除指定状态的文章
+    @DeleteQuery(&quot;{ 'status': ?0 }&quot;)
+    long deleteByArticleStatus(String status);
+
+    // 18. 删除作者的所有草稿
+    @DeleteQuery(&quot;{ 'author': ?0, 'status': 'draft' }&quot;)
+    long deleteDraftsByAuthor(String author);
+}
+</code></pre>
+<h3 id="458-query-vs-方法名派生查询--如何选择">4.5.8 @Query vs 方法名派生查询 —— 如何选择</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐方式</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>简单的单字段查询</td>
+<td>方法名派生</td>
+<td>简洁直观</td>
+</tr>
+<tr>
+<td>双字段 AND 查询</td>
+<td>方法名派生</td>
+<td>方法名不长，可读性好</td>
+</tr>
+<tr>
+<td>三个以上条件的查询</td>
+<td><code>@Query</code></td>
+<td>方法名过长，可读性差</td>
+</tr>
+<tr>
+<td>正则 / 模糊搜索</td>
+<td><code>@Query</code></td>
+<td><code>$regex</code> + <code>$options</code> 更灵活</td>
+</tr>
+<tr>
+<td><code>$or</code> / <code>$nor</code> 等逻辑组合</td>
+<td><code>@Query</code></td>
+<td>方法名很难表达复杂逻辑</td>
+</tr>
+<tr>
+<td>数组操作（<code>$all</code>、<code>$elemMatch</code>）</td>
+<td><code>@Query</code></td>
+<td>派生查询不支持</td>
+</tr>
+<tr>
+<td>投影查询（返回部分字段）</td>
+<td><code>@Query</code></td>
+<td><code>fields</code> 属性很方便</td>
+</tr>
+<tr>
+<td>动态条件（条件数量不固定）</td>
+<td><code>MongoTemplate</code></td>
+<td><code>@Query</code> 和派生查询都不适合</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<p>本章系统学习了 Spring Boot 集成 MongoDB 的核心知识：</p>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>核心内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>配置</strong></td>
+<td><code>spring.data.mongodb.uri</code> 连接配置、连接池参数、多数据源</td>
+</tr>
+<tr>
+<td><strong>实体映射</strong></td>
+<td><code>@Document</code>、<code>@Id</code>、<code>@Field</code>、<code>@Indexed</code>、<code>@CompoundIndex</code>、<code>@DBRef</code>、<code>@Transient</code>、<code>@CreatedDate</code>、<code>@LastModifiedDate</code></td>
+</tr>
+<tr>
+<td><strong>MongoRepository</strong></td>
+<td>继承接口即可获得完整 CRUD 能力，配合 Service + Controller 构建 RESTful API</td>
+</tr>
+<tr>
+<td><strong>方法名派生查询</strong></td>
+<td>30 个关键字覆盖常见查询场景，自动生成查询实现</td>
+</tr>
+<tr>
+<td><strong>@Query 注解</strong></td>
+<td>JSON 查询语法 + 位置参数 + SpEL 表达式 + 投影 + 分页排序，18 个完整示例</td>
+</tr>
+</tbody>
+</table>
+<p><strong>三种查询方式的选择建议：</strong></p>
+<pre><code>简单查询 ────→ MongoRepository 方法名派生查询
+  │
+  ↓ 条件变多 / 需要投影
+中等复杂 ────→ @Query 注解
+  │
+  ↓ 条件动态 / 非常复杂
+高度灵活 ────→ MongoTemplate（下一章详解）
+</code></pre>
+<p>下一章我们将深入学习 MongoTemplate —— Spring Data MongoDB 提供的底层模板类，它可以处理任何复杂度的 MongoDB 操作。</p>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

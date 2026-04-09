@@ -1,0 +1,1491 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第十二章-mybatis-执行原理与源码导读-">第十二章 MyBatis 执行原理与源码导读 📖</h1>
+<blockquote>
+<p>知其所以然，排查疑难问题的底气。本章不逐行贴源码，而是梳理关键脉络与核心类，帮你建立&quot;心智地图&quot;，遇到问题时知道该往哪里看。</p>
+</blockquote>
+<hr />
+<h2 id="121-整体架构分层--接口层--核心处理层--基础支撑层">12.1 整体架构分层 —— 接口层 / 核心处理层 / 基础支撑层</h2>
+<p>MyBatis 的源码按职责可以分为<strong>三层架构</strong>，自上而下依次为：</p>
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│                      接口层 (API)                        │
+│  SqlSession · SqlSessionFactory · MapperProxy            │
+│  ── 对外暴露的编程接口，开发者直接打交道的部分 ──           │
+├─────────────────────────────────────────────────────────┤
+│                   核心处理层 (Core)                       │
+│                                                         │
+│  ┌──────────────┐ ┌──────────────┐ ┌──────────────────┐ │
+│  │ 配置解析      │ │ SQL 执行     │ │ 结果集映射        │ │
+│  │ XMLConfig-   │ │ Executor     │ │ ResultSetHandler │ │
+│  │ Builder      │ │ Statement-   │ │ DefaultResult-   │ │
+│  │ XMLMapper-   │ │ Handler      │ │ SetHandler       │ │
+│  │ Builder      │ │ Parameter-   │ │                  │ │
+│  │              │ │ Handler      │ │                  │ │
+│  └──────────────┘ └──────────────┘ └──────────────────┘ │
+│                                                         │
+│  ┌──────────────┐ ┌──────────────┐ ┌──────────────────┐ │
+│  │ SQL 解析      │ │ 插件机制     │ │ 缓存机制          │ │
+│  │ SqlSource    │ │ Interceptor- │ │ Cache            │ │
+│  │ SqlNode      │ │ Chain        │ │ CachingExecutor  │ │
+│  │ BoundSql     │ │              │ │                  │ │
+│  └──────────────┘ └──────────────┘ └──────────────────┘ │
+├─────────────────────────────────────────────────────────┤
+│                   基础支撑层 (Foundation)                 │
+│                                                         │
+│  日志 (Log)          反射 (Reflection)    类型 (Type)     │
+│  资源加载 (IO)       数据源 (DataSource)   事务 (Tx)      │
+│  解析器 (Parsing)    绑定 (Binding)                      │
+└─────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="三层职责说明">三层职责说明</h3>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>职责</th>
+<th>关键包/类</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>接口层</strong></td>
+<td>提供面向开发者的 API，接收调用请求并委托给核心处理层</td>
+<td><code>SqlSession</code>、<code>SqlSessionFactory</code>、<code>MapperProxy</code></td>
+</tr>
+<tr>
+<td><strong>核心处理层</strong></td>
+<td>完成从配置解析、SQL 解析、参数绑定、SQL 执行到结果映射的全部流程</td>
+<td><code>Executor</code>、<code>StatementHandler</code>、<code>ParameterHandler</code>、<code>ResultSetHandler</code>、<code>MappedStatement</code>、<code>SqlSource</code></td>
+</tr>
+<tr>
+<td><strong>基础支撑层</strong></td>
+<td>提供反射、类型转换、日志、资源加载、数据源管理等底层工具</td>
+<td><code>TypeHandler</code>、<code>ReflectorFactory</code>、<code>ObjectFactory</code>、<code>Log</code>、<code>DataSource</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>设计思想</strong>：核心处理层的四大组件（Executor / StatementHandler / ParameterHandler / ResultSetHandler）均通过<strong>接口抽象 + 插件拦截</strong>的方式实现，这正是 MyBatis 插件机制的扩展点所在（详见第八章）。</p>
+</blockquote>
+<hr />
+<h2 id="122-启动流程--从-xml-解析到-configuration-对象构建">12.2 启动流程 —— 从 XML 解析到 Configuration 对象构建</h2>
+<p>MyBatis 启动的核心目标只有一个：<strong>把所有配置文件解析成一个 <code>Configuration</code> 对象</strong>。后续所有运行时行为都依赖这个对象。</p>
+<h3 id="启动时序">启动时序</h3>
+<pre><code>SqlSessionFactoryBuilder.build(inputStream)
+    │
+    ▼
+XMLConfigBuilder.parse()          ← 解析 mybatis-config.xml
+    │
+    ├─ parseConfiguration(root)
+    │   ├─ propertiesElement()     ← &lt;properties&gt;
+    │   ├─ settingsAsProperties()  ← &lt;settings&gt;
+    │   ├─ typeAliasesElement()    ← &lt;typeAliases&gt;
+    │   ├─ pluginElement()         ← &lt;plugins&gt;
+    │   ├─ environmentsElement()   ← &lt;environments&gt;
+    │   └─ mapperElement()         ← &lt;mappers&gt; ───┐
+    │                                              │
+    │   ┌──────────────────────────────────────────┘
+    │   ▼
+    │  XMLMapperBuilder.parse()    ← 逐个解析 Mapper XML
+    │   ├─ configurationElement()
+    │   │   ├─ &lt;resultMap&gt;  → ResultMap 对象
+    │   │   ├─ &lt;sql&gt;        → SQL 片段
+    │   │   └─ &lt;select|insert|update|delete&gt;
+    │   │       │
+    │   │       ▼
+    │   │   XMLStatementBuilder.parseStatementNode()
+    │   │       → 构建 MappedStatement 对象
+    │   │       → 注册到 Configuration.mappedStatements
+    │   │
+    │   └─ bindMapperForNamespace()
+    │       → 注册 Mapper 接口到 MapperRegistry
+    │
+    ▼
+Configuration 对象构建完成
+    │
+    ▼
+new DefaultSqlSessionFactory(configuration)
+</code></pre>
+<h3 id="configuration-对象关键属性">Configuration 对象关键属性</h3>
+<p><code>Configuration</code> 是 MyBatis 最核心的数据结构，几乎承载了所有运行时信息：</p>
+<pre><code class="language-java">public class Configuration {
+    // 全局配置
+    protected Environment environment;           // 数据源 + 事务管理器
+    protected boolean cacheEnabled = true;       // 二级缓存开关
+    protected boolean lazyLoadingEnabled;         // 懒加载开关
+    protected boolean mapUnderscoreToCamelCase;   // 驼峰映射
+    protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
+
+    // 类型体系
+    protected final TypeHandlerRegistry typeHandlerRegistry;
+    protected final TypeAliasRegistry typeAliasRegistry;
+
+    // Mapper 注册中心
+    protected final MapperRegistry mapperRegistry;
+
+    // SQL 语句注册（key = namespace + id）
+    protected final Map&lt;String, MappedStatement&gt; mappedStatements;
+
+    // 结果映射注册
+    protected final Map&lt;String, ResultMap&gt; resultMaps;
+
+    // 插件链
+    protected final InterceptorChain interceptorChain;
+
+    // 缓存注册（二级缓存，key = namespace）
+    protected final Map&lt;String, Cache&gt; caches;
+
+    // 对象工厂、反射工厂等
+    protected ObjectFactory objectFactory;
+    protected ReflectorFactory reflectorFactory;
+}
+</code></pre>
+<blockquote>
+<p><strong>排查技巧</strong>：很多&quot;找不到 SQL&quot;、&quot;TypeHandler 未注册&quot;的问题，本质上都是 <code>Configuration</code> 对象中对应的注册表里缺少了相应条目。理解这个对象的结构，是定位配置类问题的关键。</p>
+</blockquote>
+<hr />
+<h2 id="123-mapper-代理机制--mapperproxy-与-mappermethod">12.3 Mapper 代理机制 —— MapperProxy 与 MapperMethod</h2>
+<p>我们在代码中只定义了 Mapper 接口（没有实现类），MyBatis 如何让它&quot;跑起来&quot;？答案是 <strong>JDK 动态代理</strong>。</p>
+<h3 id="mapperproxy--invocationhandler-实现">MapperProxy —— InvocationHandler 实现</h3>
+<pre><code class="language-java">// 简化后的核心逻辑
+public class MapperProxy&lt;T&gt; implements InvocationHandler, Serializable {
+
+    private final SqlSession sqlSession;
+    private final Class&lt;T&gt; mapperInterface;
+    private final Map&lt;Method, MapperMethodInvoker&gt; methodCache;
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        // Object 类的方法（toString/hashCode 等）直接放行
+        if (Object.class.equals(method.getDeclaringClass())) {
+            return method.invoke(this, args);
+        }
+        // 其他方法通过 MapperMethodInvoker 执行
+        return cachedInvoker(method).invoke(proxy, method, args, sqlSession);
+    }
+}
+</code></pre>
+<p>关键要点：</p>
+<ul>
+<li><strong>注册时机</strong>：<code>Configuration.addMapper(Class)</code> → <code>MapperRegistry.addMapper()</code> → 为每个 Mapper 接口创建 <code>MapperProxyFactory</code></li>
+<li><strong>创建代理</strong>：<code>SqlSession.getMapper()</code> → <code>MapperRegistry.getMapper()</code> → <code>MapperProxyFactory.newInstance()</code> → <code>Proxy.newProxyInstance()</code></li>
+<li><strong>方法缓存</strong>：<code>MapperProxy</code> 内部维护了 <code>methodCache</code>，每个接口方法只需解析一次，后续直接复用</li>
+</ul>
+<h3 id="mappermethod--方法签名到-sql-执行的路由">MapperMethod —— 方法签名到 SQL 执行的路由</h3>
+<p><code>MapperMethod</code> 是连接 Mapper 接口方法与底层 SQL 执行的桥梁，由两个内部类组成：</p>
+<pre><code class="language-java">public class MapperMethod {
+
+    private final SqlCommand command;       // SQL 命令信息
+    private final MethodSignature method;   // 方法签名信息
+
+    public Object execute(SqlSession sqlSession, Object[] args) {
+        switch (command.getType()) {
+            case INSERT:
+                // 参数转换 → sqlSession.insert(statement, param)
+                break;
+            case UPDATE:
+                // 参数转换 → sqlSession.update(statement, param)
+                break;
+            case DELETE:
+                // 参数转换 → sqlSession.delete(statement, param)
+                break;
+            case SELECT:
+                if (method.returnsVoid() &amp;&amp; method.hasResultHandler()) {
+                    executeWithResultHandler(sqlSession, args);
+                } else if (method.returnsMany()) {
+                    result = executeForMany(sqlSession, args);
+                } else if (method.returnsMap()) {
+                    result = executeForMap(sqlSession, args);
+                } else if (method.returnsCursor()) {
+                    result = executeForCursor(sqlSession, args);
+                } else {
+                    result = sqlSession.selectOne(command.getName(), param);
+                }
+                break;
+            case FLUSH:
+                result = sqlSession.flushStatements();
+                break;
+        }
+        return result;
+    }
+}
+</code></pre>
+<ul>
+<li><strong><code>SqlCommand</code></strong>：解析接口方法对应的 <code>MappedStatement</code>，确定 SQL 类型（INSERT / UPDATE / DELETE / SELECT）和语句 ID</li>
+<li><strong><code>MethodSignature</code></strong>：解析方法的返回类型、参数名、是否有 <code>RowBounds</code>（分页）和 <code>ResultHandler</code></li>
+</ul>
+<h3 id="代理调用链总结">代理调用链总结</h3>
+<pre><code>userMapper.findById(1L)
+    │
+    ▼ JDK 动态代理
+MapperProxy.invoke()
+    │
+    ▼ 从 methodCache 获取或创建
+MapperMethod.execute(sqlSession, args)
+    │
+    ├─ SqlCommand: 确定是 SELECT 类型，语句 ID 为 &quot;com.example.mapper.UserMapper.findById&quot;
+    ├─ MethodSignature: 返回类型是 User（单个对象）
+    │
+    ▼ 路由到
+sqlSession.selectOne(&quot;com.example.mapper.UserMapper.findById&quot;, 1L)
+    │
+    ▼
+进入 Executor 执行流程...
+</code></pre>
+<hr />
+<h2 id="124-sql-执行全流程">12.4 SQL 执行全流程</h2>
+<p>从 <code>SqlSession</code> 收到请求开始，SQL 执行会经过四大核心组件的流水线处理：</p>
+<pre><code>SqlSession.selectList(statementId, parameter)
+    │
+    ▼
+┌──────────────────────────────────────────────────────────────┐
+│ Executor                                                     │
+│  ① 查询二级缓存（CachingExecutor，如果开启）                    │
+│  ② 查询一级缓存（BaseExecutor.localCache）                     │
+│  ③ 缓存未命中 → 调用 doQuery()                                │
+│     └─ 创建 StatementHandler                                  │
+├──────────────────────────────────────────────────────────────┤
+│ StatementHandler                                             │
+│  ④ 调用 prepare() → 创建 JDBC Statement（PreparedStatement）  │
+│  ⑤ 调用 parameterize() → 委托 ParameterHandler 设置参数       │
+├──────────────────────────────────────────────────────────────┤
+│ ParameterHandler                                             │
+│  ⑥ 遍历参数映射 → 通过 TypeHandler 将 Java 值写入占位符         │
+│     如: ps.setLong(1, 1L)                                    │
+├──────────────────────────────────────────────────────────────┤
+│ JDBC 执行                                                     │
+│  ⑦ PreparedStatement.execute() → 数据库返回 ResultSet          │
+├──────────────────────────────────────────────────────────────┤
+│ ResultSetHandler                                             │
+│  ⑧ 遍历 ResultSet → 根据 resultMap/resultType 创建对象         │
+│  ⑨ 通过 TypeHandler 逐列转换 → 反射填充属性                     │
+│  ⑩ 处理嵌套映射、懒加载代理等                                   │
+├──────────────────────────────────────────────────────────────┤
+│ 返回                                                          │
+│  ⑪ 结果写入一级缓存 → 返回给调用方                              │
+└──────────────────────────────────────────────────────────────┘
+</code></pre>
+<blockquote>
+<p><strong>记住这条链路</strong>：<code>Executor</code> → <code>StatementHandler</code> → <code>ParameterHandler</code> → JDBC → <code>ResultSetHandler</code>，这也是插件可以拦截的四个组件（<code>Executor</code> 和后三者）。</p>
+</blockquote>
+<hr />
+<h3 id="1241-executor--simpleexecutor--reuseexecutor--batchexecutor">12.4.1 Executor —— SimpleExecutor / ReuseExecutor / BatchExecutor</h3>
+<p><code>Executor</code> 是 SQL 执行的入口，MyBatis 提供了三种实现（均继承自 <code>BaseExecutor</code>），外加一个装饰器 <code>CachingExecutor</code>。</p>
+<h4 id="继承关系">继承关系</h4>
+<pre><code>Executor (接口)
+    │
+    ├── BaseExecutor (抽象类，实现一级缓存逻辑)
+    │       ├── SimpleExecutor
+    │       ├── ReuseExecutor
+    │       └── BatchExecutor
+    │
+    └── CachingExecutor (装饰器，实现二级缓存逻辑)
+              └── 内部持有一个 BaseExecutor 实例
+</code></pre>
+<h4 id="三种-executor-对比">三种 Executor 对比</h4>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>SimpleExecutor</th>
+<th>ReuseExecutor</th>
+<th>BatchExecutor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Statement 复用</strong></td>
+<td>每次创建新的 Statement，执行后关闭</td>
+<td>以 SQL 字符串为 key 缓存 Statement，相同 SQL 复用</td>
+<td>将多条 SQL 添加到批处理队列</td>
+</tr>
+<tr>
+<td><strong>执行方式</strong></td>
+<td>逐条执行</td>
+<td>逐条执行（但复用 Statement）</td>
+<td>调用 <code>flushStatements()</code> 时批量发送</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>默认选择，通用场景</td>
+<td>同一 SqlSession 中频繁执行相同 SQL</td>
+<td>大批量写操作（插入/更新/删除）</td>
+</tr>
+<tr>
+<td><strong>性能特点</strong></td>
+<td>每条 SQL 都有完整的 prepare → execute 开销</td>
+<td>减少了 Statement 创建和编译开销</td>
+<td>网络往返次数最少，批量写性能最优</td>
+</tr>
+<tr>
+<td><strong>注意事项</strong></td>
+<td>无特殊限制</td>
+<td>Statement 在 SqlSession 关闭时统一释放</td>
+<td>无法立即获取自增主键和影响行数，需 flush 后获取</td>
+</tr>
+</tbody>
+</table>
+<p><strong>源码关键方法</strong>：</p>
+<ul>
+<li><code>BaseExecutor.query()</code> — 一级缓存查询逻辑</li>
+<li><code>SimpleExecutor.doQuery()</code> — 创建 Statement → 执行 → 关闭</li>
+<li><code>ReuseExecutor.prepareStatement()</code> — 从 <code>statementMap</code> 中复用</li>
+<li><code>BatchExecutor.doUpdate()</code> — 调用 <code>Statement.addBatch()</code></li>
+</ul>
+<blockquote>
+<p><strong>配置方式</strong>：全局通过 <code>&lt;setting name=&quot;defaultExecutorType&quot; value=&quot;REUSE&quot;/&gt;</code> 设置，也可在打开 SqlSession 时指定：<code>sqlSessionFactory.openSession(ExecutorType.BATCH)</code>。</p>
+</blockquote>
+<hr />
+<h3 id="1242-statementhandler--三种实现">12.4.2 StatementHandler —— 三种实现</h3>
+<p><code>StatementHandler</code> 负责创建 JDBC Statement 并驱动执行，三种实现对应 JDBC 的三种 Statement 类型。</p>
+<pre><code>StatementHandler (接口)
+    │
+    ├── BaseStatementHandler (抽象类)
+    │       ├── SimpleStatementHandler    → java.sql.Statement
+    │       ├── PreparedStatementHandler  → java.sql.PreparedStatement  ← 最常用
+    │       └── CallableStatementHandler  → java.sql.CallableStatement
+    │
+    └── RoutingStatementHandler (路由器，根据 MappedStatement.statementType 分发)
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>实现类</th>
+<th>对应 JDBC 类型</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SimpleStatementHandler</code></td>
+<td><code>Statement</code></td>
+<td>无参数的简单 SQL，XML 中 <code>statementType=&quot;STATEMENT&quot;</code></td>
+</tr>
+<tr>
+<td><code>PreparedStatementHandler</code></td>
+<td><code>PreparedStatement</code></td>
+<td>带参数的 SQL（默认），支持 <code>#{}</code> 预编译</td>
+</tr>
+<tr>
+<td><code>CallableStatementHandler</code></td>
+<td><code>CallableStatement</code></td>
+<td>调用存储过程，<code>statementType=&quot;CALLABLE&quot;</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>核心方法</strong>：</p>
+<ul>
+<li><code>prepare()</code> — 创建 Statement 对象，设置超时时间和 fetchSize</li>
+<li><code>parameterize()</code> — 委托 <code>ParameterHandler</code> 设置参数</li>
+<li><code>query()</code> / <code>update()</code> — 执行 SQL 并调用 <code>ResultSetHandler</code> 处理结果</li>
+</ul>
+<blockquote>
+<p><strong>实际开发中</strong>，绝大多数 SQL 使用的都是 <code>PreparedStatementHandler</code>。只有显式指定了 <code>statementType</code> 或使用 <code>${}</code> 拼接的场景才会用到 <code>SimpleStatementHandler</code>。</p>
+</blockquote>
+<hr />
+<h3 id="1243-parameterhandler--参数设置">12.4.3 ParameterHandler —— 参数设置</h3>
+<p><code>ParameterHandler</code> 接口只有一个实现类 <code>DefaultParameterHandler</code>，职责单一：将 Java 参数值设置到 <code>PreparedStatement</code> 的占位符上。</p>
+<pre><code class="language-java">// 核心逻辑简化
+public class DefaultParameterHandler implements ParameterHandler {
+
+    public void setParameters(PreparedStatement ps) {
+        // 遍历 BoundSql 中的 ParameterMapping 列表
+        for (int i = 0; i &lt; parameterMappings.size(); i++) {
+            ParameterMapping mapping = parameterMappings.get(i);
+            String propertyName = mapping.getProperty();
+
+            // 从参数对象中取值
+            Object value = /* 通过 MetaObject 反射取值 */;
+
+            // 获取对应的 TypeHandler
+            TypeHandler typeHandler = mapping.getTypeHandler();
+
+            // 通过 TypeHandler 设置参数
+            typeHandler.setParameter(ps, i + 1, value, mapping.getJdbcType());
+        }
+    }
+}
+</code></pre>
+<p><strong>参数解析链路</strong>：</p>
+<ol>
+<li>XML 中的 <code>#{username}</code> 在解析阶段被替换为 <code>?</code>，同时生成 <code>ParameterMapping</code>（记录属性名、Java 类型、JDBC 类型、TypeHandler）</li>
+<li>运行时，<code>DefaultParameterHandler</code> 遍历 <code>ParameterMapping</code> 列表</li>
+<li>通过 <code>MetaObject</code>（MyBatis 的反射工具）从参数对象中提取属性值</li>
+<li>调用对应的 <code>TypeHandler.setParameter()</code> 写入 <code>PreparedStatement</code></li>
+</ol>
+<blockquote>
+<p><strong>常见问题</strong>：<code>There is no getter for property named 'xxx'</code> 这个错误就出在这里 —— <code>MetaObject</code> 找不到参数对象上的属性。</p>
+</blockquote>
+<hr />
+<h3 id="1244-resultsethandler--结果集映射">12.4.4 ResultSetHandler —— 结果集映射</h3>
+<p><code>ResultSetHandler</code> 负责将 JDBC <code>ResultSet</code> 转换为 Java 对象，核心实现类是 <code>DefaultResultSetHandler</code>，也是 MyBatis 中最复杂的组件之一。</p>
+<p><strong>处理流程</strong>：</p>
+<pre><code>ResultSet 返回
+    │
+    ▼
+DefaultResultSetHandler.handleResultSets()
+    │
+    ├─ 获取 ResultMap 配置
+    │
+    ├─ handleResultSet()
+    │   │
+    │   ├─ handleRowValues()
+    │   │   │
+    │   │   ├─ 简单映射：handleRowValuesForSimpleResultMap()
+    │   │   │   ├─ 创建目标对象（ObjectFactory）
+    │   │   │   ├─ 自动映射（autoMapping，列名 → 属性名）
+    │   │   │   ├─ 手动映射（resultMap 中显式定义的 column → property）
+    │   │   │   └─ 通过 TypeHandler 逐列转换值
+    │   │   │
+    │   │   └─ 嵌套映射：handleRowValuesForNestedResultMap()
+    │   │       ├─ 处理 association / collection
+    │   │       ├─ 基于 rowKey 做结果对象的去重与合并
+    │   │       └─ 递归调用映射逻辑
+    │   │
+    │   └─ 将映射后的对象添加到结果列表
+    │
+    ▼
+返回 List&lt;Object&gt;
+</code></pre>
+<p><strong>核心类与方法</strong>：</p>
+<ul>
+<li><code>DefaultResultSetHandler.handleResultSets()</code> — 入口</li>
+<li><code>DefaultResultSetHandler.getRowValue()</code> — 单行映射</li>
+<li><code>DefaultResultSetHandler.applyAutomaticMappings()</code> — 自动映射</li>
+<li><code>DefaultResultSetHandler.applyPropertyMappings()</code> — 显式映射</li>
+<li><code>ObjectFactory.create()</code> — 创建结果对象实例</li>
+</ul>
+<blockquote>
+<p><strong>性能提示</strong>：<code>autoMapping</code> 在每次查询时都会通过反射匹配列名与属性名。如果你遇到性能敏感场景，显式定义 <code>resultMap</code> 可以避免这部分开销。</p>
+</blockquote>
+<hr />
+<h2 id="125-动态-sql-解析原理--sqlnode-与-sqlsource">12.5 动态 SQL 解析原理 —— SqlNode 与 SqlSource</h2>
+<p>第四章讲了动态 SQL 的用法（<code>&lt;if&gt;</code>、<code>&lt;where&gt;</code>、<code>&lt;foreach&gt;</code> 等），这里看看它在源码层面是如何实现的。</p>
+<h3 id="sqlnode-树结构">SqlNode 树结构</h3>
+<p>MyBatis 将 Mapper XML 中的每个动态 SQL 标签解析为一个 <code>SqlNode</code> 节点，整条 SQL 形成一棵树：</p>
+<pre><code>&lt;select id=&quot;findUsers&quot;&gt;
+    SELECT * FROM user
+    &lt;where&gt;
+        &lt;if test=&quot;name != null&quot;&gt;
+            AND name = #{name}
+        &lt;/if&gt;
+        &lt;if test=&quot;age != null&quot;&gt;
+            AND age = #{age}
+        &lt;/if&gt;
+    &lt;/where&gt;
+&lt;/select&gt;
+</code></pre>
+<p>解析后的 SqlNode 树：</p>
+<pre><code>MixedSqlNode
+  ├── StaticTextSqlNode (&quot;SELECT * FROM user&quot;)
+  └── WhereSqlNode
+        └── MixedSqlNode
+              ├── IfSqlNode (test=&quot;name != null&quot;)
+              │     └── StaticTextSqlNode (&quot;AND name = #{name}&quot;)
+              └── IfSqlNode (test=&quot;age != null&quot;)
+                    └── StaticTextSqlNode (&quot;AND age = #{age}&quot;)
+</code></pre>
+<p><strong>主要 SqlNode 实现</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>SqlNode 实现类</th>
+<th>对应 XML 标签</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>StaticTextSqlNode</code></td>
+<td>纯文本 SQL 片段</td>
+</tr>
+<tr>
+<td><code>IfSqlNode</code></td>
+<td><code>&lt;if&gt;</code></td>
+</tr>
+<tr>
+<td><code>ChooseSqlNode</code></td>
+<td><code>&lt;choose&gt;</code> / <code>&lt;when&gt;</code> / <code>&lt;otherwise&gt;</code></td>
+</tr>
+<tr>
+<td><code>WhereSqlNode</code></td>
+<td><code>&lt;where&gt;</code>（继承自 <code>TrimSqlNode</code>）</td>
+</tr>
+<tr>
+<td><code>SetSqlNode</code></td>
+<td><code>&lt;set&gt;</code>（继承自 <code>TrimSqlNode</code>）</td>
+</tr>
+<tr>
+<td><code>TrimSqlNode</code></td>
+<td><code>&lt;trim&gt;</code></td>
+</tr>
+<tr>
+<td><code>ForEachSqlNode</code></td>
+<td><code>&lt;foreach&gt;</code></td>
+</tr>
+<tr>
+<td><code>TextSqlNode</code></td>
+<td>含 <code>${}</code> 的文本（需运行时替换）</td>
+</tr>
+<tr>
+<td><code>MixedSqlNode</code></td>
+<td>容器节点，持有子 SqlNode 列表</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dynamicsqlsource-与-rawsqlsource">DynamicSqlSource 与 RawSqlSource</h3>
+<p><code>SqlSource</code> 是从 <code>SqlNode</code> 树到最终可执行 <code>BoundSql</code> 的桥梁，有两种核心实现：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>场景</th>
+<th>解析时机</th>
+<th>性能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>RawSqlSource</code></strong></td>
+<td>SQL 中<strong>没有</strong>动态标签（纯 <code>#{}</code> 占位符）</td>
+<td>启动时一次性解析，<code>#{}</code> → <code>?</code></td>
+<td>高，无运行时开销</td>
+</tr>
+<tr>
+<td><strong><code>DynamicSqlSource</code></strong></td>
+<td>SQL 中<strong>包含</strong>动态标签（<code>&lt;if&gt;</code> / <code>&lt;foreach&gt;</code> 等）或 <code>${}</code></td>
+<td>每次执行时动态拼接</td>
+<td>略低，每次需遍历 SqlNode 树</td>
+</tr>
+</tbody>
+</table>
+<p><strong>运行时流程</strong>：</p>
+<pre><code>DynamicSqlSource.getBoundSql(parameterObject)
+    │
+    ├─ 创建 DynamicContext（用于拼接 SQL 文本）
+    │
+    ├─ rootSqlNode.apply(context)
+    │   └─ 递归遍历 SqlNode 树
+    │       ├─ IfSqlNode: 评估 OGNL 表达式 → 决定是否拼接
+    │       ├─ ForEachSqlNode: 遍历集合 → 重复拼接
+    │       └─ StaticTextSqlNode: 直接追加文本
+    │
+    ├─ 将拼接后的 SQL 中的 #{} 替换为 ?
+    │   → 同时生成 ParameterMapping 列表
+    │
+    ▼
+    BoundSql（包含：最终 SQL 字符串 + ParameterMapping 列表 + 参数对象）
+</code></pre>
+<blockquote>
+<p><strong>源码入口</strong>：<code>XMLScriptBuilder.parseScriptNode()</code> 负责将 XML 标签解析为 <code>SqlNode</code> 树，并根据是否包含动态元素决定创建 <code>DynamicSqlSource</code> 还是 <code>RawSqlSource</code>。</p>
+</blockquote>
+<hr />
+<h2 id="126-缓存实现原理--装饰器模式">12.6 缓存实现原理 —— 装饰器模式</h2>
+<p>MyBatis 的缓存体系采用了经典的<strong>装饰器模式（Decorator Pattern）</strong>，通过层层包装为缓存添加不同能力。</p>
+<h3 id="核心缓存类">核心缓存类</h3>
+<p>所有缓存实现都实现了 <code>org.apache.ibatis.cache.Cache</code> 接口：</p>
+<pre><code class="language-java">public interface Cache {
+    String getId();
+    void putObject(Object key, Object value);
+    Object getObject(Object key);
+    Object removeObject(Object key);
+    void clear();
+    int getSize();
+}
+</code></pre>
+<h3 id="装饰器层层包装">装饰器层层包装</h3>
+<p>MyBatis 内置的缓存装饰器如下，由内到外逐层增强：</p>
+<pre><code>PerpetualCache                ← 最内层：基础实现，HashMap 存储
+    │
+    └── LruCache              ← 淘汰策略：最近最少使用（默认）
+        │                        (也可替换为 FifoCache / SoftCache / WeakCache)
+        │
+        └── SerializedCache   ← 序列化：存储时序列化，取出时反序列化
+            │                    （readOnly=false 时启用，保证返回的是副本）
+            │
+            └── LoggingCache  ← 日志：记录缓存命中率
+                │
+                └── SynchronizedCache  ← 线程安全：synchronized 同步
+                    │
+                    └── BlockingCache   ← 防穿透：阻塞等待（可选）
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>装饰器</th>
+<th>作用</th>
+<th>对应配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PerpetualCache</code></td>
+<td>基础存储，内部使用 <code>HashMap</code></td>
+<td>始终作为最内层</td>
+</tr>
+<tr>
+<td><code>LruCache</code></td>
+<td>LRU 淘汰策略（默认）</td>
+<td><code>eviction=&quot;LRU&quot;</code></td>
+</tr>
+<tr>
+<td><code>FifoCache</code></td>
+<td>FIFO 先进先出淘汰</td>
+<td><code>eviction=&quot;FIFO&quot;</code></td>
+</tr>
+<tr>
+<td><code>SoftCache</code></td>
+<td>软引用，JVM 内存不足时回收</td>
+<td><code>eviction=&quot;SOFT&quot;</code></td>
+</tr>
+<tr>
+<td><code>WeakCache</code></td>
+<td>弱引用，GC 时即回收</td>
+<td><code>eviction=&quot;WEAK&quot;</code></td>
+</tr>
+<tr>
+<td><code>SerializedCache</code></td>
+<td>序列化存储，保证线程安全的深拷贝</td>
+<td><code>readOnly=&quot;false&quot;</code>（默认）</td>
+</tr>
+<tr>
+<td><code>LoggingCache</code></td>
+<td>打印缓存命中率日志</td>
+<td>默认启用</td>
+</tr>
+<tr>
+<td><code>SynchronizedCache</code></td>
+<td><code>synchronized</code> 同步访问</td>
+<td>默认启用</td>
+</tr>
+<tr>
+<td><code>BlockingCache</code></td>
+<td>阻塞式缓存，防止缓存击穿</td>
+<td><code>blocking=&quot;true&quot;</code></td>
+</tr>
+<tr>
+<td><code>ScheduledCache</code></td>
+<td>定时清空缓存</td>
+<td><code>flushInterval</code> 有值时启用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="装饰器组装过程">装饰器组装过程</h3>
+<p>在解析 <code>&lt;cache&gt;</code> 标签时，<code>CacheBuilder</code> 按照以下顺序组装：</p>
+<pre><code class="language-java">// CacheBuilder.build() 简化逻辑
+public Cache build() {
+    // 1. 设置默认实现
+    setDefaultImplementations();  // PerpetualCache + LruCache
+
+    // 2. 创建基础缓存
+    Cache cache = newBaseCacheInstance(implementation, id);  // PerpetualCache
+
+    // 3. 逐层添加装饰器
+    cache = newCacheDecoratorInstance(LruCache.class, cache);
+    // ... 其他自定义装饰器 ...
+
+    // 4. 标准装饰器（框架自动添加）
+    cache = setStandardDecorators(cache);
+    //   → SerializedCache（如果 readOnly=false）
+    //   → LoggingCache
+    //   → SynchronizedCache
+    //   → ScheduledCache（如果 flushInterval &gt; 0）
+
+    return cache;
+}
+</code></pre>
+<blockquote>
+<p><strong>实战意义</strong>：理解装饰器模式后，你可以自定义 <code>Cache</code> 实现（如整合 Redis），只需实现 <code>Cache</code> 接口，并在 <code>&lt;cache type=&quot;com.example.RedisCache&quot;/&gt;</code> 中指定，MyBatis 仍然会自动为其套上 <code>LoggingCache</code>、<code>SynchronizedCache</code> 等标准装饰器。</p>
+</blockquote>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>三层架构</td>
+<td>接口层（API）→ 核心处理层（执行引擎）→ 基础支撑层（工具）</td>
+</tr>
+<tr>
+<td>启动流程</td>
+<td>XML → <code>XMLConfigBuilder</code> / <code>XMLMapperBuilder</code> → <code>Configuration</code> 对象</td>
+</tr>
+<tr>
+<td>Mapper 代理</td>
+<td><code>MapperProxy</code>（JDK 动态代理）→ <code>MapperMethod</code>（路由到 SqlSession 方法）</td>
+</tr>
+<tr>
+<td>SQL 执行链</td>
+<td><code>Executor</code> → <code>StatementHandler</code> → <code>ParameterHandler</code> → JDBC → <code>ResultSetHandler</code></td>
+</tr>
+<tr>
+<td>三种 Executor</td>
+<td>Simple（默认）/ Reuse（复用 Statement）/ Batch（批处理）</td>
+</tr>
+<tr>
+<td>动态 SQL</td>
+<td><code>SqlNode</code> 树 + <code>DynamicSqlSource</code>（运行时拼接）/ <code>RawSqlSource</code>（启动时预编译）</td>
+</tr>
+<tr>
+<td>缓存架构</td>
+<td>装饰器模式：<code>PerpetualCache</code> → <code>LruCache</code> → <code>SerializedCache</code> → <code>LoggingCache</code> → ...</td>
+</tr>
+</tbody>
+</table>
+<h3 id="源码阅读推荐路径">源码阅读推荐路径</h3>
+<p>如果你想深入阅读 MyBatis 源码，建议按以下顺序切入：</p>
+<pre><code>1. Configuration 类          ← 全局数据结构，了解&quot;MyBatis 运行时知道些什么&quot;
+2. MapperProxy / MapperMethod ← 代理机制，理解&quot;接口如何变成可执行代码&quot;
+3. SimpleExecutor.doQuery()   ← 执行入口，一路跟进 StatementHandler → ParameterHandler → ResultSetHandler
+4. XMLScriptBuilder           ← 动态 SQL 解析，SqlNode 树的构建过程
+5. CacheBuilder / CachingExecutor ← 缓存的装饰与使用
+</code></pre>
+<blockquote>
+<p><strong>最后提醒</strong>：源码阅读的目的不是记住每一行代码，而是建立整体认知。当你遇到诡异问题时，能快速判断&quot;问题出在哪个环节&quot;，然后有针对性地打断点排查 —— 这就够了。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

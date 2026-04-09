@@ -1,0 +1,2525 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第08课-弹性布局与流式布局">第08课 弹性布局与流式布局</h1>
+<blockquote>
+<p>在前面的课程中，我们学习了 Row/Column（线性布局）和 Stack（层叠布局）。但在实际开发中，你一定遇到过这样的问题：当子组件的总宽度超出 Row 的可用空间时，Flutter 会抛出溢出错误（黄黑条纹警告）。本课将学习 Wrap、Flow、LayoutBuilder 和 MediaQuery，彻底解决这类布局难题，并掌握响应式布局的核心技巧。</p>
+</blockquote>
+<hr />
+<h2 id="1-wrap--自动换行布局">1. Wrap —— 自动换行布局</h2>
+<h3 id="11-为什么需要-wrap">1.1 为什么需要 Wrap？</h3>
+<p>在 Row 中放置过多子组件时，当总宽度超出父容器限制，Flutter 不会自动换行，而是报溢出错误：</p>
+<pre><code class="language-dart">// ❌ 这段代码会导致溢出
+Row(
+  children: List.generate(10, (i) =&gt; Chip(label: Text('标签 $i'))),
+)
+</code></pre>
+<p><strong>Wrap 的出现正是为了解决这个问题</strong>——它会在主轴空间不足时自动将子组件换到下一行（或下一列）。</p>
+<h3 id="12-基础用法">1.2 基础用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Wrap 基础用法')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Wrap(
+            spacing: 8.0,       // 主轴方向子组件间距
+            runSpacing: 12.0,   // 交叉轴方向（行与行之间）间距
+            children: List.generate(
+              12,
+              (index) =&gt; Chip(
+                avatar: CircleAvatar(child: Text('${index + 1}')),
+                label: Text('标签 ${index + 1}'),
+                backgroundColor: Colors.blue.shade100,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>运行效果：12 个 Chip 会根据屏幕宽度自动排列，放不下时自动换到下一行。</p>
+<h3 id="13-核心属性详解">1.3 核心属性详解</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>direction</code></td>
+<td><code>Axis</code></td>
+<td><code>Axis.horizontal</code></td>
+<td>主轴方向，水平或垂直</td>
+</tr>
+<tr>
+<td><code>spacing</code></td>
+<td><code>double</code></td>
+<td><code>0.0</code></td>
+<td>主轴方向子组件之间的间距</td>
+</tr>
+<tr>
+<td><code>runSpacing</code></td>
+<td><code>double</code></td>
+<td><code>0.0</code></td>
+<td>交叉轴方向（行/列之间）的间距</td>
+</tr>
+<tr>
+<td><code>alignment</code></td>
+<td><code>WrapAlignment</code></td>
+<td><code>WrapAlignment.start</code></td>
+<td>主轴方向的对齐方式</td>
+</tr>
+<tr>
+<td><code>runAlignment</code></td>
+<td><code>WrapAlignment</code></td>
+<td><code>WrapAlignment.start</code></td>
+<td>交叉轴方向各行的对齐方式</td>
+</tr>
+<tr>
+<td><code>crossAxisAlignment</code></td>
+<td><code>WrapCrossAlignment</code></td>
+<td><code>WrapCrossAlignment.start</code></td>
+<td>每一行内部子组件在交叉轴方向的对齐</td>
+</tr>
+</tbody>
+</table>
+<h4 id="direction--主轴方向">direction —— 主轴方向</h4>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Wrap direction 示例')),
+        body: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 水平方向的 Wrap（默认）
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('水平方向 (默认)',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    direction: Axis.horizontal, // 默认值
+                    children: _buildChips(),
+                  ),
+                ],
+              ),
+            ),
+            const VerticalDivider(),
+            // 垂直方向的 Wrap
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('垂直方向',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  SizedBox(
+                    height: 200, // 垂直方向需要限定高度
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      direction: Axis.vertical, // 垂直排列
+                      children: _buildChips(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static List&lt;Widget&gt; _buildChips() {
+    return List.generate(
+      8,
+      (i) =&gt; Chip(label: Text('Tag $i')),
+    );
+  }
+}
+</code></pre>
+<ul>
+<li><code>Axis.horizontal</code>（默认）：子组件从左到右排列，满行后换到下一行。</li>
+<li><code>Axis.vertical</code>：子组件从上到下排列，满列后换到下一列。注意垂直方向时需要给 Wrap 一个有限的高度约束。</li>
+</ul>
+<h4 id="alignment--主轴对齐">alignment —— 主轴对齐</h4>
+<p><code>WrapAlignment</code> 提供六种对齐方式，与 <code>MainAxisAlignment</code> 类似：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Wrap alignment 对比')),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final align in WrapAlignment.values)
+                _buildSection(align),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSection(WrapAlignment alignment) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        Text(
+          'alignment: ${alignment.name}',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          color: Colors.grey.shade200,
+          width: double.infinity,
+          child: Wrap(
+            alignment: alignment,
+            spacing: 8,
+            runSpacing: 8,
+            children: const [
+              Chip(label: Text('Flutter')),
+              Chip(label: Text('Dart')),
+              Chip(label: Text('Widget')),
+              Chip(label: Text('布局')),
+              Chip(label: Text('响应式')),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<ul>
+<li><code>start</code>：靠主轴起始端对齐</li>
+<li><code>end</code>：靠主轴末端对齐</li>
+<li><code>center</code>：居中</li>
+<li><code>spaceBetween</code>：首尾贴边，中间均匀分布</li>
+<li><code>spaceAround</code>：每个子组件两侧有相等间距</li>
+<li><code>spaceEvenly</code>：所有间距完全相等</li>
+</ul>
+<h4 id="runalignment--行间对齐">runAlignment —— 行间对齐</h4>
+<p><code>runAlignment</code> 控制的是多行之间在交叉轴方向上的分布方式，只有当 Wrap 的交叉轴有剩余空间时才能看到效果：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Wrap runAlignment 示例')),
+        body: Container(
+          height: 300,
+          color: Colors.grey.shade200,
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            // 多行在交叉轴方向上的分布方式
+            runAlignment: WrapAlignment.spaceEvenly,
+            children: List.generate(
+              8,
+              (i) =&gt; Container(
+                width: 80,
+                height: 40,
+                alignment: Alignment.center,
+                color: Colors.blue.shade200,
+                child: Text('项目 $i'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h4 id="crossaxisalignment--行内交叉轴对齐">crossAxisAlignment —— 行内交叉轴对齐</h4>
+<p>控制同一行中高度不同的子组件如何在交叉轴方向对齐：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Wrap crossAxisAlignment 示例')),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('crossAxisAlignment: center',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Container(
+                color: Colors.grey.shade200,
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    // 故意创建不同高度的子组件
+                    Container(width: 60, height: 30, color: Colors.red),
+                    Container(width: 60, height: 60, color: Colors.green),
+                    Container(width: 60, height: 45, color: Colors.blue),
+                    Container(width: 60, height: 30, color: Colors.orange),
+                    Container(width: 60, height: 50, color: Colors.purple),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text('crossAxisAlignment: start',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Container(
+                color: Colors.grey.shade200,
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.start,
+                  children: [
+                    Container(width: 60, height: 30, color: Colors.red),
+                    Container(width: 60, height: 60, color: Colors.green),
+                    Container(width: 60, height: 45, color: Colors.blue),
+                    Container(width: 60, height: 30, color: Colors.orange),
+                    Container(width: 60, height: 50, color: Colors.purple),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<ul>
+<li><code>WrapCrossAlignment.start</code>：所有子组件在行内顶部对齐</li>
+<li><code>WrapCrossAlignment.center</code>：所有子组件在行内居中对齐</li>
+<li><code>WrapCrossAlignment.end</code>：所有子组件在行内底部对齐</li>
+</ul>
+<h3 id="14-实战标签选择器">1.4 实战：标签选择器</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(home: TagSelector());
+  }
+}
+
+class TagSelector extends StatefulWidget {
+  const TagSelector({super.key});
+
+  @override
+  State&lt;TagSelector&gt; createState() =&gt; _TagSelectorState();
+}
+
+class _TagSelectorState extends State&lt;TagSelector&gt; {
+  final List&lt;String&gt; _allTags = [
+    'Flutter', 'Dart', 'iOS', 'Android', 'Web',
+    'Desktop', 'Firebase', '状态管理', '动画', '网络请求',
+    '本地存储', '国际化', '测试', '性能优化',
+  ];
+  final Set&lt;String&gt; _selectedTags = {};
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('兴趣标签选择')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '请选择你感兴趣的技术方向：',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _allTags.map((tag) {
+                final isSelected = _selectedTags.contains(tag);
+                return FilterChip(
+                  label: Text(tag),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    setState(() {
+                      if (selected) {
+                        _selectedTags.add(tag);
+                      } else {
+                        _selectedTags.remove(tag);
+                      }
+                    });
+                  },
+                  selectedColor: Colors.blue.shade200,
+                  checkmarkColor: Colors.blue.shade800,
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 24),
+            Text('已选择 ${_selectedTags.length} 个标签：'
+                '${_selectedTags.join(', ')}'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践：</strong> Wrap 是实现标签选择器、筛选条件栏等 UI 的首选组件。当子组件数量和宽度不确定时，优先使用 Wrap 而非 Row。</p>
+</blockquote>
+<hr />
+<h2 id="2-flow--高性能自定义流式布局">2. Flow —— 高性能自定义流式布局</h2>
+<h3 id="21-什么是-flow">2.1 什么是 Flow？</h3>
+<p><code>Flow</code> 是 Flutter 提供的一个高性能布局组件，它通过 <code>FlowDelegate</code> 将布局和绘制的控制权完全交给开发者。与 Wrap 的&quot;自动换行&quot;不同，Flow 需要你手动计算每个子组件的位置。</p>
+<p><strong>Flow 的核心优势：</strong></p>
+<ol>
+<li><strong>极高的性能</strong>：Flow 使用变换矩阵（transformation matrix）来定位子组件，而不是重新布局。当需要重新定位子组件时，只需调用 <code>paintChildren</code>，不会触发子组件的重新布局（relayout），因此性能远优于其他布局组件。</li>
+<li><strong>完全的布局控制</strong>：你可以实现任何自定义的布局逻辑，比如扇形菜单、瀑布流等。</li>
+</ol>
+<p><strong>Flow 的使用场景：</strong></p>
+<ul>
+<li>需要频繁改变子组件位置的动画场景（如展开/收起菜单）</li>
+<li>自定义的复杂布局算法</li>
+<li>对性能要求极高的大量子组件定位</li>
+</ul>
+<h3 id="22-flowdelegate-详解">2.2 FlowDelegate 详解</h3>
+<p>使用 Flow 的关键在于实现 <code>FlowDelegate</code>，它有三个核心方法：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>paintChildren(FlowPaintingContext context)</code></td>
+<td><strong>必须实现</strong>。控制每个子组件的绘制位置和变换</td>
+</tr>
+<tr>
+<td><code>shouldRelayout(covariant FlowDelegate oldDelegate)</code></td>
+<td><strong>必须实现</strong>。决定是否需要重新布局</td>
+</tr>
+<tr>
+<td><code>getSize(BoxConstraints constraints)</code></td>
+<td>可选。返回 Flow 组件本身的尺寸，默认尽可能大</td>
+</tr>
+<tr>
+<td><code>shouldRepaint(covariant FlowDelegate oldDelegate)</code></td>
+<td>可选。决定是否需要重绘</td>
+</tr>
+<tr>
+<td><code>getConstraintsForChild(int i, BoxConstraints constraints)</code></td>
+<td>可选。为每个子组件设置约束</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-基础示例自定义流式排列">2.3 基础示例：自定义流式排列</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Flow 基础示例')),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Flow(
+            delegate: SimpleFlowDelegate(spacing: 8),
+            children: List.generate(
+              15,
+              (index) =&gt; Container(
+                width: 60 + (index % 3) * 20.0, // 不同宽度
+                height: 40,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.primaries[index % Colors.primaries.length],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '项目 $index',
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 自定义 FlowDelegate：实现自动换行排列
+class SimpleFlowDelegate extends FlowDelegate {
+  final double spacing;
+
+  SimpleFlowDelegate({required this.spacing});
+
+  @override
+  void paintChildren(FlowPaintingContext context) {
+    double x = 0; // 当前绘制位置 x
+    double y = 0; // 当前绘制位置 y
+    double rowHeight = 0; // 当前行的最大高度
+
+    for (int i = 0; i &lt; context.childCount; i++) {
+      final childSize = context.getChildSize(i)!;
+
+      // 如果当前行放不下，换到下一行
+      if (x + childSize.width &gt; context.size.width &amp;&amp; x &gt; 0) {
+        x = 0;
+        y += rowHeight + spacing;
+        rowHeight = 0;
+      }
+
+      // 通过变换矩阵定位子组件（这正是 Flow 高性能的关键）
+      context.paintChild(i, transform: Matrix4.translationValues(x, y, 0));
+
+      x += childSize.width + spacing;
+      rowHeight = rowHeight &gt; childSize.height ? rowHeight : childSize.height;
+    }
+  }
+
+  @override
+  Size getSize(BoxConstraints constraints) {
+    // 返回 Flow 的尺寸，宽度尽量大，高度也尽量大
+    return Size(constraints.maxWidth, constraints.maxHeight);
+  }
+
+  @override
+  bool shouldRelayout(SimpleFlowDelegate oldDelegate) {
+    return oldDelegate.spacing != spacing;
+  }
+
+  @override
+  bool shouldRepaint(SimpleFlowDelegate oldDelegate) {
+    return oldDelegate.spacing != spacing;
+  }
+}
+</code></pre>
+<h3 id="24-进阶示例展开收起的动画菜单">2.4 进阶示例：展开/收起的动画菜单</h3>
+<p>这是 Flow 最经典的应用场景——利用其高性能变换实现流畅的动画效果：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'dart:math';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(home: FlowMenuDemo());
+  }
+}
+
+class FlowMenuDemo extends StatefulWidget {
+  const FlowMenuDemo({super.key});
+
+  @override
+  State&lt;FlowMenuDemo&gt; createState() =&gt; _FlowMenuDemoState();
+}
+
+class _FlowMenuDemoState extends State&lt;FlowMenuDemo&gt;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Flow 动画菜单')),
+      body: Stack(
+        children: [
+          const Center(child: Text('点击右下角按钮展开菜单')),
+          Positioned(
+            right: 20,
+            bottom: 20,
+            child: Flow(
+              delegate: _AnimatedMenuDelegate(animation: _controller),
+              children: [
+                // 最后一个是主按钮（触发展开/收起）
+                _buildMenuItem(Icons.menu, Colors.blue, onTap: _toggleMenu),
+                _buildMenuItem(Icons.camera_alt, Colors.green, onTap: () {}),
+                _buildMenuItem(Icons.photo, Colors.orange, onTap: () {}),
+                _buildMenuItem(Icons.videocam, Colors.red, onTap: () {}),
+                _buildMenuItem(Icons.mic, Colors.purple, onTap: () {}),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(IconData icon, Color color, {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          boxShadow: const [
+            BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
+          ],
+        ),
+        child: Icon(icon, color: Colors.white),
+      ),
+    );
+  }
+
+  void _toggleMenu() {
+    if (_controller.isCompleted) {
+      _controller.reverse();
+    } else {
+      _controller.forward();
+    }
+  }
+}
+
+/// 扇形展开动画的 FlowDelegate
+class _AnimatedMenuDelegate extends FlowDelegate {
+  final Animation&lt;double&gt; animation;
+
+  _AnimatedMenuDelegate({required this.animation})
+      : super(repaint: animation); // 关键：监听动画变化来触发重绘
+
+  @override
+  void paintChildren(FlowPaintingContext context) {
+    final childCount = context.childCount;
+    if (childCount == 0) return;
+
+    final size = 56.0; // 按钮尺寸
+    final radius = 120.0; // 扇形展开的半径
+
+    // 先绘制展开的子按钮（索引 1 到 childCount-1）
+    for (int i = 1; i &lt; childCount; i++) {
+      // 计算每个子按钮的角度（从 180° 到 270°，即左上方扇形）
+      final angle = pi + (pi / 2) * (i - 1) / (childCount - 2);
+      final x = radius * cos(angle) * animation.value;
+      final y = radius * sin(angle) * animation.value;
+
+      context.paintChild(
+        i,
+        transform: Matrix4.translationValues(x, y, 0)
+          ..scale(animation.value), // 缩放效果
+        opacity: animation.value,   // 透明度变化
+      );
+    }
+
+    // 最后绘制主按钮（始终在原位）
+    context.paintChild(0, transform: Matrix4.identity());
+  }
+
+  @override
+  Size getSize(BoxConstraints constraints) {
+    return const Size(56, 56); // Flow 只占主按钮的大小
+  }
+
+  @override
+  bool shouldRelayout(_AnimatedMenuDelegate oldDelegate) =&gt; false;
+
+  @override
+  bool shouldRepaint(_AnimatedMenuDelegate oldDelegate) {
+    return animation != oldDelegate.animation;
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项：</strong></p>
+<ol>
+<li>Flow 的子组件不能设置为 <code>const</code>，因为 Flow 需要获取其尺寸。</li>
+<li>Flow 子组件会被绘制到 Flow 的边界之外（overflow），这是设计如此——类似于 Stack 的 <code>clipBehavior: Clip.none</code>。</li>
+<li><code>FlowDelegate</code> 的构造函数中传入 <code>repaint: animation</code> 可以在动画值变化时自动触发重绘，无需 <code>setState</code>。</li>
+</ol>
+</blockquote>
+<h3 id="25-wrap-vs-flow-对比">2.5 Wrap vs Flow 对比</h3>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>Wrap</th>
+<th>Flow</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>使用复杂度</td>
+<td>简单，声明式</td>
+<td>复杂，需要实现 FlowDelegate</td>
+</tr>
+<tr>
+<td>布局方式</td>
+<td>自动计算换行</td>
+<td>完全手动控制</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>一般（改变时重新布局）</td>
+<td>极高（只重绘，不重新布局子组件）</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>标签、筛选条件等静态或低频变化布局</td>
+<td>动画菜单、需要频繁变化位置的高性能场景</td>
+</tr>
+<tr>
+<td>子组件溢出</td>
+<td>自动处理</td>
+<td>可以绘制到边界之外</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践：</strong> 大多数场景下优先使用 Wrap，它简单且够用。只有当你需要实现自定义布局算法或高性能动画定位时，才考虑使用 Flow。</p>
+</blockquote>
+<hr />
+<h2 id="3-layoutbuilder--根据父约束动态构建-ui">3. LayoutBuilder —— 根据父约束动态构建 UI</h2>
+<h3 id="31-什么是-layoutbuilder">3.1 什么是 LayoutBuilder？</h3>
+<p><code>LayoutBuilder</code> 可以在 <code>build</code> 阶段获取父组件传递的布局约束（<code>BoxConstraints</code>），从而根据可用空间动态决定构建什么 UI。这是实现响应式布局的基础工具之一。</p>
+<p>与 <code>MediaQuery</code> 不同的是：</p>
+<ul>
+<li><code>MediaQuery</code> 获取的是<strong>整个屏幕</strong>的信息</li>
+<li><code>LayoutBuilder</code> 获取的是<strong>父组件给予的约束</strong>，更适合组件级别的自适应</li>
+</ul>
+<h3 id="32-boxconstraints-参数解读">3.2 BoxConstraints 参数解读</h3>
+<p><code>BoxConstraints</code> 包含四个关键属性：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>minWidth</code></td>
+<td>最小宽度约束</td>
+</tr>
+<tr>
+<td><code>maxWidth</code></td>
+<td>最大宽度约束（<code>double.infinity</code> 表示无限制）</td>
+</tr>
+<tr>
+<td><code>minHeight</code></td>
+<td>最小高度约束</td>
+</tr>
+<tr>
+<td><code>maxHeight</code></td>
+<td>最大高度约束（<code>double.infinity</code> 表示无限制）</td>
+</tr>
+</tbody>
+</table>
+<p>常用判断方法：</p>
+<ul>
+<li><code>constraints.hasBoundedWidth</code>：宽度是否有限</li>
+<li><code>constraints.hasBoundedHeight</code>：高度是否有限</li>
+<li><code>constraints.isTight</code>：是否是严格约束（min == max）</li>
+<li><code>constraints.biggest</code>：约束范围内最大的 Size</li>
+<li><code>constraints.smallest</code>：约束范围内最小的 Size</li>
+</ul>
+<h3 id="33-基础示例根据宽度切换布局">3.3 基础示例：根据宽度切换布局</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('LayoutBuilder 示例')),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              // 根据父组件给予的最大宽度动态选择布局
+              if (constraints.maxWidth &gt; 600) {
+                // 宽屏：使用两列布局
+                return _buildWideLayout();
+              } else {
+                // 窄屏：使用单列布局
+                return _buildNarrowLayout();
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWideLayout() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 1,
+          child: _buildSidebar(),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          flex: 3,
+          child: _buildMainContent(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNarrowLayout() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _buildMainContent(),
+          const SizedBox(height: 16),
+          _buildSidebar(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSidebar() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('侧边栏', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            ...['首页', '文章', '关于', '设置'].map(
+              (item) =&gt; ListTile(
+                leading: const Icon(Icons.chevron_right),
+                title: Text(item),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainContent() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('主要内容区域',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            const Text('这里是页面的主要内容。在宽屏模式下，侧边栏在左边；'
+                '在窄屏模式下，主要内容在上方，侧边栏在下方。'),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: List.generate(
+                6,
+                (i) =&gt; Chip(label: Text('标签 ${i + 1}')),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="34-约束信息调试工具">3.4 约束信息调试工具</h3>
+<p>在开发过程中，你可以用 LayoutBuilder 来调试组件接收到的约束信息：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('约束信息调试')),
+        body: Column(
+          children: [
+            // 示例 1：全宽布局中的约束
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return Container(
+                    color: Colors.blue.shade50,
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      '全宽区域的约束：\n'
+                      'minWidth: ${constraints.minWidth}\n'
+                      'maxWidth: ${constraints.maxWidth}\n'
+                      'minHeight: ${constraints.minHeight}\n'
+                      'maxHeight: ${constraints.maxHeight}\n'
+                      'hasBoundedWidth: ${constraints.hasBoundedWidth}\n'
+                      'hasBoundedHeight: ${constraints.hasBoundedHeight}',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  );
+                },
+              ),
+            ),
+            // 示例 2：固定宽度容器中的约束
+            Center(
+              child: SizedBox(
+                width: 200,
+                height: 150,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Container(
+                      color: Colors.green.shade50,
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        '固定 200x150 容器中的约束：\n'
+                        'minWidth: ${constraints.minWidth}\n'
+                        'maxWidth: ${constraints.maxWidth}\n'
+                        'minHeight: ${constraints.minHeight}\n'
+                        'maxHeight: ${constraints.maxHeight}',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项：</strong> LayoutBuilder 的 <code>builder</code> 回调会在布局阶段被调用。不要在其中做耗时操作，也不要在 <code>builder</code> 中调用 <code>setState</code> —— 这会导致无限循环。</p>
+</blockquote>
+<hr />
+<h2 id="4-mediaquery--获取屏幕尺寸与设备信息">4. MediaQuery —— 获取屏幕尺寸与设备信息</h2>
+<h3 id="41-什么是-mediaquery">4.1 什么是 MediaQuery？</h3>
+<p><code>MediaQuery</code> 是一个 <code>InheritedWidget</code>，它在 Widget 树中向下传递设备和屏幕的媒体查询信息。在 <code>MaterialApp</code> 或 <code>WidgetsApp</code> 中会自动创建 <code>MediaQuery</code>，你可以在任何后代组件中通过 <code>MediaQuery.of(context)</code> 获取。</p>
+<h3 id="42-核心属性详解">4.2 核心属性详解</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(home: MediaQueryDemo());
+  }
+}
+
+class MediaQueryDemo extends StatelessWidget {
+  const MediaQueryDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('MediaQuery 属性一览')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildInfoCard('屏幕尺寸 (size)', [
+              '宽度: ${mediaQuery.size.width.toStringAsFixed(1)}',
+              '高度: ${mediaQuery.size.height.toStringAsFixed(1)}',
+              '说明: 屏幕的逻辑像素尺寸（非物理像素）',
+            ]),
+            _buildInfoCard('安全区域内边距 (padding)', [
+              '顶部: ${mediaQuery.padding.top}',
+              '底部: ${mediaQuery.padding.bottom}',
+              '左侧: ${mediaQuery.padding.left}',
+              '右侧: ${mediaQuery.padding.right}',
+              '说明: 状态栏、刘海屏、底部导航条等系统 UI 占据的空间',
+            ]),
+            _buildInfoCard('视图嵌入 (viewInsets)', [
+              '顶部: ${mediaQuery.viewInsets.top}',
+              '底部: ${mediaQuery.viewInsets.bottom}',
+              '说明: 键盘弹出时，viewInsets.bottom 就是键盘高度',
+            ]),
+            _buildInfoCard('屏幕方向 (orientation)', [
+              '当前方向: ${mediaQuery.orientation}',
+              '说明: portrait 为竖屏，landscape 为横屏',
+            ]),
+            _buildInfoCard('文本缩放因子 (textScaleFactor)', [
+              // Flutter 3.12+ 使用 textScaler
+              '缩放因子: ${mediaQuery.textScaler.scale(1.0)}',
+              '说明: 用户在系统设置中调整的文本大小倍率',
+            ]),
+            _buildInfoCard('平台亮度 (platformBrightness)', [
+              '当前模式: ${mediaQuery.platformBrightness}',
+              '说明: Brightness.light 为浅色模式，Brightness.dark 为深色模式',
+            ]),
+            _buildInfoCard('设备像素比 (devicePixelRatio)', [
+              '像素比: ${mediaQuery.devicePixelRatio}',
+              '说明: 物理像素与逻辑像素的比值，如 2.0 表示 2 倍屏',
+            ]),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(String title, List&lt;String&gt; items) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title,
+                style: const TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
+            const SizedBox(height: 8),
+            ...items.map((item) =&gt; Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text(item, style: const TextStyle(fontSize: 14)),
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="43-各属性的使用场景">4.3 各属性的使用场景</h3>
+<h4 id="size--屏幕尺寸">size —— 屏幕尺寸</h4>
+<p>最常用的属性，用于判断设备类型和选择布局方案：</p>
+<pre><code class="language-dart">final size = MediaQuery.sizeOf(context); // 推荐用法，性能更好
+final width = size.width;
+
+if (width &gt;= 1200) {
+  // 桌面端布局
+} else if (width &gt;= 600) {
+  // 平板布局
+} else {
+  // 手机布局
+}
+</code></pre>
+<h4 id="padding--安全区域">padding —— 安全区域</h4>
+<p>处理异形屏（刘海屏、打孔屏）和系统 UI 区域：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(home: SafeAreaDemo());
+  }
+}
+
+class SafeAreaDemo extends StatelessWidget {
+  const SafeAreaDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final padding = MediaQuery.paddingOf(context);
+
+    return Scaffold(
+      body: Column(
+        children: [
+          // 方式一：手动添加状态栏高度的间距
+          SizedBox(height: padding.top),
+          const Text('方式一：手动处理安全区域'),
+          const Spacer(),
+          // 方式二：使用 SafeArea（推荐）
+          SafeArea(
+            child: Container(
+              color: Colors.blue.shade100,
+              padding: const EdgeInsets.all(16),
+              child: const Text('方式二：SafeArea 自动处理'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h4 id="viewinsets--键盘高度">viewInsets —— 键盘高度</h4>
+<p>在有输入框的页面中，常用于处理键盘遮挡问题：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(home: KeyboardAwareDemo());
+  }
+}
+
+class KeyboardAwareDemo extends StatelessWidget {
+  const KeyboardAwareDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 键盘弹出时，viewInsets.bottom 即为键盘高度
+    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+    final isKeyboardVisible = bottomInset &gt; 0;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('键盘感知示例')),
+      body: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: Text(
+                isKeyboardVisible
+                    ? '键盘已弹出，高度: ${bottomInset.toStringAsFixed(0)}'
+                    : '键盘未弹出',
+                style: const TextStyle(fontSize: 18),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: '点击此处弹出键盘',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
+          // Scaffold 的 resizeToAvoidBottomInset 默认为 true，
+          // 会自动调整 body 大小以避开键盘
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="44-性能优化使用细粒度的-mediaquery-方法">4.4 性能优化：使用细粒度的 MediaQuery 方法</h3>
+<p>Flutter 3.10+ 引入了细粒度的 <code>MediaQuery</code> 访问方法，<strong>强烈推荐使用</strong>：</p>
+<pre><code class="language-dart">// ❌ 不推荐：监听了整个 MediaQueryData 的变化
+// 当任何一个属性（如键盘弹出导致 viewInsets 变化）改变时，都会重建
+final data = MediaQuery.of(context);
+final width = data.size.width;
+
+// ✅ 推荐：只监听 size 的变化
+// 键盘弹出等其他变化不会触发重建
+final size = MediaQuery.sizeOf(context);
+
+// ✅ 推荐：只监听 padding 的变化
+final padding = MediaQuery.paddingOf(context);
+
+// ✅ 推荐：只监听 viewInsets 的变化
+final viewInsets = MediaQuery.viewInsetsOf(context);
+
+// ✅ 推荐：只监听亮度模式的变化
+final brightness = MediaQuery.platformBrightnessOf(context);
+
+// ✅ 推荐：只监听方向的变化
+final orientation = MediaQuery.orientationOf(context);
+</code></pre>
+<blockquote>
+<p><strong>最佳实践：</strong> 始终使用 <code>MediaQuery.xxxOf(context)</code> 而非 <code>MediaQuery.of(context).xxx</code>，这样可以避免不必要的组件重建，显著提升性能。</p>
+</blockquote>
+<hr />
+<h2 id="5-响应式布局实战">5. 响应式布局实战</h2>
+<h3 id="51-响应式设计的断点策略">5.1 响应式设计的断点策略</h3>
+<p>在 Flutter 中，常用的屏幕宽度断点如下：</p>
+<table>
+<thead>
+<tr>
+<th>设备类型</th>
+<th>宽度范围</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>手机（竖屏）</td>
+<td>&lt; 600</td>
+<td>单列布局</td>
+</tr>
+<tr>
+<td>平板（竖屏）/ 手机（横屏）</td>
+<td>600 - 1023</td>
+<td>双列布局</td>
+</tr>
+<tr>
+<td>桌面 / 平板（横屏）</td>
+<td>≥ 1024</td>
+<td>三列或更多列布局</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-完整实战自适应新闻页面">5.2 完整实战：自适应新闻页面</h3>
+<p>下面是一个完整的自适应新闻页面，根据屏幕宽度自动切换手机单列布局和平板双列布局：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '响应式新闻应用',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const ResponsiveNewsPage(),
+    );
+  }
+}
+
+/// 新闻数据模型
+class NewsItem {
+  final String title;
+  final String summary;
+  final String category;
+  final String time;
+  final IconData icon;
+
+  const NewsItem({
+    required this.title,
+    required this.summary,
+    required this.category,
+    required this.time,
+    required this.icon,
+  });
+}
+
+/// 模拟新闻数据
+final List&lt;NewsItem&gt; _mockNews = [
+  const NewsItem(
+    title: 'Flutter 4.0 正式发布',
+    summary: 'Google 发布了 Flutter 4.0，带来了全新的渲染引擎和更好的性能表现...',
+    category: '技术',
+    time: '2 小时前',
+    icon: Icons.code,
+  ),
+  const NewsItem(
+    title: 'Dart 语言新特性预览',
+    summary: '即将发布的 Dart 新版本将引入模式匹配增强和宏编程支持...',
+    category: '技术',
+    time: '3 小时前',
+    icon: Icons.language,
+  ),
+  const NewsItem(
+    title: '移动应用开发趋势报告',
+    summary: '最新报告显示跨平台框架使用率持续增长，Flutter 市场份额领先...',
+    category: '行业',
+    time: '5 小时前',
+    icon: Icons.trending_up,
+  ),
+  const NewsItem(
+    title: 'Material Design 3 最佳实践',
+    summary: '深入了解 Material 3 的设计原则，以及如何在 Flutter 中正确实现...',
+    category: '设计',
+    time: '8 小时前',
+    icon: Icons.palette,
+  ),
+  const NewsItem(
+    title: '状态管理方案对比分析',
+    summary: '对比 Provider、Riverpod、Bloc 和 GetX 的优缺点及适用场景...',
+    category: '技术',
+    time: '1 天前',
+    icon: Icons.account_tree,
+  ),
+  const NewsItem(
+    title: 'Flutter Web 性能优化指南',
+    summary: 'Flutter Web 应用的加载速度和渲染性能优化实战技巧汇总...',
+    category: '教程',
+    time: '1 天前',
+    icon: Icons.web,
+  ),
+  const NewsItem(
+    title: '桌面端应用开发实战',
+    summary: '使用 Flutter 开发 Windows、macOS 和 Linux 桌面应用的完整指南...',
+    category: '教程',
+    time: '2 天前',
+    icon: Icons.desktop_windows,
+  ),
+  const NewsItem(
+    title: '动画性能优化深度解析',
+    summary: '分析 Flutter 动画的底层原理，以及如何实现 60fps 的流畅动画...',
+    category: '技术',
+    time: '2 天前',
+    icon: Icons.animation,
+  ),
+];
+
+/// 响应式新闻页面
+class ResponsiveNewsPage extends StatelessWidget {
+  const ResponsiveNewsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('技术资讯'),
+        centerTitle: false,
+        actions: [
+          IconButton(icon: const Icon(Icons.search), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.notifications_outlined), onPressed: () {}),
+        ],
+      ),
+      // 使用 LayoutBuilder 实现组件级别的响应式
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth &gt;= 900) {
+            return _buildDesktopLayout();
+          } else if (constraints.maxWidth &gt;= 600) {
+            return _buildTabletLayout();
+          } else {
+            return _buildMobileLayout();
+          }
+        },
+      ),
+    );
+  }
+
+  /// 手机布局：单列卡片列表
+  Widget _buildMobileLayout() {
+    return CustomScrollView(
+      slivers: [
+        // 顶部标签筛选栏
+        SliverToBoxAdapter(child: _buildCategoryChips()),
+        // 新闻列表
+        SliverPadding(
+          padding: const EdgeInsets.all(12),
+          sliver: SliverList.separated(
+            itemCount: _mockNews.length,
+            separatorBuilder: (_, __) =&gt; const SizedBox(height: 12),
+            itemBuilder: (context, index) =&gt;
+                _buildNewsCard(_mockNews[index], isCompact: true),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 平板布局：双列网格
+  Widget _buildTabletLayout() {
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(child: _buildCategoryChips()),
+        SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 1.8,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) =&gt;
+                  _buildNewsCard(_mockNews[index], isCompact: false),
+              childCount: _mockNews.length,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 桌面布局：左侧分类导航 + 右侧双列内容
+  Widget _buildDesktopLayout() {
+    return Row(
+      children: [
+        // 左侧分类导航
+        SizedBox(
+          width: 220,
+          child: Card(
+            margin: const EdgeInsets.all(12),
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text('分类导航',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                ),
+                for (final category in ['全部', '技术', '行业', '设计', '教程'])
+                  ListTile(
+                    leading: const Icon(Icons.folder_outlined),
+                    title: Text(category),
+                    selected: category == '全部',
+                    onTap: () {},
+                  ),
+              ],
+            ),
+          ),
+        ),
+        // 右侧内容区域
+        Expanded(
+          child: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverGrid(
+                  gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 2.2,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) =&gt;
+                        _buildNewsCard(_mockNews[index], isCompact: false),
+                    childCount: _mockNews.length,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 分类标签栏
+  Widget _buildCategoryChips() {
+    final categories = ['全部', '技术', '行业', '设计', '教程'];
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+      child: Wrap(
+        spacing: 8,
+        children: categories.map((category) {
+          final isSelected = category == '全部';
+          return ChoiceChip(
+            label: Text(category),
+            selected: isSelected,
+            onSelected: (_) {},
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  /// 新闻卡片
+  Widget _buildNewsCard(NewsItem news, {required bool isCompact}) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {},
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(news.icon, size: 20, color: Colors.blue),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(news.category,
+                        style: TextStyle(
+                            fontSize: 12, color: Colors.blue.shade700)),
+                  ),
+                  const Spacer(),
+                  Text(news.time,
+                      style:
+                          const TextStyle(fontSize: 12, color: Colors.grey)),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                news.title,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                maxLines: isCompact ? 1 : 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: Text(
+                  news.summary,
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                  maxLines: isCompact ? 2 : 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="53-封装响应式工具类">5.3 封装响应式工具类</h3>
+<p>在实际项目中，建议将断点判断封装成工具类，方便复用：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+/// 响应式断点工具类
+class Responsive {
+  /// 标准断点值
+  static const double mobileBreakpoint = 600;
+  static const double tabletBreakpoint = 1024;
+
+  /// 判断当前是否为手机布局
+  static bool isMobile(BuildContext context) =&gt;
+      MediaQuery.sizeOf(context).width &lt; mobileBreakpoint;
+
+  /// 判断当前是否为平板布局
+  static bool isTablet(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    return width &gt;= mobileBreakpoint &amp;&amp; width &lt; tabletBreakpoint;
+  }
+
+  /// 判断当前是否为桌面布局
+  static bool isDesktop(BuildContext context) =&gt;
+      MediaQuery.sizeOf(context).width &gt;= tabletBreakpoint;
+
+  /// 根据设备类型返回不同的值
+  static T value&lt;T&gt;(
+    BuildContext context, {
+    required T mobile,
+    T? tablet,
+    T? desktop,
+  }) {
+    if (isDesktop(context)) return desktop ?? tablet ?? mobile;
+    if (isTablet(context)) return tablet ?? mobile;
+    return mobile;
+  }
+}
+
+/// 响应式布局构建器 Widget
+class ResponsiveBuilder extends StatelessWidget {
+  final Widget Function(BuildContext context) mobile;
+  final Widget Function(BuildContext context)? tablet;
+  final Widget Function(BuildContext context)? desktop;
+
+  const ResponsiveBuilder({
+    super.key,
+    required this.mobile,
+    this.tablet,
+    this.desktop,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth &gt;= Responsive.tabletBreakpoint) {
+          return (desktop ?? tablet ?? mobile)(context);
+        } else if (constraints.maxWidth &gt;= Responsive.mobileBreakpoint) {
+          return (tablet ?? mobile)(context);
+        }
+        return mobile(context);
+      },
+    );
+  }
+}
+</code></pre>
+<p>使用方式：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+// 假设上面的 Responsive 和 ResponsiveBuilder 已导入
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('响应式工具类示例')),
+        body: ResponsiveBuilder(
+          mobile: (context) =&gt; const Center(child: Text('手机布局：单列')),
+          tablet: (context) =&gt; const Center(child: Text('平板布局：双列')),
+          desktop: (context) =&gt; const Center(child: Text('桌面布局：三列')),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="54-orientationbuilder--监听屏幕方向">5.4 OrientationBuilder —— 监听屏幕方向</h3>
+<p>除了 <code>MediaQuery.orientationOf</code>，Flutter 还提供了专门的 <code>OrientationBuilder</code>：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('OrientationBuilder 示例')),
+        body: OrientationBuilder(
+          builder: (context, orientation) {
+            // 根据屏幕方向切换网格列数
+            final crossAxisCount =
+                orientation == Orientation.portrait ? 2 : 4;
+
+            return GridView.builder(
+              padding: const EdgeInsets.all(12),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+              ),
+              itemCount: 20,
+              itemBuilder: (context, index) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.primaries[index % Colors.primaries.length]
+                        .shade200,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '项目 ${index + 1}',
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践：</strong></p>
+<ol>
+<li>优先使用 <code>LayoutBuilder</code> 实现组件级响应式布局，它比 <code>MediaQuery</code> 更灵活——因为它基于父组件约束而非屏幕尺寸。</li>
+<li><code>MediaQuery</code> 更适合获取设备级别的信息（如安全区域、键盘高度、暗色模式等）。</li>
+<li>将断点常量和判断逻辑统一封装，避免硬编码分散在各处。</li>
+<li>在响应式设计中，使用 <code>Wrap</code> 让内容自然流动，而非为每种屏幕尺寸硬编码布局。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="6-本课小结">6. 本课小结</h2>
+<p>本课学习了四个核心组件和一套响应式布局策略：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>核心用途</th>
+<th>关键要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Wrap</strong></td>
+<td>自动换行布局</td>
+<td>解决 Row/Column 溢出问题；<code>spacing</code>、<code>runSpacing</code> 控制间距</td>
+</tr>
+<tr>
+<td><strong>Flow</strong></td>
+<td>高性能自定义布局</td>
+<td>通过 <code>FlowDelegate</code> 手动控制子组件位置；使用变换矩阵，性能极高</td>
+</tr>
+<tr>
+<td><strong>LayoutBuilder</strong></td>
+<td>基于父约束构建 UI</td>
+<td>获取 <code>BoxConstraints</code>，实现组件级响应式布局</td>
+</tr>
+<tr>
+<td><strong>MediaQuery</strong></td>
+<td>获取设备和屏幕信息</td>
+<td>屏幕尺寸、安全区域、键盘高度、暗色模式等；优先使用 <code>xxxOf</code> 方法</td>
+</tr>
+</tbody>
+</table>
+<p><strong>核心思路：</strong></p>
+<ol>
+<li>需要自动换行 → 用 <strong>Wrap</strong></li>
+<li>需要极致性能的自定义定位 → 用 <strong>Flow</strong></li>
+<li>需要根据父组件的可用空间适配 → 用 <strong>LayoutBuilder</strong></li>
+<li>需要获取设备级信息 → 用 <strong>MediaQuery</strong></li>
+<li>综合运用以上工具，就能构建出适配手机、平板、桌面的响应式界面</li>
+</ol>
+<hr />
+<h2 id="7-课后练习">7. 课后练习</h2>
+<h3 id="练习一可折叠标签面板">练习一：可折叠标签面板</h3>
+<p>实现一个可折叠的标签面板：</p>
+<ul>
+<li>默认显示前两行标签，多余的隐藏</li>
+<li>底部有一个&quot;展开/收起&quot;按钮</li>
+<li>展开时显示所有标签</li>
+<li>使用 <code>Wrap</code> 实现标签排列，使用 <code>AnimatedContainer</code> 或 <code>ClipRect</code> 控制高度变化</li>
+</ul>
+<h3 id="练习二自定义-flow-布局">练习二：自定义 Flow 布局</h3>
+<p>使用 <code>Flow</code> 和 <code>FlowDelegate</code> 实现一个圆形排列布局：</p>
+<ul>
+<li>将 N 个子组件均匀分布在一个圆形上</li>
+<li>通过动画控制展开/收起（半径从 0 到目标值）</li>
+<li>提示：使用三角函数 <code>cos</code> 和 <code>sin</code> 计算每个子组件的位置</li>
+</ul>
+<h3 id="练习三响应式个人主页">练习三：响应式个人主页</h3>
+<p>综合运用本课所学，构建一个响应式的个人主页：</p>
+<ul>
+<li><strong>手机端（&lt; 600）</strong>：头像和信息垂直排列，技能标签用 Wrap 自动换行，项目列表单列展示</li>
+<li><strong>平板端（600 - 1024）</strong>：头像和信息水平排列，项目列表双列网格展示</li>
+<li><strong>桌面端（≥ 1024）</strong>：左侧固定个人信息栏，右侧项目列表三列网格展示</li>
+<li>使用 <code>LayoutBuilder</code> 进行断点判断</li>
+<li>使用 <code>MediaQuery</code> 获取安全区域信息</li>
+</ul>
+<h3 id="练习四调试约束">练习四：调试约束</h3>
+<p>在你当前的项目中任意一个复杂布局里添加 <code>LayoutBuilder</code>，打印出该位置收到的 <code>BoxConstraints</code>，观察并理解 Flutter 的约束传递机制。尝试在以下位置观察约束：</p>
+<ul>
+<li><code>Column</code> 的子组件位置</li>
+<li><code>Expanded</code> 内部</li>
+<li><code>SingleChildScrollView</code> 内部</li>
+<li>嵌套的 <code>Row</code> &gt; <code>Column</code> 内部</li>
+</ul>
+<hr />
+<blockquote>
+<p><strong>下一课预告：</strong> 第09课 约束与尺寸控制组件 —— 我们将深入学习 Flutter 布局约束机制的核心原理（&quot;Constraints go down, Sizes go up&quot;），掌握 ConstrainedBox、FittedBox、AspectRatio 等精细化尺寸控制组件。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2007 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="附录">附录</h1>
+<hr />
+<h2 id="附录-amybatis-常用配置速查表">附录 A：MyBatis 常用配置速查表</h2>
+<h3 id="a1-mybatis-configxml-settings-完整速查">A.1 mybatis-config.xml settings 完整速查</h3>
+<blockquote>
+<p><code>&lt;settings&gt;</code> 是 MyBatis 中最重要的全局调优标签，以下按功能分组列出所有常用配置项。</p>
+</blockquote>
+<h4 id="映射与命名">映射与命名</h4>
+<table>
+<thead>
+<tr>
+<th>setting 名称</th>
+<th>说明</th>
+<th>可选值</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mapUnderscoreToCamelCase</code></td>
+<td>是否开启下划线命名到驼峰命名的自动映射（如 <code>user_name</code> → <code>userName</code>）</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>autoMappingBehavior</code></td>
+<td>自动映射策略：NONE 不启用；PARTIAL 仅映射无嵌套的结果；FULL 映射所有结果（含嵌套）</td>
+<td><code>NONE</code> / <code>PARTIAL</code> / <code>FULL</code></td>
+<td><code>PARTIAL</code></td>
+</tr>
+<tr>
+<td><code>autoMappingUnknownColumnBehavior</code></td>
+<td>当发现自动映射目标中有未知列时的行为</td>
+<td><code>NONE</code> / <code>WARNING</code> / <code>FAILING</code></td>
+<td><code>NONE</code></td>
+</tr>
+<tr>
+<td><code>argNameBasedConstructorAutoMapping</code></td>
+<td>构造器自动映射时是否按参数名匹配而非按顺序匹配</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="缓存">缓存</h4>
+<table>
+<thead>
+<tr>
+<th>setting 名称</th>
+<th>说明</th>
+<th>可选值</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cacheEnabled</code></td>
+<td>全局二级缓存开关（仍需在 Mapper XML 中配置 <code>&lt;cache&gt;</code> 才生效）</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>localCacheScope</code></td>
+<td>一级缓存作用域：SESSION 为同一 SqlSession 内共享；STATEMENT 为每次查询后立即清除</td>
+<td><code>SESSION</code> / <code>STATEMENT</code></td>
+<td><code>SESSION</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="延迟加载">延迟加载</h4>
+<table>
+<thead>
+<tr>
+<th>setting 名称</th>
+<th>说明</th>
+<th>可选值</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lazyLoadingEnabled</code></td>
+<td>延迟加载全局开关，开启后所有 association / collection 默认延迟加载</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>aggressiveLazyLoading</code></td>
+<td>开启后任意属性的访问都会触发所有延迟属性的加载；3.4.1+ 默认关闭</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>lazyLoadTriggerMethods</code></td>
+<td>触发延迟加载的对象方法列表</td>
+<td>逗号分隔的方法名</td>
+<td><code>equals,clone,hashCode,toString</code></td>
+</tr>
+<tr>
+<td><code>proxyFactory</code></td>
+<td>延迟加载的代理工厂实现</td>
+<td><code>CGLIB</code> / <code>JAVASSIST</code></td>
+<td><code>JAVASSIST</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="执行器与语句">执行器与语句</h4>
+<table>
+<thead>
+<tr>
+<th>setting 名称</th>
+<th>说明</th>
+<th>可选值</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>defaultExecutorType</code></td>
+<td>默认执行器类型：SIMPLE 普通；REUSE 复用 PreparedStatement；BATCH 批量执行</td>
+<td><code>SIMPLE</code> / <code>REUSE</code> / <code>BATCH</code></td>
+<td><code>SIMPLE</code></td>
+</tr>
+<tr>
+<td><code>defaultStatementTimeout</code></td>
+<td>设置所有 SQL 语句的默认超时时间（秒）</td>
+<td>正整数 / <code>null</code></td>
+<td><code>null</code>（无限制）</td>
+</tr>
+<tr>
+<td><code>defaultFetchSize</code></td>
+<td>设置 JDBC fetchSize 的默认值，控制每次从数据库获取的行数</td>
+<td>正整数 / <code>null</code></td>
+<td><code>null</code>（使用驱动默认）</td>
+</tr>
+<tr>
+<td><code>defaultResultSetType</code></td>
+<td>默认的 ResultSet 类型</td>
+<td><code>FORWARD_ONLY</code> / <code>SCROLL_SENSITIVE</code> / <code>SCROLL_INSENSITIVE</code> / <code>DEFAULT</code></td>
+<td><code>null</code>（使用驱动默认）</td>
+</tr>
+<tr>
+<td><code>useGeneratedKeys</code></td>
+<td>全局开启自动生成主键，可在 <code>&lt;insert&gt;</code> 标签中单独覆盖</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="行为与安全">行为与安全</h4>
+<table>
+<thead>
+<tr>
+<th>setting 名称</th>
+<th>说明</th>
+<th>可选值</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>safeRowBoundsEnabled</code></td>
+<td>是否允许在嵌套查询中使用 RowBounds（分页），false 表示允许</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>safeResultHandlerEnabled</code></td>
+<td>是否允许在嵌套查询中使用 ResultHandler，false 表示允许</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>multipleResultSetsEnabled</code></td>
+<td>是否允许单个语句返回多个结果集（需驱动支持）</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>useColumnLabel</code></td>
+<td>使用列标签而非列名来获取结果</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>callSettersOnNulls</code></td>
+<td>当结果集中的值为 null 时是否调用 setter / put，对 Map 返回值有影响</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>returnInstanceForEmptyRow</code></td>
+<td>当结果行所有列都为 null 时是否返回空实例而非 null</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>shrinkWhitespacesInSql</code></td>
+<td>移除 SQL 中多余的空白字符，仅保留单个空格（便于日志阅读）</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>nullableOnForEach</code></td>
+<td>当 <code>&lt;foreach&gt;</code> 的 collection 参数为 null 时是否不抛异常</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="日志与调试">日志与调试</h4>
+<table>
+<thead>
+<tr>
+<th>setting 名称</th>
+<th>说明</th>
+<th>可选值</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>logImpl</code></td>
+<td>指定日志实现，不设置时 MyBatis 按优先级自动查找</td>
+<td><code>SLF4J</code> / <code>LOG4J</code> / <code>LOG4J2</code> / <code>JDK_LOGGING</code> / <code>COMMONS_LOGGING</code> / <code>STDOUT_LOGGING</code> / <code>NO_LOGGING</code></td>
+<td>未设置（自动检测）</td>
+</tr>
+<tr>
+<td><code>logPrefix</code></td>
+<td>为所有 MyBatis 日志名添加统一前缀</td>
+<td>任意字符串</td>
+<td>未设置</td>
+</tr>
+</tbody>
+</table>
+<h4 id="其他">其他</h4>
+<table>
+<thead>
+<tr>
+<th>setting 名称</th>
+<th>说明</th>
+<th>可选值</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>jdbcTypeForNull</code></td>
+<td>当参数值为 null 且没有指定 jdbcType 时使用的 JDBC 类型</td>
+<td>任何 <code>JdbcType</code> 枚举值</td>
+<td><code>OTHER</code></td>
+</tr>
+<tr>
+<td><code>configurationFactory</code></td>
+<td>指定一个 Configuration 工厂类，用于提供 Configuration 实例</td>
+<td>类全限定名</td>
+<td>未设置</td>
+</tr>
+<tr>
+<td><code>vfsImpl</code></td>
+<td>自定义 VFS（虚拟文件系统）实现类</td>
+<td>类全限定名（逗号分隔）</td>
+<td>未设置</td>
+</tr>
+<tr>
+<td><code>defaultEnumTypeHandler</code></td>
+<td>默认枚举类型处理器</td>
+<td>类全限定名</td>
+<td><code>org.apache.ibatis.type.EnumTypeHandler</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="a2-spring-boot-applicationyml-对应配置">A.2 Spring Boot application.yml 对应配置</h3>
+<blockquote>
+<p>Spring Boot 中使用 <code>mybatis-spring-boot-starter</code> 时，大部分 settings 可通过 <code>mybatis.configuration.*</code> 配置。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>mybatis-config.xml setting</th>
+<th>Spring Boot application.yml 配置键</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mapUnderscoreToCamelCase</code></td>
+<td><code>mybatis.configuration.map-underscore-to-camel-case</code></td>
+</tr>
+<tr>
+<td><code>cacheEnabled</code></td>
+<td><code>mybatis.configuration.cache-enabled</code></td>
+</tr>
+<tr>
+<td><code>lazyLoadingEnabled</code></td>
+<td><code>mybatis.configuration.lazy-loading-enabled</code></td>
+</tr>
+<tr>
+<td><code>aggressiveLazyLoading</code></td>
+<td><code>mybatis.configuration.aggressive-lazy-loading</code></td>
+</tr>
+<tr>
+<td><code>defaultExecutorType</code></td>
+<td><code>mybatis.configuration.default-executor-type</code></td>
+</tr>
+<tr>
+<td><code>defaultStatementTimeout</code></td>
+<td><code>mybatis.configuration.default-statement-timeout</code></td>
+</tr>
+<tr>
+<td><code>defaultFetchSize</code></td>
+<td><code>mybatis.configuration.default-fetch-size</code></td>
+</tr>
+<tr>
+<td><code>autoMappingBehavior</code></td>
+<td><code>mybatis.configuration.auto-mapping-behavior</code></td>
+</tr>
+<tr>
+<td><code>autoMappingUnknownColumnBehavior</code></td>
+<td><code>mybatis.configuration.auto-mapping-unknown-column-behavior</code></td>
+</tr>
+<tr>
+<td><code>localCacheScope</code></td>
+<td><code>mybatis.configuration.local-cache-scope</code></td>
+</tr>
+<tr>
+<td><code>logImpl</code></td>
+<td><code>mybatis.configuration.log-impl</code></td>
+</tr>
+<tr>
+<td><code>useGeneratedKeys</code></td>
+<td><code>mybatis.configuration.use-generated-keys</code></td>
+</tr>
+<tr>
+<td><code>callSettersOnNulls</code></td>
+<td><code>mybatis.configuration.call-setters-on-nulls</code></td>
+</tr>
+<tr>
+<td><code>returnInstanceForEmptyRow</code></td>
+<td><code>mybatis.configuration.return-instance-for-empty-row</code></td>
+</tr>
+<tr>
+<td><code>shrinkWhitespacesInSql</code></td>
+<td><code>mybatis.configuration.shrink-whitespaces-in-sql</code></td>
+</tr>
+<tr>
+<td><code>jdbcTypeForNull</code></td>
+<td><code>mybatis.configuration.jdbc-type-for-null</code></td>
+</tr>
+<tr>
+<td><code>defaultEnumTypeHandler</code></td>
+<td><code>mybatis.configuration.default-enum-type-handler</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>其他常用 Spring Boot 级别配置：</strong></p>
+<table>
+<thead>
+<tr>
+<th>配置键</th>
+<th>说明</th>
+<th>示例值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mybatis.mapper-locations</code></td>
+<td>Mapper XML 文件路径</td>
+<td><code>classpath:mapper/**/*.xml</code></td>
+</tr>
+<tr>
+<td><code>mybatis.type-aliases-package</code></td>
+<td>类型别名扫描包</td>
+<td><code>com.example.entity</code></td>
+</tr>
+<tr>
+<td><code>mybatis.type-handlers-package</code></td>
+<td>TypeHandler 扫描包</td>
+<td><code>com.example.handler</code></td>
+</tr>
+<tr>
+<td><code>mybatis.config-location</code></td>
+<td>外部 mybatis-config.xml 路径</td>
+<td><code>classpath:mybatis-config.xml</code></td>
+</tr>
+<tr>
+<td><code>mybatis.executor-type</code></td>
+<td>执行器类型（等同 defaultExecutorType）</td>
+<td><code>SIMPLE</code></td>
+</tr>
+<tr>
+<td><code>mybatis.check-config-location</code></td>
+<td>是否检查配置文件是否存在</td>
+<td><code>true</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="a3-配置示例">A.3 配置示例</h3>
+<p><strong>mybatis-config.xml 方式：</strong></p>
+<pre><code class="language-xml">&lt;configuration&gt;
+    &lt;settings&gt;
+        &lt;setting name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+        &lt;setting name=&quot;lazyLoadingEnabled&quot; value=&quot;true&quot;/&gt;
+        &lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;
+        &lt;setting name=&quot;defaultExecutorType&quot; value=&quot;SIMPLE&quot;/&gt;
+        &lt;setting name=&quot;logImpl&quot; value=&quot;SLF4J&quot;/&gt;
+        &lt;setting name=&quot;localCacheScope&quot; value=&quot;SESSION&quot;/&gt;
+        &lt;setting name=&quot;jdbcTypeForNull&quot; value=&quot;NULL&quot;/&gt;
+        &lt;setting name=&quot;callSettersOnNulls&quot; value=&quot;true&quot;/&gt;
+    &lt;/settings&gt;
+&lt;/configuration&gt;
+</code></pre>
+<p><strong>Spring Boot application.yml 方式：</strong></p>
+<pre><code class="language-yaml">mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.example.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    lazy-loading-enabled: true
+    cache-enabled: true
+    default-executor-type: simple
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    local-cache-scope: session
+    jdbc-type-for-null: null
+    call-setters-on-nulls: true
+</code></pre>
+<hr />
+<h2 id="附录-bmybatis-plus-条件构造器方法速查">附录 B：MyBatis-Plus 条件构造器方法速查</h2>
+<blockquote>
+<p>以下所有方法均适用于 <code>QueryWrapper</code>、<code>LambdaQueryWrapper</code>、<code>UpdateWrapper</code>、<code>LambdaUpdateWrapper</code>（除特别注明外）。
+Lambda 写法将字符串列名替换为方法引用，如 <code>eq(&quot;name&quot;, &quot;张三&quot;)</code> → <code>eq(User::getName, &quot;张三&quot;)</code>。
+所有条件方法均支持 <code>condition</code> 前缀参数控制是否拼接：<code>eq(age != null, &quot;age&quot;, age)</code>。</p>
+</blockquote>
+<h3 id="b1-比较类">B.1 比较类</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>eq(column, val)</code></td>
+<td><code>column = val</code></td>
+<td><code>eq(&quot;name&quot;, &quot;张三&quot;)</code></td>
+<td>等于</td>
+</tr>
+<tr>
+<td><code>ne(column, val)</code></td>
+<td><code>column &lt;&gt; val</code></td>
+<td><code>ne(&quot;status&quot;, 0)</code></td>
+<td>不等于</td>
+</tr>
+<tr>
+<td><code>gt(column, val)</code></td>
+<td><code>column &gt; val</code></td>
+<td><code>gt(&quot;age&quot;, 18)</code></td>
+<td>大于</td>
+</tr>
+<tr>
+<td><code>ge(column, val)</code></td>
+<td><code>column &gt;= val</code></td>
+<td><code>ge(&quot;age&quot;, 18)</code></td>
+<td>大于等于</td>
+</tr>
+<tr>
+<td><code>lt(column, val)</code></td>
+<td><code>column &lt; val</code></td>
+<td><code>lt(&quot;price&quot;, 100)</code></td>
+<td>小于</td>
+</tr>
+<tr>
+<td><code>le(column, val)</code></td>
+<td><code>column &lt;= val</code></td>
+<td><code>le(&quot;price&quot;, 100)</code></td>
+<td>小于等于</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b2-模糊查询类">B.2 模糊查询类</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>like(column, val)</code></td>
+<td><code>column LIKE '%val%'</code></td>
+<td><code>like(&quot;name&quot;, &quot;张&quot;)</code></td>
+<td>两边模糊</td>
+</tr>
+<tr>
+<td><code>notLike(column, val)</code></td>
+<td><code>column NOT LIKE '%val%'</code></td>
+<td><code>notLike(&quot;name&quot;, &quot;测试&quot;)</code></td>
+<td>NOT LIKE 两边模糊</td>
+</tr>
+<tr>
+<td><code>likeLeft(column, val)</code></td>
+<td><code>column LIKE '%val'</code></td>
+<td><code>likeLeft(&quot;name&quot;, &quot;三&quot;)</code></td>
+<td>左模糊（以 val 结尾）</td>
+</tr>
+<tr>
+<td><code>likeRight(column, val)</code></td>
+<td><code>column LIKE 'val%'</code></td>
+<td><code>likeRight(&quot;name&quot;, &quot;张&quot;)</code></td>
+<td>右模糊（以 val 开头）</td>
+</tr>
+<tr>
+<td><code>notLikeLeft(column, val)</code></td>
+<td><code>column NOT LIKE '%val'</code></td>
+<td><code>notLikeLeft(&quot;name&quot;, &quot;三&quot;)</code></td>
+<td>NOT LIKE 左模糊</td>
+</tr>
+<tr>
+<td><code>notLikeRight(column, val)</code></td>
+<td><code>column NOT LIKE 'val%'</code></td>
+<td><code>notLikeRight(&quot;name&quot;, &quot;张&quot;)</code></td>
+<td>NOT LIKE 右模糊</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b3-范围类">B.3 范围类</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>between(column, val1, val2)</code></td>
+<td><code>column BETWEEN val1 AND val2</code></td>
+<td><code>between(&quot;age&quot;, 18, 30)</code></td>
+<td>闭区间范围</td>
+</tr>
+<tr>
+<td><code>notBetween(column, val1, val2)</code></td>
+<td><code>column NOT BETWEEN val1 AND val2</code></td>
+<td><code>notBetween(&quot;age&quot;, 18, 30)</code></td>
+<td>不在范围内</td>
+</tr>
+<tr>
+<td><code>in(column, collection)</code></td>
+<td><code>column IN (v1, v2, ...)</code></td>
+<td><code>in(&quot;id&quot;, Arrays.asList(1, 2, 3))</code></td>
+<td>IN 查询</td>
+</tr>
+<tr>
+<td><code>in(column, values...)</code></td>
+<td><code>column IN (v1, v2, ...)</code></td>
+<td><code>in(&quot;id&quot;, 1, 2, 3)</code></td>
+<td>IN 查询（可变参数）</td>
+</tr>
+<tr>
+<td><code>notIn(column, collection)</code></td>
+<td><code>column NOT IN (v1, v2, ...)</code></td>
+<td><code>notIn(&quot;status&quot;, Arrays.asList(0, -1))</code></td>
+<td>NOT IN 查询</td>
+</tr>
+<tr>
+<td><code>inSql(column, sqlValue)</code></td>
+<td><code>column IN (sql)</code></td>
+<td><code>inSql(&quot;id&quot;, &quot;SELECT id FROM t WHERE status = 1&quot;)</code></td>
+<td>IN 子查询</td>
+</tr>
+<tr>
+<td><code>notInSql(column, sqlValue)</code></td>
+<td><code>column NOT IN (sql)</code></td>
+<td><code>notInSql(&quot;id&quot;, &quot;SELECT id FROM t WHERE deleted = 1&quot;)</code></td>
+<td>NOT IN 子查询</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b4-空值判断类">B.4 空值判断类</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>isNull(column)</code></td>
+<td><code>column IS NULL</code></td>
+<td><code>isNull(&quot;email&quot;)</code></td>
+<td>字段为 NULL</td>
+</tr>
+<tr>
+<td><code>isNotNull(column)</code></td>
+<td><code>column IS NOT NULL</code></td>
+<td><code>isNotNull(&quot;phone&quot;)</code></td>
+<td>字段不为 NULL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b5-分组排序having">B.5 分组、排序、Having</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>groupBy(columns...)</code></td>
+<td><code>GROUP BY column1, column2</code></td>
+<td><code>groupBy(&quot;department&quot;, &quot;status&quot;)</code></td>
+<td>分组</td>
+</tr>
+<tr>
+<td><code>orderByAsc(columns...)</code></td>
+<td><code>ORDER BY column ASC</code></td>
+<td><code>orderByAsc(&quot;create_time&quot;)</code></td>
+<td>升序排序</td>
+</tr>
+<tr>
+<td><code>orderByDesc(columns...)</code></td>
+<td><code>ORDER BY column DESC</code></td>
+<td><code>orderByDesc(&quot;create_time&quot;)</code></td>
+<td>降序排序</td>
+</tr>
+<tr>
+<td><code>orderBy(condition, isAsc, columns...)</code></td>
+<td><code>ORDER BY column ASC/DESC</code></td>
+<td><code>orderBy(true, true, &quot;age&quot;)</code></td>
+<td>通用排序，isAsc 控制方向</td>
+</tr>
+<tr>
+<td><code>having(sqlHaving, params...)</code></td>
+<td><code>HAVING ...</code></td>
+<td><code>having(&quot;count(id) &gt; {0}&quot;, 10)</code></td>
+<td>HAVING 子句</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b6-拼接类">B.6 拼接类</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apply(sqlSegment, params...)</code></td>
+<td>直接拼接到 WHERE 后</td>
+<td><code>apply(&quot;date_format(create_time,'%Y-%m-%d') = {0}&quot;, &quot;2024-01-01&quot;)</code></td>
+<td>拼接自定义 SQL 片段，<code>{0}</code> 占位防注入</td>
+</tr>
+<tr>
+<td><code>last(lastSql)</code></td>
+<td>拼接到 SQL 末尾</td>
+<td><code>last(&quot;LIMIT 1&quot;)</code></td>
+<td><strong>慎用</strong>：无防注入保护，只能调用一次</td>
+</tr>
+<tr>
+<td><code>exists(existsSql)</code></td>
+<td><code>EXISTS (sql)</code></td>
+<td><code>exists(&quot;SELECT 1 FROM orders WHERE orders.user_id = users.id&quot;)</code></td>
+<td>EXISTS 子查询</td>
+</tr>
+<tr>
+<td><code>notExists(notExistsSql)</code></td>
+<td><code>NOT EXISTS (sql)</code></td>
+<td><code>notExists(&quot;SELECT 1 FROM blacklist WHERE blacklist.uid = users.id&quot;)</code></td>
+<td>NOT EXISTS 子查询</td>
+</tr>
+<tr>
+<td><code>comment(comment)</code></td>
+<td><code>/* comment */</code></td>
+<td><code>comment(&quot;查询活跃用户&quot;)</code></td>
+<td>在 SQL 头部添加注释</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b7-逻辑连接类">B.7 逻辑连接类</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>and(consumer)</code></td>
+<td><code>AND (...)</code></td>
+<td><code>and(w -&gt; w.eq(&quot;status&quot;, 1).ne(&quot;type&quot;, 0))</code></td>
+<td>AND 嵌套，consumer 内的条件被括号包裹</td>
+</tr>
+<tr>
+<td><code>or()</code></td>
+<td><code>OR</code></td>
+<td><code>eq(&quot;name&quot;, &quot;张三&quot;).or().eq(&quot;name&quot;, &quot;李四&quot;)</code></td>
+<td>下一个条件用 OR 连接（默认是 AND）</td>
+</tr>
+<tr>
+<td><code>or(consumer)</code></td>
+<td><code>OR (...)</code></td>
+<td><code>or(w -&gt; w.eq(&quot;role&quot;, &quot;admin&quot;).eq(&quot;level&quot;, 5))</code></td>
+<td>OR 嵌套，consumer 内的条件被括号包裹</td>
+</tr>
+<tr>
+<td><code>nested(consumer)</code></td>
+<td><code>(...)</code></td>
+<td><code>nested(w -&gt; w.eq(&quot;a&quot;, 1).ne(&quot;b&quot;, 2))</code></td>
+<td>纯嵌套，不带 AND/OR 前缀</td>
+</tr>
+<tr>
+<td><code>not(consumer)</code></td>
+<td><code>NOT (...)</code></td>
+<td><code>not(w -&gt; w.eq(&quot;status&quot;, 0))</code></td>
+<td>NOT 嵌套</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b8-字段选择仅-querywrapper">B.8 字段选择（仅 QueryWrapper）</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>select(columns...)</code></td>
+<td><code>SELECT column1, column2</code></td>
+<td><code>select(&quot;id&quot;, &quot;name&quot;, &quot;age&quot;)</code></td>
+<td>指定查询字段</td>
+</tr>
+<tr>
+<td><code>select(predicate)</code></td>
+<td><code>SELECT ...</code></td>
+<td><code>select(i -&gt; i.getProperty().startsWith(&quot;test&quot;))</code></td>
+<td>Lambda 过滤查询字段（仅 LambdaQueryWrapper）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b9-字段设置仅-updatewrapper">B.9 字段设置（仅 UpdateWrapper）</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>set(column, val)</code></td>
+<td><code>SET column = val</code></td>
+<td><code>set(&quot;name&quot;, &quot;新名字&quot;)</code></td>
+<td>设置更新字段值</td>
+</tr>
+<tr>
+<td><code>setSql(setSql)</code></td>
+<td><code>SET ...</code></td>
+<td><code>setSql(&quot;balance = balance - 100&quot;)</code></td>
+<td>拼接自定义 SET SQL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b10-综合使用示例">B.10 综合使用示例</h3>
+<p><strong>基础查询：</strong></p>
+<pre><code class="language-java">// 查询年龄 18~30 之间、名字包含&quot;张&quot;、按创建时间降序排列的用户
+List&lt;User&gt; users = userMapper.selectList(
+    new QueryWrapper&lt;User&gt;()
+        .between(&quot;age&quot;, 18, 30)
+        .like(&quot;name&quot;, &quot;张&quot;)
+        .orderByDesc(&quot;create_time&quot;)
+);
+</code></pre>
+<p><strong>Lambda 写法：</strong></p>
+<pre><code class="language-java">List&lt;User&gt; users = userMapper.selectList(
+    new LambdaQueryWrapper&lt;User&gt;()
+        .between(User::getAge, 18, 30)
+        .like(User::getName, &quot;张&quot;)
+        .orderByDesc(User::getCreateTime)
+);
+</code></pre>
+<p><strong>复杂 OR 嵌套条件：</strong></p>
+<pre><code class="language-java">// WHERE (status = 1 AND type = 'vip') OR (level &gt;= 10)
+List&lt;User&gt; users = userMapper.selectList(
+    new LambdaQueryWrapper&lt;User&gt;()
+        .and(w -&gt; w.eq(User::getStatus, 1).eq(User::getType, &quot;vip&quot;))
+        .or(w -&gt; w.ge(User::getLevel, 10))
+);
+</code></pre>
+<p><strong>条件动态拼接：</strong></p>
+<pre><code class="language-java">// 参数为 null 时自动跳过该条件
+LambdaQueryWrapper&lt;User&gt; wrapper = new LambdaQueryWrapper&lt;User&gt;()
+    .eq(StringUtils.isNotBlank(name), User::getName, name)
+    .ge(minAge != null, User::getAge, minAge)
+    .le(maxAge != null, User::getAge, maxAge);
+</code></pre>
+<p><strong>UpdateWrapper 更新指定字段：</strong></p>
+<pre><code class="language-java">userMapper.update(null,
+    new LambdaUpdateWrapper&lt;User&gt;()
+        .eq(User::getId, 1L)
+        .set(User::getName, &quot;新名字&quot;)
+        .set(User::getStatus, 1)
+);
+</code></pre>
+<hr />
+<h2 id="附录-c常见报错速查">附录 C：常见报错速查</h2>
+<h3 id="c1-编译期--启动期错误">C.1 编译期 / 启动期错误</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>错误信息关键字</th>
+<th>完整错误描述</th>
+<th>常见原因</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>Invalid bound statement (not found)</code></td>
+<td><code>org.apache.ibatis.binding.BindingException: Invalid bound statement (not found): com.example.mapper.UserMapper.selectById</code></td>
+<td>Mapper XML 的 namespace 与接口全限定名不一致；XML 未被扫描到；方法名不匹配</td>
+<td>检查 namespace 是否为接口全路径；检查 <code>mapper-locations</code> 配置；确认 XML 中 id 与接口方法名一致</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>Type interface ... is not known to the MapperRegistry</code></td>
+<td><code>org.apache.ibatis.binding.BindingException: Type interface com.example.mapper.UserMapper is not known to the MapperRegistry</code></td>
+<td>Mapper 接口未被注册到 MyBatis</td>
+<td>添加 <code>@MapperScan</code> 扫描包路径或在接口上加 <code>@Mapper</code> 注解</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>Could not find resource</code></td>
+<td><code>java.io.IOException: Could not find resource mapper/UserMapper.xml</code></td>
+<td>XML 文件路径配置错误或文件不存在</td>
+<td>检查 <code>mapper-locations</code> 路径；确认 XML 文件在 classpath 正确位置；Maven 项目检查 resources 目录</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>Ambiguous collection type for property</code></td>
+<td><code>org.apache.ibatis.builder.BuilderException: Ambiguous collection type for property 'xxx'</code></td>
+<td>resultMap 中 collection 的 ofType 未指定或无法推断泛型类型</td>
+<td>显式指定 <code>ofType</code> 属性</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>Error creating bean with name 'sqlSessionFactory'</code></td>
+<td><code>org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'sqlSessionFactory'</code></td>
+<td>MyBatis 配置错误（XML 语法错误、数据源未配置等）</td>
+<td>检查 XML 语法；确认数据源配置正确；查看完整堆栈中的 Caused by</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>No qualifying bean of type 'xxxMapper'</code></td>
+<td><code>org.springframework.beans.factory.NoSuchBeanDefinitionException</code></td>
+<td>Mapper 接口未被 Spring 管理</td>
+<td>确认 <code>@MapperScan</code> 包路径正确；接口上添加 <code>@Mapper</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>Error resolving class. Cause: ClassNotFoundException</code></td>
+<td><code>org.apache.ibatis.builder.BuilderException: Error resolving class</code></td>
+<td>typeAlias 或 resultType 指定的类名错误</td>
+<td>检查类的全限定名拼写；配置 <code>type-aliases-package</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="c2-运行期错误">C.2 运行期错误</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>错误信息关键字</th>
+<th>完整错误描述</th>
+<th>常见原因</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8</td>
+<td><code>TooManyResultsException</code></td>
+<td><code>org.apache.ibatis.exceptions.TooManyResultsException: Expected one result (or null) to be returned by selectOne(), but found: N</code></td>
+<td>查询返回多条记录但 Mapper 方法声明为返回单个对象</td>
+<td>确认 SQL 条件是否正确；改用 <code>List&lt;T&gt;</code> 返回类型；或在 SQL 中添加 <code>LIMIT 1</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>There is no getter for property named 'xxx'</code></td>
+<td><code>org.apache.ibatis.reflection.ReflectionException: There is no getter for property named 'xxx' in 'class ...'</code></td>
+<td><code>#{}</code> 中的属性名与参数对象的属性名不匹配</td>
+<td>检查拼写；多参数时使用 <code>@Param</code> 注解命名</td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>Parameter 'xxx' not found</code></td>
+<td><code>org.apache.ibatis.binding.BindingException: Parameter 'xxx' not found. Available parameters are [arg0, arg1, param1, param2]</code></td>
+<td>多参数方法未使用 <code>@Param</code> 注解</td>
+<td>为每个参数添加 <code>@Param(&quot;xxx&quot;)</code> 注解</td>
+</tr>
+<tr>
+<td>11</td>
+<td><code>Failed to execute DbCommand</code> / <code>BadSqlGrammarException</code></td>
+<td><code>org.springframework.jdbc.BadSqlGrammarException</code> 或数据库报 SQL 语法错误</td>
+<td>动态 SQL 拼接错误；XML 中特殊字符未转义；SQL 关键字冲突</td>
+<td>开启日志打印完整 SQL；用 <code>&lt;![CDATA[]]&gt;</code> 包裹特殊字符；给表/列名加反引号</td>
+</tr>
+<tr>
+<td>12</td>
+<td><code>Column 'xxx' not found</code></td>
+<td><code>java.sql.SQLException: Column 'xxx' not found</code></td>
+<td>resultMap 或 resultType 中引用了结果集中不存在的列名</td>
+<td>检查 SQL 的 SELECT 字段列表；确认 resultMap 中的 column 与查询列名一致</td>
+</tr>
+<tr>
+<td>13</td>
+<td><code>Null value was assigned to a property of primitive type</code></td>
+<td><code>org.apache.ibatis.executor.result.ResultMapException: Error attempting to get column 'xxx' from result set. Cause: ... Null value was assigned to a property of primitive type setter of ...</code></td>
+<td>数据库字段值为 NULL 但 Java 实体属性类型为基本类型（如 <code>int</code>、<code>long</code>）</td>
+<td>将实体属性改为包装类型（<code>Integer</code>、<code>Long</code>）</td>
+</tr>
+<tr>
+<td>14</td>
+<td><code>Error querying database. Cause: java.sql.SQLSyntaxErrorException</code></td>
+<td>SQL 语法异常，具体信息由数据库驱动返回</td>
+<td>SQL 写错；表名/列名不存在；使用了数据库不支持的语法</td>
+<td>开启日志查看完整 SQL 并在数据库客户端中执行调试</td>
+</tr>
+<tr>
+<td>15</td>
+<td><code>ClassCastException</code> (缓存相关)</td>
+<td><code>java.lang.ClassCastException: ... cannot be cast to ...</code></td>
+<td>二级缓存开启后，实体类未实现 <code>Serializable</code> 接口；或不同 ClassLoader 导致</td>
+<td>实体类实现 <code>Serializable</code>；检查热部署配置</td>
+</tr>
+<tr>
+<td>16</td>
+<td><code>The expression 'xxx' evaluated to a null value</code></td>
+<td>OGNL 表达式求值为 null，在 <code>&lt;foreach&gt;</code> 或 <code>&lt;if&gt;</code> 中出现</td>
+<td>传入的参数对象为 null 或属性路径不正确</td>
+<td>检查调用时参数非空；在 <code>&lt;if&gt;</code> 中先做 null 判断</td>
+</tr>
+<tr>
+<td>17</td>
+<td><code>IncompleteElementException</code></td>
+<td><code>org.apache.ibatis.builder.IncompleteElementException</code></td>
+<td>XML 中 <code>&lt;include refid=&quot;xxx&quot;&gt;</code> 引用了不存在的 SQL 片段；或 resultMap 相互引用形成循环</td>
+<td>检查 <code>refid</code> 是否拼写正确；确认被引用的 <code>&lt;sql&gt;</code> 片段存在</td>
+</tr>
+<tr>
+<td>18</td>
+<td><code>A query was run and no Result Maps were found</code></td>
+<td><code>org.apache.ibatis.executor.ExecutorException</code></td>
+<td><code>&lt;select&gt;</code> 标签未指定 <code>resultType</code> 或 <code>resultMap</code></td>
+<td>补充 <code>resultType</code> 或 <code>resultMap</code> 属性</td>
+</tr>
+</tbody>
+</table>
+<h3 id="c3-mybatis-plus-特有错误">C.3 MyBatis-Plus 特有错误</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>错误信息关键字</th>
+<th>完整错误描述</th>
+<th>常见原因</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>19</td>
+<td><code>Table 'xxx' doesn't exist</code> (MP 拼错表名)</td>
+<td>SQL 执行报表不存在</td>
+<td>实体类名与表名不匹配，且未使用 <code>@TableName</code> 注解</td>
+<td>在实体类上添加 <code>@TableName(&quot;实际表名&quot;)</code></td>
+</tr>
+<tr>
+<td>20</td>
+<td><code>Unknown column 'xxx' in 'field list'</code> (MP 拼错列名)</td>
+<td>SQL 执行报列不存在</td>
+<td>实体属性名与列名不匹配且未配置驼峰映射或 <code>@TableField</code></td>
+<td>检查 <code>map-underscore-to-camel-case</code> 配置；使用 <code>@TableField(&quot;实际列名&quot;)</code></td>
+</tr>
+<tr>
+<td>21</td>
+<td><code>Injection of autowired dependencies failed</code> (IService 相关)</td>
+<td>Spring 注入失败</td>
+<td>Service 实现类未继承 <code>ServiceImpl</code> 或未指定正确的泛型</td>
+<td>确认继承 <code>ServiceImpl&lt;XxxMapper, XxxEntity&gt;</code> 并实现对应 <code>IService</code></td>
+</tr>
+<tr>
+<td>22</td>
+<td><code>com.baomidou.mybatisplus.core.exceptions.MybatisPlusException: Failed to process, please exclude the tableName</code></td>
+<td>代码生成器报错</td>
+<td>代码生成器指定的表名在数据库中不存在</td>
+<td>检查表名拼写及数据库连接指向的数据库</td>
+</tr>
+<tr>
+<td>23</td>
+<td><code>Cause: Cannot find column type for ... in table ...</code></td>
+<td>数据权限或多租户插件报错</td>
+<td>插件配置的租户字段在某些表中不存在</td>
+<td>排除不需要租户过滤的表；确认字段存在</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="附录-d推荐学习资源">附录 D：推荐学习资源</h2>
+<h3 id="d1-官方文档">D.1 官方文档</h3>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>链接</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MyBatis 3 官方文档（中文）</td>
+<td>https://mybatis.org/mybatis-3/zh_CN/</td>
+<td>最权威的参考资料，配置、映射、动态 SQL 全覆盖</td>
+</tr>
+<tr>
+<td>MyBatis-Spring 文档</td>
+<td>https://mybatis.org/spring/zh_CN/</td>
+<td>Spring 整合 MyBatis 的官方指南</td>
+</tr>
+<tr>
+<td>MyBatis-Spring-Boot-Starter</td>
+<td>https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/</td>
+<td>Spring Boot 自动配置说明</td>
+</tr>
+<tr>
+<td>MyBatis-Plus 官方文档</td>
+<td>https://baomidou.com/</td>
+<td>MP 使用指南、API 文档、插件说明</td>
+</tr>
+<tr>
+<td>PageHelper 文档</td>
+<td>https://pagehelper.github.io/</td>
+<td>分页插件使用与配置</td>
+</tr>
+</tbody>
+</table>
+<h3 id="d2-优质教程与博客">D.2 优质教程与博客</h3>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>链接</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MyBatis-Plus 快速指南</td>
+<td>https://baomidou.com/guides/quick-start/</td>
+<td>官方入门教程，带完整示例</td>
+</tr>
+<tr>
+<td>MyBatis 源码分析系列</td>
+<td>https://github.com/tuguangquan/mybatis</td>
+<td>结合源码的深度分析</td>
+</tr>
+<tr>
+<td>美团技术团队 - 数据访问层实践</td>
+<td>https://tech.meituan.com/</td>
+<td>大厂在 MyBatis 上的工程实践总结</td>
+</tr>
+<tr>
+<td>廖雪峰 Java 教程 - JDBC 与 ORM</td>
+<td>https://www.liaoxuefeng.com/wiki/1252599548343744</td>
+<td>基础概念讲解清晰</td>
+</tr>
+</tbody>
+</table>
+<h3 id="d3-github-项目">D.3 GitHub 项目</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>链接</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MyBatis 3 源码</td>
+<td>https://github.com/mybatis/mybatis-3</td>
+<td>官方源码，学习框架原理的第一手资料</td>
+</tr>
+<tr>
+<td>MyBatis-Plus</td>
+<td>https://github.com/baomidou/mybatis-plus</td>
+<td>MP 源码与 Issue 讨论</td>
+</tr>
+<tr>
+<td>MyBatis-Spring</td>
+<td>https://github.com/mybatis/spring</td>
+<td>Spring 整合模块源码</td>
+</tr>
+<tr>
+<td>MyBatis Generator (MBG)</td>
+<td>https://github.com/mybatis/generator</td>
+<td>官方代码生成器</td>
+</tr>
+<tr>
+<td>PageHelper</td>
+<td>https://github.com/pagehelper/Mybatis-PageHelper</td>
+<td>最流行的 MyBatis 分页插件</td>
+</tr>
+<tr>
+<td>awesome-mybatis-plus</td>
+<td>https://github.com/baomidou/awesome-mybatis-plus</td>
+<td>MyBatis-Plus 优秀应用与插件合集</td>
+</tr>
+<tr>
+<td>MyBatis-Plus-Samples</td>
+<td>https://github.com/baomidou/mybatis-plus-samples</td>
+<td>官方示例代码，覆盖各种使用场景</td>
+</tr>
+</tbody>
+</table>
+<h3 id="d4-工具推荐">D.4 工具推荐</h3>
+<table>
+<thead>
+<tr>
+<th>工具名称</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MyBatis Log Plugin</strong> (IDEA 插件)</td>
+<td>开发调试</td>
+<td>将 MyBatis 输出的带 <code>?</code> 占位符的 SQL 还原为完整可执行 SQL，极大提升调试效率</td>
+</tr>
+<tr>
+<td><strong>MyBatisX</strong> (IDEA 插件)</td>
+<td>开发效率</td>
+<td>JetBrains 官方推荐的 MyBatis 插件，支持 Mapper 接口与 XML 之间跳转、代码生成、SQL 提示</td>
+</tr>
+<tr>
+<td><strong>Free MyBatis Tool</strong> (IDEA 插件)</td>
+<td>开发效率</td>
+<td>免费的 Mapper 接口与 XML 互相跳转插件，轻量实用</td>
+</tr>
+<tr>
+<td><strong>MyBatis Generator (MBG)</strong></td>
+<td>代码生成</td>
+<td>官方代码生成器，根据数据库表自动生成实体类、Mapper 接口、XML 文件</td>
+</tr>
+<tr>
+<td><strong>MyBatis-Plus Generator</strong></td>
+<td>代码生成</td>
+<td>MP 自带的代码生成器，支持自定义模板，生成 Entity/Mapper/Service/Controller 全套代码</td>
+</tr>
+<tr>
+<td><strong>p6spy</strong></td>
+<td>SQL 监控</td>
+<td>JDBC 代理驱动，记录完整 SQL 及执行耗时，适合开发和测试环境使用</td>
+</tr>
+<tr>
+<td><strong>Druid</strong></td>
+<td>连接池/监控</td>
+<td>阿里巴巴开源的数据库连接池，内置 SQL 监控、慢查询统计、防 SQL 注入等功能</td>
+</tr>
+<tr>
+<td><strong>DBeaver / DataGrip</strong></td>
+<td>数据库客户端</td>
+<td>免费/商业的数据库管理工具，方便执行和调试 SQL</td>
+</tr>
+<tr>
+<td><strong>Arthas</strong></td>
+<td>JVM 诊断</td>
+<td>阿里开源的 Java 诊断工具，可在线上环境动态查看 MyBatis 生成的 SQL 和执行情况</td>
+</tr>
+</tbody>
+</table>
+<h3 id="d5-常用-maven-依赖速查">D.5 常用 Maven 依赖速查</h3>
+<pre><code class="language-xml">&lt;!-- MyBatis 核心 --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+    &lt;version&gt;3.5.16&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- MyBatis Spring Boot Starter --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;3.0.3&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- MyBatis-Plus Spring Boot 3 Starter --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.baomidou&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-plus-spring-boot3-starter&lt;/artifactId&gt;
+    &lt;version&gt;3.5.7&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- MyBatis-Plus Spring Boot 2 Starter --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.baomidou&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-plus-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;3.5.7&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- PageHelper Spring Boot Starter --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.github.pagehelper&lt;/groupId&gt;
+    &lt;artifactId&gt;pagehelper-spring-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;2.1.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- MyBatis Generator --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis.generator&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-generator-core&lt;/artifactId&gt;
+    &lt;version&gt;1.4.2&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- p6spy SQL 监控 --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;p6spy&lt;/groupId&gt;
+    &lt;artifactId&gt;p6spy&lt;/artifactId&gt;
+    &lt;version&gt;3.9.1&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<blockquote>
+<p><strong>版本提示：</strong> 以上版本号为编写时的推荐版本，实际使用时请到 <a href="https://search.maven.org/">Maven Central</a> 查询最新稳定版。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2761 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第十一章-mybatis-plus-增强框架-">第十一章 MyBatis-Plus 增强框架 ⭐</h1>
+<blockquote>
+<p>MyBatis-Plus（简称 MP）是 MyBatis 的增强工具，在 MyBatis 的基础上<strong>只做增强不做改变</strong>，为简化开发、提高效率而生。它已成为国内 Java 项目中使用 MyBatis 的事实标准，几乎所有新项目都会直接引入 MP 而非裸用 MyBatis。本章将系统讲解 MyBatis-Plus 的核心功能。</p>
+</blockquote>
+<hr />
+<h2 id="111-快速上手">11.1 快速上手</h2>
+<h3 id="1111-依赖引入与自动配置">11.1.1 依赖引入与自动配置</h3>
+<p>MyBatis-Plus 提供了 Spring Boot Starter，引入后会自动配置 <code>SqlSessionFactory</code>、<code>MapperScannerConfigurer</code> 等组件，<strong>无需再单独引入 MyBatis 的 Starter</strong>。</p>
+<h4 id="maven-依赖">Maven 依赖</h4>
+<pre><code class="language-xml">&lt;dependencies&gt;
+    &lt;!-- MyBatis-Plus Spring Boot Starter（已包含 MyBatis + MyBatis-Spring） --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.baomidou&lt;/groupId&gt;
+        &lt;artifactId&gt;mybatis-plus-spring-boot3-starter&lt;/artifactId&gt;
+        &lt;version&gt;3.5.7&lt;/version&gt;
+    &lt;/dependency&gt;
+
+    &lt;!-- 如果是 Spring Boot 2.x 项目，使用以下依赖 --&gt;
+    &lt;!--
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.baomidou&lt;/groupId&gt;
+        &lt;artifactId&gt;mybatis-plus-boot-starter&lt;/artifactId&gt;
+        &lt;version&gt;3.5.7&lt;/version&gt;
+    &lt;/dependency&gt;
+    --&gt;
+
+    &lt;!-- 数据库驱动（以 MySQL 为例） --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+        &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+        &lt;scope&gt;runtime&lt;/scope&gt;
+    &lt;/dependency&gt;
+
+    &lt;!-- 连接池（Spring Boot 默认 HikariCP，通常无需额外引入） --&gt;
+
+    &lt;!-- Lombok（可选，但强烈推荐） --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+        &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+        &lt;optional&gt;true&lt;/optional&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：引入 <code>mybatis-plus-spring-boot3-starter</code> 后<strong>不要再引入</strong> <code>mybatis-spring-boot-starter</code>，否则会产生版本冲突。MP 的 Starter 已经包含了 MyBatis 的所有依赖。</p>
+</blockquote>
+<h4 id="applicationyml-配置">application.yml 配置</h4>
+<pre><code class="language-yaml">spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mybatis_demo?useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+
+mybatis-plus:
+  # Mapper XML 文件位置（默认值就是 classpath*:/mapper/**/*.xml）
+  mapper-locations: classpath*:/mapper/**/*.xml
+  # 实体类别名包扫描
+  type-aliases-package: com.example.entity
+  configuration:
+    # 开启驼峰命名自动映射（默认已开启）
+    map-underscore-to-camel-case: true
+    # 日志实现（开发环境建议开启，可以看到完整 SQL）
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      # 全局主键策略（默认 ASSIGN_ID，即雪花算法）
+      id-type: assign_id
+      # 全局逻辑删除字段名
+      logic-delete-field: deleted
+      # 逻辑删除值
+      logic-delete-value: 1
+      # 逻辑未删除值
+      logic-not-delete-value: 0
+      # 全局表名前缀
+      # table-prefix: t_
+</code></pre>
+<h4 id="启动类配置">启动类配置</h4>
+<pre><code class="language-java">@SpringBootApplication
+@MapperScan(&quot;com.example.mapper&quot;)  // 扫描 Mapper 接口包
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+</code></pre>
+<h4 id="实体类与-mapper-接口">实体类与 Mapper 接口</h4>
+<p>假设数据库中有一张 <code>user</code> 表：</p>
+<pre><code class="language-sql">CREATE TABLE user (
+    id       BIGINT       NOT NULL AUTO_INCREMENT,
+    name     VARCHAR(50)  NOT NULL,
+    age      INT          NULL,
+    email    VARCHAR(100) NULL,
+    deleted  TINYINT      NOT NULL DEFAULT 0,
+    create_time DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+</code></pre>
+<pre><code class="language-java">@Data
+@TableName(&quot;user&quot;)
+public class User {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private String name;
+    private Integer age;
+    private String email;
+    @TableLogic
+    private Integer deleted;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
+}
+</code></pre>
+<pre><code class="language-java">public interface UserMapper extends BaseMapper&lt;User&gt; {
+    // 无需编写任何方法，继承 BaseMapper 即可获得完整的 CRUD 能力
+}
+</code></pre>
+<p>到这里，一个完整的 MyBatis-Plus 项目就搭建完成了。你已经可以对 <code>user</code> 表执行增删改查操作，<strong>无需编写任何 XML 或 SQL 语句</strong>。</p>
+<hr />
+<h3 id="1112-basemapper--内置-crud-方法一览">11.1.2 BaseMapper —— 内置 CRUD 方法一览</h3>
+<p><code>BaseMapper&lt;T&gt;</code> 是 MyBatis-Plus 提供的通用 Mapper 接口，所有自定义 Mapper 只需继承它，即可获得以下内置方法：</p>
+<h4 id="插入">插入</h4>
+<table>
+<thead>
+<tr>
+<th>方法签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int insert(T entity)</code></td>
+<td>插入一条记录，null 字段不会出现在 SQL 中（字段策略）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="删除">删除</h4>
+<table>
+<thead>
+<tr>
+<th>方法签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int deleteById(Serializable id)</code></td>
+<td>根据主键删除</td>
+</tr>
+<tr>
+<td><code>int deleteById(T entity)</code></td>
+<td>根据实体主键删除（3.5.0+）</td>
+</tr>
+<tr>
+<td><code>int deleteBatchIds(Collection&lt;?&gt; idList)</code></td>
+<td>根据主键批量删除</td>
+</tr>
+<tr>
+<td><code>int deleteByMap(Map&lt;String, Object&gt; columnMap)</code></td>
+<td>根据 columnMap 条件删除（key 为列名）</td>
+</tr>
+<tr>
+<td><code>int delete(Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>根据条件构造器删除</td>
+</tr>
+</tbody>
+</table>
+<h4 id="更新">更新</h4>
+<table>
+<thead>
+<tr>
+<th>方法签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int updateById(T entity)</code></td>
+<td>根据主键更新，null 字段不更新</td>
+</tr>
+<tr>
+<td><code>int update(T entity, Wrapper&lt;T&gt; updateWrapper)</code></td>
+<td>根据条件构造器更新</td>
+</tr>
+<tr>
+<td><code>int update(Wrapper&lt;T&gt; updateWrapper)</code></td>
+<td>根据 UpdateWrapper 更新（可用 set 方法指定更新字段）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="查询">查询</h4>
+<table>
+<thead>
+<tr>
+<th>方法签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>T selectById(Serializable id)</code></td>
+<td>根据主键查询</td>
+</tr>
+<tr>
+<td><code>List&lt;T&gt; selectBatchIds(Collection&lt;?&gt; idList)</code></td>
+<td>根据主键批量查询</td>
+</tr>
+<tr>
+<td><code>List&lt;T&gt; selectByMap(Map&lt;String, Object&gt; columnMap)</code></td>
+<td>根据 columnMap 条件查询</td>
+</tr>
+<tr>
+<td><code>T selectOne(Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>根据条件查询一条记录（结果多条会抛异常）</td>
+</tr>
+<tr>
+<td><code>T selectOne(Wrapper&lt;T&gt; queryWrapper, boolean throwEx)</code></td>
+<td>同上，throwEx=false 时多条结果取第一条</td>
+</tr>
+<tr>
+<td><code>Long selectCount(Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>根据条件查询总记录数</td>
+</tr>
+<tr>
+<td><code>List&lt;T&gt; selectList(Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>根据条件查询列表</td>
+</tr>
+<tr>
+<td><code>List&lt;Map&lt;String, Object&gt;&gt; selectMaps(Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>查询结果封装为 <code>Map</code> 列表（适合部分字段查询）</td>
+</tr>
+<tr>
+<td><code>List&lt;Object&gt; selectObjs(Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>查询结果只返回第一列的值</td>
+</tr>
+<tr>
+<td><code>&lt;P extends IPage&lt;T&gt;&gt; P selectPage(P page, Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>分页查询</td>
+</tr>
+<tr>
+<td><code>&lt;P extends IPage&lt;Map&lt;String, Object&gt;&gt;&gt; P selectMapsPage(P page, Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>分页查询，结果封装为 Map</td>
+</tr>
+<tr>
+<td><code>boolean exists(Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>判断是否存在满足条件的记录（3.5.3.2+）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="使用示例">使用示例</h4>
+<pre><code class="language-java">@SpringBootTest
+class UserMapperTest {
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Test
+    void testInsert() {
+        User user = new User();
+        user.setName(&quot;张三&quot;);
+        user.setAge(25);
+        user.setEmail(&quot;zhangsan@example.com&quot;);
+        int rows = userMapper.insert(user);
+        // 插入后主键会自动回填到 user.id
+        System.out.println(&quot;影响行数: &quot; + rows);
+        System.out.println(&quot;回填主键: &quot; + user.getId());
+    }
+
+    @Test
+    void testSelectById() {
+        User user = userMapper.selectById(1L);
+        System.out.println(user);
+    }
+
+    @Test
+    void testSelectBatchIds() {
+        List&lt;User&gt; users = userMapper.selectBatchIds(Arrays.asList(1L, 2L, 3L));
+        users.forEach(System.out::println);
+    }
+
+    @Test
+    void testSelectByMap() {
+        Map&lt;String, Object&gt; columnMap = new HashMap&lt;&gt;();
+        columnMap.put(&quot;name&quot;, &quot;张三&quot;);
+        columnMap.put(&quot;age&quot;, 25);
+        List&lt;User&gt; users = userMapper.selectByMap(columnMap);
+        users.forEach(System.out::println);
+    }
+
+    @Test
+    void testUpdateById() {
+        User user = new User();
+        user.setId(1L);
+        user.setName(&quot;张三（已更新）&quot;);
+        int rows = userMapper.updateById(user);
+        System.out.println(&quot;影响行数: &quot; + rows);
+    }
+
+    @Test
+    void testDeleteById() {
+        int rows = userMapper.deleteById(1L);
+        System.out.println(&quot;影响行数: &quot; + rows);
+    }
+}
+</code></pre>
+<hr />
+<h3 id="1113-iservice--serviceimpl--服务层封装">11.1.3 IService / ServiceImpl —— 服务层封装</h3>
+<p>MyBatis-Plus 还提供了通用 Service 层接口 <code>IService&lt;T&gt;</code> 及其实现类 <code>ServiceImpl&lt;M extends BaseMapper&lt;T&gt;, T&gt;</code>，在 BaseMapper 基础上进一步封装了<strong>批量操作</strong>和<strong>链式调用</strong>等便利方法。</p>
+<h4 id="定义-service">定义 Service</h4>
+<pre><code class="language-java">public interface UserService extends IService&lt;User&gt; {
+    // 可在此定义业务方法
+}
+</code></pre>
+<pre><code class="language-java">@Service
+public class UserServiceImpl extends ServiceImpl&lt;UserMapper, User&gt; implements UserService {
+    // 自动注入 UserMapper，无需手动 @Autowired
+    // 可通过 this.baseMapper 或 getBaseMapper() 访问
+}
+</code></pre>
+<h4 id="iservice-常用方法">IService 常用方法</h4>
+<p><strong>保存</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>boolean save(T entity)</code></td>
+<td>插入一条记录</td>
+</tr>
+<tr>
+<td><code>boolean saveBatch(Collection&lt;T&gt; entityList)</code></td>
+<td>批量插入（默认 1000 条一批）</td>
+</tr>
+<tr>
+<td><code>boolean saveBatch(Collection&lt;T&gt; entityList, int batchSize)</code></td>
+<td>批量插入，自定义批次大小</td>
+</tr>
+<tr>
+<td><code>boolean saveOrUpdate(T entity)</code></td>
+<td>主键有值则更新，否则插入</td>
+</tr>
+<tr>
+<td><code>boolean saveOrUpdateBatch(Collection&lt;T&gt; entityList)</code></td>
+<td>批量 saveOrUpdate</td>
+</tr>
+</tbody>
+</table>
+<p><strong>删除</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>boolean removeById(Serializable id)</code></td>
+<td>根据主键删除</td>
+</tr>
+<tr>
+<td><code>boolean removeBatchByIds(Collection&lt;?&gt; idList)</code></td>
+<td>批量删除</td>
+</tr>
+<tr>
+<td><code>boolean removeByMap(Map&lt;String, Object&gt; columnMap)</code></td>
+<td>根据列值条件删除</td>
+</tr>
+<tr>
+<td><code>boolean remove(Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>根据条件构造器删除</td>
+</tr>
+</tbody>
+</table>
+<p><strong>更新</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>boolean updateById(T entity)</code></td>
+<td>根据主键更新</td>
+</tr>
+<tr>
+<td><code>boolean updateBatchById(Collection&lt;T&gt; entityList)</code></td>
+<td>批量更新</td>
+</tr>
+<tr>
+<td><code>boolean update(Wrapper&lt;T&gt; updateWrapper)</code></td>
+<td>根据条件构造器更新</td>
+</tr>
+<tr>
+<td><code>boolean update(T entity, Wrapper&lt;T&gt; updateWrapper)</code></td>
+<td>entity 提供 SET 值，wrapper 提供 WHERE</td>
+</tr>
+</tbody>
+</table>
+<p><strong>查询</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>T getById(Serializable id)</code></td>
+<td>根据主键查询</td>
+</tr>
+<tr>
+<td><code>T getOne(Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>根据条件查询一条（多条会抛异常）</td>
+</tr>
+<tr>
+<td><code>T getOne(Wrapper&lt;T&gt; queryWrapper, boolean throwEx)</code></td>
+<td>同上，throwEx=false 取第一条</td>
+</tr>
+<tr>
+<td><code>List&lt;T&gt; list()</code></td>
+<td>查询全部</td>
+</tr>
+<tr>
+<td><code>List&lt;T&gt; list(Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>条件查询列表</td>
+</tr>
+<tr>
+<td><code>List&lt;T&gt; listByIds(Collection&lt;?&gt; idList)</code></td>
+<td>根据主键批量查询</td>
+</tr>
+<tr>
+<td><code>long count()</code></td>
+<td>查询总记录数</td>
+</tr>
+<tr>
+<td><code>long count(Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>条件查询记录数</td>
+</tr>
+<tr>
+<td><code>&lt;E extends IPage&lt;T&gt;&gt; E page(E page)</code></td>
+<td>无条件分页查询</td>
+</tr>
+<tr>
+<td><code>&lt;E extends IPage&lt;T&gt;&gt; E page(E page, Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>条件分页查询</td>
+</tr>
+<tr>
+<td><code>List&lt;Map&lt;String, Object&gt;&gt; listMaps(Wrapper&lt;T&gt; queryWrapper)</code></td>
+<td>查询结果封装为 Map</td>
+</tr>
+</tbody>
+</table>
+<p><strong>链式调用</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法签名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QueryChainWrapper&lt;T&gt; query()</code></td>
+<td>链式查询</td>
+</tr>
+<tr>
+<td><code>LambdaQueryChainWrapper&lt;T&gt; lambdaQuery()</code></td>
+<td>Lambda 链式查询</td>
+</tr>
+<tr>
+<td><code>UpdateChainWrapper&lt;T&gt; update()</code></td>
+<td>链式更新</td>
+</tr>
+<tr>
+<td><code>LambdaUpdateChainWrapper&lt;T&gt; lambdaUpdate()</code></td>
+<td>Lambda 链式更新</td>
+</tr>
+</tbody>
+</table>
+<h4 id="链式调用示例">链式调用示例</h4>
+<pre><code class="language-java">@Service
+public class UserServiceImpl extends ServiceImpl&lt;UserMapper, User&gt; implements UserService {
+
+    public List&lt;User&gt; findActiveAdults() {
+        // 链式 Lambda 查询 —— 极其简洁
+        return lambdaQuery()
+                .ge(User::getAge, 18)
+                .eq(User::getDeleted, 0)
+                .orderByDesc(User::getCreateTime)
+                .list();
+    }
+
+    public boolean deactivateUser(Long userId) {
+        // 链式 Lambda 更新
+        return lambdaUpdate()
+                .eq(User::getId, userId)
+                .set(User::getDeleted, 1)
+                .update();
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>IService vs BaseMapper 如何选择？</strong></p>
+<ul>
+<li>简单 CRUD → 直接在 Controller 或其他地方注入 Mapper 调用 BaseMapper 方法即可</li>
+<li>需要批量操作、事务控制、复杂业务逻辑 → 使用 IService / ServiceImpl</li>
+<li>实际项目中推荐统一使用 Service 层，保持分层清晰</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="112-注解体系">11.2 注解体系</h2>
+<p>MyBatis-Plus 通过一套简洁的注解，实现实体类与数据库表之间的映射。这比原生 MyBatis 的 <code>resultMap</code> 配置要简单得多。</p>
+<h3 id="1121-tablename--表名映射">11.2.1 @TableName —— 表名映射</h3>
+<p>当实体类名与数据库表名不一致时，使用 <code>@TableName</code> 指定表名。</p>
+<pre><code class="language-java">@Data
+@TableName(&quot;sys_user&quot;)  // 映射到 sys_user 表
+public class User {
+    private Long id;
+    private String name;
+    private Integer age;
+}
+</code></pre>
+<p><strong>常用属性：</strong></p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>value</code></td>
+<td>String</td>
+<td><code>&quot;&quot;</code></td>
+<td>表名</td>
+</tr>
+<tr>
+<td><code>schema</code></td>
+<td>String</td>
+<td><code>&quot;&quot;</code></td>
+<td>schema</td>
+</tr>
+<tr>
+<td><code>resultMap</code></td>
+<td>String</td>
+<td><code>&quot;&quot;</code></td>
+<td>XML 中 resultMap 的 id（复杂映射时使用）</td>
+</tr>
+<tr>
+<td><code>autoResultMap</code></td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>是否自动构建 resultMap（含 typeHandler 时需开启）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>如果表名有统一前缀</strong>（如 <code>t_user</code>、<code>t_order</code>），可以在 <code>application.yml</code> 中设置 <code>mybatis-plus.global-config.db-config.table-prefix: t_</code>，这样就不需要每个实体都写 <code>@TableName</code> 了。</p>
+</blockquote>
+<hr />
+<h3 id="1122-tableid--主键策略">11.2.2 @TableId —— 主键策略</h3>
+<p><code>@TableId</code> 用于标识主键字段，并指定主键生成策略。</p>
+<pre><code class="language-java">@Data
+@TableName(&quot;user&quot;)
+public class User {
+    @TableId(value = &quot;id&quot;, type = IdType.AUTO)
+    private Long id;
+    // ...
+}
+</code></pre>
+<p><strong>主键策略一览：</strong></p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>枚举值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AUTO</code></td>
+<td><code>IdType.AUTO</code></td>
+<td>数据库自增，MP 不参与主键生成，依赖数据库 <code>AUTO_INCREMENT</code></td>
+</tr>
+<tr>
+<td><code>ASSIGN_ID</code></td>
+<td><code>IdType.ASSIGN_ID</code></td>
+<td><strong>默认策略</strong>，MP 自动分配 ID（雪花算法），适用于 <code>Long</code> / <code>String</code></td>
+</tr>
+<tr>
+<td><code>ASSIGN_UUID</code></td>
+<td><code>IdType.ASSIGN_UUID</code></td>
+<td>分配 UUID（去掉横线的 32 位字符串），适用于 <code>String</code></td>
+</tr>
+<tr>
+<td><code>INPUT</code></td>
+<td><code>IdType.INPUT</code></td>
+<td>手动输入，MP 不参与，需要在 insert 前自行设置主键值</td>
+</tr>
+<tr>
+<td><code>NONE</code></td>
+<td><code>IdType.NONE</code></td>
+<td>无策略，等同于 INPUT</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-java">// 数据库自增
+@TableId(type = IdType.AUTO)
+private Long id;
+
+// 雪花算法（默认，推荐用于分布式系统）
+@TableId(type = IdType.ASSIGN_ID)
+private Long id;
+
+// UUID
+@TableId(type = IdType.ASSIGN_UUID)
+private String id;
+
+// 手动输入
+@TableId(type = IdType.INPUT)
+private Long id;
+</code></pre>
+<blockquote>
+<p><strong>生产建议</strong>：分布式系统推荐使用 <code>ASSIGN_ID</code>（雪花算法），生成的 ID 是趋势递增的 Long 型，既保证全局唯一，又对数据库索引友好。单机小项目用 <code>AUTO</code> 即可。</p>
+</blockquote>
+<hr />
+<h3 id="1123-tablefield--字段映射">11.2.3 @TableField —— 字段映射</h3>
+<p><code>@TableField</code> 用于标注非主键字段，处理字段名不一致、字段排除、自动填充等场景。</p>
+<h4 id="基础映射--字段名不一致">基础映射 —— 字段名不一致</h4>
+<pre><code class="language-java">@Data
+@TableName(&quot;user&quot;)
+public class User {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+
+    @TableField(&quot;user_name&quot;)  // 数据库字段名为 user_name，Java 属性名为 name
+    private String name;
+
+    private Integer age;
+}
+</code></pre>
+<h4 id="exist--排除非数据库字段">exist —— 排除非数据库字段</h4>
+<pre><code class="language-java">@Data
+@TableName(&quot;user&quot;)
+public class User {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private String name;
+
+    @TableField(exist = false)  // 该字段在数据库中不存在，查询和插入时忽略
+    private String remark;
+}
+</code></pre>
+<h4 id="fill--自动填充策略配合-metaobjecthandler见-116">fill —— 自动填充策略（配合 MetaObjectHandler，见 11.6）</h4>
+<pre><code class="language-java">@Data
+@TableName(&quot;user&quot;)
+public class User {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private String name;
+
+    @TableField(fill = FieldFill.INSERT)          // 插入时自动填充
+    private LocalDateTime createTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)   // 插入和更新时自动填充
+    private LocalDateTime updateTime;
+}
+</code></pre>
+<p><code>FieldFill</code> 枚举值：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT</code></td>
+<td>不自动填充（默认）</td>
+</tr>
+<tr>
+<td><code>INSERT</code></td>
+<td>插入时填充</td>
+</tr>
+<tr>
+<td><code>UPDATE</code></td>
+<td>更新时填充</td>
+</tr>
+<tr>
+<td><code>INSERT_UPDATE</code></td>
+<td>插入和更新时都填充</td>
+</tr>
+</tbody>
+</table>
+<h4 id="typehandler--指定类型处理器">typeHandler —— 指定类型处理器</h4>
+<pre><code class="language-java">@Data
+@TableName(value = &quot;user&quot;, autoResultMap = true)  // 必须开启 autoResultMap
+public class User {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+
+    // 数据库 JSON 字段 ↔ Java 对象
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private Map&lt;String, Object&gt; extraInfo;
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：使用 <code>typeHandler</code> 时，必须在 <code>@TableName</code> 中设置 <code>autoResultMap = true</code>，否则查询时 typeHandler 不生效。</p>
+</blockquote>
+<h4 id="condition--控制默认条件生成方式">condition —— 控制默认条件生成方式</h4>
+<pre><code class="language-java">@TableField(condition = SqlCondition.LIKE)  // 当此字段作为查询条件时，默认使用 LIKE
+private String name;
+</code></pre>
+<hr />
+<h3 id="1124-tablelogic--逻辑删除">11.2.4 @TableLogic —— 逻辑删除</h3>
+<p>逻辑删除不会真正删除数据库记录，而是通过标记字段（如 <code>deleted</code>）来表示已删除。MP 会自动在所有查询中追加 <code>WHERE deleted = 0</code> 条件，在删除操作中将 <code>DELETE</code> 改为 <code>UPDATE</code>。</p>
+<pre><code class="language-java">@Data
+@TableName(&quot;user&quot;)
+public class User {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private String name;
+
+    @TableLogic  // 标记逻辑删除字段
+    private Integer deleted;  // 0-未删除 1-已删除
+}
+</code></pre>
+<p>配置全局逻辑删除（推荐在 <code>application.yml</code> 中统一配置，这样不需要每个实体都加 <code>@TableLogic</code>）：</p>
+<pre><code class="language-yaml">mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+</code></pre>
+<p><strong>逻辑删除的效果：</strong></p>
+<pre><code class="language-java">// 调用 deleteById
+userMapper.deleteById(1L);
+// 实际执行的 SQL: UPDATE user SET deleted = 1 WHERE id = 1 AND deleted = 0
+
+// 调用 selectList
+userMapper.selectList(null);
+// 实际执行的 SQL: SELECT * FROM user WHERE deleted = 0
+
+// 调用 updateById
+userMapper.updateById(user);
+// 实际执行的 SQL: UPDATE user SET name = '...' WHERE id = 1 AND deleted = 0
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：逻辑删除只对 MP 自动生成的 SQL 生效。如果你在 XML 中手写 SQL，需要自行添加 <code>WHERE deleted = 0</code> 条件。</p>
+</blockquote>
+<hr />
+<h3 id="1125-version--乐观锁">11.2.5 @Version —— 乐观锁</h3>
+<p>乐观锁通过版本号机制防止并发更新冲突：更新时检查版本号是否一致，不一致则更新失败。</p>
+<h4 id="第-1-步配置乐观锁插件">第 1 步：配置乐观锁插件</h4>
+<pre><code class="language-java">@Configuration
+public class MybatisPlusConfig {
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
+        return interceptor;
+    }
+}
+</code></pre>
+<h4 id="第-2-步实体类添加-version">第 2 步：实体类添加 @Version</h4>
+<pre><code class="language-java">@Data
+@TableName(&quot;product&quot;)
+public class Product {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private String name;
+    private Integer price;
+
+    @Version  // 乐观锁版本号字段
+    private Integer version;
+}
+</code></pre>
+<h4 id="第-3-步使用">第 3 步：使用</h4>
+<pre><code class="language-java">// 先查询获取当前版本号
+Product product = productMapper.selectById(1L);
+// product.version = 1
+
+product.setPrice(200);
+int rows = productMapper.updateById(product);
+// 实际执行的 SQL:
+// UPDATE product SET name='...', price=200, version=2
+// WHERE id=1 AND version=1
+//                 ^^^^^^^^^^^ 乐观锁条件
+
+if (rows == 0) {
+    // 更新失败，说明数据已被其他线程修改，需要重试或提示用户
+    System.out.println(&quot;更新失败，数据已被修改&quot;);
+}
+</code></pre>
+<blockquote>
+<p><strong>支持的类型</strong>：<code>int</code>、<code>Integer</code>、<code>long</code>、<code>Long</code>、<code>Date</code>、<code>Timestamp</code>、<code>LocalDateTime</code>。整数类型每次更新自动 +1，时间类型自动更新为当前时间。</p>
+</blockquote>
+<hr />
+<h3 id="1126-enumvalue--枚举映射">11.2.6 @EnumValue —— 枚举映射</h3>
+<p>在 MP 中，枚举类型可以直接映射到数据库字段，通过 <code>@EnumValue</code> 标注枚举中与数据库存储值对应的属性。</p>
+<h4 id="定义枚举">定义枚举</h4>
+<pre><code class="language-java">@Getter
+public enum GenderEnum {
+    MALE(1, &quot;男&quot;),
+    FEMALE(2, &quot;女&quot;);
+
+    @EnumValue  // 标记数据库存储的值
+    private final int code;
+
+    private final String desc;
+
+    GenderEnum(int code, String desc) {
+        this.code = code;
+        this.desc = desc;
+    }
+}
+</code></pre>
+<h4 id="实体类中使用">实体类中使用</h4>
+<pre><code class="language-java">@Data
+@TableName(&quot;user&quot;)
+public class User {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private String name;
+    private GenderEnum gender;  // 直接使用枚举类型
+}
+</code></pre>
+<h4 id="配置枚举包扫描">配置枚举包扫描</h4>
+<pre><code class="language-yaml">mybatis-plus:
+  type-enums-package: com.example.enums
+</code></pre>
+<p>使用时 MP 会自动将 <code>GenderEnum.MALE</code> 存为 <code>1</code>，查询时将 <code>1</code> 映射回 <code>GenderEnum.MALE</code>。</p>
+<pre><code class="language-java">User user = new User();
+user.setName(&quot;张三&quot;);
+user.setGender(GenderEnum.MALE);  // 存储值为 1
+userMapper.insert(user);
+// SQL: INSERT INTO user (name, gender) VALUES ('张三', 1)
+
+User result = userMapper.selectById(1L);
+System.out.println(result.getGender());  // 输出: MALE
+System.out.println(result.getGender().getDesc());  // 输出: 男
+</code></pre>
+<blockquote>
+<p><strong>替代方案</strong>：也可以让枚举实现 <code>IEnum&lt;T&gt;</code> 接口，效果相同。选择 <code>@EnumValue</code> 注解方式更简洁，推荐优先使用。</p>
+</blockquote>
+<hr />
+<h2 id="113-条件构造器-核心">11.3 条件构造器（⭐ 核心）</h2>
+<p>条件构造器是 MyBatis-Plus 最强大的功能之一，它让你<strong>用 Java 代码构建 SQL 条件</strong>，告别手写动态 SQL 的烦恼。这是 MP 日常使用中出现频率最高的 API，必须熟练掌握。</p>
+<h3 id="1131-querywrapper--基础条件构造">11.3.1 QueryWrapper —— 基础条件构造</h3>
+<p><code>QueryWrapper</code> 是最基础的条件构造器，以字符串形式指定列名。</p>
+<pre><code class="language-java">// 查询年龄大于 18 且邮箱不为空的用户
+QueryWrapper&lt;User&gt; wrapper = new QueryWrapper&lt;&gt;();
+wrapper.gt(&quot;age&quot;, 18)
+       .isNotNull(&quot;email&quot;);
+List&lt;User&gt; users = userMapper.selectList(wrapper);
+// SQL: SELECT * FROM user WHERE age &gt; 18 AND email IS NOT NULL
+
+// 查询姓张的用户，按年龄降序
+QueryWrapper&lt;User&gt; wrapper2 = new QueryWrapper&lt;&gt;();
+wrapper2.likeRight(&quot;name&quot;, &quot;张&quot;)
+        .orderByDesc(&quot;age&quot;);
+List&lt;User&gt; users2 = userMapper.selectList(wrapper2);
+// SQL: SELECT * FROM user WHERE name LIKE '张%' ORDER BY age DESC
+
+// 只查询部分字段
+QueryWrapper&lt;User&gt; wrapper3 = new QueryWrapper&lt;&gt;();
+wrapper3.select(&quot;id&quot;, &quot;name&quot;, &quot;age&quot;)  // 指定查询字段
+        .lt(&quot;age&quot;, 30);
+List&lt;User&gt; users3 = userMapper.selectList(wrapper3);
+// SQL: SELECT id, name, age FROM user WHERE age &lt; 30
+
+// 条件判断：根据参数动态拼接条件
+String name = &quot;张三&quot;;
+Integer minAge = null;
+QueryWrapper&lt;User&gt; wrapper4 = new QueryWrapper&lt;&gt;();
+wrapper4.eq(StringUtils.isNotBlank(name), &quot;name&quot;, name)   // name 非空才拼接
+        .ge(minAge != null, &quot;age&quot;, minAge);                // minAge 非 null 才拼接
+List&lt;User&gt; users4 = userMapper.selectList(wrapper4);
+// 如果 minAge 为 null，SQL: SELECT * FROM user WHERE name = '张三'
+</code></pre>
+<blockquote>
+<p><strong>condition 参数</strong>：几乎所有条件方法的第一个参数都支持 <code>boolean condition</code>，为 <code>true</code> 时才拼接该条件。这是 MP 替代 <code>&lt;if&gt;</code> 动态 SQL 的方式，非常实用。</p>
+</blockquote>
+<hr />
+<h3 id="1132-lambdaquerywrapper--类型安全的条件构造">11.3.2 LambdaQueryWrapper —— 类型安全的条件构造</h3>
+<p><strong>强烈推荐优先使用 <code>LambdaQueryWrapper</code></strong>，原因如下：</p>
+<ol>
+<li><strong>编译期检查</strong>：用方法引用（如 <code>User::getName</code>）代替字符串列名，拼写错误在编译时就能发现</li>
+<li><strong>重构友好</strong>：修改字段名时 IDE 会自动同步更新所有引用</li>
+<li><strong>IDE 提示</strong>：写条件时有代码补全，不需要记列名</li>
+</ol>
+<pre><code class="language-java">// 基础查询
+LambdaQueryWrapper&lt;User&gt; wrapper = new LambdaQueryWrapper&lt;&gt;();
+wrapper.gt(User::getAge, 18)
+       .isNotNull(User::getEmail);
+List&lt;User&gt; users = userMapper.selectList(wrapper);
+// SQL: SELECT * FROM user WHERE age &gt; 18 AND email IS NOT NULL
+
+// 便捷写法 —— 静态构造
+LambdaQueryWrapper&lt;User&gt; wrapper2 = Wrappers.&lt;User&gt;lambdaQuery()
+        .eq(User::getName, &quot;张三&quot;)
+        .between(User::getAge, 18, 30)
+        .orderByAsc(User::getAge);
+List&lt;User&gt; users2 = userMapper.selectList(wrapper2);
+// SQL: SELECT * FROM user WHERE name = '张三' AND age BETWEEN 18 AND 30 ORDER BY age ASC
+
+// 动态条件
+String name = getUserInput();
+Integer age = getAgeInput();
+LambdaQueryWrapper&lt;User&gt; wrapper3 = new LambdaQueryWrapper&lt;&gt;();
+wrapper3.like(StringUtils.isNotBlank(name), User::getName, name)
+        .eq(age != null, User::getAge, age)
+        .orderByDesc(User::getCreateTime);
+List&lt;User&gt; users3 = userMapper.selectList(wrapper3);
+
+// 查询指定字段
+LambdaQueryWrapper&lt;User&gt; wrapper4 = new LambdaQueryWrapper&lt;&gt;();
+wrapper4.select(User::getId, User::getName, User::getAge)
+        .lt(User::getAge, 30);
+List&lt;User&gt; users4 = userMapper.selectList(wrapper4);
+// SQL: SELECT id, name, age FROM user WHERE age &lt; 30
+
+// 查询数量
+Long count = userMapper.selectCount(
+    new LambdaQueryWrapper&lt;User&gt;().eq(User::getAge, 25)
+);
+
+// 查询单条记录
+User user = userMapper.selectOne(
+    new LambdaQueryWrapper&lt;User&gt;()
+        .eq(User::getName, &quot;张三&quot;)
+        .eq(User::getAge, 25)
+);
+</code></pre>
+<h4 id="querywrapper-vs-lambdaquerywrapper-对比">QueryWrapper vs LambdaQueryWrapper 对比</h4>
+<pre><code class="language-java">// QueryWrapper —— 字符串列名，容易拼错，重构不友好
+wrapper.eq(&quot;user_name&quot;, &quot;张三&quot;);
+
+// LambdaQueryWrapper —— 方法引用，编译期安全，IDE 可提示
+wrapper.eq(User::getName, &quot;张三&quot;);
+</code></pre>
+<blockquote>
+<p><strong>结论</strong>：除非需要使用 <code>last()</code>、<code>apply()</code> 等少数仅字符串方式支持的方法，否则<strong>一律使用 LambdaQueryWrapper</strong>。</p>
+</blockquote>
+<hr />
+<h3 id="1133-updatewrapper--lambdaupdatewrapper">11.3.3 UpdateWrapper / LambdaUpdateWrapper</h3>
+<p><code>UpdateWrapper</code> 和 <code>LambdaUpdateWrapper</code> 用于构建更新操作的条件和 SET 子句。</p>
+<pre><code class="language-java">// 将年龄大于 30 的用户的邮箱置空
+LambdaUpdateWrapper&lt;User&gt; wrapper = new LambdaUpdateWrapper&lt;&gt;();
+wrapper.gt(User::getAge, 30)
+       .set(User::getEmail, null);  // SET email = null
+userMapper.update(wrapper);
+// SQL: UPDATE user SET email = null WHERE age &gt; 30
+
+// 使用 setSql 拼接原生 SQL 片段
+LambdaUpdateWrapper&lt;User&gt; wrapper2 = new LambdaUpdateWrapper&lt;&gt;();
+wrapper2.eq(User::getId, 1L)
+        .setSql(&quot;age = age + 1&quot;);  // 原生 SQL 表达式
+userMapper.update(wrapper2);
+// SQL: UPDATE user SET age = age + 1 WHERE id = 1
+
+// 同时提供实体和条件：实体中非 null 字段作为 SET 值，wrapper 提供 WHERE 条件
+User updateEntity = new User();
+updateEntity.setName(&quot;新名字&quot;);
+LambdaUpdateWrapper&lt;User&gt; wrapper3 = new LambdaUpdateWrapper&lt;&gt;();
+wrapper3.eq(User::getId, 1L);
+userMapper.update(updateEntity, wrapper3);
+// SQL: UPDATE user SET name = '新名字' WHERE id = 1
+
+// LambdaUpdateWrapper 综合示例 —— 批量更新状态
+LambdaUpdateWrapper&lt;User&gt; wrapper4 = new LambdaUpdateWrapper&lt;&gt;();
+wrapper4.in(User::getId, Arrays.asList(1L, 2L, 3L))
+        .set(User::getEmail, &quot;updated@example.com&quot;)
+        .set(User::getAge, 30);
+userMapper.update(wrapper4);
+// SQL: UPDATE user SET email = 'updated@example.com', age = 30 WHERE id IN (1, 2, 3)
+</code></pre>
+<blockquote>
+<p><strong>何时用 <code>updateById</code>，何时用 <code>UpdateWrapper</code>？</strong></p>
+<ul>
+<li><code>updateById</code>：根据主键更新，简单直接，适合已知主键的单条更新</li>
+<li><code>UpdateWrapper</code>：支持复杂条件更新、批量更新、字段自增等场景</li>
+</ul>
+</blockquote>
+<hr />
+<h3 id="1134-常用方法链速查表-高频使用">11.3.4 常用方法链速查表（⭐ 高频使用）</h3>
+<p>以下表格列出了条件构造器中最常用的方法，<strong>必须熟记</strong>：</p>
+<h4 id="比较条件">比较条件</h4>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例（Lambda 写法）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>eq</code></td>
+<td><code>= ?</code></td>
+<td><code>.eq(User::getName, &quot;张三&quot;)</code> → <code>name = '张三'</code></td>
+</tr>
+<tr>
+<td><code>ne</code></td>
+<td><code>&lt;&gt; ?</code></td>
+<td><code>.ne(User::getAge, 18)</code> → <code>age &lt;&gt; 18</code></td>
+</tr>
+<tr>
+<td><code>gt</code></td>
+<td><code>&gt; ?</code></td>
+<td><code>.gt(User::getAge, 18)</code> → <code>age &gt; 18</code></td>
+</tr>
+<tr>
+<td><code>ge</code></td>
+<td><code>&gt;= ?</code></td>
+<td><code>.ge(User::getAge, 18)</code> → <code>age &gt;= 18</code></td>
+</tr>
+<tr>
+<td><code>lt</code></td>
+<td><code>&lt; ?</code></td>
+<td><code>.lt(User::getAge, 30)</code> → <code>age &lt; 30</code></td>
+</tr>
+<tr>
+<td><code>le</code></td>
+<td><code>&lt;= ?</code></td>
+<td><code>.le(User::getAge, 30)</code> → <code>age &lt;= 30</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="范围条件">范围条件</h4>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>between</code></td>
+<td><code>BETWEEN ? AND ?</code></td>
+<td><code>.between(User::getAge, 18, 30)</code> → <code>age BETWEEN 18 AND 30</code></td>
+</tr>
+<tr>
+<td><code>notBetween</code></td>
+<td><code>NOT BETWEEN ? AND ?</code></td>
+<td><code>.notBetween(User::getAge, 18, 30)</code> → <code>age NOT BETWEEN 18 AND 30</code></td>
+</tr>
+<tr>
+<td><code>in</code></td>
+<td><code>IN (?, ?, ...)</code></td>
+<td><code>.in(User::getId, 1, 2, 3)</code> → <code>id IN (1, 2, 3)</code></td>
+</tr>
+<tr>
+<td><code>in</code>（集合）</td>
+<td><code>IN (?, ?, ...)</code></td>
+<td><code>.in(User::getId, idList)</code> → <code>id IN (...)</code></td>
+</tr>
+<tr>
+<td><code>notIn</code></td>
+<td><code>NOT IN (?, ?, ...)</code></td>
+<td><code>.notIn(User::getId, 1, 2)</code> → <code>id NOT IN (1, 2)</code></td>
+</tr>
+<tr>
+<td><code>inSql</code></td>
+<td><code>IN (子查询)</code></td>
+<td><code>.inSql(User::getId, &quot;SELECT id FROM role WHERE type = 1&quot;)</code> → <code>id IN (SELECT ...)</code></td>
+</tr>
+<tr>
+<td><code>notInSql</code></td>
+<td><code>NOT IN (子查询)</code></td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<h4 id="模糊查询">模糊查询</h4>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>like</code></td>
+<td><code>LIKE '%?%'</code></td>
+<td><code>.like(User::getName, &quot;张&quot;)</code> → <code>name LIKE '%张%'</code></td>
+</tr>
+<tr>
+<td><code>notLike</code></td>
+<td><code>NOT LIKE '%?%'</code></td>
+<td><code>.notLike(User::getName, &quot;张&quot;)</code> → <code>name NOT LIKE '%张%'</code></td>
+</tr>
+<tr>
+<td><code>likeLeft</code></td>
+<td><code>LIKE '%?'</code></td>
+<td><code>.likeLeft(User::getName, &quot;三&quot;)</code> → <code>name LIKE '%三'</code></td>
+</tr>
+<tr>
+<td><code>likeRight</code></td>
+<td><code>LIKE '?%'</code></td>
+<td><code>.likeRight(User::getName, &quot;张&quot;)</code> → <code>name LIKE '张%'</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="空值判断">空值判断</h4>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>isNull</code></td>
+<td><code>IS NULL</code></td>
+<td><code>.isNull(User::getEmail)</code> → <code>email IS NULL</code></td>
+</tr>
+<tr>
+<td><code>isNotNull</code></td>
+<td><code>IS NOT NULL</code></td>
+<td><code>.isNotNull(User::getEmail)</code> → <code>email IS NOT NULL</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="分组与排序">分组与排序</h4>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>groupBy</code></td>
+<td><code>GROUP BY</code></td>
+<td><code>.groupBy(User::getAge)</code> → <code>GROUP BY age</code></td>
+</tr>
+<tr>
+<td><code>having</code></td>
+<td><code>HAVING</code></td>
+<td><code>.having(&quot;count(*) &gt; {0}&quot;, 10)</code> → <code>HAVING count(*) &gt; 10</code></td>
+</tr>
+<tr>
+<td><code>orderByAsc</code></td>
+<td><code>ORDER BY ... ASC</code></td>
+<td><code>.orderByAsc(User::getAge)</code> → <code>ORDER BY age ASC</code></td>
+</tr>
+<tr>
+<td><code>orderByDesc</code></td>
+<td><code>ORDER BY ... DESC</code></td>
+<td><code>.orderByDesc(User::getCreateTime)</code> → <code>ORDER BY create_time DESC</code></td>
+</tr>
+<tr>
+<td><code>orderBy</code></td>
+<td><code>ORDER BY ...</code></td>
+<td><code>.orderBy(true, true, User::getAge)</code> → <code>ORDER BY age ASC</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="拼接与其他">拼接与其他</h4>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>对应 SQL</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>exists</code></td>
+<td><code>EXISTS (子查询)</code></td>
+<td><code>.exists(&quot;SELECT 1 FROM order WHERE order.user_id = user.id&quot;)</code></td>
+</tr>
+<tr>
+<td><code>notExists</code></td>
+<td><code>NOT EXISTS (子查询)</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>apply</code></td>
+<td>自定义 SQL 片段</td>
+<td><code>.apply(&quot;date_format(create_time,'%Y-%m-%d') = {0}&quot;, &quot;2024-01-01&quot;)</code></td>
+</tr>
+<tr>
+<td><code>last</code></td>
+<td>拼接到 SQL 末尾</td>
+<td><code>.last(&quot;LIMIT 1&quot;)</code> ⚠️ 有 SQL 注入风险，慎用</td>
+</tr>
+<tr>
+<td><code>select</code></td>
+<td>指定查询字段</td>
+<td><code>.select(User::getId, User::getName)</code></td>
+</tr>
+<tr>
+<td><code>set</code>（Update）</td>
+<td>SET 子句</td>
+<td><code>.set(User::getAge, 25)</code> → <code>SET age = 25</code></td>
+</tr>
+<tr>
+<td><code>setSql</code>（Update）</td>
+<td>SET 原生 SQL</td>
+<td><code>.setSql(&quot;age = age + 1&quot;)</code> → <code>SET age = age + 1</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>：<code>last()</code> 方法会直接拼接到 SQL 末尾，不做任何转义，有 SQL 注入风险。只在确实需要且值可控的情况下使用。</p>
+</blockquote>
+<hr />
+<h3 id="1135-条件构造器嵌套与-or-条件">11.3.5 条件构造器嵌套与 OR 条件</h3>
+<p>默认情况下，所有条件之间是 <code>AND</code> 关系。要使用 <code>OR</code>、嵌套括号等复杂条件，需要使用以下方法：</p>
+<h4 id="or--切换为-or-连接">or() —— 切换为 OR 连接</h4>
+<pre><code class="language-java">// 查询名字为张三 OR 年龄大于 30
+LambdaQueryWrapper&lt;User&gt; wrapper = new LambdaQueryWrapper&lt;&gt;();
+wrapper.eq(User::getName, &quot;张三&quot;)
+       .or()
+       .gt(User::getAge, 30);
+// SQL: WHERE name = '张三' OR age &gt; 30
+</code></pre>
+<h4 id="orconsumer--or-嵌套带括号">or(Consumer) —— OR 嵌套（带括号）</h4>
+<pre><code class="language-java">// 查询邮箱不为空 AND (名字为张三 OR 年龄大于30)
+LambdaQueryWrapper&lt;User&gt; wrapper = new LambdaQueryWrapper&lt;&gt;();
+wrapper.isNotNull(User::getEmail)
+       .or(w -&gt; w.eq(User::getName, &quot;张三&quot;)
+                 .gt(User::getAge, 30));
+// SQL: WHERE email IS NOT NULL OR (name = '张三' AND age &gt; 30)
+// ⚠️ 注意：or(Consumer) 是将整个 Consumer 内部的条件用 OR 连接到外部
+</code></pre>
+<h4 id="andconsumer--and-嵌套带括号">and(Consumer) —— AND 嵌套（带括号）</h4>
+<pre><code class="language-java">// 查询名字为张三 AND (年龄小于 20 OR 年龄大于 40)
+LambdaQueryWrapper&lt;User&gt; wrapper = new LambdaQueryWrapper&lt;&gt;();
+wrapper.eq(User::getName, &quot;张三&quot;)
+       .and(w -&gt; w.lt(User::getAge, 20)
+                  .or()
+                  .gt(User::getAge, 40));
+// SQL: WHERE name = '张三' AND (age &lt; 20 OR age &gt; 40)
+</code></pre>
+<h4 id="nestedconsumer--纯嵌套不带-andor-前缀">nested(Consumer) —— 纯嵌套（不带 AND/OR 前缀）</h4>
+<pre><code class="language-java">// nested() 只生成括号，不自动加 AND/OR
+LambdaQueryWrapper&lt;User&gt; wrapper = new LambdaQueryWrapper&lt;&gt;();
+wrapper.nested(w -&gt; w.eq(User::getName, &quot;张三&quot;)
+                     .or()
+                     .eq(User::getName, &quot;李四&quot;))
+       .ge(User::getAge, 18);
+// SQL: WHERE (name = '张三' OR name = '李四') AND age &gt;= 18
+</code></pre>
+<h4 id="综合实战示例">综合实战示例</h4>
+<pre><code class="language-java">// 场景：后台用户搜索接口
+// 条件：状态为启用 AND (用户名模糊匹配 OR 邮箱模糊匹配) AND 注册时间在指定范围内
+public List&lt;User&gt; searchUsers(String keyword, LocalDateTime startTime, LocalDateTime endTime) {
+    return userMapper.selectList(
+        new LambdaQueryWrapper&lt;User&gt;()
+            .eq(User::getDeleted, 0)
+            .and(StringUtils.isNotBlank(keyword), w -&gt; w
+                .like(User::getName, keyword)
+                .or()
+                .like(User::getEmail, keyword)
+            )
+            .ge(startTime != null, User::getCreateTime, startTime)
+            .le(endTime != null, User::getCreateTime, endTime)
+            .orderByDesc(User::getCreateTime)
+    );
+    // 假设 keyword=&quot;张&quot;, startTime=2024-01-01
+    // SQL: WHERE deleted = 0
+    //      AND (name LIKE '%张%' OR email LIKE '%张%')
+    //      AND create_time &gt;= '2024-01-01'
+    //      ORDER BY create_time DESC
+}
+</code></pre>
+<pre><code class="language-java">// 场景：复杂多条件嵌套
+// 查询 VIP 用户中（年龄在 25-35 之间 且 有邮箱）或（年龄大于 50 的）
+LambdaQueryWrapper&lt;User&gt; wrapper = new LambdaQueryWrapper&lt;&gt;();
+wrapper.eq(User::getVip, true)
+       .and(w -&gt; w
+           .nested(n -&gt; n
+               .between(User::getAge, 25, 35)
+               .isNotNull(User::getEmail)
+           )
+           .or()
+           .gt(User::getAge, 50)
+       );
+// SQL: WHERE vip = true AND ((age BETWEEN 25 AND 35 AND email IS NOT NULL) OR age &gt; 50)
+</code></pre>
+<hr />
+<h2 id="114-分页插件">11.4 分页插件</h2>
+<p>MyBatis-Plus 内置了分页插件，配置简单且功能强大，是替代 PageHelper 的首选方案。</p>
+<h3 id="1141-mybatisplusinterceptor-配置">11.4.1 MybatisPlusInterceptor 配置</h3>
+<pre><code class="language-java">@Configuration
+public class MybatisPlusConfig {
+
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+
+        // 分页插件（必须指定数据库类型）
+        PaginationInnerInterceptor paginationInterceptor = new PaginationInnerInterceptor(DbType.MYSQL);
+        paginationInterceptor.setMaxLimit(500L); // 单页最大条数限制，防止恶意大分页
+        interceptor.addInnerInterceptor(paginationInterceptor);
+
+        // 可以继续添加其他插件，如乐观锁
+        // interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
+
+        return interceptor;
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>MybatisPlusInterceptor</code> 中各插件的添加顺序有要求。建议按照官方文档推荐的顺序：多租户 → 动态表名 → 分页 → 乐观锁 → SQL 性能规范 → 防全表更新删除。</p>
+</blockquote>
+<hr />
+<h3 id="1142-page-对象与分页查询">11.4.2 Page 对象与分页查询</h3>
+<pre><code class="language-java">// 基础分页查询
+@Test
+void testPage() {
+    // 参数：当前页码（从 1 开始）、每页大小
+    Page&lt;User&gt; page = new Page&lt;&gt;(1, 10);
+    userMapper.selectPage(page, null);  // null 表示无条件
+
+    System.out.println(&quot;总记录数: &quot; + page.getTotal());
+    System.out.println(&quot;总页数: &quot; + page.getPages());
+    System.out.println(&quot;当前页码: &quot; + page.getCurrent());
+    System.out.println(&quot;每页大小: &quot; + page.getSize());
+    System.out.println(&quot;是否有上一页: &quot; + page.hasPrevious());
+    System.out.println(&quot;是否有下一页: &quot; + page.hasNext());
+    System.out.println(&quot;当前页数据: &quot; + page.getRecords());
+}
+
+// 带条件的分页查询
+@Test
+void testPageWithCondition() {
+    Page&lt;User&gt; page = new Page&lt;&gt;(2, 5);  // 第 2 页，每页 5 条
+    LambdaQueryWrapper&lt;User&gt; wrapper = new LambdaQueryWrapper&lt;&gt;();
+    wrapper.ge(User::getAge, 18)
+           .orderByDesc(User::getCreateTime);
+
+    userMapper.selectPage(page, wrapper);
+    // SQL: SELECT * FROM user WHERE age &gt;= 18 ORDER BY create_time DESC LIMIT 5 OFFSET 5
+    // 同时会自动执行 COUNT 查询: SELECT COUNT(*) FROM user WHERE age &gt;= 18
+
+    page.getRecords().forEach(System.out::println);
+}
+
+// 不查询 COUNT（适用于不需要总数的场景，如滚动加载）
+@Test
+void testPageWithoutCount() {
+    Page&lt;User&gt; page = new Page&lt;&gt;(1, 10, false);  // 第三个参数 false 表示不查 COUNT
+    userMapper.selectPage(page, null);
+    // 只会执行 LIMIT 查询，不会执行 COUNT 查询
+}
+</code></pre>
+<h4 id="page-对象常用属性">Page 对象常用属性</h4>
+<table>
+<thead>
+<tr>
+<th>属性/方法</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>records</code></td>
+<td><code>List&lt;T&gt;</code></td>
+<td>当前页数据列表</td>
+</tr>
+<tr>
+<td><code>total</code></td>
+<td><code>long</code></td>
+<td>满足条件的总记录数</td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td><code>long</code></td>
+<td>每页大小</td>
+</tr>
+<tr>
+<td><code>current</code></td>
+<td><code>long</code></td>
+<td>当前页码（从 1 开始）</td>
+</tr>
+<tr>
+<td><code>pages</code></td>
+<td><code>long</code></td>
+<td>总页数</td>
+</tr>
+<tr>
+<td><code>hasNext()</code></td>
+<td><code>boolean</code></td>
+<td>是否有下一页</td>
+</tr>
+<tr>
+<td><code>hasPrevious()</code></td>
+<td><code>boolean</code></td>
+<td>是否有上一页</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="1143-自定义-sql-分页">11.4.3 自定义 SQL 分页</h3>
+<p>有些复杂查询需要手写 SQL，同样可以使用 MP 的分页功能。</p>
+<h4 id="mapper-接口">Mapper 接口</h4>
+<pre><code class="language-java">public interface UserMapper extends BaseMapper&lt;User&gt; {
+
+    // 方式一：Page 作为第一个参数，MP 会自动拦截并分页
+    @Select(&quot;SELECT u.*, d.name AS dept_name FROM user u LEFT JOIN department d ON u.dept_id = d.id WHERE u.age &gt; #{age}&quot;)
+    Page&lt;UserVO&gt; selectUserWithDept(Page&lt;UserVO&gt; page, @Param(&quot;age&quot;) Integer age);
+
+    // 方式二：使用 XML
+    Page&lt;UserVO&gt; selectPageByCondition(Page&lt;UserVO&gt; page, @Param(&quot;query&quot;) UserQuery query);
+}
+</code></pre>
+<h4 id="mapper-xml">Mapper XML</h4>
+<pre><code class="language-xml">&lt;!-- UserMapper.xml --&gt;
+&lt;select id=&quot;selectPageByCondition&quot; resultType=&quot;com.example.vo.UserVO&quot;&gt;
+    SELECT u.id, u.name, u.age, u.email, d.name AS deptName
+    FROM user u
+    LEFT JOIN department d ON u.dept_id = d.id
+    &lt;where&gt;
+        &lt;if test=&quot;query.name != null and query.name != ''&quot;&gt;
+            AND u.name LIKE CONCAT('%', #{query.name}, '%')
+        &lt;/if&gt;
+        &lt;if test=&quot;query.minAge != null&quot;&gt;
+            AND u.age &gt;= #{query.minAge}
+        &lt;/if&gt;
+        &lt;if test=&quot;query.deptId != null&quot;&gt;
+            AND u.dept_id = #{query.deptId}
+        &lt;/if&gt;
+    &lt;/where&gt;
+    ORDER BY u.create_time DESC
+&lt;/select&gt;
+</code></pre>
+<h4 id="使用方式">使用方式</h4>
+<pre><code class="language-java">@Service
+public class UserServiceImpl extends ServiceImpl&lt;UserMapper, User&gt; implements UserService {
+
+    public Page&lt;UserVO&gt; getUserPage(int pageNum, int pageSize, UserQuery query) {
+        Page&lt;UserVO&gt; page = new Page&lt;&gt;(pageNum, pageSize);
+        return baseMapper.selectPageByCondition(page, query);
+        // MP 会自动在 SQL 后追加 LIMIT 和执行 COUNT 查询
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>关键点</strong>：自定义分页的核心是将 <code>Page</code> 对象作为 Mapper 方法的<strong>第一个参数</strong>，MP 分页插件会自动识别并进行分页处理。</p>
+</blockquote>
+<hr />
+<h2 id="115-代码生成器">11.5 代码生成器</h2>
+<p>MyBatis-Plus 提供了代码生成器，可以根据数据库表结构自动生成 Entity、Mapper、Mapper XML、Service、Controller 等代码，大幅减少重复劳动。</p>
+<h3 id="1151-新版代码生成器配置">11.5.1 新版代码生成器配置</h3>
+<p>新版代码生成器使用 <code>FastAutoGenerator</code>（3.5.1+），采用 Builder 模式，配置更加直观。</p>
+<h4 id="添加依赖">添加依赖</h4>
+<pre><code class="language-xml">&lt;!-- 代码生成器 --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.baomidou&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-plus-generator&lt;/artifactId&gt;
+    &lt;version&gt;3.5.7&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- 模板引擎（二选一） --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.freemarker&lt;/groupId&gt;
+    &lt;artifactId&gt;freemarker&lt;/artifactId&gt;
+    &lt;version&gt;2.3.33&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;!-- 或使用 Velocity --&gt;
+&lt;!--
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.velocity&lt;/groupId&gt;
+    &lt;artifactId&gt;velocity-engine-core&lt;/artifactId&gt;
+    &lt;version&gt;2.3&lt;/version&gt;
+&lt;/dependency&gt;
+--&gt;
+</code></pre>
+<h4 id="完整配置示例">完整配置示例</h4>
+<pre><code class="language-java">public class CodeGenerator {
+
+    public static void main(String[] args) {
+        FastAutoGenerator.create(
+                &quot;jdbc:mysql://localhost:3306/mybatis_demo?serverTimezone=Asia/Shanghai&quot;,
+                &quot;root&quot;,
+                &quot;123456&quot;
+            )
+            // 全局配置
+            .globalConfig(builder -&gt; builder
+                .author(&quot;YourName&quot;)
+                .outputDir(System.getProperty(&quot;user.dir&quot;) + &quot;/src/main/java&quot;)
+                .commentDate(&quot;yyyy-MM-dd&quot;)
+                .disableOpenDir()  // 生成后不自动打开目录
+            )
+            // 包配置
+            .packageConfig(builder -&gt; builder
+                .parent(&quot;com.example&quot;)
+                .entity(&quot;entity&quot;)
+                .mapper(&quot;mapper&quot;)
+                .service(&quot;service&quot;)
+                .serviceImpl(&quot;service.impl&quot;)
+                .controller(&quot;controller&quot;)
+                .xml(&quot;mapper.xml&quot;)    // XML 输出到 java 目录下
+                // 如果希望 XML 输出到 resources 下，使用 pathInfo
+                .pathInfo(Collections.singletonMap(
+                    OutputFile.xml,
+                    System.getProperty(&quot;user.dir&quot;) + &quot;/src/main/resources/mapper&quot;
+                ))
+            )
+            // 策略配置
+            .strategyConfig(builder -&gt; builder
+                .addInclude(&quot;user&quot;, &quot;order&quot;, &quot;product&quot;)  // 要生成的表名
+                // .addInclude(&quot;all&quot;)  // 生成所有表
+                .addTablePrefix(&quot;t_&quot;, &quot;sys_&quot;)  // 去除表名前缀
+
+                // Entity 策略
+                .entityBuilder()
+                    .enableLombok()           // 启用 Lombok
+                    .enableTableFieldAnnotation()  // 生成 @TableField 注解
+                    .logicDeleteColumnName(&quot;deleted&quot;)
+                    .versionColumnName(&quot;version&quot;)
+                    .addTableFills(
+                        new Column(&quot;create_time&quot;, FieldFill.INSERT),
+                        new Column(&quot;update_time&quot;, FieldFill.INSERT_UPDATE)
+                    )
+                    .idType(IdType.AUTO)
+
+                // Mapper 策略
+                .mapperBuilder()
+                    .enableMapperAnnotation()  // 在 Mapper 接口上添加 @Mapper 注解
+                    .enableBaseResultMap()     // 生成通用 ResultMap
+                    .enableBaseColumnList()    // 生成通用 SQL 列列表
+
+                // Service 策略
+                .serviceBuilder()
+                    .formatServiceFileName(&quot;%sService&quot;)      // 去掉默认的 I 前缀
+                    .formatServiceImplFileName(&quot;%sServiceImpl&quot;)
+
+                // Controller 策略
+                .controllerBuilder()
+                    .enableRestStyle()  // 生成 @RestController
+            )
+            // 模板引擎
+            .templateEngine(new FreemarkerTemplateEngine())
+            .execute();
+    }
+}
+</code></pre>
+<p>运行后将在指定目录下自动生成以下文件：</p>
+<ul>
+<li><code>entity/User.java</code> —— 实体类</li>
+<li><code>mapper/UserMapper.java</code> —— Mapper 接口</li>
+<li><code>mapper/UserMapper.xml</code> —— Mapper XML</li>
+<li><code>service/UserService.java</code> —— Service 接口</li>
+<li><code>service/impl/UserServiceImpl.java</code> —— Service 实现</li>
+<li><code>controller/UserController.java</code> —— Controller</li>
+</ul>
+<hr />
+<h3 id="1152-自定义模板">11.5.2 自定义模板</h3>
+<p>如果默认生成的代码不符合团队规范，可以通过自定义模板来调整。</p>
+<h4 id="第-1-步拷贝默认模板">第 1 步：拷贝默认模板</h4>
+<p>从 <code>mybatis-plus-generator</code> JAR 包的 <code>templates/</code> 目录下拷贝对应模板文件到项目的 <code>src/main/resources/templates/</code> 目录，文件包括：</p>
+<ul>
+<li><code>entity.java.ftl</code> —— 实体类模板</li>
+<li><code>mapper.java.ftl</code> —— Mapper 接口模板</li>
+<li><code>mapper.xml.ftl</code> —— Mapper XML 模板</li>
+<li><code>service.java.ftl</code> —— Service 接口模板</li>
+<li><code>serviceImpl.java.ftl</code> —— Service 实现模板</li>
+<li><code>controller.java.ftl</code> —— Controller 模板</li>
+</ul>
+<h4 id="第-2-步修改模板">第 2 步：修改模板</h4>
+<p>以 Freemarker 模板引擎为例，模板中可以使用变量如 <code>${entity}</code>（实体类名）、<code>${table.name}</code>（表名）等。</p>
+<pre><code class="language-html">&lt;!-- 自定义 controller.java.ftl 片段示例 --&gt;
+@RestController
+@RequestMapping(&quot;/${table.entityPath}&quot;)
+@RequiredArgsConstructor
+public class ${table.controllerName} {
+
+    private final ${table.serviceName} ${table.entityPath}Service;
+
+    @GetMapping(&quot;/{id}&quot;)
+    public Result&lt;${entity}&gt; getById(@PathVariable Long id) {
+        return Result.success(${table.entityPath}Service.getById(id));
+    }
+
+    @GetMapping(&quot;/page&quot;)
+    public Result&lt;Page&lt;${entity}&gt;&gt; page(Page&lt;${entity}&gt; page) {
+        return Result.success(${table.entityPath}Service.page(page));
+    }
+}
+</code></pre>
+<h4 id="第-3-步指定自定义模板路径">第 3 步：指定自定义模板路径</h4>
+<pre><code class="language-java">FastAutoGenerator.create(url, username, password)
+    // ...其他配置...
+    .templateConfig(builder -&gt; builder
+        .controller(&quot;/templates/controller.java&quot;)  // 指向自定义模板
+    )
+    .templateEngine(new FreemarkerTemplateEngine())
+    .execute();
+</code></pre>
+<hr />
+<h2 id="116-自动填充--metaobjecthandler">11.6 自动填充 —— MetaObjectHandler</h2>
+<p>在实际项目中，<code>create_time</code>、<code>update_time</code>、<code>create_by</code> 等字段在每次插入或更新时都需要自动填充，手动设置既繁琐又容易遗漏。MP 提供了 <code>MetaObjectHandler</code> 来统一处理。</p>
+<h3 id="完整实现">完整实现</h3>
+<h4 id="第-1-步实体类标注填充策略">第 1 步：实体类标注填充策略</h4>
+<pre><code class="language-java">@Data
+@TableName(&quot;user&quot;)
+public class User {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private String name;
+    private Integer age;
+
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
+
+    @TableField(fill = FieldFill.INSERT)
+    private String createBy;
+
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private String updateBy;
+}
+</code></pre>
+<h4 id="第-2-步实现-metaobjecthandler">第 2 步：实现 MetaObjectHandler</h4>
+<pre><code class="language-java">@Component
+public class MyMetaObjectHandler implements MetaObjectHandler {
+
+    @Override
+    public void insertFill(MetaObject metaObject) {
+        // 插入时填充 createTime 和 updateTime
+        this.strictInsertFill(metaObject, &quot;createTime&quot;, LocalDateTime::now, LocalDateTime.class);
+        this.strictInsertFill(metaObject, &quot;updateTime&quot;, LocalDateTime::now, LocalDateTime.class);
+        // 填充创建人（从安全上下文获取当前用户）
+        this.strictInsertFill(metaObject, &quot;createBy&quot;, this::getCurrentUsername, String.class);
+        this.strictInsertFill(metaObject, &quot;updateBy&quot;, this::getCurrentUsername, String.class);
+    }
+
+    @Override
+    public void updateFill(MetaObject metaObject) {
+        // 更新时填充 updateTime
+        this.strictUpdateFill(metaObject, &quot;updateTime&quot;, LocalDateTime::now, LocalDateTime.class);
+        this.strictUpdateFill(metaObject, &quot;updateBy&quot;, this::getCurrentUsername, String.class);
+    }
+
+    private String getCurrentUsername() {
+        // 实际项目中从 SecurityContext / ThreadLocal 获取当前登录用户
+        // 示例：SecurityContextHolder.getContext().getAuthentication().getName()
+        return &quot;system&quot;;
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong><code>strictInsertFill</code> vs <code>fillStrategy</code></strong>：</p>
+<ul>
+<li><code>strictInsertFill</code>：<strong>严格模式</strong>，只有当实体的该字段值为 <code>null</code> 时才会填充（不覆盖手动设置的值）</li>
+<li><code>setFieldValByName</code>：直接强制设置值（会覆盖已有值，已废弃）</li>
+</ul>
+<p>推荐使用 <code>strictInsertFill</code> / <code>strictUpdateFill</code>。</p>
+</blockquote>
+<h4 id="使用效果">使用效果</h4>
+<pre><code class="language-java">User user = new User();
+user.setName(&quot;张三&quot;);
+user.setAge(25);
+// 无需手动设置 createTime、updateTime、createBy、updateBy
+userMapper.insert(user);
+// INSERT INTO user (name, age, create_time, update_time, create_by, update_by)
+// VALUES ('张三', 25, '2024-12-01 10:30:00', '2024-12-01 10:30:00', 'system', 'system')
+</code></pre>
+<hr />
+<h2 id="117-多租户插件-">11.7 多租户插件 💡</h2>
+<p>多租户（Multi-Tenancy）是 SaaS 系统的核心需求，MP 提供了开箱即用的多租户插件，基于<strong>共享数据库、共享 Schema、通过租户 ID 隔离数据</strong>的模式。</p>
+<h3 id="基本原理">基本原理</h3>
+<p>插件会自动在所有 SQL 的 <code>WHERE</code> 条件中追加 <code>tenant_id = ?</code>，在 <code>INSERT</code> 语句中自动插入 <code>tenant_id</code> 字段。</p>
+<h3 id="配置示例">配置示例</h3>
+<pre><code class="language-java">@Configuration
+public class MybatisPlusConfig {
+
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+
+        // 多租户插件（必须在分页插件之前添加）
+        interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(new TenantLineHandler() {
+            @Override
+            public Expression getTenantId() {
+                // 从当前上下文获取租户 ID（如 ThreadLocal、请求头等）
+                Long tenantId = TenantContext.getCurrentTenantId();
+                return new LongValue(tenantId);
+            }
+
+            @Override
+            public String getTenantIdColumn() {
+                return &quot;tenant_id&quot;;  // 租户 ID 字段名
+            }
+
+            @Override
+            public boolean ignoreTable(String tableName) {
+                // 某些公共表不需要租户隔离
+                return &quot;sys_config&quot;.equals(tableName) || &quot;sys_dict&quot;.equals(tableName);
+            }
+        }));
+
+        // 分页插件
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+
+        return interceptor;
+    }
+}
+</code></pre>
+<p>配置后的效果：</p>
+<pre><code class="language-java">userMapper.selectList(null);
+// 原始 SQL: SELECT * FROM user
+// 实际执行: SELECT * FROM user WHERE tenant_id = 1
+
+userMapper.insert(user);
+// 原始 SQL: INSERT INTO user (name, age) VALUES ('张三', 25)
+// 实际执行: INSERT INTO user (name, age, tenant_id) VALUES ('张三', 25, 1)
+</code></pre>
+<blockquote>
+<p>多租户插件对业务代码<strong>完全透明</strong>，无需在每个 SQL 中手写租户条件。如果需要某个方法绕过租户过滤（如超级管理员查看所有数据），可以使用 <code>@InterceptorIgnore(tenantLine = &quot;true&quot;)</code> 注解。</p>
+</blockquote>
+<hr />
+<h2 id="118-数据权限插件-">11.8 数据权限插件 💡</h2>
+<p>数据权限是指<strong>不同角色/用户只能看到属于自己权限范围内的数据</strong>，例如：部门经理只能看到本部门的数据、区域经理只能看到本区域的数据。</p>
+<p>MP 提供了 <code>DataPermissionInterceptor</code>，允许你通过自定义处理器在 SQL 中动态追加数据权限条件。</p>
+<h3 id="配置示例-1">配置示例</h3>
+<pre><code class="language-java">@Configuration
+public class MybatisPlusConfig {
+
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+
+        // 数据权限插件
+        DataPermissionInterceptor dataPermissionInterceptor = new DataPermissionInterceptor();
+        dataPermissionInterceptor.setDataPermissionHandler(new MyDataPermissionHandler());
+        interceptor.addInnerInterceptor(dataPermissionInterceptor);
+
+        // 分页插件
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        return interceptor;
+    }
+}
+</code></pre>
+<pre><code class="language-java">public class MyDataPermissionHandler implements DataPermissionHandler {
+    @Override
+    public Expression getSqlSegment(Expression where, String mappedStatementId) {
+        // 根据当前用户角色构造数据权限条件
+        // 例如：普通用户只能查自己的数据，部门经理能查本部门数据
+        // 具体实现取决于业务需求
+        // 返回 null 表示不追加条件
+        return where;
+    }
+}
+</code></pre>
+<blockquote>
+<p>数据权限的实现相对复杂，通常需要结合具体业务场景和权限模型来设计。在实际项目中，往往需要配合 <code>@DataPermission</code> 自定义注解、AOP 等机制，实现细粒度的数据权限控制。</p>
+</blockquote>
+<hr />
+<h2 id="119-mybatis-plus-与原生-mybatis-xml-混合使用">11.9 MyBatis-Plus 与原生 MyBatis XML 混合使用</h2>
+<p>MyBatis-Plus 的设计理念是<strong>只做增强不做改变</strong>，因此你完全可以在 MP 项目中继续使用原生 MyBatis 的 XML 映射文件，两者完美共存。</p>
+<h3 id="使用场景">使用场景</h3>
+<ul>
+<li>复杂多表联查（多个 JOIN + 子查询 + 聚合函数）</li>
+<li>需要精确控制 SQL 的性能优化场景</li>
+<li>已有大量 MyBatis XML 的遗留项目迁移到 MP</li>
+<li>需要使用 <code>&lt;resultMap&gt;</code> 处理复杂对象映射</li>
+<li>统计报表类的特殊查询</li>
+</ul>
+<h3 id="配置">配置</h3>
+<p>确保 <code>application.yml</code> 中配置了 XML 文件扫描路径：</p>
+<pre><code class="language-yaml">mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+</code></pre>
+<h3 id="示例">示例</h3>
+<h4 id="mapper-接口-1">Mapper 接口</h4>
+<pre><code class="language-java">public interface UserMapper extends BaseMapper&lt;User&gt; {
+
+    // ===== MP 内置方法（继承自 BaseMapper） =====
+    // selectById、insert、updateById 等 —— 无需编写，直接使用
+
+    // ===== 自定义方法（使用 XML 实现） =====
+
+    /**
+     * 多表联查 —— 查询用户及其部门信息
+     */
+    List&lt;UserDetailVO&gt; selectUserDetail(@Param(&quot;query&quot;) UserQuery query);
+
+    /**
+     * 复杂统计 —— 按部门统计用户数量
+     */
+    List&lt;DeptUserCountVO&gt; countByDept();
+
+    /**
+     * 自定义分页 —— MP 分页 + 自定义 SQL
+     */
+    Page&lt;UserDetailVO&gt; selectUserDetailPage(Page&lt;UserDetailVO&gt; page, @Param(&quot;query&quot;) UserQuery query);
+}
+</code></pre>
+<h4 id="mapper-xml-1">Mapper XML</h4>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.example.mapper.UserMapper&quot;&gt;
+
+    &lt;!-- 复杂多表联查 --&gt;
+    &lt;select id=&quot;selectUserDetail&quot; resultType=&quot;com.example.vo.UserDetailVO&quot;&gt;
+        SELECT
+            u.id,
+            u.name,
+            u.age,
+            u.email,
+            d.name AS deptName,
+            r.name AS roleName
+        FROM user u
+        LEFT JOIN department d ON u.dept_id = d.id
+        LEFT JOIN user_role ur ON u.id = ur.user_id
+        LEFT JOIN role r ON ur.role_id = r.id
+        &lt;where&gt;
+            u.deleted = 0
+            &lt;if test=&quot;query.name != null and query.name != ''&quot;&gt;
+                AND u.name LIKE CONCAT('%', #{query.name}, '%')
+            &lt;/if&gt;
+            &lt;if test=&quot;query.deptId != null&quot;&gt;
+                AND u.dept_id = #{query.deptId}
+            &lt;/if&gt;
+            &lt;if test=&quot;query.roleName != null and query.roleName != ''&quot;&gt;
+                AND r.name = #{query.roleName}
+            &lt;/if&gt;
+        &lt;/where&gt;
+        ORDER BY u.create_time DESC
+    &lt;/select&gt;
+
+    &lt;!-- 统计查询 --&gt;
+    &lt;select id=&quot;countByDept&quot; resultType=&quot;com.example.vo.DeptUserCountVO&quot;&gt;
+        SELECT
+            d.id AS deptId,
+            d.name AS deptName,
+            COUNT(u.id) AS userCount
+        FROM department d
+        LEFT JOIN user u ON d.id = u.dept_id AND u.deleted = 0
+        GROUP BY d.id, d.name
+        ORDER BY userCount DESC
+    &lt;/select&gt;
+
+    &lt;!-- 自定义分页（Page 作为第一个参数，MP 自动拦截） --&gt;
+    &lt;select id=&quot;selectUserDetailPage&quot; resultType=&quot;com.example.vo.UserDetailVO&quot;&gt;
+        SELECT u.id, u.name, u.age, d.name AS deptName
+        FROM user u
+        LEFT JOIN department d ON u.dept_id = d.id
+        &lt;where&gt;
+            u.deleted = 0
+            &lt;if test=&quot;query.name != null and query.name != ''&quot;&gt;
+                AND u.name LIKE CONCAT('%', #{query.name}, '%')
+            &lt;/if&gt;
+        &lt;/where&gt;
+        ORDER BY u.create_time DESC
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<h4 id="service-层混合使用">Service 层混合使用</h4>
+<pre><code class="language-java">@Service
+public class UserServiceImpl extends ServiceImpl&lt;UserMapper, User&gt; implements UserService {
+
+    // 使用 MP 内置方法
+    public User getUser(Long id) {
+        return getById(id);  // IService 方法
+    }
+
+    // 使用 MP 条件构造器
+    public List&lt;User&gt; findByAge(Integer minAge) {
+        return lambdaQuery()
+                .ge(User::getAge, minAge)
+                .list();
+    }
+
+    // 使用自定义 XML 方法
+    public List&lt;UserDetailVO&gt; getUserDetail(UserQuery query) {
+        return baseMapper.selectUserDetail(query);
+    }
+
+    // MP 分页 + 自定义 XML
+    public Page&lt;UserDetailVO&gt; getUserDetailPage(int pageNum, int pageSize, UserQuery query) {
+        return baseMapper.selectUserDetailPage(new Page&lt;&gt;(pageNum, pageSize), query);
+    }
+}
+</code></pre>
+<h3 id="混合使用的最佳实践">混合使用的最佳实践</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单表 CRUD</td>
+<td>MP 内置方法（BaseMapper / IService）</td>
+</tr>
+<tr>
+<td>单表条件查询</td>
+<td>LambdaQueryWrapper / LambdaUpdateWrapper</td>
+</tr>
+<tr>
+<td>简单两表 JOIN</td>
+<td>可用 MP 的 <code>selectMaps</code> 或自定义 XML</td>
+</tr>
+<tr>
+<td>复杂多表联查</td>
+<td>自定义 Mapper XML</td>
+</tr>
+<tr>
+<td>统计报表类查询</td>
+<td>自定义 Mapper XML</td>
+</tr>
+<tr>
+<td>批量操作</td>
+<td>MP 的 <code>saveBatch</code> / <code>updateBatchById</code></td>
+</tr>
+<tr>
+<td>需精确控制 SQL 的性能场景</td>
+<td>自定义 Mapper XML</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>总结</strong>：MP 和原生 MyBatis XML 是<strong>互补关系</strong>，不是替代关系。简单操作用 MP 省时省力，复杂查询用 XML 灵活可控。在一个 Mapper 接口中，可以同时拥有 MP 内置方法和自定义 XML 方法，两者互不干扰。</p>
+</blockquote>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>重要程度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BaseMapper CRUD</td>
+<td>⭐⭐⭐</td>
+<td>最基本的增删改查，必须掌握</td>
+</tr>
+<tr>
+<td>IService / ServiceImpl</td>
+<td>⭐⭐⭐</td>
+<td>服务层封装，批量操作和链式调用</td>
+</tr>
+<tr>
+<td>注解体系</td>
+<td>⭐⭐⭐</td>
+<td><code>@TableName</code>、<code>@TableId</code>、<code>@TableField</code>、<code>@TableLogic</code> 是高频使用注解</td>
+</tr>
+<tr>
+<td>LambdaQueryWrapper</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td><strong>最核心的 API</strong>，日常开发使用频率最高</td>
+</tr>
+<tr>
+<td>分页插件</td>
+<td>⭐⭐⭐⭐</td>
+<td>几乎每个项目都需要</td>
+</tr>
+<tr>
+<td>自动填充</td>
+<td>⭐⭐⭐</td>
+<td>统一处理公共字段</td>
+</tr>
+<tr>
+<td>代码生成器</td>
+<td>⭐⭐</td>
+<td>提高效率的工具</td>
+</tr>
+<tr>
+<td>乐观锁 / 逻辑删除</td>
+<td>⭐⭐⭐</td>
+<td>常见业务需求</td>
+</tr>
+<tr>
+<td>多租户 / 数据权限</td>
+<td>⭐</td>
+<td>SaaS 项目才需要，了解即可</td>
+</tr>
+<tr>
+<td>混合使用 XML</td>
+<td>⭐⭐⭐</td>
+<td>复杂查询必备技能</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>学习建议</strong>：先把 11.1 ~ 11.3 吃透（特别是 LambdaQueryWrapper），这是日常开发中使用频率最高的部分。然后根据项目需要按需学习 11.4 ~ 11.9 的内容。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

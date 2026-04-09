@@ -1,0 +1,1678 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第七章-缓存机制-">第七章 缓存机制 ⭐</h1>
+<blockquote>
+<p>缓存是性能优化的重要手段，也是常见坑点。理解 MyBatis 的一级缓存与二级缓存原理，才能在生产环境中做出正确的缓存策略决策。</p>
+</blockquote>
+<hr />
+<h2 id="71-一级缓存sqlsession-级别">7.1 一级缓存（SqlSession 级别）</h2>
+<h3 id="711-默认行为与生效范围">7.1.1 默认行为与生效范围</h3>
+<p>一级缓存是 MyBatis 默认开启且无法关闭的缓存机制，其作用域为 <strong>SqlSession</strong>。在同一个 SqlSession 内，对同一条 SQL（相同的 Statement ID + 相同的参数）的多次查询，只有第一次会真正执行 SQL 语句，后续查询直接从缓存中获取结果。</p>
+<p><strong>底层实现</strong>：一级缓存本质上就是 SqlSession 内部维护的一个 <code>HashMap</code>（<code>PerpetualCache</code>），key 由 <code>MappedStatement ID + 参数 + RowBounds + SQL</code> 组成。</p>
+<pre><code class="language-java">// 演示一级缓存命中
+public void testFirstLevelCache() {
+    SqlSession sqlSession = sqlSessionFactory.openSession();
+    try {
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+
+        // 第一次查询 —— 执行 SQL，结果写入一级缓存
+        User user1 = mapper.selectById(1L);
+        System.out.println(&quot;第一次查询: &quot; + user1);
+
+        // 第二次查询 —— 直接命中一级缓存，不发送 SQL
+        User user2 = mapper.selectById(1L);
+        System.out.println(&quot;第二次查询: &quot; + user2);
+
+        // 验证：两次返回的是同一个对象引用
+        System.out.println(&quot;是否同一对象: &quot; + (user1 == user2)); // true
+    } finally {
+        sqlSession.close();
+    }
+}
+</code></pre>
+<p>开启日志后，控制台输出如下：</p>
+<pre><code>==&gt;  Preparing: SELECT id, username, email FROM user WHERE id = ?
+==&gt; Parameters: 1(Long)
+&lt;==    Columns: id, username, email
+&lt;==        Row: 1, zhangsan, zhangsan@example.com
+&lt;==      Total: 1
+第一次查询: User{id=1, username='zhangsan', email='zhangsan@example.com'}
+第二次查询: User{id=1, username='zhangsan', email='zhangsan@example.com'}
+是否同一对象: true
+</code></pre>
+<p>可以清晰地看到只有 <strong>一条</strong> SQL 被执行，第二次查询直接返回了缓存中的同一个 Java 对象。</p>
+<blockquote>
+<p><strong>注意</strong>：一级缓存返回的是对象引用而非副本。如果修改了返回对象的属性，缓存中的数据也会被改变，这可能导致后续查询拿到脏数据。</p>
+</blockquote>
+<hr />
+<h3 id="712-一级缓存失效的四种场景">7.1.2 一级缓存失效的四种场景</h3>
+<p>以下四种场景会导致一级缓存失效，必须重新执行 SQL：</p>
+<h4 id="场景一不同的-sqlsession">场景一：不同的 SqlSession</h4>
+<p>一级缓存的作用域是 SqlSession，不同 SqlSession 拥有各自独立的缓存空间。</p>
+<pre><code class="language-java">public void testDifferentSqlSession() {
+    SqlSession sqlSession1 = sqlSessionFactory.openSession();
+    SqlSession sqlSession2 = sqlSessionFactory.openSession();
+    try {
+        UserMapper mapper1 = sqlSession1.getMapper(UserMapper.class);
+        UserMapper mapper2 = sqlSession2.getMapper(UserMapper.class);
+
+        // sqlSession1 执行查询 —— 发送 SQL
+        User user1 = mapper1.selectById(1L);
+        // sqlSession2 执行相同查询 —— 仍然发送 SQL（不同 SqlSession，缓存不共享）
+        User user2 = mapper2.selectById(1L);
+
+        System.out.println(&quot;是否同一对象: &quot; + (user1 == user2)); // false
+    } finally {
+        sqlSession1.close();
+        sqlSession2.close();
+    }
+}
+</code></pre>
+<h4 id="场景二相同-sqlsession-但查询条件不同">场景二：相同 SqlSession 但查询条件不同</h4>
+<p>查询条件不同意味着 CacheKey 不同，自然无法命中缓存。</p>
+<pre><code class="language-java">public void testDifferentParams() {
+    SqlSession sqlSession = sqlSessionFactory.openSession();
+    try {
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+
+        // 查询 id=1 —— 发送 SQL
+        User user1 = mapper.selectById(1L);
+        // 查询 id=2 —— 发送 SQL（参数不同，缓存未命中）
+        User user2 = mapper.selectById(2L);
+
+        System.out.println(&quot;是否同一对象: &quot; + (user1 == user2)); // false
+    } finally {
+        sqlSession.close();
+    }
+}
+</code></pre>
+<h4 id="场景三两次查询之间执行了增删改操作">场景三：两次查询之间执行了增删改操作</h4>
+<p>任何 <code>INSERT</code>、<code>UPDATE</code>、<code>DELETE</code> 操作都会清空当前 SqlSession 的<strong>全部</strong>一级缓存，无论操作的是哪张表。</p>
+<pre><code class="language-java">public void testCacheClearAfterUpdate() {
+    SqlSession sqlSession = sqlSessionFactory.openSession();
+    try {
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+
+        // 第一次查询 —— 发送 SQL，结果写入缓存
+        User user1 = mapper.selectById(1L);
+        System.out.println(&quot;第一次查询: &quot; + user1);
+
+        // 执行一次更新操作（哪怕更新的是其他记录）
+        mapper.updateEmail(2L, &quot;new@example.com&quot;);
+
+        // 第二次查询 —— 重新发送 SQL（缓存已被清空）
+        User user2 = mapper.selectById(1L);
+        System.out.println(&quot;第二次查询: &quot; + user2);
+
+        System.out.println(&quot;是否同一对象: &quot; + (user1 == user2)); // false
+    } finally {
+        sqlSession.close();
+    }
+}
+</code></pre>
+<h4 id="场景四手动清空缓存">场景四：手动清空缓存</h4>
+<p>调用 <code>sqlSession.clearCache()</code> 可以手动清空一级缓存。</p>
+<pre><code class="language-java">public void testManualClearCache() {
+    SqlSession sqlSession = sqlSessionFactory.openSession();
+    try {
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+
+        // 第一次查询 —— 发送 SQL
+        User user1 = mapper.selectById(1L);
+
+        // 手动清空一级缓存
+        sqlSession.clearCache();
+
+        // 第二次查询 —— 重新发送 SQL
+        User user2 = mapper.selectById(1L);
+
+        System.out.println(&quot;是否同一对象: &quot; + (user1 == user2)); // false
+    } finally {
+        sqlSession.close();
+    }
+}
+</code></pre>
+<p><strong>四种场景速记</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失效场景</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>不同 SqlSession</td>
+<td>缓存作用域隔离</td>
+</tr>
+<tr>
+<td>2</td>
+<td>查询条件不同</td>
+<td>CacheKey 不匹配</td>
+</tr>
+<tr>
+<td>3</td>
+<td>中间执行了增删改</td>
+<td>执行 update/insert/delete 后自动清空缓存</td>
+</tr>
+<tr>
+<td>4</td>
+<td>手动调用 clearCache()</td>
+<td>主动清空</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="713-spring-集成下一级缓存的特殊表现">7.1.3 Spring 集成下一级缓存的特殊表现</h3>
+<p>在 Spring 框架中整合 MyBatis 后，一级缓存的行为会发生显著变化。这是很多开发者不了解的一个关键点。</p>
+<p><strong>核心问题</strong>：Spring 中通过 <code>SqlSessionTemplate</code> 管理 SqlSession，默认情况下<strong>每次 Mapper 方法调用都会创建一个新的 SqlSession</strong>，方法执行完毕后立即关闭。这意味着在没有事务的情况下，一级缓存基本上形同虚设。</p>
+<pre><code class="language-java">@Service
+public class UserService {
+
+    @Autowired
+    private UserMapper userMapper;
+
+    // 没有 @Transactional，每次 mapper 调用使用不同的 SqlSession
+    public void queryWithoutTransaction() {
+        // 第一次查询 —— SqlSession-A，发送 SQL，查询完毕后关闭 SqlSession-A
+        User user1 = userMapper.selectById(1L);
+        // 第二次查询 —— SqlSession-B，发送 SQL，查询完毕后关闭 SqlSession-B
+        User user2 = userMapper.selectById(1L);
+
+        // 两次都发送了 SQL，一级缓存未生效
+        System.out.println(&quot;是否同一对象: &quot; + (user1 == user2)); // false
+    }
+
+    // 加了 @Transactional，整个方法共用同一个 SqlSession
+    @Transactional
+    public void queryWithTransaction() {
+        // 第一次查询 —— SqlSession-A，发送 SQL
+        User user1 = userMapper.selectById(1L);
+        // 第二次查询 —— 仍然是 SqlSession-A，命中一级缓存
+        User user2 = userMapper.selectById(1L);
+
+        // 一级缓存生效
+        System.out.println(&quot;是否同一对象: &quot; + (user1 == user2)); // true
+    }
+}
+</code></pre>
+<p><strong>原理说明</strong>：</p>
+<pre><code>无事务场景：
+  方法调用 → 创建 SqlSession → 执行查询 → 关闭 SqlSession（缓存销毁）
+  方法调用 → 创建 SqlSession → 执行查询 → 关闭 SqlSession（缓存销毁）
+  → 两次查询使用不同的 SqlSession，一级缓存无法命中
+
+有事务场景（@Transactional）：
+  开启事务 → 创建 SqlSession → 绑定到 ThreadLocal
+    方法调用 → 复用同一个 SqlSession → 执行查询（结果进入缓存）
+    方法调用 → 复用同一个 SqlSession → 命中一级缓存
+  提交事务 → 关闭 SqlSession
+  → 同一事务内的查询共享一级缓存
+</code></pre>
+<p><strong>实际影响</strong>：</p>
+<ul>
+<li>在 Spring Boot 项目中，大部分查询操作<strong>不在同一个事务</strong>中，因此一级缓存的实际命中率非常低</li>
+<li>只有在 <code>@Transactional</code> 方法内部的多次相同查询，一级缓存才会生效</li>
+<li>不要依赖一级缓存来做性能优化，它更多是一个&quot;附带福利&quot;</li>
+</ul>
+<blockquote>
+<p><strong>结论</strong>：在 Spring 整合环境下，一级缓存的价值非常有限。如果需要缓存优化，应该使用 Redis 等外部缓存方案（见 7.3 节）。</p>
+</blockquote>
+<hr />
+<h2 id="72-二级缓存namespace-级别">7.2 二级缓存（namespace 级别）</h2>
+<p>二级缓存是 MyBatis 提供的跨 SqlSession 的缓存机制，其作用域为 Mapper 的 <strong>namespace</strong>。同一个 namespace 下的所有 SqlSession 共享同一块二级缓存区域。</p>
+<p><strong>执行流程</strong>：查询时先查二级缓存 → 未命中则查一级缓存 → 仍未命中则查数据库。</p>
+<pre><code>查询请求
+  ↓
+二级缓存（namespace 级别）—— 命中则直接返回
+  ↓ （未命中）
+一级缓存（SqlSession 级别）—— 命中则直接返回
+  ↓ （未命中）
+数据库查询 → 结果写入一级缓存
+  ↓ （SqlSession 关闭或提交时）
+一级缓存数据刷入二级缓存
+</code></pre>
+<h3 id="721-开启方式--cache-标签">7.2.1 开启方式 —— <code>&lt;cache&gt;</code> 标签</h3>
+<p>二级缓存默认是关闭的，需要手动开启。开启步骤如下：</p>
+<p><strong>步骤一：确认全局配置已开启二级缓存（默认即为 true）</strong></p>
+<pre><code class="language-xml">&lt;!-- mybatis-config.xml --&gt;
+&lt;configuration&gt;
+    &lt;settings&gt;
+        &lt;!-- 全局开关，默认 true，一般不需要显式配置 --&gt;
+        &lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;
+    &lt;/settings&gt;
+&lt;/configuration&gt;
+</code></pre>
+<p>Spring Boot 中对应的配置：</p>
+<pre><code class="language-yaml"># application.yml
+mybatis:
+  configuration:
+    cache-enabled: true  # 默认 true
+</code></pre>
+<p><strong>步骤二：在 Mapper XML 中添加 <code>&lt;cache&gt;</code> 标签</strong></p>
+<pre><code class="language-xml">&lt;!-- UserMapper.xml --&gt;
+&lt;mapper namespace=&quot;com.example.mapper.UserMapper&quot;&gt;
+
+    &lt;!-- 开启当前 namespace 的二级缓存 --&gt;
+    &lt;cache/&gt;
+
+    &lt;select id=&quot;selectById&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+        SELECT id, username, email FROM user WHERE id = #{id}
+    &lt;/select&gt;
+
+    &lt;update id=&quot;updateEmail&quot;&gt;
+        UPDATE user SET email = #{email} WHERE id = #{id}
+    &lt;/update&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<p><strong>步骤三：实体类实现 <code>Serializable</code> 接口（见 7.2.3）</strong></p>
+<p><strong>完整使用示例</strong>：</p>
+<pre><code class="language-java">public void testSecondLevelCache() {
+    // 第一个 SqlSession
+    SqlSession sqlSession1 = sqlSessionFactory.openSession();
+    UserMapper mapper1 = sqlSession1.getMapper(UserMapper.class);
+    User user1 = mapper1.selectById(1L);
+    System.out.println(&quot;第一次查询: &quot; + user1);
+    sqlSession1.close(); // 关键：关闭 SqlSession 后，一级缓存数据才会刷入二级缓存
+
+    // 第二个 SqlSession
+    SqlSession sqlSession2 = sqlSessionFactory.openSession();
+    UserMapper mapper2 = sqlSession2.getMapper(UserMapper.class);
+    User user2 = mapper2.selectById(1L); // 命中二级缓存，不发送 SQL
+    System.out.println(&quot;第二次查询: &quot; + user2);
+    sqlSession2.close();
+
+    // 注意：二级缓存返回的是反序列化后的新对象（readOnly=false 时）
+    System.out.println(&quot;是否同一对象: &quot; + (user1 == user2)); // false
+}
+</code></pre>
+<p>日志输出：</p>
+<pre><code>[sqlSession1]
+==&gt;  Preparing: SELECT id, username, email FROM user WHERE id = ?
+==&gt; Parameters: 1(Long)
+&lt;==      Total: 1
+第一次查询: User{id=1, username='zhangsan', email='zhangsan@example.com'}
+
+[sqlSession2]
+Cache Hit Ratio [com.example.mapper.UserMapper]: 0.5
+第二次查询: User{id=1, username='zhangsan', email='zhangsan@example.com'}
+是否同一对象: false
+</code></pre>
+<blockquote>
+<p><strong>关键点</strong>：一级缓存中的数据只有在 SqlSession <strong>关闭（close）</strong> 或 <strong>提交（commit）</strong> 后，才会被写入二级缓存。如果 SqlSession 未关闭，二级缓存是拿不到数据的。</p>
+</blockquote>
+<hr />
+<h3 id="722-cache-属性详解--eviction--flushinterval--size--readonly">7.2.2 cache 属性详解 —— eviction / flushInterval / size / readOnly</h3>
+<p><code>&lt;cache&gt;</code> 标签支持多个属性来控制缓存行为：</p>
+<pre><code class="language-xml">&lt;cache
+    eviction=&quot;LRU&quot;
+    flushInterval=&quot;60000&quot;
+    size=&quot;512&quot;
+    readOnly=&quot;false&quot;
+    blocking=&quot;false&quot;
+/&gt;
+</code></pre>
+<p><strong>属性详解表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>含义</th>
+<th>可选值</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>eviction</code></td>
+<td>缓存淘汰策略</td>
+<td><code>LRU</code> / <code>FIFO</code> / <code>SOFT</code> / <code>WEAK</code></td>
+<td><code>LRU</code></td>
+<td>缓存满时的回收策略</td>
+</tr>
+<tr>
+<td><code>flushInterval</code></td>
+<td>自动刷新间隔（毫秒）</td>
+<td>任意正整数</td>
+<td>无（不自动刷新）</td>
+<td>设置后会按时间间隔自动清空缓存</td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td>最大缓存引用数</td>
+<td>任意正整数</td>
+<td><code>1024</code></td>
+<td>缓存可以存储的对象（或列表）引用数量上限</td>
+</tr>
+<tr>
+<td><code>readOnly</code></td>
+<td>是否只读</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+<td>true 返回同一引用（快但不安全），false 返回序列化副本（安全但慢）</td>
+</tr>
+<tr>
+<td><code>blocking</code></td>
+<td>是否阻塞</td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+<td>true 时同一缓存 key 只允许一个线程查询，防缓存击穿</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>自定义缓存实现类</td>
+<td>实现 <code>org.apache.ibatis.cache.Cache</code> 接口的全类名</td>
+<td>MyBatis 内置实现</td>
+<td>可以指定 Redis、Ehcache 等第三方实现</td>
+</tr>
+</tbody>
+</table>
+<p><strong>淘汰策略详解</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>全称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LRU</code></td>
+<td>Least Recently Used</td>
+<td>移除最近最少使用的对象（最常用）</td>
+</tr>
+<tr>
+<td><code>FIFO</code></td>
+<td>First In First Out</td>
+<td>按先进先出顺序移除</td>
+</tr>
+<tr>
+<td><code>SOFT</code></td>
+<td>Soft Reference</td>
+<td>基于 JVM 软引用回收，内存不足时才回收</td>
+</tr>
+<tr>
+<td><code>WEAK</code></td>
+<td>Weak Reference</td>
+<td>基于 JVM 弱引用回收，GC 时即回收（存活时间最短）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>readOnly 属性的重要区别</strong>：</p>
+<pre><code class="language-java">// readOnly=&quot;true&quot; 时：
+// 所有调用者拿到的是同一个对象引用，性能好但不安全
+// 如果一个调用者修改了对象属性，其他调用者也会受影响
+User user1 = mapper1.selectById(1L);
+user1.setUsername(&quot;modified&quot;); // 会影响缓存中的数据！
+
+// readOnly=&quot;false&quot; 时（默认）：
+// 每次从缓存中取出对象时都会通过序列化/反序列化创建一个新的副本
+// 安全但有额外的序列化开销
+User user1 = mapper1.selectById(1L);
+user1.setUsername(&quot;modified&quot;); // 不影响缓存中的数据
+</code></pre>
+<blockquote>
+<p><strong>建议</strong>：生产环境中如果确定使用二级缓存，推荐保持 <code>readOnly=&quot;false&quot;</code>（默认值）以避免并发修改问题。</p>
+</blockquote>
+<hr />
+<h3 id="723-实体类序列化要求">7.2.3 实体类序列化要求</h3>
+<p>当 <code>readOnly=&quot;false&quot;</code>（默认值）时，二级缓存通过 Java 序列化机制来创建对象副本，因此实体类<strong>必须实现 <code>Serializable</code> 接口</strong>，否则会抛出 <code>NotSerializableException</code>。</p>
+<pre><code class="language-java">// 正确：实现 Serializable 接口
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private Long id;
+    private String username;
+    private String email;
+
+    // getter / setter ...
+}
+</code></pre>
+<p>如果实体类包含关联对象，关联对象也必须实现 <code>Serializable</code>：</p>
+<pre><code class="language-java">public class Order implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private Long id;
+    private BigDecimal amount;
+    private User user; // User 也必须实现 Serializable
+
+    // getter / setter ...
+}
+</code></pre>
+<blockquote>
+<p><strong>例外</strong>：当 <code>readOnly=&quot;true&quot;</code> 时，缓存直接返回对象引用，不需要序列化，因此实体类可以不实现 <code>Serializable</code>。但这样做会牺牲线程安全性，不推荐在生产环境使用。</p>
+</blockquote>
+<hr />
+<h3 id="724-cache-ref--跨-namespace-共享缓存">7.2.4 <code>&lt;cache-ref&gt;</code> —— 跨 namespace 共享缓存</h3>
+<p>默认情况下，每个 Mapper namespace 拥有独立的二级缓存空间。但某些场景下，多个 Mapper 操作的是同一组数据表，需要共享缓存以避免脏读问题。</p>
+<p><code>&lt;cache-ref&gt;</code> 可以让当前 namespace 引用另一个 namespace 的缓存空间：</p>
+<pre><code class="language-xml">&lt;!-- OrderMapper.xml --&gt;
+&lt;mapper namespace=&quot;com.example.mapper.OrderMapper&quot;&gt;
+
+    &lt;!-- 引用 UserMapper 的缓存空间，两个 namespace 共享同一块缓存 --&gt;
+    &lt;cache-ref namespace=&quot;com.example.mapper.UserMapper&quot;/&gt;
+
+    &lt;select id=&quot;selectOrderWithUser&quot; resultMap=&quot;orderWithUserMap&quot;&gt;
+        SELECT o.*, u.username
+        FROM orders o
+        LEFT JOIN user u ON o.user_id = u.id
+        WHERE o.id = #{id}
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<p><strong>使用 cache-ref 后的效果</strong>：</p>
+<ul>
+<li><code>OrderMapper</code> 和 <code>UserMapper</code> 共享同一个缓存区域</li>
+<li><code>OrderMapper</code> 中的增删改操作会清空共享缓存，<code>UserMapper</code> 的缓存也会被清空，反之亦然</li>
+<li>这可以在一定程度上缓解多表关联场景下的脏读问题</li>
+</ul>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li>使用 <code>&lt;cache-ref&gt;</code> 后，当前 namespace 不能再使用 <code>&lt;cache&gt;</code> 标签</li>
+<li>共享缓存会导致缓存粒度变粗 —— 任意一个 namespace 的写操作都会清空整个共享缓存</li>
+<li>这种方案只适用于关联度很高的少数几个 Mapper，不宜大范围使用</li>
+</ul>
+<hr />
+<h3 id="725-二级缓存的脏读问题与规避方案">7.2.5 二级缓存的脏读问题与规避方案</h3>
+<p>二级缓存最大的陷阱在于<strong>多表关联场景下的脏读</strong>。这也是生产环境中通常建议关闭二级缓存的核心原因。</p>
+<h4 id="脏读场景复现">脏读场景复现</h4>
+<p>假设有两张表：<code>user</code> 和 <code>orders</code>，以及两个 Mapper：<code>UserMapper</code> 和 <code>OrderMapper</code>。</p>
+<pre><code class="language-xml">&lt;!-- UserMapper.xml —— 独立的缓存空间 --&gt;
+&lt;mapper namespace=&quot;com.example.mapper.UserMapper&quot;&gt;
+    &lt;cache/&gt;
+
+    &lt;select id=&quot;selectById&quot; resultType=&quot;User&quot;&gt;
+        SELECT id, username, email FROM user WHERE id = #{id}
+    &lt;/select&gt;
+&lt;/mapper&gt;
+
+&lt;!-- OrderMapper.xml —— 独立的缓存空间 --&gt;
+&lt;mapper namespace=&quot;com.example.mapper.OrderMapper&quot;&gt;
+    &lt;cache/&gt;
+
+    &lt;!-- 这条 SQL 关联查询了 user 表 --&gt;
+    &lt;select id=&quot;selectOrderDetail&quot; resultType=&quot;OrderDetail&quot;&gt;
+        SELECT o.id, o.amount, u.username AS userName
+        FROM orders o
+        LEFT JOIN user u ON o.user_id = u.id
+        WHERE o.id = #{id}
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre>
+<p><strong>脏读过程</strong>：</p>
+<pre><code>时刻 T1：OrderMapper.selectOrderDetail(1)
+         → 执行 SQL，查询到 userName = &quot;zhangsan&quot;
+         → 结果写入 OrderMapper 的二级缓存
+
+时刻 T2：UserMapper.updateUsername(1, &quot;lisi&quot;)
+         → 更新 user 表，userName 从 &quot;zhangsan&quot; 变为 &quot;lisi&quot;
+         → 清空 UserMapper 的二级缓存（✓）
+         → OrderMapper 的缓存不受影响！（✗ 脏读根源）
+
+时刻 T3：OrderMapper.selectOrderDetail(1)
+         → 命中 OrderMapper 的二级缓存
+         → 返回 userName = &quot;zhangsan&quot;（脏数据！实际已经是 &quot;lisi&quot;）
+</code></pre>
+<p><strong>问题本质</strong>：二级缓存以 namespace 为隔离单元。当 SQL 跨表查询时，表 A 的数据变更只会清空表 A 所在 namespace 的缓存，而包含表 A 数据的其他 namespace 缓存不会被感知到。</p>
+<h4 id="用代码验证脏读">用代码验证脏读</h4>
+<pre><code class="language-java">public void testDirtyRead() {
+    // T1: 通过 OrderMapper 查询（关联了 user 表）
+    SqlSession session1 = sqlSessionFactory.openSession();
+    OrderMapper orderMapper1 = session1.getMapper(OrderMapper.class);
+    OrderDetail detail1 = orderMapper1.selectOrderDetail(1L);
+    System.out.println(&quot;T1 查询结果: &quot; + detail1.getUserName()); // zhangsan
+    session1.close(); // 结果写入 OrderMapper 二级缓存
+
+    // T2: 通过 UserMapper 更新 user 表
+    SqlSession session2 = sqlSessionFactory.openSession();
+    UserMapper userMapper = session2.getMapper(UserMapper.class);
+    userMapper.updateUsername(1L, &quot;lisi&quot;);
+    session2.commit();
+    session2.close(); // 清空 UserMapper 二级缓存，但 OrderMapper 缓存不受影响
+
+    // T3: 再次通过 OrderMapper 查询 —— 脏读！
+    SqlSession session3 = sqlSessionFactory.openSession();
+    OrderMapper orderMapper3 = session3.getMapper(OrderMapper.class);
+    OrderDetail detail3 = orderMapper3.selectOrderDetail(1L);
+    System.out.println(&quot;T3 查询结果: &quot; + detail3.getUserName()); // zhangsan（脏数据！）
+    session3.close();
+}
+</code></pre>
+<h4 id="规避方案">规避方案</h4>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>做法</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>cache-ref</strong></td>
+<td><code>OrderMapper</code> 中使用 <code>&lt;cache-ref namespace=&quot;...UserMapper&quot;/&gt;</code></td>
+<td>简单直接</td>
+<td>缓存粒度变粗，命中率下降</td>
+</tr>
+<tr>
+<td><strong>关闭二级缓存</strong></td>
+<td>不在 Mapper XML 中添加 <code>&lt;cache&gt;</code> 标签</td>
+<td>彻底消除脏读风险</td>
+<td>失去二级缓存的性能收益</td>
+</tr>
+<tr>
+<td><strong>使用外部缓存</strong></td>
+<td>在 Service 层使用 Redis / Caffeine 等缓存，手动控制失效</td>
+<td>灵活可控，粒度精细</td>
+<td>需要额外开发和维护</td>
+</tr>
+<tr>
+<td><strong>避免跨表查询缓存</strong></td>
+<td>只对单表查询的 Mapper 开启缓存</td>
+<td>务实折中</td>
+<td>需要仔细甄别每个 Mapper</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：在存在多表关联查询的场景下，<strong>不要使用 MyBatis 二级缓存</strong>。用 Redis 等外部缓存在 Service 层做精确控制，是更安全、更主流的做法。</p>
+</blockquote>
+<hr />
+<h2 id="73-自定义缓存--整合-redis--ehcache">7.3 自定义缓存 —— 整合 Redis / Ehcache</h2>
+<p>MyBatis 支持通过 <code>type</code> 属性指定自定义缓存实现，只要实现 <code>org.apache.ibatis.cache.Cache</code> 接口即可。下面以整合 Redis 为例，演示完整的配置过程。</p>
+<h3 id="方式一使用-mybatis-redis-官方模块">方式一：使用 mybatis-redis 官方模块</h3>
+<p><strong>步骤一：添加 Maven 依赖</strong></p>
+<pre><code class="language-xml">&lt;dependencies&gt;
+    &lt;!-- MyBatis --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
+        &lt;version&gt;3.0.3&lt;/version&gt;
+    &lt;/dependency&gt;
+
+    &lt;!-- Redis --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<p><strong>步骤二：自定义 Redis Cache 实现</strong></p>
+<pre><code class="language-java">import org.apache.ibatis.cache.Cache;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+public class MybatisRedisCache implements Cache {
+
+    private final String id;
+    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+
+    private static volatile RedisTemplate&lt;String, Object&gt; redisTemplate;
+
+    public MybatisRedisCache(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException(&quot;Cache instances require an ID&quot;);
+        }
+        this.id = id;
+    }
+
+    /**
+     * 由于 MyBatis 自己实例化缓存对象，无法使用 Spring 注入，
+     * 需要通过静态方法手动设置 RedisTemplate。
+     */
+    public static void setRedisTemplate(RedisTemplate&lt;String, Object&gt; template) {
+        redisTemplate = template;
+    }
+
+    private RedisTemplate&lt;String, Object&gt; getRedisTemplate() {
+        if (redisTemplate == null) {
+            throw new IllegalStateException(&quot;RedisTemplate has not been initialized&quot;);
+        }
+        return redisTemplate;
+    }
+
+    @Override
+    public String getId() {
+        return this.id;
+    }
+
+    @Override
+    public void putObject(Object key, Object value) {
+        getRedisTemplate().opsForHash().put(id, key.toString(), value);
+    }
+
+    @Override
+    public Object getObject(Object key) {
+        return getRedisTemplate().opsForHash().get(id, key.toString());
+    }
+
+    @Override
+    public Object removeObject(Object key) {
+        Object value = getObject(key);
+        getRedisTemplate().opsForHash().delete(id, key.toString());
+        return value;
+    }
+
+    @Override
+    public void clear() {
+        getRedisTemplate().delete(id);
+    }
+
+    @Override
+    public int getSize() {
+        Long size = getRedisTemplate().opsForHash().size(id);
+        return size == null ? 0 : size.intValue();
+    }
+
+    @Override
+    public ReadWriteLock getReadWriteLock() {
+        return readWriteLock;
+    }
+}
+</code></pre>
+<p><strong>步骤三：初始化 RedisTemplate</strong></p>
+<pre><code class="language-java">@Configuration
+public class MybatisCacheConfig {
+
+    @Bean
+    public RedisTemplate&lt;String, Object&gt; mybatisCacheRedisTemplate(
+            LettuceConnectionFactory connectionFactory) {
+
+        RedisTemplate&lt;String, Object&gt; template = new RedisTemplate&lt;&gt;();
+        template.setConnectionFactory(connectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.afterPropertiesSet();
+
+        // 注入到 MybatisRedisCache 中
+        MybatisRedisCache.setRedisTemplate(template);
+        return template;
+    }
+}
+</code></pre>
+<p><strong>步骤四：在 Mapper XML 中指定自定义缓存</strong></p>
+<pre><code class="language-xml">&lt;mapper namespace=&quot;com.example.mapper.UserMapper&quot;&gt;
+
+    &lt;!-- 使用 Redis 作为二级缓存实现 --&gt;
+    &lt;cache type=&quot;com.example.cache.MybatisRedisCache&quot;
+           eviction=&quot;LRU&quot;
+           flushInterval=&quot;600000&quot;
+           size=&quot;1024&quot;
+           readOnly=&quot;true&quot;/&gt;
+
+    &lt;select id=&quot;selectById&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+        SELECT id, username, email FROM user WHERE id = #{id}
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<p><strong>步骤五：Redis 配置</strong></p>
+<pre><code class="language-yaml"># application.yml
+spring:
+  redis:
+    host: localhost
+    port: 6379
+    password:
+    database: 0
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+</code></pre>
+<h3 id="方式二使用-spring-cache-抽象推荐">方式二：使用 Spring Cache 抽象（推荐）</h3>
+<p>相比直接整合 MyBatis 二级缓存，更推荐的做法是在 <strong>Service 层</strong> 使用 Spring Cache 抽象 + Redis：</p>
+<pre><code class="language-java">@Service
+public class UserService {
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Cacheable(value = &quot;user&quot;, key = &quot;#id&quot;)
+    public User getUserById(Long id) {
+        return userMapper.selectById(id);
+    }
+
+    @CacheEvict(value = &quot;user&quot;, key = &quot;#user.id&quot;)
+    public void updateUser(User user) {
+        userMapper.updateById(user);
+    }
+
+    @CacheEvict(value = &quot;user&quot;, allEntries = true)
+    public void deleteUser(Long id) {
+        userMapper.deleteById(id);
+    }
+}
+</code></pre>
+<p>配合 Redis 配置：</p>
+<pre><code class="language-java">@Configuration
+@EnableCaching
+public class RedisCacheConfig {
+
+    @Bean
+    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(30))
+                .serializeKeysWith(
+                    RedisSerializationContext.SerializationPair
+                        .fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(
+                    RedisSerializationContext.SerializationPair
+                        .fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                .disableCachingNullValues();
+
+        return RedisCacheManager.builder(connectionFactory)
+                .cacheDefaults(config)
+                .build();
+    }
+}
+</code></pre>
+<p><strong>两种方式对比</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>MyBatis 二级缓存 + Redis</th>
+<th>Spring Cache + Redis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>控制粒度</td>
+<td>namespace 级别</td>
+<td>方法级别</td>
+</tr>
+<tr>
+<td>缓存失效</td>
+<td>整个 namespace 一起失效</td>
+<td>可按 key 精确失效</td>
+</tr>
+<tr>
+<td>多表关联脏读</td>
+<td>存在风险</td>
+<td>由开发者在 Service 层精确控制</td>
+</tr>
+<tr>
+<td>接入成本</td>
+<td>需实现 Cache 接口</td>
+<td>注解驱动，接入简单</td>
+</tr>
+<tr>
+<td>灵活性</td>
+<td>低</td>
+<td>高</td>
+</tr>
+<tr>
+<td>推荐度</td>
+<td>⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="74-生产环境缓存策略建议">7.4 生产环境缓存策略建议</h2>
+<p>基于实际项目经验，给出以下明确的生产环境缓存策略建议：</p>
+<h3 id="一级缓存保持默认不依赖">一级缓存：保持默认，不依赖</h3>
+<ul>
+<li>一级缓存默认开启且无法关闭，保持默认即可</li>
+<li>在 Spring 环境下，一级缓存的实际价值非常有限（仅在 <code>@Transactional</code> 方法内生效）</li>
+<li><strong>不要依赖一级缓存做性能优化</strong>，把它当作一个透明的&quot;附赠品&quot;</li>
+</ul>
+<h3 id="二级缓存一般建议关闭">二级缓存：一般建议关闭</h3>
+<p><strong>推荐在生产环境中关闭 MyBatis 二级缓存</strong>，原因如下：</p>
+<ol>
+<li><strong>脏读风险</strong>：多表关联场景下存在无法彻底解决的脏读问题</li>
+<li><strong>粒度太粗</strong>：以 namespace 为单位的缓存失效策略过于粗暴，任何写操作都会清空整个 namespace 的缓存</li>
+<li><strong>分布式场景失效</strong>：MyBatis 内置的二级缓存是本地缓存（JVM 内存），在多实例部署的分布式环境下各节点缓存不一致</li>
+<li><strong>序列化开销</strong>：<code>readOnly=false</code> 时每次缓存读取都需要反序列化，性能收益被削减</li>
+<li><strong>Debug 困难</strong>：缓存导致的数据不一致问题难以排查</li>
+</ol>
+<p>关闭方式：</p>
+<pre><code class="language-yaml"># application.yml — 全局关闭二级缓存
+mybatis:
+  configuration:
+    cache-enabled: false
+</code></pre>
+<p>或者更简单 —— 不在任何 Mapper XML 中添加 <code>&lt;cache&gt;</code> 标签即可。</p>
+<h3 id="推荐方案service-层--redis-外部缓存">推荐方案：Service 层 + Redis 外部缓存</h3>
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│                    推荐缓存架构                           │
+│                                                         │
+│   Controller → Service（@Cacheable）→ Mapper → DB       │
+│                    ↕                                    │
+│                  Redis                                  │
+│              (集中式缓存)                                │
+│                                                         │
+│   优势：                                                 │
+│   ✅ 分布式环境下多实例共享缓存                            │
+│   ✅ 方法级别的精确缓存控制                               │
+│   ✅ 灵活的 TTL 和失效策略                                │
+│   ✅ 可视化管理（Redis 可直接查看/删除缓存数据）            │
+│   ✅ 避免 MyBatis 二级缓存的脏读问题                      │
+└─────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="生产环境-checklist">生产环境 Checklist</h3>
+<table>
+<thead>
+<tr>
+<th>检查项</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>一级缓存</td>
+<td>保持默认开启，不做特殊处理</td>
+</tr>
+<tr>
+<td>二级缓存</td>
+<td>关闭（<code>cache-enabled: false</code> 或不加 <code>&lt;cache&gt;</code> 标签）</td>
+</tr>
+<tr>
+<td>缓存方案</td>
+<td>使用 Spring Cache + Redis</td>
+</tr>
+<tr>
+<td>缓存粒度</td>
+<td>Service 方法级别，按业务需求精确控制</td>
+</tr>
+<tr>
+<td>缓存 TTL</td>
+<td>根据业务设置合理的过期时间，避免永不过期</td>
+</tr>
+<tr>
+<td>缓存穿透</td>
+<td>对空结果也进行短时间缓存，或使用布隆过滤器</td>
+</tr>
+<tr>
+<td>缓存雪崩</td>
+<td>TTL 加随机偏移量，避免大量缓存同时过期</td>
+</tr>
+<tr>
+<td>缓存击穿</td>
+<td>热点数据使用分布式锁或提前预热</td>
+</tr>
+<tr>
+<td>数据一致性</td>
+<td>更新数据时先更新 DB 再删除缓存（Cache Aside 模式）</td>
+</tr>
+<tr>
+<td>监控</td>
+<td>接入缓存命中率监控，及时发现异常</td>
+</tr>
+</tbody>
+</table>
+<h3 id="总结">总结</h3>
+<pre><code>MyBatis 缓存决策流程：
+
+Q: 需要缓存优化吗？
+├── 否 → 保持默认，不做任何处理
+└── 是
+    Q: 是单体应用还是分布式部署？
+    ├── 单体 + 纯单表查询 → 可以考虑 MyBatis 二级缓存（但仍不推荐）
+    └── 其他场景 → 使用 Redis 等外部缓存（推荐）
+        ├── 简单场景 → Spring Cache 注解（@Cacheable / @CacheEvict）
+        └── 复杂场景 → 手动操作 RedisTemplate，精确控制缓存逻辑
+</code></pre>
+<blockquote>
+<p><strong>一句话总结</strong>：MyBatis 的一级缓存了解原理即可，二级缓存在生产环境建议关闭，真正的缓存优化交给 Redis + Spring Cache 来完成。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

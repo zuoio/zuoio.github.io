@@ -1,0 +1,3496 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第23课-自定义绘制---custompaint">第23课 自定义绘制 - CustomPaint</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter 常用组件系统学习<br />
+<strong>适用人群</strong>：有 Dart 语言基础，了解 Flutter 基本概念的开发者<br />
+<strong>课程目标</strong>：掌握 CustomPaint 与 Canvas API，能够自定义绘制任意图形、路径、文字，并具备实现自定义图表（饼图、折线图）的能力</p>
+</blockquote>
+<p>当 Flutter 内置的组件无法满足你的 UI 需求时，<strong>CustomPaint</strong> 就是你的终极武器。它让你直接操控 Canvas（画布），像画家一样一笔一笔地绘制出任何你想要的图形。本课将从最基础的线条和矩形画起，逐步深入到贝塞尔曲线、路径运算、文字绘制，最终带你完成两个完整的图表实战项目。</p>
+<hr />
+<h2 id="1-custompaint-与-custompainter">1. CustomPaint 与 CustomPainter</h2>
+<h3 id="11-custompaint-组件">1.1 CustomPaint 组件</h3>
+<p><code>CustomPaint</code> 是 Flutter 提供的自定义绘制组件，它本身不绘制任何内容，而是将绘制工作委托给 <code>CustomPainter</code> 对象。</p>
+<p>核心属性：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>painter</code></td>
+<td><code>CustomPainter?</code></td>
+<td>在 <code>child</code> <strong>之前</strong>绘制（背景层）</td>
+</tr>
+<tr>
+<td><code>foregroundPainter</code></td>
+<td><code>CustomPainter?</code></td>
+<td>在 <code>child</code> <strong>之后</strong>绘制（前景层）</td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td><code>Size</code></td>
+<td>当没有 <code>child</code> 时使用此尺寸，默认为 <code>Size.zero</code></td>
+</tr>
+<tr>
+<td><code>child</code></td>
+<td><code>Widget?</code></td>
+<td>子组件，CustomPaint 的尺寸由 child 决定</td>
+</tr>
+</tbody>
+</table>
+<p><strong>尺寸决定规则</strong>：</p>
+<ol>
+<li>如果有 <code>child</code>，CustomPaint 的尺寸由 <code>child</code> 决定</li>
+<li>如果没有 <code>child</code>，则使用 <code>size</code> 属性</li>
+<li>如果 <code>size</code> 也未指定（或为 <code>Size.zero</code>），则使用父约束的最小值</li>
+</ol>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('CustomPaint 基础')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(300, 200), // 没有 child 时使用此尺寸
+            painter: MyBackgroundPainter(),  // 背景层绘制
+            foregroundPainter: MyForegroundPainter(), // 前景层绘制
+            child: const Center(
+              child: Text(
+                'Hello CustomPaint',
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// 背景层画家 —— 绘制蓝色填充矩形
+class MyBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.blue;
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+
+// 前景层画家 —— 绘制红色对角线（会覆盖在 child 之上）
+class MyForegroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.red
+      ..strokeWidth = 3;
+    canvas.drawLine(Offset.zero, Offset(size.width, size.height), paint);
+    canvas.drawLine(Offset(size.width, 0), Offset(0, size.height), paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="12-custompainter-抽象类">1.2 CustomPainter 抽象类</h3>
+<p><code>CustomPainter</code> 是你自定义绘制逻辑的核心，必须实现两个方法：</p>
+<pre><code class="language-dart">class MyPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // canvas：画布对象，提供各种 draw 方法
+    // size：绘制区域的尺寸
+  }
+
+  @override
+  bool shouldRepaint(covariant MyPainter oldDelegate) {
+    // 返回 true 表示需要重绘，false 表示不需要
+    // 框架在 CustomPaint 重建时调用此方法来决定是否需要重新执行 paint()
+    return false;
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：<code>paint()</code> 方法中的 <code>Size</code> 参数就是 CustomPaint 组件最终确定的尺寸。你应该始终基于这个 <code>size</code> 来计算绘制坐标，而不是使用硬编码的数值，这样才能让绘制内容自适应不同尺寸。</p>
+</blockquote>
+<h3 id="13-使用-repaint-通知重绘">1.3 使用 repaint 通知重绘</h3>
+<p>当你的绘制内容依赖于外部状态变化（如动画），可以传入一个 <code>Listenable</code>（通常是 <code>AnimationController</code>）来通知 <code>CustomPaint</code> 重绘，而不必依赖 <code>setState</code>：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const RepaintNotifierDemo(),
+    );
+  }
+}
+
+class RepaintNotifierDemo extends StatefulWidget {
+  const RepaintNotifierDemo({super.key});
+
+  @override
+  State&lt;RepaintNotifierDemo&gt; createState() =&gt; _RepaintNotifierDemoState();
+}
+
+class _RepaintNotifierDemoState extends State&lt;RepaintNotifierDemo&gt;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(); // 循环播放
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Repaint 通知重绘')),
+      body: Center(
+        child: CustomPaint(
+          size: const Size(200, 200),
+          // 传入 _controller 作为 repaint 通知器
+          // 每当 _controller 值变化时自动触发重绘，无需 setState
+          painter: PulsePainter(animation: _controller),
+        ),
+      ),
+    );
+  }
+}
+
+class PulsePainter extends CustomPainter {
+  final Animation&lt;double&gt; animation;
+
+  PulsePainter({required this.animation}) : super(repaint: animation);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final maxRadius = size.width / 2;
+    final paint = Paint()
+      ..color = Colors.blue.withOpacity(1 - animation.value)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(center, maxRadius * animation.value, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant PulsePainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：对于动画驱动的绘制，优先使用 <code>super(repaint: animation)</code> 方式，而不是在 <code>shouldRepaint</code> 中返回 <code>true</code>。前者更高效——只有当 <code>Listenable</code> 通知时才会重绘，而后者需要整个 Widget 重建才会触发检查。</p>
+</blockquote>
+<hr />
+<h2 id="2-paint-对象">2. Paint 对象</h2>
+<p><code>Paint</code> 对象描述了&quot;用什么样的笔来画&quot;，它是 Canvas 绑制的核心配置。</p>
+<h3 id="21-paint-常用属性总览">2.1 Paint 常用属性总览</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>color</code></td>
+<td><code>Color</code></td>
+<td>画笔颜色</td>
+</tr>
+<tr>
+<td><code>strokeWidth</code></td>
+<td><code>double</code></td>
+<td>线条宽度（仅 stroke 模式有效）</td>
+</tr>
+<tr>
+<td><code>style</code></td>
+<td><code>PaintingStyle</code></td>
+<td><code>fill</code>（填充）或 <code>stroke</code>（描边）</td>
+</tr>
+<tr>
+<td><code>strokeCap</code></td>
+<td><code>StrokeCap</code></td>
+<td>线段端点样式：<code>butt</code>、<code>round</code>、<code>square</code></td>
+</tr>
+<tr>
+<td><code>strokeJoin</code></td>
+<td><code>StrokeJoin</code></td>
+<td>线段连接处样式：<code>miter</code>、<code>round</code>、<code>bevel</code></td>
+</tr>
+<tr>
+<td><code>shader</code></td>
+<td><code>Shader?</code></td>
+<td>着色器（渐变、图片着色等）</td>
+</tr>
+<tr>
+<td><code>maskFilter</code></td>
+<td><code>MaskFilter?</code></td>
+<td>模糊滤镜（实现阴影效果）</td>
+</tr>
+<tr>
+<td><code>isAntiAlias</code></td>
+<td><code>bool</code></td>
+<td>是否开启抗锯齿，默认 <code>true</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-paintingstylefill-与-stroke">2.2 PaintingStyle：fill 与 stroke</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Fill 与 Stroke')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(350, 200),
+            painter: FillStrokePainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FillStrokePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 填充模式
+    final fillPaint = Paint()
+      ..color = Colors.blue
+      ..style = PaintingStyle.fill; // 默认值就是 fill
+    canvas.drawRect(
+      const Rect.fromLTWH(20, 50, 120, 100),
+      fillPaint,
+    );
+
+    // 描边模式
+    final strokePaint = Paint()
+      ..color = Colors.red
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4;
+    canvas.drawRect(
+      const Rect.fromLTWH(200, 50, 120, 100),
+      strokePaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="23-strokecap-与-strokejoin">2.3 StrokeCap 与 StrokeJoin</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('StrokeCap 与 StrokeJoin')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(400, 350),
+            painter: StrokeCapJoinPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class StrokeCapJoinPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // === StrokeCap 演示 ===
+    final caps = [StrokeCap.butt, StrokeCap.round, StrokeCap.square];
+    final capNames = ['butt', 'round', 'square'];
+
+    for (int i = 0; i &lt; caps.length; i++) {
+      final paint = Paint()
+        ..color = Colors.blue
+        ..strokeWidth = 16
+        ..strokeCap = caps[i];
+      final y = 40.0 + i * 50;
+      canvas.drawLine(Offset(30, y), Offset(180, y), paint);
+
+      // 标注端点样式名称
+      final tp = TextPainter(
+        text: TextSpan(
+          text: capNames[i],
+          style: const TextStyle(color: Colors.black, fontSize: 14),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      tp.paint(canvas, Offset(190, y - 8));
+    }
+
+    // === StrokeJoin 演示 ===
+    final joins = [StrokeJoin.miter, StrokeJoin.round, StrokeJoin.bevel];
+    final joinNames = ['miter', 'round', 'bevel'];
+
+    for (int i = 0; i &lt; joins.length; i++) {
+      final paint = Paint()
+        ..color = Colors.red
+        ..strokeWidth = 10
+        ..style = PaintingStyle.stroke
+        ..strokeJoin = joins[i];
+
+      final offsetX = 30.0 + i * 130;
+      final path = Path()
+        ..moveTo(offsetX, 220)
+        ..lineTo(offsetX + 30, 280)
+        ..lineTo(offsetX + 60, 210)
+        ..lineTo(offsetX + 90, 280);
+      canvas.drawPath(path, paint);
+
+      final tp = TextPainter(
+        text: TextSpan(
+          text: joinNames[i],
+          style: const TextStyle(color: Colors.black, fontSize: 12),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      tp.paint(canvas, Offset(offsetX + 20, 290));
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="24-shader渐变着色">2.4 Shader：渐变着色</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Shader 渐变')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(350, 400),
+            painter: ShaderPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ShaderPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 线性渐变
+    final linearRect = const Rect.fromLTWH(20, 20, 300, 80);
+    final linearPaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Colors.red, Colors.yellow, Colors.green],
+      ).createShader(linearRect);
+    canvas.drawRect(linearRect, linearPaint);
+
+    // 径向渐变
+    final radialRect = const Rect.fromLTWH(20, 130, 300, 100);
+    final radialPaint = Paint()
+      ..shader = RadialGradient(
+        colors: [Colors.purple, Colors.blue, Colors.cyan.withOpacity(0)],
+      ).createShader(radialRect);
+    canvas.drawOval(radialRect, radialPaint);
+
+    // 扫描渐变
+    final sweepRect = const Rect.fromLTWH(100, 270, 150, 120);
+    final sweepPaint = Paint()
+      ..shader = const SweepGradient(
+        colors: [Colors.red, Colors.orange, Colors.yellow, Colors.green,
+                 Colors.blue, Colors.purple, Colors.red],
+      ).createShader(sweepRect);
+    canvas.drawOval(sweepRect, sweepPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="25-maskfilter模糊阴影">2.5 MaskFilter：模糊阴影</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('MaskFilter 阴影')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(300, 200),
+            painter: MaskFilterPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MaskFilterPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 带模糊阴影的圆
+    final shadowPaint = Paint()
+      ..color = Colors.black38
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+    canvas.drawCircle(const Offset(155, 105), 60, shadowPaint);
+
+    // 正常绘制的圆（阴影之上）
+    final circlePaint = Paint()
+      ..color = Colors.blue
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(const Offset(150, 100), 60, circlePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<p><code>MaskFilter.blur</code> 的两个参数：</p>
+<ul>
+<li><code>BlurStyle</code>：模糊样式 —— <code>normal</code>（内外都模糊）、<code>solid</code>（仅外部模糊）、<code>outer</code>（只画外部模糊，不画形状本身）、<code>inner</code>（只在内部模糊）</li>
+<li><code>sigma</code>：模糊程度，数值越大越模糊</li>
+</ul>
+<hr />
+<h2 id="3-canvas-api基础图形">3. Canvas API：基础图形</h2>
+<p>Canvas 的坐标系原点在<strong>左上角</strong>，X 轴向右，Y 轴向下。</p>
+<h3 id="31-drawline--画线">3.1 drawLine —— 画线</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('drawLine 画线')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(300, 200),
+            painter: LinePainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class LinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.blue
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+
+    // 从 (20, 50) 画到 (280, 50)
+    canvas.drawLine(
+      const Offset(20, 50),
+      const Offset(280, 50),
+      paint,
+    );
+
+    // 虚线效果需要使用 Path + PathEffect 或手动绘制
+    // 这里演示多条不同样式的线
+    paint.color = Colors.red;
+    paint.strokeWidth = 6;
+    canvas.drawLine(
+      const Offset(20, 100),
+      const Offset(280, 100),
+      paint,
+    );
+
+    paint.color = Colors.green;
+    paint.strokeWidth = 2;
+    canvas.drawLine(
+      const Offset(20, 150),
+      const Offset(280, 180),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="32-drawrect--画矩形">3.2 drawRect —— 画矩形</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('drawRect 画矩形')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(350, 250),
+            painter: RectPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class RectPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 方式一：fromLTWH(left, top, width, height)
+    final fillPaint = Paint()..color = Colors.blue.withOpacity(0.5);
+    canvas.drawRect(
+      const Rect.fromLTWH(20, 30, 140, 80),
+      fillPaint,
+    );
+
+    // 方式二：fromLTRB(left, top, right, bottom)
+    final strokePaint = Paint()
+      ..color = Colors.red
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+    canvas.drawRect(
+      const Rect.fromLTRB(190, 30, 330, 110),
+      strokePaint,
+    );
+
+    // 方式三：fromCenter(center, width, height)
+    final centerPaint = Paint()..color = Colors.green.withOpacity(0.5);
+    canvas.drawRect(
+      Rect.fromCenter(
+        center: Offset(size.width / 2, 180),
+        width: 200,
+        height: 60,
+      ),
+      centerPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="33-drawrrect--画圆角矩形">3.3 drawRRect —— 画圆角矩形</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('drawRRect 圆角矩形')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(350, 300),
+            painter: RRectPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class RRectPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.purple
+      ..style = PaintingStyle.fill;
+
+    // 四角统一圆角
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(20, 20, 140, 80),
+        const Radius.circular(16),
+      ),
+      paint,
+    );
+
+    // 各角独立圆角
+    paint.color = Colors.teal;
+    canvas.drawRRect(
+      RRect.fromRectAndCorners(
+        const Rect.fromLTWH(190, 20, 140, 80),
+        topLeft: const Radius.circular(30),
+        topRight: const Radius.circular(5),
+        bottomLeft: const Radius.circular(5),
+        bottomRight: const Radius.circular(30),
+      ),
+      paint,
+    );
+
+    // 描边圆角矩形
+    final strokePaint = Paint()
+      ..color = Colors.orange
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(80, 140, 200, 80),
+        const Radius.circular(20),
+      ),
+      strokePaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="34-drawcircle--画圆">3.4 drawCircle —— 画圆</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('drawCircle 画圆')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(300, 300),
+            painter: CirclePainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CirclePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+
+    // 从外到内绘制多个同心圆
+    final colors = [Colors.red, Colors.orange, Colors.yellow,
+                    Colors.green, Colors.blue];
+    for (int i = 0; i &lt; colors.length; i++) {
+      final paint = Paint()
+        ..color = colors[i].withOpacity(0.6)
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(center, 120.0 - i * 25, paint);
+    }
+
+    // 最外层描边
+    final strokePaint = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+    canvas.drawCircle(center, 120, strokePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="35-drawoval--画椭圆">3.5 drawOval —— 画椭圆</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('drawOval 画椭圆')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(350, 250),
+            painter: OvalPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class OvalPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 椭圆由其外接矩形定义
+    final paint = Paint()
+      ..color = Colors.indigo
+      ..style = PaintingStyle.fill;
+
+    // 横向椭圆
+    canvas.drawOval(
+      const Rect.fromLTWH(30, 30, 250, 80),
+      paint,
+    );
+
+    // 纵向椭圆
+    paint.color = Colors.teal.withOpacity(0.6);
+    canvas.drawOval(
+      const Rect.fromLTWH(120, 30, 80, 180),
+      paint,
+    );
+
+    // 如果外接矩形是正方形，椭圆就变成了圆
+    paint
+      ..color = Colors.amber
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+    canvas.drawOval(
+      const Rect.fromLTWH(30, 140, 80, 80),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="36-drawarc--画弧与扇形">3.6 drawArc —— 画弧与扇形</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'dart:math';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('drawArc 弧与扇形')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(400, 350),
+            painter: ArcPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ArcPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // === 弧线（useCenter = false, stroke 模式）===
+    final arcPaint = Paint()
+      ..color = Colors.blue
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4;
+
+    canvas.drawArc(
+      const Rect.fromLTWH(30, 30, 150, 150), // 外接矩形
+      0,            // 起始角度（弧度制，0 = 3点钟方向）
+      pi * 1.5,     // 扫过角度（3/4 圆弧）
+      false,        // useCenter: false = 弧线
+      arcPaint,
+    );
+
+    // === 扇形（useCenter = true, fill 模式）===
+    final sectorPaint = Paint()
+      ..color = Colors.red.withOpacity(0.7)
+      ..style = PaintingStyle.fill;
+
+    canvas.drawArc(
+      const Rect.fromLTWH(220, 30, 150, 150),
+      -pi / 2,     // 从12点钟方向开始
+      pi / 3 * 2,  // 扫过 120 度
+      true,         // useCenter: true = 扇形（连接到中心点）
+      sectorPaint,
+    );
+
+    // === 多个扇形拼成饼图 ===
+    final rect = const Rect.fromLTWH(120, 200, 150, 150);
+    final pieColors = [Colors.blue, Colors.green, Colors.orange, Colors.purple];
+    final sweeps = [pi / 2, pi / 3, pi / 4, pi - pi / 3 - pi / 4]; // 总和接近 2*pi
+    double startAngle = -pi / 2;
+
+    for (int i = 0; i &lt; pieColors.length; i++) {
+      final paint = Paint()..color = pieColors[i];
+      canvas.drawArc(rect, startAngle, sweeps[i], true, paint);
+      startAngle += sweeps[i];
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：Canvas 中所有角度参数都使用<strong>弧度制</strong>（radian），而不是角度制（degree）。<code>pi</code> 表示 180°，<code>pi / 2</code> 表示 90°。角度转弧度公式：<code>radian = degree * pi / 180</code>。</p>
+</blockquote>
+<h3 id="37-drawpoints--画点">3.7 drawPoints —— 画点</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('drawPoints 画点')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(350, 300),
+            painter: PointsPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class PointsPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final points = &lt;Offset&gt;[
+      const Offset(50, 50), const Offset(100, 80),
+      const Offset(150, 40), const Offset(200, 90),
+      const Offset(250, 60), const Offset(300, 70),
+    ];
+
+    // PointMode.points —— 独立的点
+    final pointPaint = Paint()
+      ..color = Colors.red
+      ..strokeWidth = 10
+      ..strokeCap = StrokeCap.round;
+    canvas.drawPoints(ui.PointMode.points, points, pointPaint);
+
+    // PointMode.lines —— 每两个点连成一条线段（0-1, 2-3, 4-5）
+    final linesPoints = points.map((p) =&gt; p.translate(0, 80)).toList();
+    final linePaint = Paint()
+      ..color = Colors.blue
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+    canvas.drawPoints(ui.PointMode.lines, linesPoints, linePaint);
+
+    // PointMode.polygon —— 所有点依次连线
+    final polygonPoints = points.map((p) =&gt; p.translate(0, 170)).toList();
+    final polyPaint = Paint()
+      ..color = Colors.green
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+    canvas.drawPoints(ui.PointMode.polygon, polygonPoints, polyPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="38-drawimage--drawimagerect--绘制图片">3.8 drawImage / drawImageRect —— 绘制图片</h3>
+<p>在 Canvas 上绘制图片需要使用 <code>dart:ui</code> 中的 <code>Image</code> 对象（注意不是 Flutter Widget 层的 <code>Image</code>）。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:ui' as ui;
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const DrawImageDemo(),
+    );
+  }
+}
+
+class DrawImageDemo extends StatefulWidget {
+  const DrawImageDemo({super.key});
+
+  @override
+  State&lt;DrawImageDemo&gt; createState() =&gt; _DrawImageDemoState();
+}
+
+class _DrawImageDemoState extends State&lt;DrawImageDemo&gt; {
+  ui.Image? _image;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  Future&lt;void&gt; _loadImage() async {
+    // 从 assets 加载图片（需在 pubspec.yaml 中声明）
+    final data = await rootBundle.load('assets/sample.png');
+    final codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
+    final frame = await codec.getNextFrame();
+    setState(() {
+      _image = frame.image;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('drawImage 绘制图片')),
+      body: Center(
+        child: _image == null
+            ? const CircularProgressIndicator()
+            : CustomPaint(
+                size: const Size(350, 300),
+                painter: ImagePainter(image: _image!),
+              ),
+      ),
+    );
+  }
+}
+
+class ImagePainter extends CustomPainter {
+  final ui.Image image;
+
+  ImagePainter({required this.image});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint();
+
+    // drawImage：将整张图绘制到指定位置
+    canvas.drawImage(image, const Offset(10, 10), paint);
+
+    // drawImageRect：将图片的一部分（src）绘制到画布的指定区域（dst）
+    final src = Rect.fromLTWH(
+      0, 0,
+      image.width.toDouble(), image.height.toDouble(),
+    );
+    const dst = Rect.fromLTWH(200, 10, 120, 120);
+    canvas.drawImageRect(image, src, dst, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant ImagePainter oldDelegate) {
+    return oldDelegate.image != image;
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：Canvas 的 <code>drawImage</code> 使用的是 <code>dart:ui</code> 包中的 <code>Image</code> 类型，需要通过 <code>instantiateImageCodec</code> 等方式异步加载，不能直接使用 Flutter widget 层的 <code>Image</code> 组件。</p>
+</blockquote>
+<hr />
+<h2 id="4-canvas-变换与裁剪">4. Canvas 变换与裁剪</h2>
+<p>Canvas 提供了一组变换和裁剪操作，让你可以对画布进行平移、旋转、缩放等操作。这些操作通常配合 <code>save()</code> 和 <code>restore()</code> 使用。</p>
+<h3 id="41-save-与-restore">4.1 save 与 restore</h3>
+<p><code>save()</code> 保存当前画布状态（变换矩阵、裁剪区域），<code>restore()</code> 恢复到上一次 <code>save()</code> 的状态。它们总是成对使用。</p>
+<h3 id="42-translaterotatescale">4.2 translate、rotate、scale</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'dart:math';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Canvas 变换')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(350, 400),
+            painter: TransformPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class TransformPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.blue
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+
+    const rect = Rect.fromLTWH(0, 0, 60, 40);
+
+    // --- 原始矩形 ---
+    canvas.save();
+    canvas.translate(50, 50); // 将原点平移到 (50, 50)
+    canvas.drawRect(rect, paint);
+    canvas.restore();
+
+    // --- 旋转 ---
+    canvas.save();
+    canvas.translate(200, 70); // 先移到旋转中心
+    canvas.rotate(pi / 6);     // 旋转 30 度
+    paint.color = Colors.red;
+    canvas.drawRect(rect, paint);
+    canvas.restore();
+
+    // --- 缩放 ---
+    canvas.save();
+    canvas.translate(50, 180);
+    canvas.scale(2.0, 1.5); // X 方向放大 2 倍，Y 方向放大 1.5 倍
+    paint.color = Colors.green;
+    canvas.drawRect(rect, paint);
+    canvas.restore();
+
+    // --- 组合变换：先平移再旋转 ---
+    canvas.save();
+    canvas.translate(250, 250);
+    for (int i = 0; i &lt; 12; i++) {
+      canvas.rotate(pi / 6); // 每次旋转 30 度
+      paint.color = Colors.primaries[i % Colors.primaries.length];
+      canvas.drawLine(const Offset(0, 0), const Offset(80, 0), paint);
+    }
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：<code>save()</code> 和 <code>restore()</code> 必须严格配对。养成习惯——每次做变换操作前先 <code>save()</code>，操作完成后立即 <code>restore()</code>。未匹配的 save/restore 会导致后续绘制的坐标系错乱。</p>
+</blockquote>
+<h3 id="43-cliprect-与-clippath">4.3 clipRect 与 clipPath</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Canvas 裁剪')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(350, 350),
+            painter: ClipPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ClipPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // === clipRect：矩形裁剪 ===
+    canvas.save();
+    canvas.clipRect(const Rect.fromLTWH(20, 20, 140, 140));
+    // 以下绘制只会在裁剪区域内显示
+    final gradientPaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Colors.red, Colors.blue],
+      ).createShader(const Rect.fromLTWH(0, 0, 200, 200));
+    canvas.drawCircle(const Offset(90, 90), 100, gradientPaint);
+    canvas.restore();
+
+    // === clipPath：自定义路径裁剪 ===
+    canvas.save();
+    final starPath = _createStarPath(
+      center: const Offset(270, 90),
+      outerRadius: 70,
+      innerRadius: 35,
+    );
+    canvas.clipPath(starPath);
+    // 裁剪区域内绘制渐变
+    final starPaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Colors.orange, Colors.purple],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ).createShader(const Rect.fromLTWH(200, 20, 140, 140));
+    canvas.drawRect(const Rect.fromLTWH(200, 20, 140, 140), starPaint);
+    canvas.restore();
+
+    // === 圆形裁剪 ===
+    canvas.save();
+    final circlePath = Path()
+      ..addOval(const Rect.fromLTWH(100, 200, 140, 140));
+    canvas.clipPath(circlePath);
+    final checkerPaint = Paint();
+    for (int row = 0; row &lt; 10; row++) {
+      for (int col = 0; col &lt; 10; col++) {
+        checkerPaint.color =
+            (row + col) % 2 == 0 ? Colors.black : Colors.white;
+        canvas.drawRect(
+          Rect.fromLTWH(100.0 + col * 14, 200.0 + row * 14, 14, 14),
+          checkerPaint,
+        );
+      }
+    }
+    canvas.restore();
+  }
+
+  Path _createStarPath({
+    required Offset center,
+    required double outerRadius,
+    required double innerRadius,
+    int points = 5,
+  }) {
+    final path = Path();
+    final angle = 3.14159265 / points;
+    for (int i = 0; i &lt; 2 * points; i++) {
+      final r = i.isEven ? outerRadius : innerRadius;
+      final a = i * angle - 3.14159265 / 2;
+      final x = center.dx + r * _cos(a);
+      final y = center.dy + r * _sin(a);
+      if (i == 0) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+    }
+    path.close();
+    return path;
+  }
+
+  double _cos(double radians) =&gt; radians == 0 ? 1 : _cosValue(radians);
+  double _cosValue(double r) {
+    return (r &gt;= 0 ? 1 : -1) * _rawCos(r.abs());
+  }
+
+  double _rawCos(double r) {
+    // 使用 dart:math
+    return r.isNaN ? 0 : _mathCos(r);
+  }
+
+  double _mathCos(double r) =&gt; r.isNaN ? 0 : _dartMathCos(r);
+  double _dartMathCos(double r) {
+    // 简化处理，实际应导入 dart:math
+    final x = r % (2 * 3.14159265);
+    double sum = 1.0;
+    double term = 1.0;
+    for (int i = 1; i &lt;= 10; i++) {
+      term *= -x * x / ((2 * i - 1) * (2 * i));
+      sum += term;
+    }
+    return sum;
+  }
+
+  double _sin(double r) {
+    final x = r % (2 * 3.14159265);
+    double sum = x;
+    double term = x;
+    for (int i = 1; i &lt;= 10; i++) {
+      term *= -x * x / ((2 * i) * (2 * i + 1));
+      sum += term;
+    }
+    return sum;
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<p>上面的星形裁剪示例使用了手动三角函数实现。实际开发中应当导入 <code>dart:math</code> 使用标准的 <code>cos()</code> 和 <code>sin()</code> 函数，下面是更简洁的写法：</p>
+<pre><code class="language-dart">import 'dart:math';
+
+Path createStarPath({
+  required Offset center,
+  required double outerRadius,
+  required double innerRadius,
+  int points = 5,
+}) {
+  final path = Path();
+  final angle = pi / points;
+  for (int i = 0; i &lt; 2 * points; i++) {
+    final r = i.isEven ? outerRadius : innerRadius;
+    final a = i * angle - pi / 2; // 从顶部开始
+    final x = center.dx + r * cos(a);
+    final y = center.dy + r * sin(a);
+    if (i == 0) {
+      path.moveTo(x, y);
+    } else {
+      path.lineTo(x, y);
+    }
+  }
+  path.close();
+  return path;
+}
+</code></pre>
+<hr />
+<h2 id="5-path-路径">5. Path 路径</h2>
+<p>Path 是 Canvas 绑制中最强大的工具。它描述了一条或多条由直线和曲线组成的复杂路径。</p>
+<h3 id="51-基础路径操作moveto-与-lineto">5.1 基础路径操作：moveTo 与 lineTo</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Path 基础')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(300, 300),
+            painter: BasicPathPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BasicPathPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.blue
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+
+    // 绘制三角形
+    final triangle = Path()
+      ..moveTo(150, 20)    // 将画笔移到起始点（不画线）
+      ..lineTo(280, 180)   // 画线到右下角
+      ..lineTo(20, 180)    // 画线到左下角
+      ..close();           // 闭合路径（自动连接到起始点）
+
+    canvas.drawPath(triangle, paint);
+
+    // 绘制箭头
+    final arrow = Path()
+      ..moveTo(50, 230)
+      ..lineTo(250, 230) // 箭杆
+      ..moveTo(220, 210) // 移动画笔（不画线），准备画箭头
+      ..lineTo(250, 230) // 箭头上边
+      ..lineTo(220, 250); // 箭头下边
+
+    paint.color = Colors.red;
+    canvas.drawPath(arrow, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="52-quadraticbezierto--二次贝塞尔曲线">5.2 quadraticBezierTo —— 二次贝塞尔曲线</h3>
+<p>二次贝塞尔曲线由三个点定义：起始点（当前路径点）、<strong>控制点</strong>和终点。曲线从起始点出发，&quot;被控制点吸引&quot;，最终到达终点。</p>
+<pre><code>起始点 ----→ 控制点（控制曲线的弯曲方向和程度）
+    ↘             ↗
+      曲线 ~~~~~~
+            ↘
+           终点
+</code></pre>
+<p>控制点不在曲线上，但决定了曲线的弯曲方向。可以想象控制点像一块磁铁，把曲线往它的方向&quot;拉&quot;。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('二次贝塞尔曲线')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(350, 350),
+            painter: QuadBezierPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class QuadBezierPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 定义三个关键点
+    const start = Offset(30, 200);     // 起始点
+    const control = Offset(175, 30);   // 控制点
+    const end = Offset(320, 200);      // 终点
+
+    // 绘制贝塞尔曲线
+    final curvePath = Path()
+      ..moveTo(start.dx, start.dy)
+      ..quadraticBezierTo(control.dx, control.dy, end.dx, end.dy);
+
+    final curvePaint = Paint()
+      ..color = Colors.blue
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+    canvas.drawPath(curvePath, curvePaint);
+
+    // 绘制辅助线（起始点→控制点→终点）
+    final guidePaint = Paint()
+      ..color = Colors.grey
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    canvas.drawLine(start, control, guidePaint);
+    canvas.drawLine(control, end, guidePaint);
+
+    // 绘制关键点
+    final pointPaint = Paint()..style = PaintingStyle.fill;
+
+    pointPaint.color = Colors.green;
+    canvas.drawCircle(start, 6, pointPaint);   // 起始点（绿色）
+
+    pointPaint.color = Colors.red;
+    canvas.drawCircle(control, 6, pointPaint); // 控制点（红色）
+
+    pointPaint.color = Colors.green;
+    canvas.drawCircle(end, 6, pointPaint);     // 终点（绿色）
+
+    // 标注文字
+    _drawLabel(canvas, '起始点', start.translate(-10, 10));
+    _drawLabel(canvas, '控制点', control.translate(-10, -20));
+    _drawLabel(canvas, '终点', end.translate(-10, 10));
+
+    // === 演示不同控制点位置的效果 ===
+    final controls2 = [
+      const Offset(175, 250), // 控制点在下方
+      const Offset(30, 30),   // 控制点靠近起始点上方
+      const Offset(320, 30),  // 控制点靠近终点上方
+    ];
+    final colors = [Colors.orange, Colors.purple, Colors.teal];
+
+    for (int i = 0; i &lt; controls2.length; i++) {
+      final p = Path()
+        ..moveTo(30, 300)
+        ..quadraticBezierTo(controls2[i].dx, controls2[i].dy + 100, 320, 300);
+      canvas.drawPath(
+        p,
+        Paint()
+          ..color = colors[i]
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2,
+      );
+    }
+  }
+
+  void _drawLabel(Canvas canvas, String text, Offset offset) {
+    final tp = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: const TextStyle(color: Colors.black, fontSize: 12),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, offset);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="53-cubicto--三次贝塞尔曲线">5.3 cubicTo —— 三次贝塞尔曲线</h3>
+<p>三次贝塞尔曲线有<strong>两个控制点</strong>，比二次贝塞尔更灵活，可以产生 S 形等复杂曲线。</p>
+<pre><code>起始点 ----→ 控制点1（控制曲线前半段的弯曲）
+    ↘
+      曲线前半段 ~~~
+                   ~~~曲线后半段
+                     ↗
+           控制点2（控制曲线后半段的弯曲）← 终点
+</code></pre>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('三次贝塞尔曲线')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(350, 300),
+            painter: CubicBezierPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CubicBezierPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    const start = Offset(20, 200);
+    const cp1 = Offset(80, 30);    // 控制点1
+    const cp2 = Offset(270, 30);   // 控制点2
+    const end = Offset(330, 200);
+
+    // 绘制三次贝塞尔曲线
+    final curvePath = Path()
+      ..moveTo(start.dx, start.dy)
+      ..cubicTo(cp1.dx, cp1.dy, cp2.dx, cp2.dy, end.dx, end.dy);
+
+    canvas.drawPath(
+      curvePath,
+      Paint()
+        ..color = Colors.blue
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
+    );
+
+    // 辅助线
+    final guidePaint = Paint()
+      ..color = Colors.grey.withOpacity(0.5)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    canvas.drawLine(start, cp1, guidePaint);
+    canvas.drawLine(cp1, cp2, guidePaint);
+    canvas.drawLine(cp2, end, guidePaint);
+
+    // 关键点
+    _drawDot(canvas, start, Colors.green, '起始点');
+    _drawDot(canvas, cp1, Colors.red, '控制点1');
+    _drawDot(canvas, cp2, Colors.red, '控制点2');
+    _drawDot(canvas, end, Colors.green, '终点');
+
+    // === S 形曲线演示 ===
+    const s1 = Offset(20, 270);
+    const sc1 = Offset(120, 220); // 控制点1 在上方
+    const sc2 = Offset(230, 320); // 控制点2 在下方 → 形成 S 形
+    const s2 = Offset(330, 270);
+
+    final sPath = Path()
+      ..moveTo(s1.dx, s1.dy)
+      ..cubicTo(sc1.dx, sc1.dy, sc2.dx, sc2.dy, s2.dx, s2.dy);
+
+    canvas.drawPath(
+      sPath,
+      Paint()
+        ..color = Colors.purple
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
+    );
+  }
+
+  void _drawDot(Canvas canvas, Offset pos, Color color, String label) {
+    canvas.drawCircle(pos, 5, Paint()..color = color);
+    final tp = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: const TextStyle(color: Colors.black87, fontSize: 11),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, pos.translate(8, -6));
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：二次贝塞尔曲线适合简单弧形（如对话气泡、波浪线），三次贝塞尔适合复杂曲线（如 S 形、动画路径）。大多数矢量绘图软件（如 Figma、Sketch）导出的路径都是三次贝塞尔。</p>
+</blockquote>
+<h3 id="54-arcto-与-arctopoint">5.4 arcTo 与 arcToPoint</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'dart:math';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('arcTo / arcToPoint')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(350, 350),
+            painter: ArcToPathPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ArcToPathPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.blue
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+
+    // arcTo：在路径中添加一段弧线
+    // 参数：外接矩形、起始角度、扫过角度、是否 moveTo 弧线起点
+    final path1 = Path()
+      ..moveTo(30, 100)
+      ..lineTo(80, 100)
+      ..arcTo(
+        const Rect.fromLTWH(80, 50, 100, 100), // 外接矩形
+        0,        // 起始角度（3 点钟方向）
+        pi,       // 扫过 180 度
+        false,    // false = 从当前点连线到弧线起点
+      )
+      ..lineTo(230, 100);
+    canvas.drawPath(path1, paint);
+
+    // arcToPoint：画弧线到指定终点
+    // 使用椭圆参数（radius）和旋转角度来定义弧线
+    final path2 = Path()
+      ..moveTo(30, 250)
+      ..arcToPoint(
+        const Offset(200, 250),        // 终点
+        radius: const Radius.circular(60), // 弧线半径
+        clockwise: true,                   // 顺时针
+      )
+      ..arcToPoint(
+        const Offset(320, 250),
+        radius: const Radius.circular(60),
+        clockwise: false,                  // 逆时针
+      );
+
+    paint.color = Colors.red;
+    canvas.drawPath(path2, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="55-添加预定义图形addrectaddovaladdrrectaddpolygon">5.5 添加预定义图形：addRect、addOval、addRRect、addPolygon</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Path 添加图形')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(350, 400),
+            painter: AddShapesPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AddShapesPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+
+    // addRect
+    final path = Path();
+    paint.color = Colors.blue;
+    path.addRect(const Rect.fromLTWH(20, 20, 120, 70));
+    canvas.drawPath(path, paint);
+
+    // addOval
+    final ovalPath = Path()
+      ..addOval(const Rect.fromLTWH(180, 20, 140, 70));
+    paint.color = Colors.red;
+    canvas.drawPath(ovalPath, paint);
+
+    // addRRect
+    final rrectPath = Path()
+      ..addRRect(RRect.fromRectAndRadius(
+        const Rect.fromLTWH(20, 120, 120, 70),
+        const Radius.circular(15),
+      ));
+    paint.color = Colors.green;
+    canvas.drawPath(rrectPath, paint);
+
+    // addPolygon：添加多边形
+    final hexagonPoints = &lt;Offset&gt;[];
+    for (int i = 0; i &lt; 6; i++) {
+      final angle = (i * 60 - 90) * 3.14159265 / 180;
+      hexagonPoints.add(Offset(
+        250 + 40 * _cos(angle),
+        155 + 40 * _sin(angle),
+      ));
+    }
+    final polygonPath = Path()
+      ..addPolygon(hexagonPoints, true); // true 表示闭合
+    paint.color = Colors.purple;
+    canvas.drawPath(polygonPath, paint);
+
+    // 组合：一个 Path 中可以添加多个子图形
+    final combinedPath = Path()
+      ..addRect(const Rect.fromLTWH(20, 230, 80, 80))
+      ..addOval(const Rect.fromLTWH(130, 230, 80, 80))
+      ..addRRect(RRect.fromRectAndRadius(
+        const Rect.fromLTWH(240, 230, 80, 80),
+        const Radius.circular(10),
+      ));
+    paint.color = Colors.orange;
+    paint.style = PaintingStyle.fill;
+    canvas.drawPath(combinedPath, paint);
+  }
+
+  double _cos(double r) {
+    double sum = 1.0, term = 1.0;
+    for (int i = 1; i &lt;= 10; i++) {
+      term *= -r * r / ((2 * i - 1) * (2 * i));
+      sum += term;
+    }
+    return sum;
+  }
+
+  double _sin(double r) {
+    double sum = r, term = r;
+    for (int i = 1; i &lt;= 10; i++) {
+      term *= -r * r / ((2 * i) * (2 * i + 1));
+      sum += term;
+    }
+    return sum;
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h3 id="56-pathcombine--路径布尔运算">5.6 Path.combine —— 路径布尔运算</h3>
+<p><code>Path.combine</code> 可以将两个路径进行布尔运算，产生新的复合路径。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Path.combine 布尔运算')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(400, 500),
+            painter: PathCombinePainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class PathCombinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final operations = &lt;MapEntry&lt;PathOperation, String&gt;&gt;[
+      const MapEntry(PathOperation.union, 'union\n(并集)'),
+      const MapEntry(PathOperation.intersect, 'intersect\n(交集)'),
+      const MapEntry(PathOperation.difference, 'difference\n(差集 A-B)'),
+      const MapEntry(PathOperation.reverseDifference, 'reverseDifference\n(差集 B-A)'),
+      const MapEntry(PathOperation.xor, 'xor\n(异或)'),
+    ];
+
+    for (int i = 0; i &lt; operations.length; i++) {
+      final offsetX = (i % 2) * 190.0 + 20;
+      final offsetY = (i ~/ 2) * 160.0 + 20;
+
+      // 两个相交的圆形路径
+      final pathA = Path()
+        ..addOval(Rect.fromCircle(
+          center: Offset(offsetX + 50, offsetY + 55),
+          radius: 40,
+        ));
+      final pathB = Path()
+        ..addOval(Rect.fromCircle(
+          center: Offset(offsetX + 90, offsetY + 55),
+          radius: 40,
+        ));
+
+      // 路径布尔运算
+      final combined = Path.combine(
+        operations[i].key,
+        pathA,
+        pathB,
+      );
+
+      final paint = Paint()
+        ..color = Colors.blue.withOpacity(0.6)
+        ..style = PaintingStyle.fill;
+      canvas.drawPath(combined, paint);
+
+      // 绘制原始圆的轮廓
+      final outlinePaint = Paint()
+        ..color = Colors.grey.withOpacity(0.3)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1;
+      canvas.drawPath(pathA, outlinePaint);
+      canvas.drawPath(pathB, outlinePaint);
+
+      // 标签
+      final tp = TextPainter(
+        text: TextSpan(
+          text: operations[i].value,
+          style: const TextStyle(color: Colors.black87, fontSize: 11),
+        ),
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.center,
+      )..layout(maxWidth: 160);
+      tp.paint(canvas, Offset(offsetX + 10, offsetY + 100));
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<p><code>PathOperation</code> 的五种模式：</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>union</code></td>
+<td>并集：合并两个路径覆盖的区域</td>
+</tr>
+<tr>
+<td><code>intersect</code></td>
+<td>交集：只保留两个路径重叠的区域</td>
+</tr>
+<tr>
+<td><code>difference</code></td>
+<td>差集：路径 A 减去与 B 重叠的部分</td>
+</tr>
+<tr>
+<td><code>reverseDifference</code></td>
+<td>反向差集：路径 B 减去与 A 重叠的部分</td>
+</tr>
+<tr>
+<td><code>xor</code></td>
+<td>异或：保留两个路径不重叠的部分</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-文字绘制textpainter">6. 文字绘制：TextPainter</h2>
+<p>在 Canvas 上绘制文字需要使用 <code>TextPainter</code>，它不是 Canvas 的方法，而是一个独立的工具类。</p>
+<h3 id="61-基础文字绘制">6.1 基础文字绘制</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('TextPainter 文字绘制')),
+        body: Center(
+          child: CustomPaint(
+            size: const Size(350, 350),
+            painter: TextPaintPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class TextPaintPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 基础文字
+    final textPainter = TextPainter(
+      text: const TextSpan(
+        text: 'Hello Canvas!',
+        style: TextStyle(
+          color: Colors.blue,
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    // 必须先调用 layout() 计算文字布局
+    textPainter.layout(minWidth: 0, maxWidth: size.width);
+    // 绘制到 Canvas 上
+    textPainter.paint(canvas, const Offset(20, 20));
+
+    // 富文本（多种样式混排）
+    final richTextPainter = TextPainter(
+      text: const TextSpan(
+        children: [
+          TextSpan(
+            text: 'Flutter ',
+            style: TextStyle(
+              color: Colors.blue,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          TextSpan(
+            text: 'Canvas ',
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 24,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+          TextSpan(
+            text: '绘制',
+            style: TextStyle(
+              color: Colors.green,
+              fontSize: 20,
+            ),
+          ),
+        ],
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    richTextPainter.layout(minWidth: 0, maxWidth: size.width);
+    richTextPainter.paint(canvas, const Offset(20, 80));
+
+    // 多行文字与换行
+    final multiLinePainter = TextPainter(
+      text: const TextSpan(
+        text: '这是一段很长的文本，用来演示 TextPainter 的自动换行功能。'
+            '当文字超过 maxWidth 时会自动换行。'
+            '你可以通过 maxLines 和 ellipsis 来控制溢出行为。',
+        style: TextStyle(
+          color: Colors.black87,
+          fontSize: 16,
+          height: 1.5,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+      maxLines: 3,
+      ellipsis: '...',
+    );
+    multiLinePainter.layout(minWidth: 0, maxWidth: size.width - 40);
+    multiLinePainter.paint(canvas, const Offset(20, 140));
+
+    // 居中绘制文字
+    final centerText = TextPainter(
+      text: const TextSpan(
+        text: '居中文字',
+        style: TextStyle(color: Colors.purple, fontSize: 22),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    // 计算居中偏移
+    final centerOffset = Offset(
+      (size.width - centerText.width) / 2,
+      270,
+    );
+    centerText.paint(canvas, centerOffset);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：<code>TextPainter</code> 使用三步走：(1) 创建并传入 <code>TextSpan</code>，(2) 调用 <code>layout()</code> 计算布局（必须在 <code>paint</code> 之前），(3) 调用 <code>paint()</code> 绘制到 Canvas。忘记调用 <code>layout()</code> 会导致运行时错误。</p>
+</blockquote>
+<hr />
+<h2 id="7-shouldrepaint-优化策略">7. shouldRepaint 优化策略</h2>
+<p><code>shouldRepaint</code> 是性能优化的关键。当 <code>CustomPaint</code> 组件重建时，Flutter 会调用此方法来决定是否需要重新执行 <code>paint()</code>。</p>
+<h3 id="71-何时返回-false">7.1 何时返回 false</h3>
+<p>当绘制内容完全不依赖外部参数（静态图形）时，返回 <code>false</code>：</p>
+<pre><code class="language-dart">class StaticGridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 绘制固定的网格背景
+    final paint = Paint()
+      ..color = Colors.grey.withOpacity(0.3)
+      ..strokeWidth = 1;
+    for (double x = 0; x &lt;= size.width; x += 20) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (double y = 0; y &lt;= size.height; y += 20) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant StaticGridPainter oldDelegate) {
+    return false; // 内容永远不变，无需重绘
+  }
+}
+</code></pre>
+<h3 id="72-何时返回-true">7.2 何时返回 true</h3>
+<p>当绘制内容依赖于外部参数，且参数发生了变化时，返回 <code>true</code>：</p>
+<pre><code class="language-dart">class DataChartPainter extends CustomPainter {
+  final List&lt;double&gt; data;
+  final Color color;
+
+  DataChartPainter({required this.data, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 根据 data 和 color 绘制图表
+    // ...（省略绘制逻辑）
+  }
+
+  @override
+  bool shouldRepaint(covariant DataChartPainter oldDelegate) {
+    // 仅当数据或颜色实际变化时才重绘
+    return oldDelegate.data != data || oldDelegate.color != color;
+  }
+}
+</code></pre>
+<h3 id="73-优化策略总结">7.3 优化策略总结</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>shouldRepaint 策略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>静态图形（无参数依赖）</td>
+<td>始终返回 <code>false</code></td>
+</tr>
+<tr>
+<td>依赖少量参数</td>
+<td>比较新旧参数，变化时返回 <code>true</code></td>
+</tr>
+<tr>
+<td>动画驱动</td>
+<td>使用 <code>super(repaint: animation)</code>，shouldRepaint 返回 <code>false</code></td>
+</tr>
+<tr>
+<td>复杂对象（如大列表）</td>
+<td>使用 <code>listEquals</code> 等深度比较，避免引用比较的误判</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/foundation.dart';
+
+class OptimizedPainter extends CustomPainter {
+  final List&lt;double&gt; data;
+  final Color color;
+  final double progress;
+
+  OptimizedPainter({
+    required this.data,
+    required this.color,
+    required this.progress,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 绘制逻辑...
+  }
+
+  @override
+  bool shouldRepaint(covariant OptimizedPainter oldDelegate) {
+    // 逐个字段精确比较
+    return oldDelegate.color != color ||
+        oldDelegate.progress != progress ||
+        !listEquals(oldDelegate.data, data); // 列表深度比较
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li>永远不要无脑返回 <code>true</code>——这会导致每次父组件 build 时都重绘</li>
+<li>动画场景使用 <code>repaint</code> 参数替代 <code>setState</code> + <code>shouldRepaint: true</code></li>
+<li>对于复杂的不可变数据，考虑使用 <code>identical()</code> 做引用比较来加速判断</li>
+<li>可以用 <code>RepaintBoundary</code> 包裹 <code>CustomPaint</code>，隔离重绘区域，避免影响其他组件</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="8-实战一绘制自定义饼图带标签和动画">8. 实战一：绘制自定义饼图（带标签和动画）</h2>
+<p>下面实现一个完整的动画饼图组件，包含数据标签、颜色图例和进入动画。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'dart:math';
+
+void main() =&gt; runApp(const PieChartApp());
+
+class PieChartApp extends StatelessWidget {
+  const PieChartApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const PieChartPage(),
+    );
+  }
+}
+
+// 饼图数据模型
+class PieChartData {
+  final String label;
+  final double value;
+  final Color color;
+
+  const PieChartData({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+}
+
+class PieChartPage extends StatefulWidget {
+  const PieChartPage({super.key});
+
+  @override
+  State&lt;PieChartPage&gt; createState() =&gt; _PieChartPageState();
+}
+
+class _PieChartPageState extends State&lt;PieChartPage&gt;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation&lt;double&gt; _animation;
+
+  final List&lt;PieChartData&gt; _data = const [
+    PieChartData(label: 'Flutter', value: 35, color: Color(0xFF42A5F5)),
+    PieChartData(label: 'React Native', value: 25, color: Color(0xFFEF5350)),
+    PieChartData(label: 'SwiftUI', value: 20, color: Color(0xFFFFCA28)),
+    PieChartData(label: 'Kotlin MP', value: 12, color: Color(0xFF66BB6A)),
+    PieChartData(label: '其他', value: 8, color: Color(0xFFAB47BC)),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOutCubic,
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _replay() {
+    _controller.reset();
+    _controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('自定义饼图')),
+      body: Column(
+        children: [
+          const SizedBox(height: 40),
+          // 饼图
+          Center(
+            child: SizedBox(
+              width: 280,
+              height: 280,
+              child: CustomPaint(
+                painter: PieChartPainter(
+                  data: _data,
+                  animation: _animation,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          // 图例
+          Wrap(
+            spacing: 16,
+            runSpacing: 8,
+            children: _data.map((item) {
+              final total = _data.fold&lt;double&gt;(0, (s, e) =&gt; s + e.value);
+              final percent = (item.value / total * 100).toStringAsFixed(1);
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 14,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: item.color,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text('${item.label} ($percent%)'),
+                ],
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _replay,
+        child: const Icon(Icons.replay),
+      ),
+    );
+  }
+}
+
+class PieChartPainter extends CustomPainter {
+  final List&lt;PieChartData&gt; data;
+  final Animation&lt;double&gt; animation;
+
+  PieChartPainter({
+    required this.data,
+    required this.animation,
+  }) : super(repaint: animation);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = min(size.width, size.height) / 2 - 20;
+    final total = data.fold&lt;double&gt;(0, (sum, item) =&gt; sum + item.value);
+
+    double startAngle = -pi / 2; // 从12点方向开始
+    final animatedSweep = 2 * pi * animation.value; // 动画控制总扫过角度
+
+    for (int i = 0; i &lt; data.length; i++) {
+      final sweepAngle = (data[i].value / total) * animatedSweep;
+
+      // 绘制扇形
+      final paint = Paint()
+        ..color = data[i].color
+        ..style = PaintingStyle.fill;
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        true,
+        paint,
+      );
+
+      // 绘制扇形边框
+      final borderPaint = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2;
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        true,
+        borderPaint,
+      );
+
+      // 当动画完成时绘制标签
+      if (animation.value &gt; 0.95) {
+        _drawLabel(
+          canvas,
+          center,
+          radius,
+          startAngle,
+          sweepAngle,
+          data[i],
+          total,
+        );
+      }
+
+      startAngle += sweepAngle;
+    }
+  }
+
+  void _drawLabel(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    double startAngle,
+    double sweepAngle,
+    PieChartData item,
+    double total,
+  ) {
+    // 标签放在扇形中间角度的外侧
+    final midAngle = startAngle + sweepAngle / 2;
+    final labelRadius = radius * 0.65;
+    final labelPos = Offset(
+      center.dx + labelRadius * cos(midAngle),
+      center.dy + labelRadius * sin(midAngle),
+    );
+
+    final percent = (item.value / total * 100).toStringAsFixed(0);
+    final tp = TextPainter(
+      text: TextSpan(
+        text: '$percent%',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    tp.paint(
+      canvas,
+      Offset(labelPos.dx - tp.width / 2, labelPos.dy - tp.height / 2),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant PieChartPainter oldDelegate) {
+    return oldDelegate.data != data;
+  }
+}
+</code></pre>
+<p><strong>饼图实现要点</strong>：</p>
+<ol>
+<li>使用 <code>drawArc</code> 的 <code>useCenter: true</code> 绘制扇形</li>
+<li>起始角度从 <code>-pi/2</code>（12 点方向）开始，更符合直觉</li>
+<li>动画通过 <code>animation.value</code> 控制总扫过角度，实现从 0 展开到完整饼图的效果</li>
+<li>标签位于扇形的中间角度方向，距圆心 65% 半径处</li>
+<li>白色边框让各扇形的边界更清晰</li>
+</ol>
+<hr />
+<h2 id="9-实战二绘制折线图坐标轴数据点连线渐变填充">9. 实战二：绘制折线图（坐标轴、数据点、连线、渐变填充）</h2>
+<p>下面实现一个完整的折线图组件，包含坐标轴、网格线、数据点、连线和渐变填充区域。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'dart:math';
+
+void main() =&gt; runApp(const LineChartApp());
+
+class LineChartApp extends StatelessWidget {
+  const LineChartApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const LineChartPage(),
+    );
+  }
+}
+
+// 折线图数据点
+class ChartPoint {
+  final String label; // X 轴标签
+  final double value; // Y 轴数值
+
+  const ChartPoint(this.label, this.value);
+}
+
+class LineChartPage extends StatefulWidget {
+  const LineChartPage({super.key});
+
+  @override
+  State&lt;LineChartPage&gt; createState() =&gt; _LineChartPageState();
+}
+
+class _LineChartPageState extends State&lt;LineChartPage&gt;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation&lt;double&gt; _animation;
+
+  final List&lt;ChartPoint&gt; _data = const [
+    ChartPoint('1月', 320),
+    ChartPoint('2月', 450),
+    ChartPoint('3月', 380),
+    ChartPoint('4月', 520),
+    ChartPoint('5月', 610),
+    ChartPoint('6月', 480),
+    ChartPoint('7月', 700),
+    ChartPoint('8月', 650),
+    ChartPoint('9月', 820),
+    ChartPoint('10月', 750),
+    ChartPoint('11月', 900),
+    ChartPoint('12月', 1050),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    );
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('折线图')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '2025年月度销售额（万元）',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            Expanded(
+              child: CustomPaint(
+                size: Size.infinite,
+                painter: LineChartPainter(
+                  data: _data,
+                  animation: _animation,
+                  lineColor: Colors.blue,
+                  fillColor: Colors.blue.withOpacity(0.15),
+                  gridColor: Colors.grey.withOpacity(0.2),
+                  axisColor: Colors.black54,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _controller.reset();
+          _controller.forward();
+        },
+        child: const Icon(Icons.replay),
+      ),
+    );
+  }
+}
+
+class LineChartPainter extends CustomPainter {
+  final List&lt;ChartPoint&gt; data;
+  final Animation&lt;double&gt; animation;
+  final Color lineColor;
+  final Color fillColor;
+  final Color gridColor;
+  final Color axisColor;
+
+  // 图表边距
+  static const double paddingLeft = 50;
+  static const double paddingRight = 20;
+  static const double paddingTop = 20;
+  static const double paddingBottom = 40;
+
+  LineChartPainter({
+    required this.data,
+    required this.animation,
+    required this.lineColor,
+    required this.fillColor,
+    required this.gridColor,
+    required this.axisColor,
+  }) : super(repaint: animation);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (data.isEmpty) return;
+
+    final chartWidth = size.width - paddingLeft - paddingRight;
+    final chartHeight = size.height - paddingTop - paddingBottom;
+    final chartRect = Rect.fromLTWH(
+      paddingLeft, paddingTop, chartWidth, chartHeight,
+    );
+
+    final maxValue = data.map((p) =&gt; p.value).reduce(max);
+    // 向上取整到最近的 100 的倍数
+    final yMax = ((maxValue / 100).ceil() * 100).toDouble();
+
+    _drawGrid(canvas, chartRect, yMax);
+    _drawAxes(canvas, chartRect);
+    _drawYLabels(canvas, chartRect, yMax);
+    _drawXLabels(canvas, chartRect);
+    _drawLineAndFill(canvas, chartRect, yMax);
+    _drawDataPoints(canvas, chartRect, yMax);
+  }
+
+  // 绘制网格线
+  void _drawGrid(Canvas canvas, Rect chartRect, double yMax) {
+    final paint = Paint()
+      ..color = gridColor
+      ..strokeWidth = 1;
+
+    const yDivisions = 5;
+    for (int i = 0; i &lt;= yDivisions; i++) {
+      final y = chartRect.bottom - (i / yDivisions) * chartRect.height;
+      canvas.drawLine(
+        Offset(chartRect.left, y),
+        Offset(chartRect.right, y),
+        paint,
+      );
+    }
+  }
+
+  // 绘制坐标轴
+  void _drawAxes(Canvas canvas, Rect chartRect) {
+    final paint = Paint()
+      ..color = axisColor
+      ..strokeWidth = 1.5;
+
+    // X 轴
+    canvas.drawLine(
+      Offset(chartRect.left, chartRect.bottom),
+      Offset(chartRect.right, chartRect.bottom),
+      paint,
+    );
+    // Y 轴
+    canvas.drawLine(
+      Offset(chartRect.left, chartRect.top),
+      Offset(chartRect.left, chartRect.bottom),
+      paint,
+    );
+  }
+
+  // 绘制 Y 轴刻度标签
+  void _drawYLabels(Canvas canvas, Rect chartRect, double yMax) {
+    const yDivisions = 5;
+    for (int i = 0; i &lt;= yDivisions; i++) {
+      final value = (yMax / yDivisions * i).toInt();
+      final y = chartRect.bottom - (i / yDivisions) * chartRect.height;
+
+      final tp = TextPainter(
+        text: TextSpan(
+          text: '$value',
+          style: TextStyle(color: axisColor, fontSize: 11),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      tp.paint(canvas, Offset(chartRect.left - tp.width - 8, y - tp.height / 2));
+    }
+  }
+
+  // 绘制 X 轴标签
+  void _drawXLabels(Canvas canvas, Rect chartRect) {
+    final xStep = chartRect.width / (data.length - 1);
+    for (int i = 0; i &lt; data.length; i++) {
+      final x = chartRect.left + i * xStep;
+      final tp = TextPainter(
+        text: TextSpan(
+          text: data[i].label,
+          style: TextStyle(color: axisColor, fontSize: 10),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      tp.paint(canvas, Offset(x - tp.width / 2, chartRect.bottom + 8));
+    }
+  }
+
+  // 绘制折线和渐变填充区域
+  void _drawLineAndFill(Canvas canvas, Rect chartRect, double yMax) {
+    if (data.length &lt; 2) return;
+
+    final xStep = chartRect.width / (data.length - 1);
+    final animProgress = animation.value;
+
+    // 计算所有数据点坐标
+    final points = &lt;Offset&gt;[];
+    for (int i = 0; i &lt; data.length; i++) {
+      final x = chartRect.left + i * xStep;
+      final normalizedY = (data[i].value / yMax) * chartRect.height;
+      final y = chartRect.bottom - normalizedY * animProgress; // 动画插值
+      points.add(Offset(x, y));
+    }
+
+    // 构建折线路径
+    final linePath = Path()..moveTo(points[0].dx, points[0].dy);
+    for (int i = 1; i &lt; points.length; i++) {
+      linePath.lineTo(points[i].dx, points[i].dy);
+    }
+
+    // 构建填充路径（折线 + 底部闭合区域）
+    final fillPath = Path.from(linePath)
+      ..lineTo(points.last.dx, chartRect.bottom)
+      ..lineTo(points.first.dx, chartRect.bottom)
+      ..close();
+
+    // 绘制渐变填充
+    final fillPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          lineColor.withOpacity(0.3 * animProgress),
+          lineColor.withOpacity(0.02),
+        ],
+      ).createShader(chartRect);
+    canvas.drawPath(fillPath, fillPaint);
+
+    // 绘制折线
+    final linePaint = Paint()
+      ..color = lineColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    canvas.drawPath(linePath, linePaint);
+  }
+
+  // 绘制数据点
+  void _drawDataPoints(Canvas canvas, Rect chartRect, double yMax) {
+    final xStep = chartRect.width / (data.length - 1);
+    final animProgress = animation.value;
+
+    if (animProgress &lt; 0.3) return; // 动画前期不显示数据点
+    final pointOpacity = ((animProgress - 0.3) / 0.7).clamp(0.0, 1.0);
+
+    for (int i = 0; i &lt; data.length; i++) {
+      final x = chartRect.left + i * xStep;
+      final normalizedY = (data[i].value / yMax) * chartRect.height;
+      final y = chartRect.bottom - normalizedY * animProgress;
+      final pos = Offset(x, y);
+
+      // 白色外圈
+      canvas.drawCircle(
+        pos,
+        5,
+        Paint()..color = Colors.white.withOpacity(pointOpacity),
+      );
+      // 彩色内圈
+      canvas.drawCircle(
+        pos,
+        4,
+        Paint()..color = lineColor.withOpacity(pointOpacity),
+      );
+
+      // 数据值标签（动画完成后显示）
+      if (animProgress &gt; 0.9) {
+        final labelOpacity = ((animProgress - 0.9) / 0.1).clamp(0.0, 1.0);
+        final tp = TextPainter(
+          text: TextSpan(
+            text: data[i].value.toInt().toString(),
+            style: TextStyle(
+              color: lineColor.withOpacity(labelOpacity),
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+        )..layout();
+        tp.paint(canvas, Offset(x - tp.width / 2, y - tp.height - 8));
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant LineChartPainter oldDelegate) {
+    return oldDelegate.data != data ||
+        oldDelegate.lineColor != lineColor ||
+        oldDelegate.fillColor != fillColor;
+  }
+}
+</code></pre>
+<p><strong>折线图实现要点</strong>：</p>
+<ol>
+<li><strong>坐标系映射</strong>：将数据值映射到画布坐标，Y 轴需要翻转（Canvas 向下为正，数据向上为正）</li>
+<li><strong>边距管理</strong>：左侧预留 Y 轴标签空间，底部预留 X 轴标签空间</li>
+<li><strong>动画效果</strong>：通过 <code>animation.value</code> 控制 Y 轴位置的插值，实现数据从底部&quot;生长&quot;的效果</li>
+<li><strong>渐变填充</strong>：使用 <code>LinearGradient</code> 创建从上到下的渐变，填充折线下方区域</li>
+<li><strong>分层绘制顺序</strong>：网格 → 坐标轴 → 填充 → 折线 → 数据点 → 标签，后绘制的在上层</li>
+</ol>
+<hr />
+<h2 id="本课小结">本课小结</h2>
+<p>本课系统讲解了 Flutter 自定义绘制的完整知识体系：</p>
+<ol>
+<li>
+<p><strong>CustomPaint 与 CustomPainter</strong>：<code>CustomPaint</code> 组件通过 <code>painter</code>（背景）和 <code>foregroundPainter</code>（前景）委托绘制，<code>CustomPainter</code> 的 <code>paint(Canvas, Size)</code> 方法是核心绑制入口。尺寸由 <code>child</code> 或 <code>size</code> 属性决定。</p>
+</li>
+<li>
+<p><strong>Paint 对象</strong>：控制绘制样式的&quot;画笔&quot;，包括颜色、描边/填充模式、线条宽度、端点样式、渐变着色器和模糊滤镜等属性。</p>
+</li>
+<li>
+<p><strong>Canvas 基础 API</strong>：<code>drawLine</code>（线）、<code>drawRect</code>（矩形）、<code>drawRRect</code>（圆角矩形）、<code>drawCircle</code>（圆）、<code>drawOval</code>（椭圆）、<code>drawArc</code>（弧/扇形）、<code>drawPoints</code>（点）、<code>drawImage</code>（图片）是绑制基础图形的核心方法。</p>
+</li>
+<li>
+<p><strong>Canvas 变换与裁剪</strong>：<code>save/restore</code> 管理画布状态，<code>translate/rotate/scale</code> 实现坐标变换，<code>clipRect/clipPath</code> 实现裁剪。变换操作必须成对使用 save/restore。</p>
+</li>
+<li>
+<p><strong>Path 路径</strong>：最强大的绘制工具，支持直线（<code>lineTo</code>）、二次贝塞尔曲线（<code>quadraticBezierTo</code>，1 个控制点）、三次贝塞尔曲线（<code>cubicTo</code>，2 个控制点）、弧线（<code>arcTo/arcToPoint</code>）以及预定义图形（<code>addRect/addOval/addRRect/addPolygon</code>）。<code>Path.combine</code> 支持五种布尔运算。</p>
+</li>
+<li>
+<p><strong>TextPainter 文字绘制</strong>：通过 <code>TextSpan</code> 定义文字内容和样式，<code>layout()</code> 计算布局后 <code>paint()</code> 绘制到 Canvas，三步缺一不可。</p>
+</li>
+<li>
+<p><strong>shouldRepaint 优化</strong>：静态内容返回 <code>false</code>，参数变化时精确比较后返回 <code>true</code>，动画驱动绑制使用 <code>repaint</code> 参数而非 <code>shouldRepaint</code>。</p>
+</li>
+<li>
+<p><strong>实战图表</strong>：饼图使用 <code>drawArc</code> + <code>useCenter: true</code> 绘制扇形，折线图需要坐标系映射、分层绘制、渐变填充等技术。</p>
+</li>
+</ol>
+<p><strong>一句话总结</strong>：CustomPaint + Canvas 是 Flutter 中&quot;画出一切&quot;的终极武器——掌握 Paint、Path 和坐标变换，就没有画不出来的 UI。</p>
+<hr />
+<h2 id="课后练习">课后练习</h2>
+<h3 id="练习1绘制仪表盘基础">练习1：绘制仪表盘（基础）</h3>
+<p>使用 <code>drawArc</code> 绘制一个半圆形仪表盘：</p>
+<ul>
+<li>底层：灰色半圆弧作为背景轨道</li>
+<li>上层：彩色弧线表示当前值（绿色→黄色→红色渐变）</li>
+<li>中间：使用 <code>TextPainter</code> 显示当前数值</li>
+<li>添加刻度线（使用 <code>save/restore</code> + <code>rotate</code> 实现）</li>
+</ul>
+<h3 id="练习2贝塞尔波浪动画中级">练习2：贝塞尔波浪动画（中级）</h3>
+<p>使用 <code>cubicTo</code> 绘制波浪效果：</p>
+<ul>
+<li>使用多段三次贝塞尔曲线拼接成一条连续波浪线</li>
+<li>波浪线下方填充半透明渐变色</li>
+<li>使用 <code>AnimationController</code> 驱动波浪水平平移，形成流动效果</li>
+<li>可以在波浪上方放一个百分比文字，模拟&quot;水位计&quot;效果</li>
+</ul>
+<h3 id="练习3绘制自定义时钟中级">练习3：绘制自定义时钟（中级）</h3>
+<p>使用 Canvas 变换绘制一个模拟时钟：</p>
+<ul>
+<li>使用 <code>drawCircle</code> 绘制表盘</li>
+<li>使用 <code>rotate</code> + <code>drawLine</code> 绘制 12 个刻度</li>
+<li>使用 <code>rotate</code> 绘制时针、分针、秒针（注意旋转中心）</li>
+<li>使用 <code>Timer.periodic</code> 或 <code>AnimationController</code> 驱动秒针转动</li>
+</ul>
+<h3 id="练习4path-布尔运算创意图标中级">练习4：Path 布尔运算创意图标（中级）</h3>
+<p>使用 <code>Path.combine</code> 创建以下图标：</p>
+<ul>
+<li>爱心：两个圆 + 一个旋转的正方形，使用 <code>union</code> 合并</li>
+<li>月亮：两个圆使用 <code>difference</code> 做差集</li>
+<li>花朵：多个椭圆使用 <code>union</code> 合并</li>
+</ul>
+<h3 id="练习5完善折线图进阶">练习5：完善折线图（进阶）</h3>
+<p>在本课实战二的基础上，扩展折线图功能：</p>
+<ul>
+<li>支持多条折线（多组数据系列）</li>
+<li>添加触摸交互：手指触摸时显示十字准星和数据气泡</li>
+<li>平滑曲线：将直线连接改为三次贝塞尔曲线连接（计算每段曲线的控制点）</li>
+<li>支持 X 轴缩放和平移（结合 <code>GestureDetector</code>）</li>
+</ul>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：<a href="lesson24_theme.md">第24课 主题与样式系统</a> —— 学习如何使用 ThemeData、ColorScheme 和组件主题来构建一套统一的视觉风格，并实现亮色/暗色模式的无缝切换。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

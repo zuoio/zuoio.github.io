@@ -1,0 +1,3066 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第04课-形状系统与-elevation">第04课 形状系统与 Elevation</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter Material Design 系统学习<br />
+<strong>前置条件</strong>：已掌握 Container、BoxDecoration 等容器组件的基本用法<br />
+<strong>课程目标</strong>：深入理解 Material 3 形状 Token 体系与 Elevation 层级模型，掌握 ShapeBorder 家族的使用，能够通过全局主题统一管理组件形状与阴影</p>
+</blockquote>
+<hr />
+<p>形状（Shape）和层级（Elevation）是 Material Design 视觉系统中的两大基石。形状赋予组件独特的视觉识别性，Elevation 定义了界面元素之间的空间层次关系。Material 3 对这两者都做了重要更新——形状有了标准化的 Token 层级体系，Elevation 则从纯阴影表达转变为色调叠加（Surface Tint）模型。</p>
+<p>本课将系统讲解这两大设计基础，并通过大量代码示例帮助你掌握实际应用。</p>
+<hr />
+<h2 id="1-material-3-shape-规范7-个形状-token-层级">1. Material 3 Shape 规范：7 个形状 Token 层级</h2>
+<p>Material 3 将形状标准化为 7 个 Token 层级，每个层级对应一个固定的圆角半径值。这种标准化使得整个应用的视觉语言保持一致。</p>
+<h3 id="11-形状-token-一览表">1.1 形状 Token 一览表</h3>
+<table>
+<thead>
+<tr>
+<th>Token 名称</th>
+<th>圆角值</th>
+<th>视觉效果</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>None</strong></td>
+<td>0dp</td>
+<td>直角矩形</td>
+<td>全宽横幅、背景面板</td>
+</tr>
+<tr>
+<td><strong>Extra Small</strong></td>
+<td>4dp</td>
+<td>极微圆角</td>
+<td>TextField、Badge</td>
+</tr>
+<tr>
+<td><strong>Small</strong></td>
+<td>8dp</td>
+<td>小圆角</td>
+<td>Chip、Snackbar</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td>12dp</td>
+<td>中等圆角</td>
+<td>Card、Dialog</td>
+</tr>
+<tr>
+<td><strong>Large</strong></td>
+<td>16dp</td>
+<td>大圆角</td>
+<td>FAB、NavigationDrawer</td>
+</tr>
+<tr>
+<td><strong>Extra Large</strong></td>
+<td>28dp</td>
+<td>超大圆角</td>
+<td>BottomSheet、大面积面板</td>
+</tr>
+<tr>
+<td><strong>Full</strong></td>
+<td>短边 / 2</td>
+<td>完全圆弧</td>
+<td>小型 FAB、搜索栏、Slider 轨道</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-形状-token-在代码中的表达">1.2 形状 Token 在代码中的表达</h3>
+<p>Flutter 中并没有内置的 <code>ShapeToken</code> 枚举，但我们可以自己定义一套标准常量来统一管理：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+/// Material 3 形状 Token 常量定义
+/// 将设计规范映射为代码中可复用的圆角值
+class M3ShapeTokens {
+  M3ShapeTokens._();
+
+  /// None: 0dp - 直角矩形
+  static const double none = 0;
+
+  /// Extra Small: 4dp
+  static const double extraSmall = 4;
+
+  /// Small: 8dp
+  static const double small = 8;
+
+  /// Medium: 12dp
+  static const double medium = 12;
+
+  /// Large: 16dp
+  static const double large = 16;
+
+  /// Extra Large: 28dp
+  static const double extraLarge = 28;
+
+  /// 将 Token 转换为 RoundedRectangleBorder
+  static RoundedRectangleBorder border(double radius) {
+    return RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(radius),
+    );
+  }
+
+  /// Full: 完全圆弧（StadiumBorder）
+  static const ShapeBorder full = StadiumBorder();
+}
+</code></pre>
+<h3 id="13-可视化展示-7-个形状层级">1.3 可视化展示 7 个形状层级</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: ShapeTokensDemo()));
+
+class ShapeTokensDemo extends StatelessWidget {
+  const ShapeTokensDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = [
+      ('None', 0.0),
+      ('Extra Small', 4.0),
+      ('Small', 8.0),
+      ('Medium', 12.0),
+      ('Large', 16.0),
+      ('Extra Large', 28.0),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('M3 Shape Tokens')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 展示 None 到 Extra Large 的圆角
+            ...tokens.map((token) =&gt; Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                children: [
+                  Container(
+                    width: 80,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(token.$2),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    '${token.$1} (${token.$2.toInt()}dp)',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ],
+              ),
+            )),
+            // 展示 Full 形状
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                children: [
+                  Container(
+                    width: 80,
+                    height: 48,
+                    decoration: ShapeDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      shape: const StadiumBorder(),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    'Full (短边/2)',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>💡 最佳实践</strong>：在项目中定义一套形状常量类（如上面的 <code>M3ShapeTokens</code>），避免在各处硬编码圆角数值。这不仅让代码更语义化，还便于后期批量调整。</p>
+</blockquote>
+<hr />
+<h2 id="2-shapeborder-家族详解">2. ShapeBorder 家族详解</h2>
+<p>Flutter 提供了 <code>ShapeBorder</code> 抽象类及其多个子类，用于描述组件的边框形状。不同的 <code>ShapeBorder</code> 子类适用于不同的视觉需求。</p>
+<h3 id="21-shapeborder-家族继承关系">2.1 ShapeBorder 家族继承关系</h3>
+<pre><code>ShapeBorder
+├── OutlinedBorder
+│   ├── RoundedRectangleBorder    // 圆角矩形
+│   ├── StadiumBorder             // 体育场形（两端半圆）
+│   ├── BeveledRectangleBorder    // 斜切角矩形
+│   ├── ContinuousRectangleBorder // 超椭圆圆角（squircle）
+│   ├── CircleBorder              // 圆形
+│   └── StarBorder                // 星形（Flutter 3.10+）
+├── RoundedRectangleBorder        // （也可直接用，不带 side）
+├── InputBorder
+│   ├── OutlineInputBorder        // 输入框轮廓边框
+│   └── UnderlineInputBorder      // 输入框下划线边框
+└── ...
+</code></pre>
+<h3 id="22-roundedrectangleborder圆角矩形">2.2 RoundedRectangleBorder：圆角矩形</h3>
+<p>这是使用频率最高的形状边框，用于创建各种圆角的矩形。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: RoundedRectDemo()));
+
+class RoundedRectDemo extends StatelessWidget {
+  const RoundedRectDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('RoundedRectangleBorder')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // 统一四角圆角
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: Center(child: Text('统一 12dp 圆角')),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // 不同角不同圆角值
+            Card(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(28),
+                  topRight: Radius.circular(28),
+                  bottomLeft: Radius.circular(4),
+                  bottomRight: Radius.circular(4),
+                ),
+              ),
+              child: const SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: Center(child: Text('顶部大圆角 + 底部小圆角')),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // 带边框线的圆角矩形
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
+              ),
+              child: const SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: Center(child: Text('带边框线的圆角矩形')),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="23-stadiumborder体育场形状">2.3 StadiumBorder：体育场形状</h3>
+<p><code>StadiumBorder</code> 将短边两端处理为完美半圆，形成&quot;胶囊&quot;形状。等同于 <code>RoundedRectangleBorder(borderRadius: BorderRadius.circular(高度/2))</code>，但不需要你自己计算半径值。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: StadiumBorderDemo()));
+
+class StadiumBorderDemo extends StatelessWidget {
+  const StadiumBorderDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('StadiumBorder')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 使用 StadiumBorder 的按钮
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: const StadiumBorder(),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+              ),
+              onPressed: () {},
+              child: const Text('胶囊按钮'),
+            ),
+            const SizedBox(height: 16),
+
+            // 使用 StadiumBorder 的 Container
+            Container(
+              width: 200,
+              height: 48,
+              decoration: ShapeDecoration(
+                color: Theme.of(context).colorScheme.tertiaryContainer,
+                shape: const StadiumBorder(),
+              ),
+              child: const Center(child: Text('StadiumBorder 容器')),
+            ),
+            const SizedBox(height: 16),
+
+            // 带边框的 StadiumBorder
+            Container(
+              width: 200,
+              height: 48,
+              decoration: ShapeDecoration(
+                shape: StadiumBorder(
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 2,
+                  ),
+                ),
+              ),
+              child: const Center(child: Text('带边框的胶囊')),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="24-beveledrectangleborder斜切角矩形">2.4 BeveledRectangleBorder：斜切角矩形</h3>
+<p><code>BeveledRectangleBorder</code> 将圆角替换为直线斜切，形成菱角分明的几何风格。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: BeveledRectDemo()));
+
+class BeveledRectDemo extends StatelessWidget {
+  const BeveledRectDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('BeveledRectangleBorder')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // 均匀斜切角
+            Card(
+              shape: const BeveledRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+              ),
+              child: const SizedBox(
+                width: double.infinity,
+                height: 80,
+                child: Center(child: Text('均匀斜切 12dp')),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 带边框的斜切角
+            Card(
+              shape: BeveledRectangleBorder(
+                borderRadius: const BorderRadius.all(Radius.circular(16)),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 1,
+                ),
+              ),
+              child: const SizedBox(
+                width: double.infinity,
+                height: 80,
+                child: Center(child: Text('带边框的斜切角')),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 大斜切 → 钻石般的视觉效果
+            Container(
+              width: 100,
+              height: 100,
+              decoration: ShapeDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                shape: const BeveledRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                ),
+              ),
+              child: const Center(child: Text('菱形')),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="25-continuousrectangleborder超椭圆圆角squircle">2.5 ContinuousRectangleBorder：超椭圆圆角（Squircle）</h3>
+<p><code>ContinuousRectangleBorder</code> 使用超椭圆曲线（superellipse）连接圆角与直边，让过渡更加平滑自然。这种形状在 iOS 设计中被广泛使用（也称为 squircle）。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: ContinuousRectDemo()));
+
+class ContinuousRectDemo extends StatelessWidget {
+  const ContinuousRectDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('ContinuousRectangleBorder')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // 对比：RoundedRectangleBorder vs ContinuousRectangleBorder
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: ShapeDecoration(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                      ),
+                      child: const Center(child: Text('Rounded')),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('普通圆角'),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: ShapeDecoration(
+                        color: Theme.of(context).colorScheme.tertiaryContainer,
+                        shape: ContinuousRectangleBorder(
+                          borderRadius: BorderRadius.circular(64),
+                        ),
+                      ),
+                      child: const Center(child: Text('Continuous')),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text('超椭圆圆角'),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Text(
+              '注意观察两者的区别：\n'
+              'Continuous 的圆角与直边之间过渡更平滑，\n'
+              '没有 Rounded 那种突然从直线变为弧线的&quot;断裂感&quot;。',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>⚠️ 注意事项</strong>：<code>ContinuousRectangleBorder</code> 的 <code>borderRadius</code> 需要设置为普通圆角的约 <strong>2 倍</strong> 才能达到类似的视觉圆角大小，因为超椭圆曲线的形状特性使其实际圆角看起来比等值的 <code>RoundedRectangleBorder</code> 更小。</p>
+</blockquote>
+<h3 id="26-circleborder圆形">2.6 CircleBorder：圆形</h3>
+<p><code>CircleBorder</code> 将组件裁剪为正圆形，常用于头像、圆形按钮等场景。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: CircleBorderDemo()));
+
+class CircleBorderDemo extends StatelessWidget {
+  const CircleBorderDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('CircleBorder')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            // 纯色圆形
+            Container(
+              width: 80,
+              height: 80,
+              decoration: ShapeDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                shape: const CircleBorder(),
+              ),
+              child: const Icon(Icons.person, color: Colors.white, size: 40),
+            ),
+
+            // 带边框的圆形
+            Container(
+              width: 80,
+              height: 80,
+              decoration: ShapeDecoration(
+                shape: CircleBorder(
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 3,
+                  ),
+                ),
+              ),
+              child: const Center(child: Text('头像')),
+            ),
+
+            // 使用 Material 组件的圆形按钮
+            Material(
+              shape: const CircleBorder(),
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () {},
+                child: const SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: Icon(Icons.add, size: 32),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="27-starborder星形边框flutter-310">2.7 StarBorder：星形边框（Flutter 3.10+）</h3>
+<p><code>StarBorder</code> 是 Flutter 3.10 引入的新形状，可以创建星形、多边形等丰富的几何形状。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: StarBorderDemo()));
+
+class StarBorderDemo extends StatelessWidget {
+  const StarBorderDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('StarBorder')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Wrap(
+          spacing: 16,
+          runSpacing: 16,
+          alignment: WrapAlignment.center,
+          children: [
+            // 默认五角星
+            _buildStarCard(
+              context,
+              label: '五角星',
+              shape: const StarBorder(),
+            ),
+
+            // 自定义角数 — 六角星
+            _buildStarCard(
+              context,
+              label: '六角星',
+              shape: const StarBorder(points: 6),
+            ),
+
+            // 调整内半径比 — 更尖锐的星形
+            _buildStarCard(
+              context,
+              label: '尖锐星形',
+              shape: const StarBorder(
+                points: 5,
+                innerRadiusRatio: 0.3, // 值越小，星角越尖锐
+              ),
+            ),
+
+            // 圆角星形
+            _buildStarCard(
+              context,
+              label: '圆角星形',
+              shape: const StarBorder(
+                points: 5,
+                pointRounding: 0.4, // 星角圆润度
+                innerRadiusRatio: 0.5,
+              ),
+            ),
+
+            // 正多边形（将 innerRadiusRatio 设为 1 时）
+            _buildStarCard(
+              context,
+              label: '正六边形',
+              shape: const StarBorder.polygon(sides: 6),
+            ),
+
+            // 正八边形
+            _buildStarCard(
+              context,
+              label: '正八边形',
+              shape: const StarBorder.polygon(sides: 8),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStarCard(
+    BuildContext context, {
+    required String label,
+    required ShapeBorder shape,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 100,
+          height: 100,
+          decoration: ShapeDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            shape: shape,
+          ),
+          child: Center(
+            child: Icon(
+              Icons.star,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(label, style: Theme.of(context).textTheme.labelSmall),
+      ],
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>💡 最佳实践</strong>：<code>StarBorder.polygon()</code> 构造函数可以创建任意正多边形，非常适合用于游戏、社交应用中的徽章、成就标识等。</p>
+</blockquote>
+<h3 id="28-shapeborder-家族对照总结">2.8 ShapeBorder 家族对照总结</h3>
+<table>
+<thead>
+<tr>
+<th>ShapeBorder 类型</th>
+<th>视觉效果</th>
+<th>常见用途</th>
+<th>关键参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RoundedRectangleBorder</code></td>
+<td>圆角矩形</td>
+<td>Card、Button、Dialog</td>
+<td><code>borderRadius</code></td>
+</tr>
+<tr>
+<td><code>StadiumBorder</code></td>
+<td>胶囊 / 体育场</td>
+<td>搜索栏、标签、Chip</td>
+<td>无（自动适应）</td>
+</tr>
+<tr>
+<td><code>BeveledRectangleBorder</code></td>
+<td>斜切角</td>
+<td>特殊装饰元素</td>
+<td><code>borderRadius</code>（控制切角大小）</td>
+</tr>
+<tr>
+<td><code>ContinuousRectangleBorder</code></td>
+<td>超椭圆 (squircle)</td>
+<td>iOS 风格图标、卡片</td>
+<td><code>borderRadius</code>（需约 2x）</td>
+</tr>
+<tr>
+<td><code>CircleBorder</code></td>
+<td>正圆</td>
+<td>头像、FAB、圆形按钮</td>
+<td>无（自动适应）</td>
+</tr>
+<tr>
+<td><code>StarBorder</code></td>
+<td>星形 / 多边形</td>
+<td>徽章、评分、装饰</td>
+<td><code>points</code>、<code>innerRadiusRatio</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-组件默认形状规范对照表">3. 组件默认形状规范对照表</h2>
+<p>Material 3 为每种组件指定了默认的形状 Token，确保整个应用的视觉一致性。下表列出了常见组件与其默认形状的对应关系：</p>
+<table>
+<thead>
+<tr>
+<th>形状 Token</th>
+<th>圆角值</th>
+<th>对应组件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>None (0dp)</strong></td>
+<td>0dp</td>
+<td>NavigationBar、FullScreenDialog</td>
+</tr>
+<tr>
+<td><strong>Extra Small (4dp)</strong></td>
+<td>4dp</td>
+<td>TextField（OutlineInputBorder）、Badge</td>
+</tr>
+<tr>
+<td><strong>Small (8dp)</strong></td>
+<td>8dp</td>
+<td>Chip、Snackbar、FilterChip、ActionChip</td>
+</tr>
+<tr>
+<td><strong>Medium (12dp)</strong></td>
+<td>12dp</td>
+<td>Card、AlertDialog、DatePicker、TimePicker</td>
+</tr>
+<tr>
+<td><strong>Large (16dp)</strong></td>
+<td>16dp</td>
+<td>FAB、ExtendedFAB、NavigationDrawer</td>
+</tr>
+<tr>
+<td><strong>Extra Large (28dp)</strong></td>
+<td>28dp</td>
+<td>BottomSheet、LargeTopAppBar</td>
+</tr>
+<tr>
+<td><strong>Full</strong></td>
+<td>短边/2</td>
+<td>SmallFAB、Slider Thumb、SearchBar、标签 Badge</td>
+</tr>
+</tbody>
+</table>
+<h3 id="31-验证默认形状">3.1 验证默认形状</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: DefaultShapesDemo(),
+    ));
+
+class DefaultShapesDemo extends StatelessWidget {
+  const DefaultShapesDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('组件默认形状')),
+      // FAB 默认使用 Large (16dp) 圆角
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Card 默认使用 Medium (12dp) 圆角
+            Text('Card — Medium (12dp)',
+                style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 8),
+            const Card(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Text('Card 使用 Medium 形状'),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Chip 默认使用 Small (8dp) 圆角
+            Text('Chip — Small (8dp)',
+                style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              children: [
+                ActionChip(label: const Text('ActionChip'), onPressed: () {}),
+                FilterChip(label: const Text('FilterChip'), selected: true, onPressed: () {}),
+                const InputChip(label: Text('InputChip')),
+              ],
+            ),
+            const SizedBox(height: 24),
+
+            // TextField 默认使用 Extra Small (4dp) 圆角
+            Text('TextField — Extra Small (4dp)',
+                style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 8),
+            const TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: '默认 Extra Small 圆角',
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Dialog 使用 Medium (12dp) 圆角
+            Text('Dialog — Medium (28dp)',
+                style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 8),
+            FilledButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) =&gt; AlertDialog(
+                    title: const Text('Dialog 形状'),
+                    content: const Text('AlertDialog 使用 28dp 的 Extra Large 圆角'),
+                    actions: [
+                      TextButton(
+                        onPressed: () =&gt; Navigator.pop(context),
+                        child: const Text('确定'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: const Text('打开 Dialog'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>⚠️ 注意事项</strong>：不同 Flutter 版本中组件的默认形状可能略有差异。建议在升级 Flutter 后检查关键组件的形状是否符合预期，必要时通过主题进行显式配置。</p>
+</blockquote>
+<hr />
+<h2 id="4-全局形状定制">4. 全局形状定制</h2>
+<p>在实际项目中，你通常需要统一管理所有组件的形状，而不是在每个组件上单独设置。Flutter 提供了通过 <code>ThemeData</code> 的各组件主题属性来全局定制形状的能力。</p>
+<h3 id="41-通过组件主题统一形状">4.1 通过组件主题统一形状</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const ShapeThemeApp());
+
+class ShapeThemeApp extends StatelessWidget {
+  const ShapeThemeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+
+        // Card 全局形状
+        cardTheme: CardTheme(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // 从默认 12dp 改为 16dp
+          ),
+        ),
+
+        // FilledButton 全局形状
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+
+        // ElevatedButton 全局形状
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+
+        // OutlinedButton 全局形状
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+
+        // Chip 全局形状
+        chipTheme: const ChipThemeData(
+          shape: StadiumBorder(), // 将 Chip 改为胶囊形
+        ),
+
+        // Dialog 全局形状
+        dialogTheme: DialogTheme(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+
+        // FloatingActionButton 全局形状
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+
+        // BottomSheet 全局形状
+        bottomSheetTheme: const BottomSheetThemeData(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(28),
+            ),
+          ),
+        ),
+
+        // 输入框全局形状
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
+      home: const ShapeThemeDemo(),
+    );
+  }
+}
+
+class ShapeThemeDemo extends StatelessWidget {
+  const ShapeThemeDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('全局形状定制')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Card(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Text('这张卡片使用全局定制的 16dp 圆角'),
+              ),
+            ),
+            const SizedBox(height: 16),
+            FilledButton(onPressed: () {}, child: const Text('FilledButton')),
+            const SizedBox(height: 8),
+            ElevatedButton(onPressed: () {}, child: const Text('ElevatedButton')),
+            const SizedBox(height: 8),
+            OutlinedButton(onPressed: () {}, child: const Text('OutlinedButton')),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              children: [
+                ActionChip(label: const Text('Chip 1'), onPressed: () {}),
+                ActionChip(label: const Text('Chip 2'), onPressed: () {}),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const TextField(
+              decoration: InputDecoration(labelText: '全局定制圆角输入框'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="42-形状优先级规则">4.2 形状优先级规则</h3>
+<p>组件的最终形状由以下优先级链决定（从高到低）：</p>
+<ol>
+<li><strong>Widget 参数</strong>：直接在组件上设置的 <code>shape</code> 属性</li>
+<li><strong>组件主题</strong>：<code>ThemeData</code> 中对应的组件主题（如 <code>CardTheme.shape</code>）</li>
+<li><strong>Material 默认值</strong>：Flutter 框架内置的 Material 3 默认形状</li>
+</ol>
+<pre><code class="language-dart">// 优先级 1: Widget 参数 — 最高优先级
+Card(
+  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+  child: ...,
+)
+
+// 优先级 2: 组件主题 — 次优先级
+ThemeData(
+  cardTheme: CardTheme(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+  ),
+)
+
+// 优先级 3: Material 默认值 — 最低优先级
+// Card 默认使用 Medium (12dp) 圆角
+</code></pre>
+<blockquote>
+<p><strong>💡 最佳实践</strong>：</p>
+<ul>
+<li>在 <code>ThemeData</code> 中统一配置全局默认形状（优先级 2）</li>
+<li>只在特殊需求时通过组件参数覆盖（优先级 1）</li>
+<li>避免在每个组件上逐个设置形状，保持一致性</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="5-material-3-中的-elevation-新模型">5. Material 3 中的 Elevation 新模型</h2>
+<p>Elevation（层级）在 Material Design 中表达界面元素之间的空间关系和视觉重要性。Material 3 对 Elevation 的表达方式做了重大改变。</p>
+<h3 id="51-m2-vs-m3-的-elevation-表达差异">5.1 M2 vs M3 的 Elevation 表达差异</h3>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>Material 2</th>
+<th>Material 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>视觉表达</strong></td>
+<td>纯阴影（drop shadow）</td>
+<td>Surface Tint（色调叠加）+ 弱化阴影</td>
+</tr>
+<tr>
+<td><strong>颜色变化</strong></td>
+<td>层级变化不影响表面颜色</td>
+<td>层级越高，表面色调越深</td>
+</tr>
+<tr>
+<td><strong>暗色模式</strong></td>
+<td>阴影几乎不可见，靠 elevation overlay</td>
+<td>Surface Tint 在亮/暗模式下都有效</td>
+</tr>
+<tr>
+<td><strong>性能</strong></td>
+<td>阴影渲染开销较大</td>
+<td>色调混合性能更优</td>
+</tr>
+<tr>
+<td><strong>设计意图</strong></td>
+<td>模拟物理世界的光影</td>
+<td>更抽象的层级语义表达</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-surface-tint-的工作机制">5.2 Surface Tint 的工作机制</h3>
+<p>在 Material 3 中，<code>surfaceTintColor</code>（通常取自 <code>colorScheme.surfaceTint</code>，即 <code>primary</code> 颜色）会根据 Elevation 值叠加到组件的背景色上。Elevation 越高，叠加的色调越浓。</p>
+<pre><code>最终颜色 = surface 底色 + surfaceTint × 不透明度(由 elevation 决定)
+</code></pre>
+<p>各层级对应的 Surface Tint 不透明度近似值：</p>
+<table>
+<thead>
+<tr>
+<th>Elevation 层级</th>
+<th>dp 值</th>
+<th>Tint 不透明度（近似）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Level 0</td>
+<td>0dp</td>
+<td>0%（无色调叠加）</td>
+</tr>
+<tr>
+<td>Level 1</td>
+<td>1dp</td>
+<td>5%</td>
+</tr>
+<tr>
+<td>Level 2</td>
+<td>3dp</td>
+<td>8%</td>
+</tr>
+<tr>
+<td>Level 3</td>
+<td>6dp</td>
+<td>11%</td>
+</tr>
+<tr>
+<td>Level 4</td>
+<td>8dp</td>
+<td>12%</td>
+</tr>
+<tr>
+<td>Level 5</td>
+<td>12dp</td>
+<td>14%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="53-直观对比-m2-与-m3-的-elevation">5.3 直观对比 M2 与 M3 的 Elevation</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const ElevationComparisonApp());
+
+class ElevationComparisonApp extends StatelessWidget {
+  const ElevationComparisonApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.indigo,
+      ),
+      home: const ElevationComparisonPage(),
+    );
+  }
+}
+
+class ElevationComparisonPage extends StatelessWidget {
+  const ElevationComparisonPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final elevations = [0.0, 1.0, 3.0, 6.0, 8.0, 12.0];
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('M2 vs M3 Elevation')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // M3 方式：Surface Tint（色调叠加）
+            Text('Material 3: Surface Tint',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Row(
+              children: elevations.map((e) {
+                return Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Material(
+                      elevation: e,
+                      surfaceTintColor:
+                          Theme.of(context).colorScheme.surfaceTint,
+                      borderRadius: BorderRadius.circular(12),
+                      child: SizedBox(
+                        height: 80,
+                        child: Center(
+                          child: Text('${e.toInt()}dp',
+                              style: Theme.of(context).textTheme.labelMedium),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 32),
+
+            // M2 方式：纯阴影（禁用 Surface Tint）
+            Text('Material 2 风格: 纯阴影',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Row(
+              children: elevations.map((e) {
+                return Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Material(
+                      elevation: e,
+                      surfaceTintColor: Colors.transparent, // 禁用色调叠加
+                      shadowColor: Colors.black, // 使用纯黑阴影
+                      borderRadius: BorderRadius.circular(12),
+                      child: SizedBox(
+                        height: 80,
+                        child: Center(
+                          child: Text('${e.toInt()}dp',
+                              style: Theme.of(context).textTheme.labelMedium),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>⚠️ 注意事项</strong>：</p>
+<ul>
+<li>在 M3 中，默认情况下 <code>shadowColor</code> 被设为透明，阴影不可见。如果你同时需要阴影和色调叠加，需要显式设置 <code>shadowColor</code>。</li>
+<li>从 M2 迁移到 M3 时，如果你的设计仍依赖阴影，可以通过 <code>surfaceTintColor: Colors.transparent</code> 禁用色调叠加，或同时设置 <code>shadowColor</code> 为非透明色。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="6-elevation-的-6-个层级">6. Elevation 的 6 个层级</h2>
+<p>Material 3 定义了 6 个标准 Elevation 层级（Level 0 到 Level 5），每个层级有明确的 dp 值和使用场景。</p>
+<h3 id="61-elevation-层级详细规范">6.1 Elevation 层级详细规范</h3>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>dp 值</th>
+<th>使用场景</th>
+<th>对应组件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Level 0</strong></td>
+<td>0dp</td>
+<td>页面主体、背景表面</td>
+<td>Surface、Scaffold body</td>
+</tr>
+<tr>
+<td><strong>Level 1</strong></td>
+<td>1dp</td>
+<td>可滚动内容、搜索栏</td>
+<td>Card（默认）、NavigationBar、SearchBar</td>
+</tr>
+<tr>
+<td><strong>Level 2</strong></td>
+<td>3dp</td>
+<td>需要轻微突出的内容</td>
+<td>ElevatedButton、NavigationDrawer（非模态）</td>
+</tr>
+<tr>
+<td><strong>Level 3</strong></td>
+<td>6dp</td>
+<td>模态内容、浮动元素</td>
+<td>FAB、Snackbar、NavigationDrawer（模态）</td>
+</tr>
+<tr>
+<td><strong>Level 4</strong></td>
+<td>8dp</td>
+<td>（较少使用）</td>
+<td>特殊需求</td>
+</tr>
+<tr>
+<td><strong>Level 5</strong></td>
+<td>12dp</td>
+<td>（较少使用）</td>
+<td>特殊需求</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-elevation-层级可视化">6.2 Elevation 层级可视化</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
+      home: ElevationLevelsDemo(),
+    ));
+
+class ElevationLevelsDemo extends StatelessWidget {
+  const ElevationLevelsDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final levels = [
+      (0, 0.0, 'Level 0', '页面背景表面'),
+      (1, 1.0, 'Level 1', 'Card、NavigationBar'),
+      (2, 3.0, 'Level 2', 'ElevatedButton'),
+      (3, 6.0, 'Level 3', 'FAB、Snackbar'),
+      (4, 8.0, 'Level 4', '较少使用'),
+      (5, 12.0, 'Level 5', '较少使用'),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Elevation 6 个层级')),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: levels.length,
+        separatorBuilder: (_, __) =&gt; const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final (level, dp, name, usage) = levels[index];
+          return Material(
+            elevation: dp,
+            surfaceTintColor: Theme.of(context).colorScheme.surfaceTint,
+            borderRadius: BorderRadius.circular(12),
+            clipBehavior: Clip.antiAlias,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  // 层级数字
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$level',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge
+                            ?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimaryContainer,
+                            ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '$name — ${dp.toInt()}dp',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          usage,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="7-material-组件详解">7. Material 组件详解</h2>
+<p><code>Material</code> 是 Flutter 中实现 Material Design 视觉效果的核心 Widget。它负责渲染背景色、阴影、形状和水波纹效果。</p>
+<h3 id="71-material-widget-的关键属性">7.1 Material Widget 的关键属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td><code>MaterialType</code></td>
+<td>材质类型（canvas/card/circle/transparency 等）</td>
+</tr>
+<tr>
+<td><code>elevation</code></td>
+<td><code>double</code></td>
+<td>层级高度，影响阴影和色调叠加</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td><code>Color?</code></td>
+<td>背景颜色</td>
+</tr>
+<tr>
+<td><code>shadowColor</code></td>
+<td><code>Color?</code></td>
+<td>阴影颜色（M3 默认透明）</td>
+</tr>
+<tr>
+<td><code>surfaceTintColor</code></td>
+<td><code>Color?</code></td>
+<td>色调叠加颜色（M3 核心特性）</td>
+</tr>
+<tr>
+<td><code>shape</code></td>
+<td><code>ShapeBorder?</code></td>
+<td>形状边框</td>
+</tr>
+<tr>
+<td><code>clipBehavior</code></td>
+<td><code>Clip</code></td>
+<td>裁剪行为</td>
+</tr>
+<tr>
+<td><code>borderRadius</code></td>
+<td><code>BorderRadiusGeometry?</code></td>
+<td>圆角（仅适用于 <code>MaterialType.canvas</code> 和 <code>card</code>）</td>
+</tr>
+<tr>
+<td><code>borderOnForeground</code></td>
+<td><code>bool</code></td>
+<td>边框是否绘制在子组件前面</td>
+</tr>
+</tbody>
+</table>
+<h3 id="72-materialtype-四种类型">7.2 MaterialType 四种类型</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.teal),
+      home: MaterialTypeDemo(),
+    ));
+
+class MaterialTypeDemo extends StatelessWidget {
+  const MaterialTypeDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('MaterialType')),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            // MaterialType.canvas — 默认类型，矩形
+            _buildTypeDemo(
+              context,
+              type: MaterialType.canvas,
+              label: 'canvas（默认）',
+              description: '矩形，可设置圆角和边框',
+              color: cs.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            const SizedBox(height: 16),
+
+            // MaterialType.card — 带默认圆角和阴影的卡片
+            _buildTypeDemo(
+              context,
+              type: MaterialType.card,
+              label: 'card',
+              description: '类似 Card，有默认圆角和层级',
+              color: cs.surfaceContainerLow,
+            ),
+            const SizedBox(height: 16),
+
+            // MaterialType.circle — 圆形
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Material(
+                    type: MaterialType.circle,
+                    elevation: 4,
+                    color: cs.primaryContainer,
+                    surfaceTintColor: cs.surfaceTint,
+                    child: SizedBox(
+                      width: 80,
+                      height: 80,
+                      child: Center(
+                        child: Text('circle',
+                            style: Theme.of(context).textTheme.labelSmall),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text('circle — 圆形，类似 CircleBorder'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // MaterialType.transparency — 透明，不渲染背景
+            _buildTypeDemo(
+              context,
+              type: MaterialType.transparency,
+              label: 'transparency',
+              description: '透明背景，只有 InkWell 水波纹可见',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTypeDemo(
+    BuildContext context, {
+    required MaterialType type,
+    required String label,
+    required String description,
+    Color? color,
+    BorderRadiusGeometry? borderRadius,
+  }) {
+    return Material(
+      type: type,
+      elevation: 4,
+      color: color,
+      surfaceTintColor: Theme.of(context).colorScheme.surfaceTint,
+      borderRadius: borderRadius,
+      child: SizedBox(
+        width: double.infinity,
+        height: 72,
+        child: InkWell(
+          onTap: () {},
+          borderRadius: borderRadius as BorderRadius?,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(label, style: Theme.of(context).textTheme.titleSmall),
+                Text(description, style: Theme.of(context).textTheme.bodySmall),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="73-shadowcolor-与-surfacetintcolor-的配合">7.3 shadowColor 与 surfaceTintColor 的配合</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.purple),
+      home: ShadowTintDemo(),
+    ));
+
+class ShadowTintDemo extends StatelessWidget {
+  const ShadowTintDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Shadow vs Tint')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 只有 Surface Tint（M3 默认行为）
+            _buildCard(
+              context,
+              title: '仅 Surface Tint',
+              subtitle: 'shadowColor: transparent',
+              elevation: 6,
+              shadowColor: Colors.transparent,
+              surfaceTintColor: cs.surfaceTint,
+            ),
+            const SizedBox(height: 16),
+
+            // 只有阴影（M2 风格）
+            _buildCard(
+              context,
+              title: '仅阴影',
+              subtitle: 'surfaceTintColor: transparent',
+              elevation: 6,
+              shadowColor: Colors.black,
+              surfaceTintColor: Colors.transparent,
+            ),
+            const SizedBox(height: 16),
+
+            // 阴影 + Surface Tint 混合
+            _buildCard(
+              context,
+              title: '阴影 + Surface Tint',
+              subtitle: '两者兼具',
+              elevation: 6,
+              shadowColor: Colors.black45,
+              surfaceTintColor: cs.surfaceTint,
+            ),
+            const SizedBox(height: 16),
+
+            // 无层级效果
+            _buildCard(
+              context,
+              title: '无 Elevation',
+              subtitle: 'elevation: 0',
+              elevation: 0,
+              shadowColor: Colors.transparent,
+              surfaceTintColor: cs.surfaceTint,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCard(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required double elevation,
+    required Color shadowColor,
+    required Color surfaceTintColor,
+  }) {
+    return Material(
+      elevation: elevation,
+      shadowColor: shadowColor,
+      surfaceTintColor: surfaceTintColor,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 4),
+            Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
+            Text('elevation: ${elevation.toInt()}dp',
+                style: Theme.of(context).textTheme.bodySmall),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>💡 最佳实践</strong>：</p>
+<ul>
+<li>优先使用 M3 的 Surface Tint 来表达层级，这是 Material 3 推荐的方式</li>
+<li>如果你的设计需要明显的阴影效果（例如浮动按钮），可以同时使用 <code>shadowColor</code> 和 <code>surfaceTintColor</code></li>
+<li>对于暗色主题，Surface Tint 比纯阴影更有效，因为深色背景上的阴影几乎不可见</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="8-实战shape--elevation-showcase-页面">8. 实战：Shape &amp; Elevation Showcase 页面</h2>
+<p>现在让我们综合运用本课所学的全部知识，构建一个完整的展示页面，涵盖所有形状类型和 6 个 Elevation 层级。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const ShapeElevationShowcaseApp());
+
+class ShapeElevationShowcaseApp extends StatelessWidget {
+  const ShapeElevationShowcaseApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Shape &amp; Elevation Showcase',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.deepPurple,
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        colorSchemeSeed: Colors.deepPurple,
+      ),
+      home: const ShowcasePage(),
+    );
+  }
+}
+
+class ShowcasePage extends StatefulWidget {
+  const ShowcasePage({super.key});
+
+  @override
+  State&lt;ShowcasePage&gt; createState() =&gt; _ShowcasePageState();
+}
+
+class _ShowcasePageState extends State&lt;ShowcasePage&gt;
+    with TickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Shape &amp; Elevation Showcase'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: '形状', icon: Icon(Icons.category)),
+            Tab(text: 'Elevation', icon: Icon(Icons.layers)),
+            Tab(text: '综合', icon: Icon(Icons.dashboard)),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          _ShapeShowcaseTab(),
+          _ElevationShowcaseTab(),
+          _CombinedShowcaseTab(),
+        ],
+      ),
+    );
+  }
+}
+
+// ===================== Tab 1: 形状展示 =====================
+
+class _ShapeShowcaseTab extends StatelessWidget {
+  const _ShapeShowcaseTab();
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // === 形状 Token 层级 ===
+          _sectionTitle(context, 'M3 Shape Token 层级'),
+          const SizedBox(height: 8),
+          _buildShapeTokenRow(context),
+          const SizedBox(height: 32),
+
+          // === ShapeBorder 家族 ===
+          _sectionTitle(context, 'ShapeBorder 家族'),
+          const SizedBox(height: 12),
+
+          // RoundedRectangleBorder
+          _buildShapeItem(
+            context,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            label: 'RoundedRectangleBorder',
+            color: cs.primaryContainer,
+          ),
+          const SizedBox(height: 12),
+
+          // StadiumBorder
+          _buildShapeItem(
+            context,
+            shape: const StadiumBorder(),
+            label: 'StadiumBorder',
+            color: cs.secondaryContainer,
+          ),
+          const SizedBox(height: 12),
+
+          // BeveledRectangleBorder
+          _buildShapeItem(
+            context,
+            shape: const BeveledRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(16)),
+            ),
+            label: 'BeveledRectangleBorder',
+            color: cs.tertiaryContainer,
+          ),
+          const SizedBox(height: 12),
+
+          // ContinuousRectangleBorder
+          _buildShapeItem(
+            context,
+            shape: ContinuousRectangleBorder(
+              borderRadius: BorderRadius.circular(32),
+            ),
+            label: 'ContinuousRectangleBorder',
+            color: cs.primaryContainer,
+          ),
+          const SizedBox(height: 12),
+
+          // CircleBorder
+          SizedBox(
+            height: 100,
+            child: Row(
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: ShapeDecoration(
+                    color: cs.secondaryContainer,
+                    shape: const CircleBorder(),
+                  ),
+                  child: Icon(Icons.circle_outlined,
+                      color: cs.onSecondaryContainer),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    'CircleBorder\n正圆形',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // StarBorder
+          _sectionTitle(context, 'StarBorder 变体'),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              _buildStarItem(context, '五角星', const StarBorder()),
+              _buildStarItem(
+                  context, '六角星', const StarBorder(points: 6)),
+              _buildStarItem(
+                context,
+                '圆角星',
+                const StarBorder(pointRounding: 0.5, innerRadiusRatio: 0.5),
+              ),
+              _buildStarItem(
+                context,
+                '六边形',
+                const StarBorder.polygon(sides: 6),
+              ),
+              _buildStarItem(
+                context,
+                '八边形',
+                const StarBorder.polygon(sides: 8),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShapeTokenRow(BuildContext context) {
+    final tokens = [
+      ('None', 0.0),
+      ('XS', 4.0),
+      ('S', 8.0),
+      ('M', 12.0),
+      ('L', 16.0),
+      ('XL', 28.0),
+    ];
+
+    return SizedBox(
+      height: 80,
+      child: Row(
+        children: [
+          ...tokens.map((t) =&gt; Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primaryContainer,
+                            borderRadius: BorderRadius.circular(t.$2),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(t.$1,
+                          style: Theme.of(context).textTheme.labelSmall),
+                      Text('${t.$2.toInt()}dp',
+                          style: Theme.of(context).textTheme.labelSmall),
+                    ],
+                  ),
+                ),
+              )),
+          // Full
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 3),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: ShapeDecoration(
+                        color:
+                            Theme.of(context).colorScheme.primaryContainer,
+                        shape: const StadiumBorder(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text('Full',
+                      style: Theme.of(context).textTheme.labelSmall),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShapeItem(
+    BuildContext context, {
+    required ShapeBorder shape,
+    required String label,
+    required Color color,
+  }) {
+    return Container(
+      width: double.infinity,
+      height: 64,
+      decoration: ShapeDecoration(color: color, shape: shape),
+      child: Center(
+        child: Text(label, style: Theme.of(context).textTheme.bodyLarge),
+      ),
+    );
+  }
+
+  Widget _buildStarItem(
+      BuildContext context, String label, ShapeBorder shape) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 64,
+          height: 64,
+          decoration: ShapeDecoration(
+            color: Theme.of(context).colorScheme.tertiaryContainer,
+            shape: shape,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(label, style: Theme.of(context).textTheme.labelSmall),
+      ],
+    );
+  }
+}
+
+// ===================== Tab 2: Elevation 展示 =====================
+
+class _ElevationShowcaseTab extends StatelessWidget {
+  const _ElevationShowcaseTab();
+
+  @override
+  Widget build(BuildContext context) {
+    final levels = [
+      (0, 0.0, '页面背景'),
+      (1, 1.0, 'Card、SearchBar'),
+      (2, 3.0, 'ElevatedButton'),
+      (3, 6.0, 'FAB、Snackbar'),
+      (4, 8.0, '较少使用'),
+      (5, 12.0, '较少使用'),
+    ];
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Surface Tint 模式
+          _sectionTitle(context, 'Surface Tint（M3 默认）'),
+          const SizedBox(height: 8),
+          ...levels.map((l) =&gt; Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Material(
+                  elevation: l.$2,
+                  surfaceTintColor:
+                      Theme.of(context).colorScheme.surfaceTint,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Level ${l.$1}',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        Text('${l.$2.toInt()}dp'),
+                        Text(l.$3,
+                            style: Theme.of(context).textTheme.bodySmall),
+                      ],
+                    ),
+                  ),
+                ),
+              )),
+          const SizedBox(height: 24),
+
+          // 阴影模式对比
+          _sectionTitle(context, '纯阴影模式（M2 风格）'),
+          const SizedBox(height: 8),
+          ...levels.map((l) =&gt; Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Material(
+                  elevation: l.$2,
+                  shadowColor: Colors.black,
+                  surfaceTintColor: Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Level ${l.$1}',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        Text('${l.$2.toInt()}dp'),
+                        Text(l.$3,
+                            style: Theme.of(context).textTheme.bodySmall),
+                      ],
+                    ),
+                  ),
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+}
+
+// ===================== Tab 3: 综合展示 =====================
+
+class _CombinedShowcaseTab extends StatelessWidget {
+  const _CombinedShowcaseTab();
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final shapes = &lt;(String, ShapeBorder)&gt;[
+      ('Rounded\n12dp', RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12))),
+      ('Stadium', const StadiumBorder()),
+      ('Beveled\n12dp', const BeveledRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)))),
+      ('Continuous\n24dp', ContinuousRectangleBorder(
+          borderRadius: BorderRadius.circular(24))),
+    ];
+
+    final elevations = [0.0, 1.0, 3.0, 6.0, 8.0, 12.0];
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionTitle(context, '形状 × Elevation 矩阵'),
+          const SizedBox(height: 4),
+          Text(
+            '横轴 = 形状类型，纵轴 = Elevation 层级',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 12),
+
+          // 表头
+          Row(
+            children: [
+              const SizedBox(width: 48),
+              ...shapes.map((s) =&gt; Expanded(
+                    child: Center(
+                      child: Text(
+                        s.$1,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                    ),
+                  )),
+            ],
+          ),
+          const SizedBox(height: 8),
+
+          // 矩阵网格
+          ...elevations.asMap().entries.map((entry) {
+            final level = entry.key;
+            final dp = entry.value;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 48,
+                    child: Text(
+                      '${dp.toInt()}dp',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ),
+                  ...shapes.map((s) =&gt; Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Material(
+                            elevation: dp,
+                            surfaceTintColor: cs.surfaceTint,
+                            shape: s.$2,
+                            clipBehavior: Clip.antiAlias,
+                            child: InkWell(
+                              onTap: () {},
+                              customBorder: s.$2,
+                              child: SizedBox(
+                                height: 56,
+                                child: Center(
+                                  child: Text(
+                                    'L$level',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )),
+                ],
+              ),
+            );
+          }),
+          const SizedBox(height: 32),
+
+          // 实际组件示例
+          _sectionTitle(context, '实际组件形状示例'),
+          const SizedBox(height: 12),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Card — Medium (12dp)',
+                      style: Theme.of(context).textTheme.titleSmall),
+                  const Text('Card 使用 Medium 圆角和 Level 1 Elevation'),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            children: [
+              FilterChip(
+                label: const Text('Small (8dp)'),
+                selected: true,
+                onSelected: (_) {},
+              ),
+              ActionChip(label: const Text('Chip'), onPressed: () {}),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              FloatingActionButton(
+                heroTag: 'fab1',
+                onPressed: () {},
+                child: const Icon(Icons.add),
+              ),
+              const SizedBox(width: 16),
+              FloatingActionButton.extended(
+                heroTag: 'fab2',
+                onPressed: () {},
+                icon: const Icon(Icons.edit),
+                label: const Text('Extended FAB'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              FilledButton(onPressed: () {}, child: const Text('Filled')),
+              const SizedBox(width: 8),
+              ElevatedButton(
+                  onPressed: () {}, child: const Text('Elevated')),
+              const SizedBox(width: 8),
+              OutlinedButton(
+                  onPressed: () {}, child: const Text('Outlined')),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ===================== 公共工具方法 =====================
+
+Widget _sectionTitle(BuildContext context, String title) {
+  return Text(
+    title,
+    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+  );
+}
+</code></pre>
+<hr />
+<h2 id="9-本课小结">9. 本课小结</h2>
+<h3 id="核心概念回顾">核心概念回顾</h3>
+<ol>
+<li>
+<p><strong>M3 Shape Token 体系</strong>：Material 3 定义了 7 个标准形状层级（None → Extra Small → Small → Medium → Large → Extra Large → Full），对应从 0dp 到全圆的圆角值。通过标准化形状 Token 统一应用的视觉语言。</p>
+</li>
+<li>
+<p><strong>ShapeBorder 家族</strong>：Flutter 提供了 6 种主要的 ShapeBorder 子类：</p>
+<ul>
+<li><code>RoundedRectangleBorder</code>：最常用的圆角矩形</li>
+<li><code>StadiumBorder</code>：胶囊形，自动适应短边半径</li>
+<li><code>BeveledRectangleBorder</code>：斜切角，几何风格</li>
+<li><code>ContinuousRectangleBorder</code>：超椭圆，iOS 风格的平滑圆角</li>
+<li><code>CircleBorder</code>：正圆</li>
+<li><code>StarBorder</code>：星形和多边形（Flutter 3.10+）</li>
+</ul>
+</li>
+<li>
+<p><strong>全局形状管理</strong>：通过 <code>ThemeData</code> 中各组件主题的 <code>shape</code> 属性统一管理形状，遵循优先级链：Widget 参数 &gt; 组件主题 &gt; Material 默认值。</p>
+</li>
+<li>
+<p><strong>Elevation 新模型</strong>：M3 用 Surface Tint（色调叠加）替代 M2 的纯阴影来表达层级，6 个层级分别对应 0dp、1dp、3dp、6dp、8dp、12dp。</p>
+</li>
+<li>
+<p><strong>Material Widget</strong>：通过 <code>type</code>、<code>elevation</code>、<code>shadowColor</code>、<code>surfaceTintColor</code> 等属性精确控制材质的视觉表现。</p>
+</li>
+</ol>
+<h3 id="关键对照表">关键对照表</h3>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>默认形状 Token</th>
+<th>默认 Elevation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scaffold body</td>
+<td>None</td>
+<td>Level 0 (0dp)</td>
+</tr>
+<tr>
+<td>Card</td>
+<td>Medium (12dp)</td>
+<td>Level 1 (1dp)</td>
+</tr>
+<tr>
+<td>Chip</td>
+<td>Small (8dp)</td>
+<td>Level 0 (0dp)</td>
+</tr>
+<tr>
+<td>TextField</td>
+<td>Extra Small (4dp)</td>
+<td>Level 0 (0dp)</td>
+</tr>
+<tr>
+<td>FAB</td>
+<td>Large (16dp)</td>
+<td>Level 3 (6dp)</td>
+</tr>
+<tr>
+<td>ElevatedButton</td>
+<td>Full</td>
+<td>Level 1 (1dp)</td>
+</tr>
+<tr>
+<td>NavigationBar</td>
+<td>None</td>
+<td>Level 2 (3dp)</td>
+</tr>
+<tr>
+<td>BottomSheet</td>
+<td>Extra Large (28dp)</td>
+<td>Level 1 (1dp)</td>
+</tr>
+<tr>
+<td>Dialog</td>
+<td>Extra Large (28dp)</td>
+<td>Level 3 (6dp)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="10-练习题">10. 练习题</h2>
+<h3 id="练习-1形状探索基础">练习 1：形状探索（基础）</h3>
+<p>创建一个页面，用 6 种 <code>ShapeBorder</code> 各包裹一个包含文字和图标的 <code>Container</code>。要求：</p>
+<ul>
+<li>每种形状使用不同的背景色</li>
+<li>每个容器至少 80×80 像素</li>
+<li>使用 <code>Wrap</code> 布局自动换行</li>
+</ul>
+<h3 id="练习-2elevation-阶梯基础">练习 2：Elevation 阶梯（基础）</h3>
+<p>创建一个纵向排列的 6 张卡片，分别设置 Level 0 到 Level 5 的 Elevation 值。要求：</p>
+<ul>
+<li>使用 <code>Material</code> Widget（不要用 <code>Card</code>）</li>
+<li>同时展示 Surface Tint 效果</li>
+<li>在每张卡片上显示当前层级编号和 dp 值</li>
+<li>尝试切换到暗色主题观察 Surface Tint 的效果</li>
+</ul>
+<h3 id="练习-3自定义品牌形状主题中级">练习 3：自定义品牌形状主题（中级）</h3>
+<p>为一个虚构的品牌 App 配置全局形状主题。要求：</p>
+<ul>
+<li>所有按钮使用 <code>StadiumBorder</code>（胶囊形）</li>
+<li>Card 使用 20dp 圆角</li>
+<li>Chip 使用 <code>ContinuousRectangleBorder</code>（超椭圆）</li>
+<li>Dialog 使用 24dp 圆角</li>
+<li>FAB 使用 <code>CircleBorder</code></li>
+<li>在一个展示页面中验证所有组件的形状效果</li>
+</ul>
+<h3 id="练习-4shape--elevation-动态调节器进阶">练习 4：Shape &amp; Elevation 动态调节器（进阶）</h3>
+<p>构建一个交互式页面，包含：</p>
+<ul>
+<li>一个中央展示区域的 <code>Material</code> Widget</li>
+<li>一个 <code>Slider</code> 控制圆角半径（0~50dp）</li>
+<li>一个 <code>Slider</code> 控制 Elevation（0~12dp）</li>
+<li>一个 <code>SegmentedButton</code> 切换形状类型（Rounded / Stadium / Beveled / Continuous）</li>
+<li>一个 <code>Switch</code> 切换 Surface Tint 开关</li>
+<li>实时预览形状和 Elevation 的变化效果</li>
+</ul>
+<h3 id="练习-5material-层级系统设计进阶">练习 5：Material 层级系统设计（进阶）</h3>
+<p>模拟一个内容阅读 App 的页面层级设计：</p>
+<ul>
+<li>底层（Level 0）：页面背景</li>
+<li>第一层（Level 1）：内容卡片列表</li>
+<li>第二层（Level 2）：浮动操作栏</li>
+<li>第三层（Level 3）：FAB</li>
+<li>点击卡片弹出详情 Dialog（Level 3）</li>
+<li>使用 <code>BottomSheet</code>（Level 1）展示评论区</li>
+<li>要求所有层级的 Surface Tint 效果清晰可辨</li>
+</ul>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：第05课将深入讲解 <strong>WidgetState 与交互状态管理</strong>，了解 Material 组件如何响应 hover、pressed、focused 等交互状态，以及如何通过 <code>WidgetStateProperty</code> 实现符合规范的状态样式切换。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

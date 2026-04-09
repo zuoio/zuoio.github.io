@@ -1,0 +1,2405 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第11章-change-streams-与实时数据">第11章 Change Streams 与实时数据</h1>
+<blockquote>
+<p>在很多业务场景中，我们需要实时感知数据的变化——新订单的通知、库存变动的同步、审计日志的记录等。
+传统方案通常需要轮询数据库或引入消息队列，而 MongoDB 提供了原生的 Change Streams 机制，
+让应用程序可以直接订阅数据变更事件，实现真正的实时数据推送。</p>
+</blockquote>
+<hr />
+<h2 id="111-change-streams-原理与应用场景">11.1 Change Streams 原理与应用场景</h2>
+<h3 id="1111-什么是-change-streams">11.1.1 什么是 Change Streams</h3>
+<p>Change Streams 是 MongoDB 3.6 引入的一种<strong>基于 oplog（操作日志）的变更监听机制</strong>，允许应用程序订阅数据库中的实时数据变更事件，而无需轮询数据库。</p>
+<p><strong>工作原理：</strong></p>
+<pre><code>客户端应用 ──watch()──&gt; MongoDB Driver ──&gt; oplog（副本集操作日志）
+                                              │
+                                              ▼
+                                   过滤 + 转换为变更事件
+                                              │
+                                              ▼
+                                   推送给客户端应用
+</code></pre>
+<ul>
+<li><strong>oplog</strong> 是 MongoDB 副本集用于数据同步的操作日志，记录了所有的写操作</li>
+<li>Change Streams 本质上是对 oplog 的一个<strong>可恢复的、有序的、实时的</strong>抽象访问层</li>
+<li>与直接读取 oplog 相比，Change Streams 提供了更友好的 API 和更好的可用性</li>
+</ul>
+<h3 id="1112-前提条件">11.1.2 前提条件</h3>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>副本集或分片集群</strong></td>
+<td>Change Streams 依赖 oplog，只有副本集和分片集群才有 oplog</td>
+</tr>
+<tr>
+<td><strong>MongoDB 3.6+</strong></td>
+<td>最低版本要求；4.0 支持数据库级别监听；4.0+ 支持集群级别监听</td>
+</tr>
+<tr>
+<td><strong>WiredTiger 存储引擎</strong></td>
+<td>默认引擎，通常不需要额外配置</td>
+</tr>
+<tr>
+<td><strong>readConcern: majority</strong></td>
+<td>需要启用 majority 读关注（默认启用）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>开发提示</strong>：如果你使用的是单节点 MongoDB（非副本集），Change Streams 不可用。
+可以参考第9章中的 Docker 单节点副本集配置方法来快速搭建开发环境。</p>
+</blockquote>
+<h3 id="1113-应用场景">11.1.3 应用场景</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>实时通知</strong></td>
+<td>数据变更时主动推送通知</td>
+<td>新订单通知、新评论提醒</td>
+</tr>
+<tr>
+<td><strong>数据同步</strong></td>
+<td>将 MongoDB 的变更同步到其他系统</td>
+<td>同步到 Elasticsearch、Redis 缓存</td>
+</tr>
+<tr>
+<td><strong>审计日志</strong></td>
+<td>记录所有数据变更操作</td>
+<td>谁在什么时间改了什么数据</td>
+</tr>
+<tr>
+<td><strong>缓存失效</strong></td>
+<td>数据更新时自动清理缓存</td>
+<td>商品价格变更时清除 Redis 缓存</td>
+</tr>
+<tr>
+<td><strong>ETL 管道</strong></td>
+<td>实时数据抽取与转换</td>
+<td>实时数据仓库同步</td>
+</tr>
+<tr>
+<td><strong>事件驱动架构</strong></td>
+<td>基于数据变更触发业务逻辑</td>
+<td>订单状态变更触发后续流程</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1114-支持的事件类型">11.1.4 支持的事件类型</h3>
+<table>
+<thead>
+<tr>
+<th>事件类型</th>
+<th>触发条件</th>
+<th>operationType 值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>insert</strong></td>
+<td>插入新文档</td>
+<td><code>&quot;insert&quot;</code></td>
+</tr>
+<tr>
+<td><strong>update</strong></td>
+<td>更新已有文档</td>
+<td><code>&quot;update&quot;</code></td>
+</tr>
+<tr>
+<td><strong>replace</strong></td>
+<td>替换整个文档</td>
+<td><code>&quot;replace&quot;</code></td>
+</tr>
+<tr>
+<td><strong>delete</strong></td>
+<td>删除文档</td>
+<td><code>&quot;delete&quot;</code></td>
+</tr>
+<tr>
+<td><strong>drop</strong></td>
+<td>删除集合</td>
+<td><code>&quot;drop&quot;</code></td>
+</tr>
+<tr>
+<td><strong>rename</strong></td>
+<td>重命名集合</td>
+<td><code>&quot;rename&quot;</code></td>
+</tr>
+<tr>
+<td><strong>dropDatabase</strong></td>
+<td>删除数据库</td>
+<td><code>&quot;dropDatabase&quot;</code></td>
+</tr>
+<tr>
+<td><strong>invalidate</strong></td>
+<td>流失效（如集合被删除）</td>
+<td><code>&quot;invalidate&quot;</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>变更事件文档的结构示例：</strong></p>
+<pre><code class="language-javascript">{
+    _id: { _data: &quot;8263...&quot; },       // Resume Token，用于断点续传
+    operationType: &quot;insert&quot;,          // 操作类型
+    clusterTime: Timestamp(1700000000, 1),  // 集群时间戳
+    fullDocument: {                   // 完整文档（insert 时自动包含）
+        _id: ObjectId(&quot;6571...&quot;),
+        name: &quot;新商品&quot;,
+        price: 99.9
+    },
+    ns: {                             // 命名空间
+        db: &quot;shop&quot;,
+        coll: &quot;products&quot;
+    },
+    documentKey: {                    // 文档主键
+        _id: ObjectId(&quot;6571...&quot;)
+    }
+}
+</code></pre>
+<hr />
+<h2 id="112-监听集合变更事件shell-篇">11.2 监听集合变更事件（Shell 篇）</h2>
+<h3 id="1121-dbcollectionwatch-基本用法">11.2.1 db.collection.watch() 基本用法</h3>
+<p><code>watch()</code> 是开启 Change Stream 的核心方法，它返回一个游标，可以持续接收变更事件。</p>
+<p><strong>基本用法：</strong></p>
+<pre><code class="language-javascript">// 监听 products 集合的所有变更
+// 注意：这是一个阻塞操作，会持续等待新事件
+const cursor = db.products.watch();
+
+// 迭代接收变更事件
+while (!cursor.isClosed()) {
+    if (cursor.hasNext()) {
+        const change = cursor.next();
+        printjson(change);
+    }
+}
+</code></pre>
+<p><strong>快速测试：</strong></p>
+<p>打开两个 mongosh 终端窗口：</p>
+<pre><code class="language-javascript">// ===== 窗口1：启动监听 =====
+use shop;
+const cursor = db.products.watch();
+while (cursor.hasNext()) {
+    printjson(cursor.next());
+}
+
+// ===== 窗口2：触发变更 =====
+use shop;
+
+// 插入文档
+db.products.insertOne({ name: &quot;iPhone 16&quot;, price: 7999, stock: 100 });
+
+// 更新文档
+db.products.updateOne({ name: &quot;iPhone 16&quot; }, { $set: { price: 7499 } });
+
+// 删除文档
+db.products.deleteOne({ name: &quot;iPhone 16&quot; });
+</code></pre>
+<p>窗口1 会依次输出 insert、update、delete 三个变更事件。</p>
+<h3 id="1122-使用-pipeline-过滤变更事件">11.2.2 使用 pipeline 过滤变更事件</h3>
+<p><code>watch()</code> 的第一个参数接受一个聚合管道数组，可以用来过滤和转换变更事件。</p>
+<p><strong>只监听 insert 操作：</strong></p>
+<pre><code class="language-javascript">const cursor = db.products.watch([
+    { $match: { operationType: &quot;insert&quot; } }
+]);
+
+while (cursor.hasNext()) {
+    const change = cursor.next();
+    print(&quot;新商品上架: &quot; + change.fullDocument.name 
+          + &quot;，价格: &quot; + change.fullDocument.price);
+}
+</code></pre>
+<p><strong>只监听特定条件的变更（如价格大于 1000 的商品）：</strong></p>
+<pre><code class="language-javascript">const cursor = db.products.watch([
+    {
+        $match: {
+            $or: [
+                // insert 事件：新文档价格 &gt; 1000
+                {
+                    operationType: &quot;insert&quot;,
+                    &quot;fullDocument.price&quot;: { $gt: 1000 }
+                },
+                // update 事件：只关注价格字段的变更
+                {
+                    operationType: &quot;update&quot;,
+                    &quot;updateDescription.updatedFields.price&quot;: { $exists: true }
+                },
+                // delete 事件
+                { operationType: &quot;delete&quot; }
+            ]
+        }
+    },
+    {
+        $project: {
+            operationType: 1,
+            documentKey: 1,
+            &quot;fullDocument.name&quot;: 1,
+            &quot;fullDocument.price&quot;: 1,
+            updateDescription: 1
+        }
+    }
+]);
+
+while (cursor.hasNext()) {
+    printjson(cursor.next());
+}
+</code></pre>
+<p><strong>监听多种操作类型：</strong></p>
+<pre><code class="language-javascript">const cursor = db.orders.watch([
+    {
+        $match: {
+            operationType: { $in: [&quot;insert&quot;, &quot;update&quot;] },
+            // 只关注状态为&quot;已支付&quot;或&quot;已发货&quot;的订单变更
+            $or: [
+                { &quot;fullDocument.status&quot;: { $in: [&quot;PAID&quot;, &quot;SHIPPED&quot;] } },
+                { &quot;updateDescription.updatedFields.status&quot;: { $in: [&quot;PAID&quot;, &quot;SHIPPED&quot;] } }
+            ]
+        }
+    }
+]);
+
+while (cursor.hasNext()) {
+    const change = cursor.next();
+    if (change.operationType === &quot;insert&quot;) {
+        print(&quot;新订单: &quot; + change.fullDocument._id + &quot; 状态: &quot; + change.fullDocument.status);
+    } else {
+        print(&quot;订单更新: &quot; + change.documentKey._id 
+              + &quot; 新状态: &quot; + change.updateDescription.updatedFields.status);
+    }
+}
+</code></pre>
+<h3 id="1123-fulldocument-选项">11.2.3 fullDocument 选项</h3>
+<p>默认情况下，<code>update</code> 事件只包含变更的字段描述（<code>updateDescription</code>），不包含完整文档。通过设置 <code>fullDocument: &quot;updateLookup&quot;</code> 可以在 update 事件中获取更新后的完整文档。</p>
+<pre><code class="language-javascript">// 不使用 fullDocument 选项时，update 事件的内容
+{
+    operationType: &quot;update&quot;,
+    documentKey: { _id: ObjectId(&quot;...&quot;) },
+    updateDescription: {
+        updatedFields: { price: 7499 },    // 只有变更的字段
+        removedFields: [],
+        truncatedArrays: []
+    }
+    // 没有 fullDocument 字段
+}
+
+// 使用 fullDocument: &quot;updateLookup&quot; 后
+const cursor = db.products.watch(
+    [],     // 空的 pipeline
+    { fullDocument: &quot;updateLookup&quot; }
+);
+
+// 此时 update 事件会包含完整文档
+{
+    operationType: &quot;update&quot;,
+    fullDocument: {                         // 完整的更新后文档
+        _id: ObjectId(&quot;...&quot;),
+        name: &quot;iPhone 16&quot;,
+        price: 7499,
+        stock: 100
+    },
+    updateDescription: {
+        updatedFields: { price: 7499 },
+        removedFields: [],
+        truncatedArrays: []
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>fullDocument: &quot;updateLookup&quot;</code> 会额外执行一次查询来获取当前文档，因此：</p>
+<ul>
+<li>获取到的是<strong>当前最新的文档</strong>，而不是变更发生那一刻的文档</li>
+<li>如果文档在变更后、查询前被再次修改或删除，可能获取到不一致的结果</li>
+<li>会增加额外的查询开销</li>
+</ul>
+</blockquote>
+<p><strong>MongoDB 6.0+ 新增的 fullDocument 选项：</strong></p>
+<pre><code class="language-javascript">// &quot;whenAvailable&quot;：尽量返回完整文档，无法获取时返回 null
+const cursor = db.products.watch([], { fullDocument: &quot;whenAvailable&quot; });
+
+// &quot;required&quot;：必须返回完整文档，无法获取时事件被丢弃
+const cursor2 = db.products.watch([], { fullDocument: &quot;required&quot; });
+</code></pre>
+<h3 id="1124-监听数据库级别和集群级别的变更">11.2.4 监听数据库级别和集群级别的变更</h3>
+<p><strong>监听整个数据库的变更（MongoDB 4.0+）：</strong></p>
+<pre><code class="language-javascript">// 监听 shop 数据库下所有集合的变更
+use shop;
+const cursor = db.watch([
+    { $match: { operationType: { $in: [&quot;insert&quot;, &quot;update&quot;, &quot;delete&quot;] } } }
+]);
+
+while (cursor.hasNext()) {
+    const change = cursor.next();
+    print(&quot;[&quot; + change.ns.coll + &quot;] &quot; + change.operationType 
+          + &quot; -&gt; &quot; + tojson(change.documentKey));
+}
+</code></pre>
+<p><strong>监听整个集群的变更（MongoDB 4.0+）：</strong></p>
+<pre><code class="language-javascript">// 监听所有数据库、所有集合的变更
+const client = db.getMongo();
+const cursor = client.watch([
+    {
+        $match: {
+            // 排除系统数据库
+            &quot;ns.db&quot;: { $nin: [&quot;admin&quot;, &quot;local&quot;, &quot;config&quot;] }
+        }
+    }
+]);
+
+while (cursor.hasNext()) {
+    const change = cursor.next();
+    print(&quot;[&quot; + change.ns.db + &quot;.&quot; + change.ns.coll + &quot;] &quot; 
+          + change.operationType);
+}
+</code></pre>
+<h3 id="1125-完整的-shell-监听示例">11.2.5 完整的 Shell 监听示例</h3>
+<p>以下是一个完整的订单变更监听脚本：</p>
+<pre><code class="language-javascript">use shop;
+
+// 准备测试数据
+db.orders.drop();
+
+// 定义变更处理函数
+function handleOrderChange(change) {
+    const timestamp = new Date().toISOString();
+    
+    switch (change.operationType) {
+        case &quot;insert&quot;:
+            print(`[${timestamp}] 📦 新订单创建`);
+            print(`  订单ID: ${change.fullDocument._id}`);
+            print(`  用户: ${change.fullDocument.userId}`);
+            print(`  金额: ¥${change.fullDocument.totalAmount}`);
+            break;
+            
+        case &quot;update&quot;:
+            print(`[${timestamp}] 🔄 订单更新`);
+            print(`  订单ID: ${change.documentKey._id}`);
+            if (change.updateDescription.updatedFields.status) {
+                print(`  新状态: ${change.updateDescription.updatedFields.status}`);
+            }
+            if (change.fullDocument) {
+                print(`  完整文档: ${tojson(change.fullDocument)}`);
+            }
+            break;
+            
+        case &quot;delete&quot;:
+            print(`[${timestamp}] ❌ 订单删除`);
+            print(`  订单ID: ${change.documentKey._id}`);
+            break;
+            
+        default:
+            print(`[${timestamp}] ⚠️ 未知操作: ${change.operationType}`);
+    }
+    print(&quot;---&quot;);
+}
+
+// 启动监听（带过滤和完整文档查找）
+print(&quot;开始监听订单变更...&quot;);
+const cursor = db.orders.watch(
+    [
+        {
+            $match: {
+                operationType: { $in: [&quot;insert&quot;, &quot;update&quot;, &quot;delete&quot;] }
+            }
+        }
+    ],
+    {
+        fullDocument: &quot;updateLookup&quot;
+    }
+);
+
+while (cursor.hasNext()) {
+    handleOrderChange(cursor.next());
+}
+</code></pre>
+<p>在另一个 mongosh 窗口中执行测试操作：</p>
+<pre><code class="language-javascript">use shop;
+
+// 创建订单
+db.orders.insertOne({
+    userId: &quot;user001&quot;,
+    items: [{ productId: &quot;P001&quot;, name: &quot;MacBook Pro&quot;, quantity: 1, price: 14999 }],
+    totalAmount: 14999,
+    status: &quot;CREATED&quot;,
+    createdAt: new Date()
+});
+
+// 更新订单状态为&quot;已支付&quot;
+db.orders.updateOne(
+    { userId: &quot;user001&quot;, status: &quot;CREATED&quot; },
+    { $set: { status: &quot;PAID&quot;, paidAt: new Date() } }
+);
+
+// 更新为&quot;已发货&quot;
+db.orders.updateOne(
+    { userId: &quot;user001&quot;, status: &quot;PAID&quot; },
+    { $set: { status: &quot;SHIPPED&quot;, shippedAt: new Date(), trackingNo: &quot;SF1234567890&quot; } }
+);
+</code></pre>
+<hr />
+<h2 id="113-在-spring-boot-中实现实时推送">11.3 在 Spring Boot 中实现实时推送</h2>
+<h3 id="1131-方式一使用-mongotemplate-的-changestream-api">11.3.1 方式一：使用 MongoTemplate 的 changeStream() API</h3>
+<p>这是最直接的方式，通过 <code>MongoTemplate</code> 的 <code>changeStream()</code> 方法以编程方式监听变更。</p>
+<p><strong>依赖（pom.xml）：</strong></p>
+<pre><code class="language-xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-data-mongodb&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<p><strong>实体类：</strong></p>
+<pre><code class="language-java">import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.Instant;
+import java.util.List;
+
+@Document(collection = &quot;orders&quot;)
+public class Order {
+    @Id
+    private String id;
+    private String userId;
+    private List&lt;OrderItem&gt; items;
+    private double totalAmount;
+    private String status;
+    private Instant createdAt;
+    private Instant updatedAt;
+
+    // 构造器
+    public Order() {}
+
+    // getter / setter
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
+    public List&lt;OrderItem&gt; getItems() { return items; }
+    public void setItems(List&lt;OrderItem&gt; items) { this.items = items; }
+    public double getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+    public Instant getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
+}
+
+public class OrderItem {
+    private String productId;
+    private String name;
+    private int quantity;
+    private double price;
+
+    public OrderItem() {}
+
+    public OrderItem(String productId, String name, int quantity, double price) {
+        this.productId = productId;
+        this.name = name;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
+    // getter / setter 省略
+    public String getProductId() { return productId; }
+    public void setProductId(String productId) { this.productId = productId; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+}
+</code></pre>
+<p><strong>使用 MongoTemplate 监听变更：</strong></p>
+<pre><code class="language-java">import com.mongodb.client.model.changestream.FullDocument;
+import org.springframework.data.mongodb.core.ChangeStreamOptions;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+@Service
+public class OrderChangeStreamService {
+
+    private static final Logger log = LoggerFactory.getLogger(OrderChangeStreamService.class);
+
+    private final MongoTemplate mongoTemplate;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final AtomicBoolean running = new AtomicBoolean(false);
+
+    public OrderChangeStreamService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    @PostConstruct
+    public void startListening() {
+        running.set(true);
+        executor.submit(this::listenToChanges);
+        log.info(&quot;订单变更监听已启动&quot;);
+    }
+
+    @PreDestroy
+    public void stopListening() {
+        running.set(false);
+        executor.shutdown();
+        log.info(&quot;订单变更监听已停止&quot;);
+    }
+
+    private void listenToChanges() {
+        // 构建 ChangeStreamOptions
+        ChangeStreamOptions options = ChangeStreamOptions.builder()
+                // 只监听 insert 和 update 操作
+                .filter(Aggregation.newAggregation(
+                        Aggregation.match(
+                                Criteria.where(&quot;operationType&quot;)
+                                        .in(&quot;insert&quot;, &quot;update&quot;, &quot;replace&quot;)
+                        )
+                ))
+                // update 事件也返回完整文档
+                .fullDocumentLookup(FullDocument.UPDATE_LOOKUP)
+                .build();
+
+        // 开始监听 orders 集合
+        mongoTemplate.changeStream(&quot;orders&quot;, options, Order.class)
+                .forEach(event -&gt; {
+                    if (!running.get()) return;
+
+                    String opType = event.getOperationType().getValue();
+                    Order order = event.getBody();
+
+                    log.info(&quot;收到订单变更事件: type={}, orderId={}, status={}&quot;,
+                            opType,
+                            order != null ? order.getId() : &quot;N/A&quot;,
+                            order != null ? order.getStatus() : &quot;N/A&quot;);
+
+                    // 根据操作类型执行不同的业务逻辑
+                    if (order != null) {
+                        handleOrderChange(opType, order);
+                    }
+                });
+    }
+
+    private void handleOrderChange(String operationType, Order order) {
+        switch (operationType) {
+            case &quot;insert&quot; -&gt; log.info(&quot;新订单创建: orderId={}, userId={}, amount={}&quot;,
+                    order.getId(), order.getUserId(), order.getTotalAmount());
+            case &quot;update&quot;, &quot;replace&quot; -&gt; {
+                if (&quot;PAID&quot;.equals(order.getStatus())) {
+                    log.info(&quot;订单已支付，触发发货流程: orderId={}&quot;, order.getId());
+                    // 这里可以调用发货服务、发送通知等
+                }
+                if (&quot;SHIPPED&quot;.equals(order.getStatus())) {
+                    log.info(&quot;订单已发货，通知用户: orderId={}&quot;, order.getId());
+                    // 发送短信/推送通知
+                }
+            }
+        }
+    }
+}
+</code></pre>
+<h3 id="1132-方式二使用-messagelistenercontainer">11.3.2 方式二：使用 MessageListenerContainer</h3>
+<p>Spring Data MongoDB 提供了 <code>MessageListenerContainer</code>，它以更&quot;Spring 化&quot;的方式管理 Change Stream 监听器的生命周期。</p>
+<p><strong>配置 MessageListenerContainer：</strong></p>
+<pre><code class="language-java">import com.mongodb.client.model.changestream.FullDocument;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.messaging.DefaultMessageListenerContainer;
+import org.springframework.data.mongodb.core.messaging.MessageListenerContainer;
+
+@Configuration
+public class ChangeStreamConfig {
+
+    @Bean
+    MessageListenerContainer messageListenerContainer(MongoTemplate mongoTemplate) {
+        DefaultMessageListenerContainer container =
+                new DefaultMessageListenerContainer(mongoTemplate);
+        // 自动启动
+        container.setAutoStartup(true);
+        return container;
+    }
+}
+</code></pre>
+<p><strong>定义 MessageListener 并注册监听：</strong></p>
+<pre><code class="language-java">import com.mongodb.client.model.changestream.ChangeStreamDocument;
+import com.mongodb.client.model.changestream.FullDocument;
+import org.bson.Document;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.data.mongodb.core.ChangeStreamOptions;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.messaging.ChangeStreamRequest;
+import org.springframework.data.mongodb.core.messaging.Message;
+import org.springframework.data.mongodb.core.messaging.MessageListener;
+import org.springframework.data.mongodb.core.messaging.MessageListenerContainer;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@Component
+public class OrderChangeListener implements MessageListener&lt;ChangeStreamDocument&lt;Document&gt;, Order&gt; {
+
+    private static final Logger log = LoggerFactory.getLogger(OrderChangeListener.class);
+
+    private final MessageListenerContainer container;
+
+    public OrderChangeListener(MessageListenerContainer container) {
+        this.container = container;
+    }
+
+    /**
+     * 应用启动完成后注册监听
+     */
+    @EventListener(ApplicationReadyEvent.class)
+    public void registerListener() {
+        // 构建 ChangeStreamOptions
+        ChangeStreamOptions options = ChangeStreamOptions.builder()
+                .filter(Aggregation.newAggregation(
+                        Aggregation.match(
+                                Criteria.where(&quot;operationType&quot;).in(&quot;insert&quot;, &quot;update&quot;)
+                        )
+                ))
+                .fullDocumentLookup(FullDocument.UPDATE_LOOKUP)
+                .build();
+
+        // 构建 ChangeStreamRequest
+        ChangeStreamRequest&lt;Order&gt; request = ChangeStreamRequest.builder(this)
+                .collection(&quot;orders&quot;)            // 监听的集合名
+                .options(options)                 // 监听选项
+                .build();
+
+        // 注册到容器
+        container.register(request, Order.class);
+        log.info(&quot;Order ChangeStream 监听器已注册&quot;);
+    }
+
+    /**
+     * 接收到变更消息时的回调
+     */
+    @Override
+    public void onMessage(Message&lt;ChangeStreamDocument&lt;Document&gt;, Order&gt; message) {
+        Order order = message.getBody();
+        ChangeStreamDocument&lt;Document&gt; raw = message.getRaw();
+
+        if (order == null || raw == null) return;
+
+        String opType = raw.getOperationType().getValue();
+
+        log.info(&quot;收到订单变更: type={}, orderId={}, status={}&quot;,
+                opType, order.getId(), order.getStatus());
+
+        switch (order.getStatus()) {
+            case &quot;PAID&quot; -&gt; {
+                log.info(&quot;处理支付完成事件，准备通知仓库发货...&quot;);
+                // 调用仓库服务
+            }
+            case &quot;SHIPPED&quot; -&gt; {
+                log.info(&quot;处理发货事件，准备通知用户...&quot;);
+                // 发送通知
+            }
+            case &quot;COMPLETED&quot; -&gt; {
+                log.info(&quot;订单完成，更新统计数据...&quot;);
+                // 更新统计
+            }
+        }
+    }
+}
+</code></pre>
+<p><strong>同时注册多个监听器（监听不同集合）：</strong></p>
+<pre><code class="language-java">@Component
+public class MultiCollectionChangeListener {
+
+    private static final Logger log = LoggerFactory.getLogger(MultiCollectionChangeListener.class);
+
+    private final MessageListenerContainer container;
+
+    public MultiCollectionChangeListener(MessageListenerContainer container) {
+        this.container = container;
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void registerAll() {
+        // 监听订单集合
+        registerOrderListener();
+        // 监听商品集合
+        registerProductListener();
+    }
+
+    private void registerOrderListener() {
+        MessageListener&lt;ChangeStreamDocument&lt;Document&gt;, Order&gt; listener =
+                message -&gt; {
+                    Order order = message.getBody();
+                    if (order != null) {
+                        log.info(&quot;[订单] {} - {}&quot;, order.getId(), order.getStatus());
+                    }
+                };
+
+        ChangeStreamRequest&lt;Order&gt; request = ChangeStreamRequest.builder(listener)
+                .collection(&quot;orders&quot;)
+                .options(ChangeStreamOptions.builder()
+                        .fullDocumentLookup(FullDocument.UPDATE_LOOKUP)
+                        .build())
+                .build();
+
+        container.register(request, Order.class);
+    }
+
+    private void registerProductListener() {
+        MessageListener&lt;ChangeStreamDocument&lt;Document&gt;, Product&gt; listener =
+                message -&gt; {
+                    Product product = message.getBody();
+                    if (product != null) {
+                        log.info(&quot;[商品] {} 库存变更: {}&quot;, product.getName(), product.getStock());
+                    }
+                };
+
+        ChangeStreamRequest&lt;Product&gt; request = ChangeStreamRequest.builder(listener)
+                .collection(&quot;products&quot;)
+                .options(ChangeStreamOptions.builder()
+                        .fullDocumentLookup(FullDocument.UPDATE_LOOKUP)
+                        .build())
+                .build();
+
+        container.register(request, Product.class);
+    }
+}
+</code></pre>
+<h3 id="1133-方式三tailable-注解与-capped-collection">11.3.3 方式三：@Tailable 注解与 Capped Collection</h3>
+<p>除了 Change Streams，MongoDB 还支持通过 <strong>Tailable Cursor</strong>（可追踪游标）实时读取 <strong>Capped Collection</strong>（固定大小集合）中的新数据。这种方式更轻量，适合日志类场景。</p>
+<p><strong>Capped Collection 的特点：</strong></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>固定大小</td>
+<td>创建时指定最大字节数和最大文档数</td>
+</tr>
+<tr>
+<td>插入有序</td>
+<td>文档按插入顺序存储，类似环形缓冲区</td>
+</tr>
+<tr>
+<td>自动淘汰</td>
+<td>达到上限时自动删除最旧的文档</td>
+</tr>
+<tr>
+<td>高性能插入</td>
+<td>不需要索引即可保证插入顺序</td>
+</tr>
+<tr>
+<td>限制</td>
+<td>不能删除单个文档，不能更新导致文档大小增长</td>
+</tr>
+</tbody>
+</table>
+<p><strong>步骤1：创建 Capped Collection</strong></p>
+<pre><code class="language-javascript">// Shell 中创建
+db.createCollection(&quot;notifications&quot;, {
+    capped: true,
+    size: 10485760,    // 10MB
+    max: 10000         // 最多10000条文档
+});
+
+// 验证
+db.notifications.isCapped();  // true
+</code></pre>
+<p>或在 Spring Boot 中通过代码创建：</p>
+<pre><code class="language-java">import jakarta.annotation.PostConstruct;
+import org.springframework.data.mongodb.core.CollectionOptions;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Component;
+
+@Component
+public class CappedCollectionInitializer {
+
+    private final MongoTemplate mongoTemplate;
+
+    public CappedCollectionInitializer(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    @PostConstruct
+    public void init() {
+        if (!mongoTemplate.collectionExists(&quot;notifications&quot;)) {
+            CollectionOptions options = CollectionOptions.empty()
+                    .capped()
+                    .size(10_485_760)       // 10MB
+                    .maxDocuments(10_000);   // 最多10000条
+
+            mongoTemplate.createCollection(&quot;notifications&quot;, options);
+        }
+    }
+}
+</code></pre>
+<p><strong>步骤2：定义实体和 Repository</strong></p>
+<pre><code class="language-java">import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.Instant;
+
+@Document(collection = &quot;notifications&quot;)
+public class Notification {
+    @Id
+    private String id;
+    private String userId;
+    private String type;       // ORDER_CREATED, ORDER_PAID, COMMENT_RECEIVED 等
+    private String title;
+    private String content;
+    private boolean read;
+    private Instant createdAt;
+
+    public Notification() {}
+
+    public Notification(String userId, String type, String title, String content) {
+        this.userId = userId;
+        this.type = type;
+        this.title = title;
+        this.content = content;
+        this.read = false;
+        this.createdAt = Instant.now();
+    }
+
+    // getter / setter 省略
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+    public boolean isRead() { return read; }
+    public void setRead(boolean read) { this.read = read; }
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+}
+</code></pre>
+<pre><code class="language-java">import org.springframework.data.mongodb.repository.Tailable;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import reactor.core.publisher.Flux;
+
+public interface NotificationRepository extends ReactiveMongoRepository&lt;Notification, String&gt; {
+
+    /**
+     * 使用 @Tailable 返回 Flux，持续接收指定用户的新通知
+     * 只能用于 Capped Collection
+     */
+    @Tailable
+    Flux&lt;Notification&gt; findByUserId(String userId);
+
+    /**
+     * 按类型订阅通知
+     */
+    @Tailable
+    Flux&lt;Notification&gt; findByType(String type);
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>@Tailable</code> 需要使用<strong>响应式</strong>的 <code>ReactiveMongoRepository</code>，并返回 <code>Flux</code> 类型。
+需要引入 <code>spring-boot-starter-data-mongodb-reactive</code> 依赖。</p>
+</blockquote>
+<p><strong>额外依赖：</strong></p>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-data-mongodb-reactive&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-webflux&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h3 id="1134-结合-sseserver-sent-events实现浏览器端实时推送">11.3.4 结合 SSE（Server-Sent Events）实现浏览器端实时推送</h3>
+<p>SSE 是一种 HTTP 协议原生支持的服务器推送技术，非常适合与 Change Streams 或 Tailable Cursor 结合使用。</p>
+<p><strong>方式A：Change Streams + SSE（推荐用于生产环境）</strong></p>
+<pre><code class="language-java">import org.springframework.data.mongodb.core.ChangeStreamOptions;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+
+import com.mongodb.client.model.changestream.FullDocument;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
+
+import java.time.Duration;
+
+@RestController
+@RequestMapping(&quot;/api/sse&quot;)
+public class OrderSseController {
+
+    private final ReactiveMongoTemplate reactiveMongoTemplate;
+
+    public OrderSseController(ReactiveMongoTemplate reactiveMongoTemplate) {
+        this.reactiveMongoTemplate = reactiveMongoTemplate;
+    }
+
+    /**
+     * SSE 端点：实时推送订单变更事件
+     * 客户端通过 EventSource 连接此端点即可接收实时数据
+     * 
+     * 使用方式：GET /api/sse/orders
+     */
+    @GetMapping(value = &quot;/orders&quot;, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux&lt;ServerSentEvent&lt;Order&gt;&gt; streamOrderChanges() {
+        ChangeStreamOptions options = ChangeStreamOptions.builder()
+                .filter(Aggregation.newAggregation(
+                        Aggregation.match(
+                                Criteria.where(&quot;operationType&quot;).in(&quot;insert&quot;, &quot;update&quot;)
+                        )
+                ))
+                .fullDocumentLookup(FullDocument.UPDATE_LOOKUP)
+                .build();
+
+        return reactiveMongoTemplate.changeStream(&quot;orders&quot;, options, Order.class)
+                .map(event -&gt; {
+                    Order order = event.getBody();
+                    String eventType = event.getOperationType() != null
+                            ? event.getOperationType().getValue()
+                            : &quot;unknown&quot;;
+
+                    return ServerSentEvent.&lt;Order&gt;builder()
+                            .id(order != null ? order.getId() : null)
+                            .event(eventType)
+                            .data(order)
+                            .build();
+                });
+    }
+
+    /**
+     * SSE 端点：实时推送指定用户的订单变更
+     * 
+     * 使用方式：GET /api/sse/orders/user/{userId}
+     */
+    @GetMapping(value = &quot;/orders/user/{userId}&quot;, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux&lt;ServerSentEvent&lt;Order&gt;&gt; streamUserOrders(@PathVariable String userId) {
+        ChangeStreamOptions options = ChangeStreamOptions.builder()
+                .filter(Aggregation.newAggregation(
+                        Aggregation.match(
+                                Criteria.where(&quot;operationType&quot;).in(&quot;insert&quot;, &quot;update&quot;)
+                                        .and(&quot;fullDocument.userId&quot;).is(userId)
+                        )
+                ))
+                .fullDocumentLookup(FullDocument.UPDATE_LOOKUP)
+                .build();
+
+        return reactiveMongoTemplate.changeStream(&quot;orders&quot;, options, Order.class)
+                .map(event -&gt; ServerSentEvent.&lt;Order&gt;builder()
+                        .event(event.getOperationType().getValue())
+                        .data(event.getBody())
+                        .build()
+                );
+    }
+
+    /**
+     * SSE 心跳：防止连接超时
+     * 每30秒发送一个心跳事件
+     */
+    @GetMapping(value = &quot;/orders/heartbeat&quot;, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux&lt;ServerSentEvent&lt;Order&gt;&gt; streamWithHeartbeat() {
+        ChangeStreamOptions options = ChangeStreamOptions.builder()
+                .fullDocumentLookup(FullDocument.UPDATE_LOOKUP)
+                .build();
+
+        Flux&lt;ServerSentEvent&lt;Order&gt;&gt; dataStream =
+                reactiveMongoTemplate.changeStream(&quot;orders&quot;, options, Order.class)
+                        .map(event -&gt; ServerSentEvent.&lt;Order&gt;builder()
+                                .event(&quot;order-change&quot;)
+                                .data(event.getBody())
+                                .build());
+
+        // 心跳流：每30秒发送一个空事件
+        Flux&lt;ServerSentEvent&lt;Order&gt;&gt; heartbeat = Flux.interval(Duration.ofSeconds(30))
+                .map(tick -&gt; ServerSentEvent.&lt;Order&gt;builder()
+                        .event(&quot;heartbeat&quot;)
+                        .build());
+
+        // 合并数据流和心跳流
+        return Flux.merge(dataStream, heartbeat);
+    }
+}
+</code></pre>
+<p><strong>方式B：@Tailable + SSE（适合 Capped Collection）</strong></p>
+<pre><code class="language-java">import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+
+@RestController
+@RequestMapping(&quot;/api/sse/notifications&quot;)
+public class NotificationSseController {
+
+    private final NotificationRepository notificationRepository;
+
+    public NotificationSseController(NotificationRepository notificationRepository) {
+        this.notificationRepository = notificationRepository;
+    }
+
+    /**
+     * SSE 端点：实时推送指定用户的通知
+     * 基于 Capped Collection 的 Tailable Cursor
+     */
+    @GetMapping(value = &quot;/user/{userId}&quot;, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux&lt;ServerSentEvent&lt;Notification&gt;&gt; streamNotifications(@PathVariable String userId) {
+        return notificationRepository.findByUserId(userId)
+                .map(notification -&gt; ServerSentEvent.&lt;Notification&gt;builder()
+                        .id(notification.getId())
+                        .event(notification.getType())
+                        .data(notification)
+                        .build());
+    }
+}
+</code></pre>
+<p><strong>前端（浏览器）连接 SSE 的 JavaScript 代码：</strong></p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;订单实时监控&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .event-card { border: 1px solid #ddd; border-radius: 8px; padding: 12px; margin: 8px 0; }
+        .event-card.insert { border-left: 4px solid #4CAF50; }
+        .event-card.update { border-left: 4px solid #2196F3; }
+        #status { padding: 8px; border-radius: 4px; margin-bottom: 16px; }
+        .connected { background: #E8F5E9; color: #2E7D32; }
+        .disconnected { background: #FFEBEE; color: #C62828; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;订单实时监控面板&lt;/h1&gt;
+    &lt;div id=&quot;status&quot; class=&quot;disconnected&quot;&gt;连接中...&lt;/div&gt;
+    &lt;div id=&quot;events&quot;&gt;&lt;/div&gt;
+
+    &lt;script&gt;
+        const eventsDiv = document.getElementById('events');
+        const statusDiv = document.getElementById('status');
+
+        // 创建 SSE 连接
+        const eventSource = new EventSource('/api/sse/orders');
+
+        eventSource.onopen = function() {
+            statusDiv.textContent = '已连接 - 等待订单变更...';
+            statusDiv.className = 'connected';
+        };
+
+        // 监听 insert 事件
+        eventSource.addEventListener('insert', function(e) {
+            const order = JSON.parse(e.data);
+            addEventCard('insert', '新订单',
+                `订单号: ${order.id} | 用户: ${order.userId} | 金额: ¥${order.totalAmount}`);
+        });
+
+        // 监听 update 事件
+        eventSource.addEventListener('update', function(e) {
+            const order = JSON.parse(e.data);
+            addEventCard('update', '订单更新',
+                `订单号: ${order.id} | 状态: ${order.status}`);
+        });
+
+        // 监听心跳
+        eventSource.addEventListener('heartbeat', function(e) {
+            console.log('收到心跳:', new Date().toISOString());
+        });
+
+        eventSource.onerror = function() {
+            statusDiv.textContent = '连接断开，正在重连...';
+            statusDiv.className = 'disconnected';
+        };
+
+        function addEventCard(type, title, content) {
+            const card = document.createElement('div');
+            card.className = `event-card ${type}`;
+            card.innerHTML = `
+                &lt;strong&gt;${title}&lt;/strong&gt;
+                &lt;span style=&quot;float:right;color:#999;&quot;&gt;${new Date().toLocaleTimeString()}&lt;/span&gt;
+                &lt;p&gt;${content}&lt;/p&gt;
+            `;
+            eventsDiv.insertBefore(card, eventsDiv.firstChild);
+        }
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h3 id="1135-三种方式的对比">11.3.5 三种方式的对比</h3>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>MongoTemplate changeStream()</th>
+<th>MessageListenerContainer</th>
+<th>@Tailable + Capped</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>实现复杂度</strong></td>
+<td>中等</td>
+<td>较低（Spring 管理生命周期）</td>
+<td>低</td>
+</tr>
+<tr>
+<td><strong>集合要求</strong></td>
+<td>普通集合即可</td>
+<td>普通集合即可</td>
+<td>必须是 Capped Collection</td>
+</tr>
+<tr>
+<td><strong>MongoDB 要求</strong></td>
+<td>副本集 / 分片集群</td>
+<td>副本集 / 分片集群</td>
+<td>副本集（非必须，但推荐）</td>
+</tr>
+<tr>
+<td><strong>事件类型</strong></td>
+<td>insert/update/delete/replace 等</td>
+<td>insert/update/delete/replace 等</td>
+<td>只有 insert</td>
+</tr>
+<tr>
+<td><strong>历史数据</strong></td>
+<td>支持 Resume Token 回溯</td>
+<td>支持 Resume Token 回溯</td>
+<td>只能读取当前及之后的数据</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>通用场景，编程式控制</td>
+<td>多个监听器并存的场景</td>
+<td>日志流、消息队列类场景</td>
+</tr>
+<tr>
+<td><strong>响应式支持</strong></td>
+<td>ReactiveMongoTemplate</td>
+<td>非响应式</td>
+<td>需要 ReactiveMongoRepository</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="114-断点续传resume-token-机制">11.4 断点续传：Resume Token 机制</h2>
+<h3 id="1141-什么是-resume-token">11.4.1 什么是 Resume Token</h3>
+<p>Resume Token 是 Change Stream 中每个变更事件的唯一标识符，包含在事件的 <code>_id</code> 字段中。它的作用是：</p>
+<ul>
+<li><strong>标记位置</strong>：记录当前消费到了哪个变更事件</li>
+<li><strong>断点续传</strong>：应用重启后，可以从上次的位置继续消费，不丢失事件</li>
+<li><strong>容错恢复</strong>：网络闪断或服务故障后恢复监听</li>
+</ul>
+<pre><code class="language-javascript">// Resume Token 的结构示例
+{
+    _id: {
+        _data: &quot;8263F1A2B3000000012B022C0100296E5A1004...&quot;
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>Resume Token 的有效期</strong>取决于 oplog 的大小。当 oplog 被覆盖后，对应的 Resume Token 就会失效。
+默认情况下 oplog 大小约为磁盘空间的 5%，通常可以保留数小时到数天的数据。</p>
+</blockquote>
+<h3 id="1142-如何保存和恢复-resume-token">11.4.2 如何保存和恢复 Resume Token</h3>
+<p><strong>在 Shell 中使用 Resume Token：</strong></p>
+<pre><code class="language-javascript">// 1. 开始监听，保存最后一个 Token
+var lastToken = null;
+var cursor = db.orders.watch([], { fullDocument: &quot;updateLookup&quot; });
+
+while (cursor.hasNext()) {
+    var change = cursor.next();
+    lastToken = change._id;  // 保存 Resume Token
+    printjson(change);
+    
+    // 将 Token 持久化到一个专门的集合中
+    db.resumeTokens.updateOne(
+        { _id: &quot;orders_stream&quot; },
+        { $set: { token: lastToken, updatedAt: new Date() } },
+        { upsert: true }
+    );
+}
+
+// 2. 恢复监听时，使用保存的 Token
+var savedToken = db.resumeTokens.findOne({ _id: &quot;orders_stream&quot; });
+if (savedToken) {
+    var cursor = db.orders.watch(
+        [],
+        {
+            fullDocument: &quot;updateLookup&quot;,
+            resumeAfter: savedToken.token  // 从上次的位置继续
+        }
+    );
+    print(&quot;从 Resume Token 恢复监听&quot;);
+} else {
+    var cursor = db.orders.watch([], { fullDocument: &quot;updateLookup&quot; });
+    print(&quot;全新开始监听&quot;);
+}
+</code></pre>
+<p><strong>startAfter vs resumeAfter：</strong></p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resumeAfter</code></td>
+<td>从指定 Token <strong>之后</strong>的下一个事件开始</td>
+<td>正常恢复，Token 对应的事件存在于 oplog 中</td>
+</tr>
+<tr>
+<td><code>startAfter</code></td>
+<td>从指定 Token <strong>之后</strong>开始，即使流已经 invalidate</td>
+<td>集合被删除重建后恢复监听</td>
+</tr>
+<tr>
+<td><code>startAtOperationTime</code></td>
+<td>从指定的集群时间戳开始</td>
+<td>不知道 Token 但知道大概时间</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1143-防止消息丢失的策略">11.4.3 防止消息丢失的策略</h3>
+<p>在生产环境中，需要考虑以下可能导致消息丢失的场景：</p>
+<table>
+<thead>
+<tr>
+<th>风险场景</th>
+<th>解决策略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>应用崩溃，未保存最新 Token</td>
+<td>定期（或每条消息后）持久化 Token</td>
+</tr>
+<tr>
+<td>oplog 被覆盖，Token 失效</td>
+<td>增大 oplog 大小；配合全量同步使用</td>
+</tr>
+<tr>
+<td>处理消息时发生异常</td>
+<td>先处理消息，成功后再更新 Token（at-least-once）</td>
+</tr>
+<tr>
+<td>网络闪断</td>
+<td>Change Streams 自动重试连接</td>
+</tr>
+<tr>
+<td>MongoDB 主节点切换</td>
+<td>Change Streams 自动切换到新主节点</td>
+</tr>
+</tbody>
+</table>
+<p><strong>消息处理的两种语义：</strong></p>
+<pre><code>At-most-once（最多一次）：
+  1. 保存 Resume Token
+  2. 处理消息
+  缺点：处理失败时消息丢失
+
+At-least-once（至少一次，推荐）：
+  1. 处理消息
+  2. 处理成功后保存 Resume Token
+  缺点：可能重复处理，需要业务幂等
+</code></pre>
+<h3 id="1144-完整的-java-代码示例含-token-持久化">11.4.4 完整的 Java 代码示例（含 Token 持久化）</h3>
+<p>以下是一个生产级的 Change Stream 消费者，支持 Resume Token 持久化和断点续传。</p>
+<p><strong>Resume Token 存储实体：</strong></p>
+<pre><code class="language-java">import org.bson.BsonDocument;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.Instant;
+
+@Document(collection = &quot;change_stream_tokens&quot;)
+public class ChangeStreamToken {
+    @Id
+    private String id;             // 标识符，如 &quot;orders_listener&quot;
+    private BsonDocument token;    // Resume Token
+    private Instant updatedAt;
+
+    public ChangeStreamToken() {}
+
+    public ChangeStreamToken(String id, BsonDocument token) {
+        this.id = id;
+        this.token = token;
+        this.updatedAt = Instant.now();
+    }
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public BsonDocument getToken() { return token; }
+    public void setToken(BsonDocument token) { this.token = token; }
+    public Instant getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
+}
+</code></pre>
+<p><strong>Resume Token 存储服务：</strong></p>
+<pre><code class="language-java">import org.bson.BsonDocument;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.Instant;
+
+@Service
+public class ResumeTokenStore {
+
+    private static final Logger log = LoggerFactory.getLogger(ResumeTokenStore.class);
+
+    private final MongoTemplate mongoTemplate;
+
+    public ResumeTokenStore(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 保存 Resume Token
+     */
+    public void saveToken(String listenerId, BsonDocument token) {
+        Query query = Query.query(Criteria.where(&quot;_id&quot;).is(listenerId));
+        Update update = new Update()
+                .set(&quot;token&quot;, token)
+                .set(&quot;updatedAt&quot;, Instant.now());
+
+        mongoTemplate.upsert(query, update, ChangeStreamToken.class);
+        log.debug(&quot;Resume Token 已保存: listenerId={}&quot;, listenerId);
+    }
+
+    /**
+     * 获取保存的 Resume Token
+     */
+    public BsonDocument getToken(String listenerId) {
+        ChangeStreamToken tokenDoc = mongoTemplate.findById(listenerId, ChangeStreamToken.class);
+        if (tokenDoc != null) {
+            log.info(&quot;找到已保存的 Resume Token: listenerId={}, updatedAt={}&quot;,
+                    listenerId, tokenDoc.getUpdatedAt());
+            return tokenDoc.getToken();
+        }
+        log.info(&quot;未找到 Resume Token，将从头开始监听: listenerId={}&quot;, listenerId);
+        return null;
+    }
+
+    /**
+     * 删除 Resume Token
+     */
+    public void deleteToken(String listenerId) {
+        Query query = Query.query(Criteria.where(&quot;_id&quot;).is(listenerId));
+        mongoTemplate.remove(query, ChangeStreamToken.class);
+    }
+}
+</code></pre>
+<p><strong>带断点续传的 Change Stream 消费者：</strong></p>
+<pre><code class="language-java">import com.mongodb.client.model.changestream.FullDocument;
+import org.bson.BsonDocument;
+import org.springframework.data.mongodb.core.ChangeStreamOptions;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+@Service
+public class ResilientOrderChangeConsumer {
+
+    private static final Logger log = LoggerFactory.getLogger(ResilientOrderChangeConsumer.class);
+    private static final String LISTENER_ID = &quot;orders_change_consumer&quot;;
+    private static final int MAX_RETRY_DELAY_MS = 30_000;
+
+    private final MongoTemplate mongoTemplate;
+    private final ResumeTokenStore tokenStore;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final AtomicBoolean running = new AtomicBoolean(false);
+
+    public ResilientOrderChangeConsumer(MongoTemplate mongoTemplate, ResumeTokenStore tokenStore) {
+        this.mongoTemplate = mongoTemplate;
+        this.tokenStore = tokenStore;
+    }
+
+    @PostConstruct
+    public void start() {
+        running.set(true);
+        executor.submit(this::consumeWithRetry);
+        log.info(&quot;订单变更消费者已启动&quot;);
+    }
+
+    @PreDestroy
+    public void stop() {
+        running.set(false);
+        executor.shutdown();
+        log.info(&quot;订单变更消费者已停止&quot;);
+    }
+
+    /**
+     * 带重试和断点续传的消费循环
+     */
+    private void consumeWithRetry() {
+        int retryDelay = 1000;
+
+        while (running.get()) {
+            try {
+                consume();
+                retryDelay = 1000; // 成功运行后重置重试延迟
+            } catch (Exception e) {
+                log.error(&quot;Change Stream 消费异常，{}ms 后重试: {}&quot;, retryDelay, e.getMessage());
+                try {
+                    Thread.sleep(retryDelay);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+                // 指数退避，最大30秒
+                retryDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY_MS);
+            }
+        }
+    }
+
+    private void consume() {
+        // 尝试从上次的位置恢复
+        BsonDocument savedToken = tokenStore.getToken(LISTENER_ID);
+
+        ChangeStreamOptions.ChangeStreamOptionsBuilder builder = ChangeStreamOptions.builder()
+                .filter(Aggregation.newAggregation(
+                        Aggregation.match(
+                                Criteria.where(&quot;operationType&quot;)
+                                        .in(&quot;insert&quot;, &quot;update&quot;, &quot;replace&quot;, &quot;delete&quot;)
+                        )
+                ))
+                .fullDocumentLookup(FullDocument.UPDATE_LOOKUP);
+
+        // 如果有保存的 Token，从断点恢复
+        if (savedToken != null) {
+            builder.resumeAfter(savedToken);
+            log.info(&quot;从 Resume Token 恢复监听&quot;);
+        }
+
+        ChangeStreamOptions options = builder.build();
+
+        // 开始消费
+        mongoTemplate.changeStream(&quot;orders&quot;, options, Order.class)
+                .forEach(event -&gt; {
+                    if (!running.get()) return;
+
+                    try {
+                        // 1. 先处理消息（at-least-once 语义）
+                        processEvent(event.getOperationType().getValue(), event.getBody());
+
+                        // 2. 处理成功后，保存 Resume Token
+                        BsonDocument resumeToken = event.getRaw().getResumeToken();
+                        if (resumeToken != null) {
+                            tokenStore.saveToken(LISTENER_ID, resumeToken);
+                        }
+
+                    } catch (Exception e) {
+                        log.error(&quot;处理变更事件失败: {}&quot;, e.getMessage(), e);
+                        // 不保存 Token，下次重启时会重新处理这条消息
+                        // 业务处理需要保证幂等性
+                    }
+                });
+    }
+
+    private void processEvent(String operationType, Order order) {
+        if (order == null) {
+            log.warn(&quot;收到空文档事件，operationType={}&quot;, operationType);
+            return;
+        }
+
+        switch (operationType) {
+            case &quot;insert&quot; -&gt; {
+                log.info(&quot;处理新订单: id={}, userId={}, amount={}&quot;,
+                        order.getId(), order.getUserId(), order.getTotalAmount());
+                // 发送新订单通知
+                // notificationService.sendNewOrderNotification(order);
+            }
+            case &quot;update&quot;, &quot;replace&quot; -&gt; {
+                log.info(&quot;处理订单更新: id={}, status={}&quot;,
+                        order.getId(), order.getStatus());
+
+                switch (order.getStatus()) {
+                    case &quot;PAID&quot; -&gt; {
+                        // 通知仓库备货
+                        // warehouseService.prepareShipment(order);
+                    }
+                    case &quot;SHIPPED&quot; -&gt; {
+                        // 通知用户物流信息
+                        // smsService.sendShipmentNotification(order);
+                    }
+                    case &quot;COMPLETED&quot; -&gt; {
+                        // 更新销售统计
+                        // statisticsService.updateSalesData(order);
+                    }
+                    case &quot;CANCELLED&quot; -&gt; {
+                        // 释放库存
+                        // inventoryService.releaseStock(order);
+                    }
+                }
+            }
+            case &quot;delete&quot; -&gt; {
+                log.info(&quot;订单被删除: id={}&quot;, order.getId());
+            }
+        }
+    }
+}
+</code></pre>
+<p><strong>关键设计要点：</strong></p>
+<table>
+<thead>
+<tr>
+<th>设计点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>指数退避重试</strong></td>
+<td>连接失败时逐步增加重试间隔（1s → 2s → 4s → ... → 30s），避免对数据库造成压力</td>
+</tr>
+<tr>
+<td><strong>At-least-once 语义</strong></td>
+<td>先处理消息，成功后才保存 Token；失败时下次会重新处理</td>
+</tr>
+<tr>
+<td><strong>幂等性要求</strong></td>
+<td>由于可能重复处理，业务逻辑必须保证幂等（如使用唯一约束、状态机检查等）</td>
+</tr>
+<tr>
+<td><strong>优雅关闭</strong></td>
+<td>通过 <code>@PreDestroy</code> 设置 <code>running=false</code>，让消费循环安全退出</td>
+</tr>
+<tr>
+<td><strong>Token 持久化</strong></td>
+<td>将 Token 存储在 MongoDB 的专用集合中，应用重启后可以恢复</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Change Streams 原理</td>
+<td>基于 oplog 的变更监听机制，需要副本集或分片集群</td>
+</tr>
+<tr>
+<td>Shell 监听</td>
+<td><code>db.collection.watch()</code> + pipeline 过滤 + fullDocument 选项</td>
+</tr>
+<tr>
+<td>Spring Boot 方式一</td>
+<td>MongoTemplate.changeStream()，编程式控制</td>
+</tr>
+<tr>
+<td>Spring Boot 方式二</td>
+<td>MessageListenerContainer，Spring 托管生命周期</td>
+</tr>
+<tr>
+<td>Spring Boot 方式三</td>
+<td>@Tailable + Capped Collection，轻量级方案</td>
+</tr>
+<tr>
+<td>SSE 推送</td>
+<td>Change Streams + ServerSentEvent，实现浏览器实时推送</td>
+</tr>
+<tr>
+<td>Resume Token</td>
+<td>断点续传机制，保证应用重启后不丢消息</td>
+</tr>
+<tr>
+<td>最佳实践</td>
+<td>at-least-once 语义 + 业务幂等 + 指数退避重试</td>
+</tr>
+</tbody>
+</table>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2196 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第04课-图片与图标组件">第04课 图片与图标组件</h1>
+<blockquote>
+<p>图片和图标是移动应用中最常见的视觉元素。Flutter 提供了丰富的组件来加载和展示不同来源的图片，同时内置了强大的 Material Icons 图标系统。本课将系统讲解 <code>Image</code>、<code>FadeInImage</code>、<code>Icon</code>、<code>ImageIcon</code> 和 <code>CircleAvatar</code> 等核心组件的使用方法与最佳实践。</p>
+</blockquote>
+<hr />
+<h2 id="1-image-组件概述">1. Image 组件概述</h2>
+<p><code>Image</code> 是 Flutter 中用于展示图片的核心组件。它支持多种图片来源：本地资源（asset）、网络（network）、文件系统（file）和内存字节（memory）。每种来源都有对应的命名构造函数。</p>
+<p><code>Image</code> 组件的常用通用属性：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>width</code></td>
+<td><code>double?</code></td>
+<td>图片显示宽度</td>
+</tr>
+<tr>
+<td><code>height</code></td>
+<td><code>double?</code></td>
+<td>图片显示高度</td>
+</tr>
+<tr>
+<td><code>fit</code></td>
+<td><code>BoxFit?</code></td>
+<td>图片填充模式（详见第3节）</td>
+</tr>
+<tr>
+<td><code>alignment</code></td>
+<td><code>Alignment</code></td>
+<td>图片在容器内的对齐方式</td>
+</tr>
+<tr>
+<td><code>repeat</code></td>
+<td><code>ImageRepeat</code></td>
+<td>图片平铺重复方式</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td><code>Color?</code></td>
+<td>混合颜色</td>
+</tr>
+<tr>
+<td><code>colorBlendMode</code></td>
+<td><code>BlendMode?</code></td>
+<td>颜色混合模式</td>
+</tr>
+<tr>
+<td><code>filterQuality</code></td>
+<td><code>FilterQuality</code></td>
+<td>图片渲染质量</td>
+</tr>
+<tr>
+<td><code>semanticLabel</code></td>
+<td><code>String?</code></td>
+<td>无障碍语义标签</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-imageasset--加载本地资源图片">2. Image.asset — 加载本地资源图片</h2>
+<h3 id="21-什么是-asset-图片">2.1 什么是 Asset 图片</h3>
+<p>Asset（资源）图片是打包在应用安装包内的图片文件。它们在编译时就已确定，不依赖网络，加载速度快、可靠性高。适用于应用图标、背景图、引导页插图等固定素材。</p>
+<h3 id="22-在-pubspecyaml-中配置-assets">2.2 在 pubspec.yaml 中配置 assets</h3>
+<p>要使用 asset 图片，首先需要将图片文件放到项目目录中（通常放在 <code>assets/images/</code> 下），然后在 <code>pubspec.yaml</code> 中声明：</p>
+<pre><code class="language-yaml">flutter:
+  assets:
+    # 声明单个文件
+    - assets/images/logo.png
+    # 声明整个目录（注意结尾的斜杠）
+    - assets/images/
+</code></pre>
+<p>推荐的项目图片目录结构：</p>
+<pre><code>my_app/
+├── assets/
+│   └── images/
+│       ├── logo.png
+│       ├── 2.0x/
+│       │   └── logo.png
+│       └── 3.0x/
+│           └── logo.png
+├── lib/
+└── pubspec.yaml
+</code></pre>
+<p>Flutter 支持分辨率适配：根目录下的图片为 1x 分辨率，<code>2.0x/</code> 和 <code>3.0x/</code> 子目录中放置对应高分辨率图片。运行时 Flutter 会根据设备的 <code>devicePixelRatio</code> 自动选择最合适的图片。</p>
+<h3 id="23-使用-imageasset">2.3 使用 Image.asset</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Image.asset 示例')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 基础用法：加载 assets/images/logo.png
+              Image.asset(
+                'assets/images/logo.png',
+                width: 200,
+                height: 200,
+              ),
+              const SizedBox(height: 20),
+              // 指定适配模式和圆角裁剪
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="24-注意事项">2.4 注意事项</h3>
+<blockquote>
+<p><strong>注意：</strong> 修改 <code>pubspec.yaml</code> 中的 <code>assets</code> 配置后，需要停止应用并重新运行（热重载不会生效），否则可能出现 <code>Unable to load asset</code> 错误。</p>
+</blockquote>
+<blockquote>
+<p><strong>最佳实践：</strong> 将 asset 路径定义为常量，避免在多处硬编码字符串，方便统一管理和修改。</p>
+</blockquote>
+<pre><code class="language-dart">// 推荐：集中管理 asset 路径
+class AppAssets {
+  AppAssets._();
+  static const String logo = 'assets/images/logo.png';
+  static const String background = 'assets/images/background.jpg';
+  static const String placeholder = 'assets/images/placeholder.png';
+}
+
+// 使用时
+Image.asset(AppAssets.logo, width: 100, height: 100);
+</code></pre>
+<hr />
+<h2 id="3-imagenetwork--网络图片加载">3. Image.network — 网络图片加载</h2>
+<h3 id="31-基本用法">3.1 基本用法</h3>
+<p><code>Image.network</code> 用于从 URL 加载并显示网络图片。这是最常见的图片加载方式之一，适用于展示用户上传的头像、服务器返回的商品图等动态内容。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Image.network 示例')),
+        body: Center(
+          child: Image.network(
+            'https://picsum.photos/300/200',
+            width: 300,
+            height: 200,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="32-loadingbuilder--加载进度占位">3.2 loadingBuilder — 加载进度占位</h3>
+<p>网络图片加载需要时间，用户等待期间应该展示加载指示器，提升用户体验。<code>loadingBuilder</code> 会在图片加载过程中被反复调用，你可以根据加载进度显示不同的 UI。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('loadingBuilder 示例')),
+        body: Center(
+          child: Image.network(
+            'https://picsum.photos/600/400',
+            width: 300,
+            height: 200,
+            fit: BoxFit.cover,
+            // loadingBuilder 在图片加载过程中被调用
+            // child 是最终的图片组件
+            // loadingProgress 包含加载进度信息，加载完成时为 null
+            loadingBuilder: (
+              BuildContext context,
+              Widget child,
+              ImageChunkEvent? loadingProgress,
+            ) {
+              if (loadingProgress == null) {
+                // 加载完成，返回图片
+                return child;
+              }
+              // 加载中，显示进度指示器
+              return SizedBox(
+                width: 300,
+                height: 200,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    // 计算加载百分比
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="33-errorbuilder--加载失败处理">3.3 errorBuilder — 加载失败处理</h3>
+<p>网络图片可能因为 URL 无效、网络异常等原因加载失败。使用 <code>errorBuilder</code> 可以在加载失败时展示友好的替代 UI，避免显示破碎的图片图标。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('errorBuilder 示例')),
+        body: Center(
+          child: Image.network(
+            // 故意使用一个无效的 URL 来触发错误
+            'https://invalid-url-example.com/not-found.jpg',
+            width: 300,
+            height: 200,
+            fit: BoxFit.cover,
+            // 加载失败时的回调
+            errorBuilder: (
+              BuildContext context,
+              Object error,
+              StackTrace? stackTrace,
+            ) {
+              return Container(
+                width: 300,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.broken_image, size: 48, color: Colors.grey),
+                    SizedBox(height: 8),
+                    Text(
+                      '图片加载失败',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="34-综合示例loadingbuilder--errorbuilder">3.4 综合示例：loadingBuilder + errorBuilder</h3>
+<p>实际项目中，建议同时使用 <code>loadingBuilder</code> 和 <code>errorBuilder</code>，构建完善的图片加载体验：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('网络图片完整示例')),
+        body: Center(
+          child: NetworkImageWithFeedback(
+            url: 'https://picsum.photos/400/300',
+            width: 300,
+            height: 200,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 封装了加载状态和错误处理的网络图片组件
+class NetworkImageWithFeedback extends StatelessWidget {
+  final String url;
+  final double width;
+  final double height;
+
+  const NetworkImageWithFeedback({
+    super.key,
+    required this.url,
+    required this.width,
+    required this.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Image.network(
+        url,
+        width: width,
+        height: height,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            width: width,
+            height: height,
+            color: Colors.grey[100],
+            child: Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            width: width,
+            height: height,
+            color: Colors.grey[200],
+            child: const Icon(
+              Icons.error_outline,
+              color: Colors.red,
+              size: 40,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="35-注意事项">3.5 注意事项</h3>
+<blockquote>
+<p><strong>注意：</strong> Android 9（API 28）及以上默认禁止 HTTP 明文请求，只允许 HTTPS。如果需要加载 HTTP 图片，需要在 <code>android/app/src/main/AndroidManifest.xml</code> 的 <code>&lt;application&gt;</code> 标签中添加 <code>android:usesCleartextTraffic=&quot;true&quot;</code>。</p>
+</blockquote>
+<blockquote>
+<p><strong>最佳实践：</strong> Flutter 内置的 <code>Image.network</code> 没有磁盘缓存能力，每次重建 Widget 都可能重新请求。生产项目中推荐使用 <a href="https://pub.dev/packages/cached_network_image"><code>cached_network_image</code></a> 包，它提供了磁盘缓存、占位图、错误图等完整功能。</p>
+</blockquote>
+<pre><code class="language-dart">// 使用 cached_network_image 的示例（需先添加依赖）
+// pubspec.yaml:
+//   dependencies:
+//     cached_network_image: ^3.3.0
+
+import 'package:cached_network_image/cached_network_image.dart';
+
+CachedNetworkImage(
+  imageUrl: 'https://picsum.photos/400/300',
+  placeholder: (context, url) =&gt; const CircularProgressIndicator(),
+  errorWidget: (context, url, error) =&gt; const Icon(Icons.error),
+  fit: BoxFit.cover,
+);
+</code></pre>
+<hr />
+<h2 id="4-imagefile-与-imagememory--从文件和内存加载">4. Image.file 与 Image.memory — 从文件和内存加载</h2>
+<h3 id="41-imagefile--从设备文件系统加载">4.1 Image.file — 从设备文件系统加载</h3>
+<p><code>Image.file</code> 用于加载设备本地文件系统中的图片，比如用户拍照后保存在相册中的图片、从网络下载缓存到本地的图片等。它接收一个 <code>dart:io</code> 的 <code>File</code> 对象。</p>
+<p><strong>典型使用场景：</strong></p>
+<ul>
+<li>显示用户通过相机拍摄的照片</li>
+<li>显示从图片选择器选取的本地图片</li>
+<li>显示下载并缓存到本地的图片文件</li>
+</ul>
+<pre><code class="language-dart">import 'dart:io';
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Image.file 示例')),
+        body: const Center(
+          child: FileImageDemo(),
+        ),
+      ),
+    );
+  }
+}
+
+class FileImageDemo extends StatefulWidget {
+  const FileImageDemo({super.key});
+
+  @override
+  State&lt;FileImageDemo&gt; createState() =&gt; _FileImageDemoState();
+}
+
+class _FileImageDemoState extends State&lt;FileImageDemo&gt; {
+  File? _imageFile;
+
+  void _loadImage() {
+    // 实际项目中，通常通过 image_picker 等插件获取文件路径
+    // 这里用一个假设路径作为演示
+    setState(() {
+      _imageFile = File('/storage/emulated/0/DCIM/photo.jpg');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (_imageFile != null)
+          Image.file(
+            _imageFile!,
+            width: 300,
+            height: 300,
+            fit: BoxFit.cover,
+            // 同样支持 errorBuilder
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                width: 300,
+                height: 300,
+                color: Colors.grey[200],
+                child: const Center(child: Text('无法加载图片')),
+              );
+            },
+          )
+        else
+          Container(
+            width: 300,
+            height: 300,
+            color: Colors.grey[200],
+            child: const Center(
+              child: Text('尚未选择图片', style: TextStyle(color: Colors.grey)),
+            ),
+          ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: _loadImage,
+          child: const Text('选择图片'),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="42-imagememory--从内存字节加载">4.2 Image.memory — 从内存字节加载</h3>
+<p><code>Image.memory</code> 接收一个 <code>Uint8List</code>（字节数组）来显示图片。适用于以下场景：</p>
+<ul>
+<li>从数据库（如 SQLite）中读取的 BLOB 图片数据</li>
+<li>通过 API 返回的 Base64 编码图片</li>
+<li>动态生成的图片数据</li>
+</ul>
+<pre><code class="language-dart">import 'dart:convert';
+import 'dart:typed_data';
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Image.memory 示例')),
+        body: const Center(
+          child: MemoryImageDemo(),
+        ),
+      ),
+    );
+  }
+}
+
+class MemoryImageDemo extends StatelessWidget {
+  const MemoryImageDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 模拟一个 Base64 编码的图片数据
+    // 实际项目中，这些数据通常来自 API 响应或数据库
+    const String base64Image =
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4'
+        'nGNgYPgPAAEDAQAIicLsAAAAASUVORK5CYII=';
+
+    // 将 Base64 字符串解码为 Uint8List
+    final Uint8List imageBytes = base64Decode(base64Image);
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.memory(
+          imageBytes,
+          width: 200,
+          height: 200,
+          fit: BoxFit.contain,
+          // 同样支持 errorBuilder
+          errorBuilder: (context, error, stackTrace) {
+            return const Text('图片数据无效');
+          },
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          '上方图片由 Base64 数据解码而来',
+          style: TextStyle(color: Colors.grey),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="43-注意事项">4.3 注意事项</h3>
+<blockquote>
+<p><strong>注意：</strong> <code>Image.file</code> 依赖 <code>dart:io</code>，因此在 Web 平台上不可用。如果需要跨平台兼容，请使用条件导入或直接使用 <code>Image.network</code>。</p>
+</blockquote>
+<blockquote>
+<p><strong>最佳实践（内存管理）：</strong> <code>Image.memory</code> 会将整个图片数据保持在内存中。对于大尺寸图片，应该考虑使用 <code>cacheWidth</code> 和 <code>cacheHeight</code> 参数来降低解码后的图片尺寸，从而减少内存占用：</p>
+</blockquote>
+<pre><code class="language-dart">Image.memory(
+  largeImageBytes,
+  cacheWidth: 300,  // 解码后缓存宽度限制为 300 像素
+  fit: BoxFit.cover,
+);
+</code></pre>
+<hr />
+<h2 id="5-boxfit-详解">5. BoxFit 详解</h2>
+<p><code>BoxFit</code> 是 Flutter 中控制子内容（不仅限于图片）如何适配父容器尺寸的枚举类型。它在 <code>Image</code>、<code>FittedBox</code>、<code>DecorationImage</code> 等多个组件中广泛使用。理解每种模式的行为差异对于正确展示图片至关重要。</p>
+<h3 id="51-七种-boxfit-模式说明">5.1 七种 BoxFit 模式说明</h3>
+<table>
+<thead>
+<tr>
+<th>BoxFit 值</th>
+<th>行为</th>
+<th>可能裁剪</th>
+<th>可能留白</th>
+<th>保持比例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fill</code></td>
+<td>拉伸填满整个容器</td>
+<td>否</td>
+<td>否</td>
+<td><strong>否</strong></td>
+</tr>
+<tr>
+<td><code>contain</code></td>
+<td>等比缩放，完整显示，可能留白</td>
+<td>否</td>
+<td><strong>是</strong></td>
+<td>是</td>
+</tr>
+<tr>
+<td><code>cover</code></td>
+<td>等比缩放，填满容器，可能裁剪</td>
+<td><strong>是</strong></td>
+<td>否</td>
+<td>是</td>
+</tr>
+<tr>
+<td><code>fitWidth</code></td>
+<td>等比缩放，宽度撑满</td>
+<td>可能</td>
+<td>可能</td>
+<td>是</td>
+</tr>
+<tr>
+<td><code>fitHeight</code></td>
+<td>等比缩放，高度撑满</td>
+<td>可能</td>
+<td>可能</td>
+<td>是</td>
+</tr>
+<tr>
+<td><code>none</code></td>
+<td>不缩放，原始尺寸居中显示</td>
+<td>可能</td>
+<td>可能</td>
+<td>是</td>
+</tr>
+<tr>
+<td><code>scaleDown</code></td>
+<td>仅缩小不放大（类似 contain 但不放大）</td>
+<td>否</td>
+<td><strong>是</strong></td>
+<td>是</td>
+</tr>
+</tbody>
+</table>
+<p><strong>详细解释每种模式：</strong></p>
+<ul>
+<li>
+<p><strong><code>BoxFit.fill</code></strong>：不管原始图片的宽高比，强制拉伸（或压缩）图片以完全填充容器。图片不会被裁剪，也不会留白，但宽高比可能被破坏，导致图片变形。适用于对比例要求不严格的纯色或渐变背景。</p>
+</li>
+<li>
+<p><strong><code>BoxFit.contain</code></strong>：在保持宽高比的前提下，尽可能放大图片，使其完整地显示在容器内。图片的某个方向会刚好填满容器，另一个方向则可能留白。适用于需要完整展示图片内容的场景（如查看详情图）。</p>
+</li>
+<li>
+<p><strong><code>BoxFit.cover</code></strong>：在保持宽高比的前提下，尽可能缩放图片，使其完全覆盖容器（不留白）。超出容器的部分会被裁剪。这是最常用的模式，适用于头像、封面图、卡片背景等场景。</p>
+</li>
+<li>
+<p><strong><code>BoxFit.fitWidth</code></strong>：在保持宽高比的前提下，缩放图片使其宽度刚好等于容器宽度。如果图片高度超出容器，则上下裁剪；如果不足，则上下留白。</p>
+</li>
+<li>
+<p><strong><code>BoxFit.fitHeight</code></strong>：在保持宽高比的前提下，缩放图片使其高度刚好等于容器高度。如果图片宽度超出容器，则左右裁剪；如果不足，则左右留白。</p>
+</li>
+<li>
+<p><strong><code>BoxFit.none</code></strong>：不进行任何缩放，以图片的原始尺寸在容器中央显示。如果图片大于容器，超出部分被裁剪；如果小于容器，周围留白。</p>
+</li>
+<li>
+<p><strong><code>BoxFit.scaleDown</code></strong>：行为类似 <code>contain</code>，但有一个关键区别——它只会缩小，不会放大。如果图片原始尺寸已经小于容器，则保持原始尺寸（与 <code>none</code> 效果相同）；如果图片大于容器，则缩小到完全显示在容器内（与 <code>contain</code> 效果相同）。</p>
+</li>
+</ul>
+<h3 id="52-统一对比示例">5.2 统一对比示例</h3>
+<p>以下示例在一个页面中展示所有七种 <code>BoxFit</code> 模式的效果，便于直观对比：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('BoxFit 模式对比')),
+        body: const BoxFitComparison(),
+      ),
+    );
+  }
+}
+
+class BoxFitComparison extends StatelessWidget {
+  const BoxFitComparison({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 所有 BoxFit 模式及其中文说明
+    const Map&lt;BoxFit, String&gt; fitModes = {
+      BoxFit.fill: 'fill\n拉伸填满，可能变形',
+      BoxFit.contain: 'contain\n完整显示，可能留白',
+      BoxFit.cover: 'cover\n填满容器，可能裁剪',
+      BoxFit.fitWidth: 'fitWidth\n宽度撑满',
+      BoxFit.fitHeight: 'fitHeight\n高度撑满',
+      BoxFit.none: 'none\n原始尺寸，不缩放',
+      BoxFit.scaleDown: 'scaleDown\n仅缩小，不放大',
+    };
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '下方每个方框大小为 200×150，图片原始比例不同于方框比例，\n'
+            '可以观察不同 BoxFit 模式下图片的显示差异。',
+            style: TextStyle(fontSize: 14, color: Colors.black54),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: fitModes.entries.map((entry) {
+              return Column(
+                children: [
+                  // 外部容器，用边框标识大小
+                  Container(
+                    width: 200,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blue, width: 2),
+                    ),
+                    child: Image.network(
+                      'https://picsum.photos/seed/flutter/400/600',
+                      fit: entry.key,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    entry.value,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="53-如何选择合适的-boxfit">5.3 如何选择合适的 BoxFit</h3>
+<table>
+<thead>
+<tr>
+<th>使用场景</th>
+<th>推荐 BoxFit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>头像、封面图、卡片背景</td>
+<td><code>cover</code></td>
+</tr>
+<tr>
+<td>图片详情查看、需完整显示</td>
+<td><code>contain</code></td>
+</tr>
+<tr>
+<td>缩略图列表</td>
+<td><code>cover</code></td>
+</tr>
+<tr>
+<td>固定尺寸的装饰性背景</td>
+<td><code>fill</code>（对变形不敏感时）</td>
+</tr>
+<tr>
+<td>不确定图片是否比容器大</td>
+<td><code>scaleDown</code></td>
+</tr>
+<tr>
+<td>横幅 Banner</td>
+<td><code>fitWidth</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践：</strong> 在大多数需要展示图片的场景中，<code>BoxFit.cover</code> 是最安全的选择。它既能保证容器被完全填充（不留白），又能保持图片的宽高比（不变形）。但要注意，被裁剪的部分可能包含重要内容，此时可以配合 <code>alignment</code> 参数控制裁剪区域的偏移。</p>
+</blockquote>
+<pre><code class="language-dart">// 确保人脸（通常在上方）不被裁剪
+Image.network(
+  'https://example.com/portrait.jpg',
+  fit: BoxFit.cover,
+  alignment: Alignment.topCenter,  // 从顶部开始显示，裁剪底部
+);
+</code></pre>
+<hr />
+<h2 id="6-fadeinimage--渐入效果加载图片">6. FadeInImage — 渐入效果加载图片</h2>
+<h3 id="61-为什么需要-fadeinimage">6.1 为什么需要 FadeInImage</h3>
+<p>当网络图片加载时，直接从空白跳到图片显示会显得生硬。<code>FadeInImage</code> 提供了从占位图到目标图片的平滑渐入过渡效果，让用户体验更加流畅自然。</p>
+<h3 id="62-配合-assetimage-作为占位图">6.2 配合 AssetImage 作为占位图</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('FadeInImage 示例')),
+        body: Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: FadeInImage(
+              // 占位图：使用本地 asset 图片
+              placeholder: const AssetImage('assets/images/placeholder.png'),
+              // 目标图：网络图片
+              image: const NetworkImage('https://picsum.photos/400/300'),
+              width: 300,
+              height: 200,
+              fit: BoxFit.cover,
+              // 渐入动画持续时间
+              fadeInDuration: const Duration(milliseconds: 300),
+              // 占位图渐出动画持续时间
+              fadeOutDuration: const Duration(milliseconds: 100),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="63-使用透明占位图无需-asset-文件">6.3 使用透明占位图（无需 asset 文件）</h3>
+<p>如果不想准备 asset 占位图，可以使用 <code>transparent_image</code> 包提供的透明 GIF，或者使用 <code>FadeInImage.memoryNetwork</code>：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+// 需要添加依赖：transparent_image: ^2.0.0
+import 'package:transparent_image/transparent_image.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('FadeInImage.memoryNetwork')),
+        body: Center(
+          child: FadeInImage.memoryNetwork(
+            // kTransparentImage 是 transparent_image 包提供的 1×1 透明 GIF
+            placeholder: kTransparentImage,
+            image: 'https://picsum.photos/400/300',
+            width: 300,
+            height: 200,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="64-使用-assetnetwork-便捷构造">6.4 使用 assetNetwork 便捷构造</h3>
+<p><code>FadeInImage.assetNetwork</code> 是一个简化的命名构造函数，直接接收 asset 路径和网络 URL 字符串：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('FadeInImage.assetNetwork')),
+        body: Center(
+          child: FadeInImage.assetNetwork(
+            // 本地占位图 asset 路径
+            placeholder: 'assets/images/loading.gif',
+            // 目标网络图片 URL
+            image: 'https://picsum.photos/400/300',
+            width: 300,
+            height: 200,
+            fit: BoxFit.cover,
+            placeholderFit: BoxFit.contain,
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="65-注意事项">6.5 注意事项</h3>
+<blockquote>
+<p><strong>最佳实践：</strong> 占位图建议使用体积非常小的图片（如低分辨率缩略图、纯色图或加载动画 GIF），这样占位图本身可以瞬间加载。如果占位图也是网络图片，那就失去了&quot;占位&quot;的意义。</p>
+</blockquote>
+<blockquote>
+<p><strong>注意：</strong> <code>FadeInImage</code> 不支持 <code>errorBuilder</code>。如果需要同时处理渐入效果和错误状态，建议使用 <code>cached_network_image</code> 包，或自行封装 <code>Image.network</code> 配合 <code>AnimatedSwitcher</code>。</p>
+</blockquote>
+<hr />
+<h2 id="7-icon-与-imageicon--图标组件">7. Icon 与 ImageIcon — 图标组件</h2>
+<h3 id="71-icon--material-icons-使用">7.1 Icon — Material Icons 使用</h3>
+<p><code>Icon</code> 是 Flutter 中用于显示字体图标的组件。Flutter 内置了完整的 Material Icons 图标库，包含数千个常用图标，无需额外下载或配置即可使用。</p>
+<p>字体图标相比图片图标有以下优势：</p>
+<ul>
+<li><strong>矢量化</strong>：任意缩放不会模糊</li>
+<li><strong>体积小</strong>：所有图标共用一个字体文件</li>
+<li><strong>易着色</strong>：通过 <code>color</code> 属性即可改变颜色</li>
+<li><strong>无障碍支持</strong>：可通过 <code>semanticLabel</code> 添加语义描述</li>
+</ul>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Icon 示例')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 基础用法
+              const Icon(Icons.home, size: 48),
+              const SizedBox(height: 16),
+
+              // 指定颜色和大小
+              const Icon(
+                Icons.favorite,
+                size: 48,
+                color: Colors.red,
+                semanticLabel: '收藏',  // 无障碍标签
+              ),
+              const SizedBox(height: 16),
+
+              // 不同风格的图标
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // 填充样式（默认）
+                  Icon(Icons.bookmark, size: 40, color: Colors.blue),
+                  SizedBox(width: 16),
+                  // 轮廓样式
+                  Icon(Icons.bookmark_border, size: 40, color: Colors.blue),
+                  SizedBox(width: 16),
+                  // 圆角样式
+                  Icon(Icons.bookmark_rounded, size: 40, color: Colors.blue),
+                  SizedBox(width: 16),
+                  // 尖角样式
+                  Icon(Icons.bookmark_sharp, size: 40, color: Colors.blue),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // 常用 Material Icons 展示
+              Wrap(
+                spacing: 20,
+                runSpacing: 20,
+                children: const [
+                  _LabeledIcon(icon: Icons.search, label: 'search'),
+                  _LabeledIcon(icon: Icons.settings, label: 'settings'),
+                  _LabeledIcon(icon: Icons.person, label: 'person'),
+                  _LabeledIcon(icon: Icons.notifications, label: 'notifications'),
+                  _LabeledIcon(icon: Icons.shopping_cart, label: 'shopping_cart'),
+                  _LabeledIcon(icon: Icons.delete, label: 'delete'),
+                  _LabeledIcon(icon: Icons.share, label: 'share'),
+                  _LabeledIcon(icon: Icons.cloud_upload, label: 'cloud_upload'),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LabeledIcon extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _LabeledIcon({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 32, color: Colors.black87),
+        const SizedBox(height: 4),
+        Text(label, style: const TextStyle(fontSize: 10)),
+      ],
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>提示：</strong> 完整的 Material Icons 列表可以在 <a href="https://fonts.google.com/icons">fonts.google.com/icons</a> 上浏览和搜索。在 Flutter 代码中通过 <code>Icons.xxx</code> 引用即可。</p>
+</blockquote>
+<h3 id="72-imageicon--使用图片作为图标">7.2 ImageIcon — 使用图片作为图标</h3>
+<p><code>ImageIcon</code> 用于将图片（通常是 PNG）作为图标显示。它会将图片作为模板（template），用指定的颜色填充非透明区域。适用于使用自定义设计的图标图片场景。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('ImageIcon 示例')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 使用本地 asset 图片作为图标
+              const ImageIcon(
+                AssetImage('assets/icons/custom_icon.png'),
+                size: 48,
+                color: Colors.blue,
+              ),
+              const SizedBox(height: 20),
+              // 使用网络图片作为图标
+              const ImageIcon(
+                NetworkImage('https://example.com/icon.png'),
+                size: 48,
+                color: Colors.green,
+              ),
+              const SizedBox(height: 20),
+              // 不同颜色展示同一个图标
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Colors.red,
+                  Colors.orange,
+                  Colors.green,
+                  Colors.blue,
+                  Colors.purple,
+                ].map((color) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: ImageIcon(
+                      const AssetImage('assets/icons/custom_icon.png'),
+                      size: 36,
+                      color: color,
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="73-自定义图标字体">7.3 自定义图标字体</h3>
+<p>除了使用 Material Icons 和图片图标，还可以使用自定义图标字体（如 <a href="https://www.iconfont.cn/">Iconfont</a> 或 <a href="https://www.fluttericon.com/">FlutterIcon</a>）。步骤如下：</p>
+<p><strong>第一步：下载字体文件，放入项目目录</strong></p>
+<pre><code>my_app/
+├── assets/
+│   └── fonts/
+│       └── my_icons.ttf
+</code></pre>
+<p><strong>第二步：在 pubspec.yaml 中声明字体</strong></p>
+<pre><code class="language-yaml">flutter:
+  fonts:
+    - family: MyIcons
+      fonts:
+        - asset: assets/fonts/my_icons.ttf
+</code></pre>
+<p><strong>第三步：定义 IconData 并使用</strong></p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+/// 自定义图标数据类
+/// 每个图标的 codePoint 值从图标字体网站导出时可以查看
+class MyIcons {
+  MyIcons._();
+
+  static const String _fontFamily = 'MyIcons';
+
+  // Unicode 码点值来自图标字体导出配置
+  static const IconData wechat = IconData(0xe600, fontFamily: _fontFamily);
+  static const IconData alipay = IconData(0xe601, fontFamily: _fontFamily);
+  static const IconData taobao = IconData(0xe602, fontFamily: _fontFamily);
+}
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('自定义图标字体')),
+        body: const Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(MyIcons.wechat, size: 48, color: Colors.green),
+              SizedBox(width: 24),
+              Icon(MyIcons.alipay, size: 48, color: Colors.blue),
+              SizedBox(width: 24),
+              Icon(MyIcons.taobao, size: 48, color: Colors.orange),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="74-注意事项">7.4 注意事项</h3>
+<blockquote>
+<p><strong>Icon vs ImageIcon 选择建议：</strong></p>
+<ul>
+<li>优先使用 <code>Icon</code> + Material Icons，因为它们是矢量图标，体积小，渲染快</li>
+<li>当需要品牌图标或 Material Icons 中没有的图标时，考虑自定义图标字体</li>
+<li>只有当图标是复杂的多色图标且无法用字体表示时，才考虑使用 <code>ImageIcon</code> 或直接用 <code>Image</code></li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>最佳实践：</strong> 使用 <code>IconTheme</code> 或 <code>Theme</code> 统一管理图标的默认大小和颜色，避免在每个 <code>Icon</code> 上重复设置：</p>
+</blockquote>
+<pre><code class="language-dart">IconTheme(
+  data: const IconThemeData(
+    size: 28,
+    color: Colors.blueGrey,
+  ),
+  child: Row(
+    children: const [
+      Icon(Icons.home),      // 自动使用 28px 和 blueGrey 颜色
+      Icon(Icons.search),
+      Icon(Icons.person),
+    ],
+  ),
+);
+</code></pre>
+<hr />
+<h2 id="8-circleavatar--圆形头像组件">8. CircleAvatar — 圆形头像组件</h2>
+<h3 id="81-基本介绍">8.1 基本介绍</h3>
+<p><code>CircleAvatar</code> 是 Material Design 中用于展示圆形头像的专用组件。它不仅仅是一个圆形裁剪，还内置了背景色、文字首字母缩写等功能，是展示用户头像的首选组件。</p>
+<p>常用属性：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backgroundImage</code></td>
+<td><code>ImageProvider?</code></td>
+<td>背景图片（头像图片）</td>
+</tr>
+<tr>
+<td><code>backgroundColor</code></td>
+<td><code>Color?</code></td>
+<td>背景颜色</td>
+</tr>
+<tr>
+<td><code>foregroundColor</code></td>
+<td><code>Color?</code></td>
+<td>前景颜色（文字颜色）</td>
+</tr>
+<tr>
+<td><code>child</code></td>
+<td><code>Widget?</code></td>
+<td>子组件（通常是文字或图标）</td>
+</tr>
+<tr>
+<td><code>radius</code></td>
+<td><code>double?</code></td>
+<td>圆的半径</td>
+</tr>
+<tr>
+<td><code>minRadius</code></td>
+<td><code>double?</code></td>
+<td>最小半径</td>
+</tr>
+<tr>
+<td><code>maxRadius</code></td>
+<td><code>double?</code></td>
+<td>最大半径</td>
+</tr>
+<tr>
+<td><code>foregroundImage</code></td>
+<td><code>ImageProvider?</code></td>
+<td>前景图片（覆盖在 child 上方）</td>
+</tr>
+<tr>
+<td><code>onBackgroundImageError</code></td>
+<td><code>ImageErrorListener?</code></td>
+<td>背景图加载失败回调</td>
+</tr>
+<tr>
+<td><code>onForegroundImageError</code></td>
+<td><code>ImageErrorListener?</code></td>
+<td>前景图加载失败回调</td>
+</tr>
+</tbody>
+</table>
+<h3 id="82-完整示例">8.2 完整示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('CircleAvatar 示例')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 1. 使用网络图片作为头像
+              const CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(
+                  'https://picsum.photos/seed/avatar/200/200',
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text('网络图片头像'),
+
+              const SizedBox(height: 24),
+
+              // 2. 使用文字首字母（图片加载前或无图片时的备选方案）
+              const CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.indigo,
+                foregroundColor: Colors.white,
+                child: Text(
+                  '张',
+                  style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text('文字头像'),
+
+              const SizedBox(height: 24),
+
+              // 3. 使用图标
+              const CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.teal,
+                child: Icon(Icons.person, size: 48, color: Colors.white),
+              ),
+              const SizedBox(height: 8),
+              const Text('图标头像'),
+
+              const SizedBox(height: 24),
+
+              // 4. 不同大小的头像展示
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundImage: NetworkImage(
+                      'https://picsum.photos/seed/a1/100/100',
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: NetworkImage(
+                      'https://picsum.photos/seed/a2/100/100',
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundImage: NetworkImage(
+                      'https://picsum.photos/seed/a3/100/100',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              const Text('不同尺寸'),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="83-带错误处理和边框的头像">8.3 带错误处理和边框的头像</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('高级 CircleAvatar 示例')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 带白色边框的头像（通过嵌套实现）
+              const CircleAvatar(
+                radius: 54,
+                backgroundColor: Colors.white, // 外圈颜色（作为边框）
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: NetworkImage(
+                    'https://picsum.photos/seed/bordered/200/200',
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text('带边框的头像'),
+
+              const SizedBox(height: 24),
+
+              // 带错误处理的头像
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.grey[300],
+                backgroundImage: const NetworkImage(
+                  'https://invalid-url.com/avatar.jpg',
+                ),
+                // 当背景图加载失败时的回调
+                onBackgroundImageError: (exception, stackTrace) {
+                  debugPrint('头像加载失败: $exception');
+                },
+                // child 会在 backgroundImage 加载失败时显示
+                child: const Icon(
+                  Icons.person,
+                  size: 48,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text('带错误处理的头像'),
+
+              const SizedBox(height: 24),
+
+              // 带装饰容器的头像（渐变边框）
+              Container(
+                padding: const EdgeInsets.all(3),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [Colors.purple, Colors.orange, Colors.pink],
+                  ),
+                ),
+                child: const CircleAvatar(
+                  radius: 50,
+                  backgroundImage: NetworkImage(
+                    'https://picsum.photos/seed/gradient/200/200',
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text('渐变边框头像'),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="84-注意事项">8.4 注意事项</h3>
+<blockquote>
+<p><strong>注意：</strong> <code>CircleAvatar</code> 的 <code>backgroundImage</code> 属性接收的是 <code>ImageProvider</code>（如 <code>NetworkImage</code>、<code>AssetImage</code>），而不是 <code>Image</code> Widget。这是初学者常犯的错误。</p>
+</blockquote>
+<pre><code class="language-dart">// 正确 ✅
+CircleAvatar(backgroundImage: NetworkImage('https://...'));
+CircleAvatar(backgroundImage: AssetImage('assets/avatar.png'));
+
+// 错误 ❌
+CircleAvatar(backgroundImage: Image.network('https://...'));  // 编译报错
+</code></pre>
+<blockquote>
+<p><strong>最佳实践：</strong> 始终为 <code>CircleAvatar</code> 设置 <code>backgroundColor</code> 和一个 <code>child</code>（如文字或图标），当 <code>backgroundImage</code> 尚未加载完成或加载失败时，用户至少能看到一个有意义的占位内容，而不是空白。</p>
+</blockquote>
+<hr />
+<h2 id="9-本课小结">9. 本课小结</h2>
+<p>本课系统学习了 Flutter 中图片与图标相关的核心组件：</p>
+<ol>
+<li>
+<p><strong>Image.asset</strong>：加载打包在应用内的本地资源图片，需要在 <code>pubspec.yaml</code> 中声明 <code>assets</code>，支持多分辨率适配。</p>
+</li>
+<li>
+<p><strong>Image.network</strong>：加载网络图片，配合 <code>loadingBuilder</code> 显示加载进度，配合 <code>errorBuilder</code> 处理加载失败，是最常用的图片加载方式。</p>
+</li>
+<li>
+<p><strong>Image.file / Image.memory</strong>：分别从文件系统和内存字节数组加载图片，适用于相机拍照、数据库存储等场景。</p>
+</li>
+<li>
+<p><strong>BoxFit</strong>：控制图片在容器中的适配方式，七种模式各有适用场景。<code>cover</code> 是最常用的模式，<code>contain</code> 适合需要完整展示的场景，<code>fill</code> 会破坏宽高比。</p>
+</li>
+<li>
+<p><strong>FadeInImage</strong>：为网络图片加载提供从占位图到目标图的平滑渐入过渡效果。</p>
+</li>
+<li>
+<p><strong>Icon / ImageIcon</strong>：<code>Icon</code> 用于显示 Material Icons 字体图标，矢量渲染、体积小；<code>ImageIcon</code> 用于将图片作为单色图标使用；还可以通过自定义字体引入第三方图标。</p>
+</li>
+<li>
+<p><strong>CircleAvatar</strong>：Material Design 规范的圆形头像组件，支持背景图片、文字、图标等多种内容形式。</p>
+</li>
+</ol>
+<p><strong>关键要点回顾：</strong></p>
+<ul>
+<li>生产环境推荐使用 <code>cached_network_image</code> 包进行网络图片加载，具备磁盘缓存能力</li>
+<li>使用 <code>cacheWidth</code> / <code>cacheHeight</code> 控制图片解码尺寸，减少内存占用</li>
+<li>优先使用字体图标（<code>Icon</code>）而非图片图标（<code>ImageIcon</code>）</li>
+<li>始终为网络图片提供加载占位和错误处理</li>
+</ul>
+<hr />
+<h2 id="10-练习题">10. 练习题</h2>
+<h3 id="练习一图片画廊">练习一：图片画廊</h3>
+<p>创建一个图片画廊页面，要求：</p>
+<ul>
+<li>使用 <code>GridView</code> 展示 9 张网络图片（可使用 <code>https://picsum.photos/seed/{n}/400/400</code>）</li>
+<li>每张图片使用 <code>BoxFit.cover</code> 填充</li>
+<li>为每张图片添加 <code>loadingBuilder</code>（显示加载动画）和 <code>errorBuilder</code>（显示错误图标）</li>
+<li>点击图片后弹出对话框，用 <code>BoxFit.contain</code> 显示完整大图</li>
+</ul>
+<h3 id="练习二用户信息卡片">练习二：用户信息卡片</h3>
+<p>创建一个用户信息卡片组件，包含：</p>
+<ul>
+<li>使用 <code>CircleAvatar</code> 展示圆形头像（网络图片）</li>
+<li>头像右下角叠加一个绿色小圆点表示&quot;在线&quot;状态（提示：使用 <code>Stack</code> + <code>Positioned</code>）</li>
+<li>头像加载失败时显示用户名首字母</li>
+<li>卡片中还需包含用户名、个人简介等文本信息</li>
+</ul>
+<h3 id="练习三boxfit-交互演示器">练习三：BoxFit 交互演示器</h3>
+<p>创建一个交互式页面：</p>
+<ul>
+<li>顶部放一张图片</li>
+<li>底部放一排按钮，对应七种 <code>BoxFit</code> 模式</li>
+<li>点击按钮切换图片的 <code>BoxFit</code> 模式</li>
+<li>在图片下方用文字说明当前模式的效果</li>
+</ul>
+<h3 id="练习四自定义图标展示">练习四：自定义图标展示</h3>
+<ul>
+<li>在 <a href="https://fonts.google.com/icons">fonts.google.com/icons</a> 上挑选 12 个你认为最常用的 Material Icons</li>
+<li>创建一个 3×4 网格展示这些图标，每个图标下方标注名称</li>
+<li>为每个图标添加点击事件，点击后用 <code>SnackBar</code> 显示图标名称</li>
+</ul>
+<hr />
+<blockquote>
+<p><strong>下一课预告：</strong> 第05课我们将学习基础容器组件，包括 <code>Container</code>、<code>SizedBox</code>、<code>DecoratedBox</code>、<code>Padding</code> 等，它们是 Flutter 布局的基础构建块。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

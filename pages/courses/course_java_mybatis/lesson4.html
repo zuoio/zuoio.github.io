@@ -1,0 +1,1722 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第四章-动态-sql-">第四章 动态 SQL ⭐</h1>
+<blockquote>
+<p>MyBatis 最强大的特性之一，直接影响代码质量。<br />
+动态 SQL 让你可以根据运行时参数，在 XML 中灵活拼接 SQL 语句，彻底告别手动字符串拼接的噩梦。</p>
+</blockquote>
+<p>在实际业务开发中，绝大多数查询都不是固定 SQL —— 用户可能只填了部分搜索条件，更新时可能只修改了几个字段，批量操作的数据量也不固定。MyBatis 提供了一组 XML 标签来优雅地处理这些场景，本章将逐一讲解。</p>
+<p><strong>本章使用的示例实体类：</strong></p>
+<pre><code class="language-java">public class User {
+    private Long id;
+    private String username;
+    private String email;
+    private Integer age;
+    private Integer status;     // 0-禁用 1-正常
+    private String department;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
+    // getter/setter 省略
+}
+</code></pre>
+<hr />
+<h2 id="41-if--条件判断">4.1 <code>&lt;if&gt;</code> —— 条件判断</h2>
+<p><code>&lt;if&gt;</code> 是最基础的动态 SQL 标签，当 <code>test</code> 表达式为 <code>true</code> 时，标签内的 SQL 片段才会被拼接到最终语句中。</p>
+<h3 id="mapper-接口">Mapper 接口</h3>
+<pre><code class="language-java">public interface UserMapper {
+    List&lt;User&gt; findByCondition(@Param(&quot;username&quot;) String username,
+                               @Param(&quot;email&quot;) String email,
+                               @Param(&quot;status&quot;) Integer status);
+}
+</code></pre>
+<h3 id="xml-映射">XML 映射</h3>
+<pre><code class="language-xml">&lt;select id=&quot;findByCondition&quot; resultType=&quot;User&quot;&gt;
+    SELECT id, username, email, age, status, department, create_time, update_time
+    FROM t_user
+    WHERE 1=1
+    &lt;if test=&quot;username != null and username != ''&quot;&gt;
+        AND username LIKE CONCAT('%', #{username}, '%')
+    &lt;/if&gt;
+    &lt;if test=&quot;email != null and email != ''&quot;&gt;
+        AND email = #{email}
+    &lt;/if&gt;
+    &lt;if test=&quot;status != null&quot;&gt;
+        AND status = #{status}
+    &lt;/if&gt;
+&lt;/select&gt;
+</code></pre>
+<h3 id="关键说明">关键说明</h3>
+<table>
+<thead>
+<tr>
+<th>要点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test</code> 属性</td>
+<td>使用 OGNL 表达式，可以访问参数属性、调用方法</td>
+</tr>
+<tr>
+<td>字符串判空</td>
+<td>字符串通常需要同时判断 <code>!= null</code> 和 <code>!= ''</code></td>
+</tr>
+<tr>
+<td>数值类型</td>
+<td>Integer / Long 等包装类型只需判断 <code>!= null</code>，<strong>不要</strong>判断 <code>!= ''</code>（OGNL 会将数字与空字符串比较导致异常）</td>
+</tr>
+<tr>
+<td><code>WHERE 1=1</code></td>
+<td>这里用了 <code>WHERE 1=1</code> 的&quot;兜底&quot;写法来保证语法正确，但这不是最佳实践——4.3 节的 <code>&lt;where&gt;</code> 标签可以彻底解决这个问题</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>OGNL 常用表达式速查：</strong></p>
+<ul>
+<li><code>username != null</code> —— 非空判断</li>
+<li><code>username != ''</code> —— 非空字符串</li>
+<li><code>list != null and list.size() &gt; 0</code> —— 集合非空判断</li>
+<li><code>type == 'admin'</code> —— 字符串比较（注意用单引号）</li>
+<li><code>age &gt; 18</code> —— 数值比较</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="42-choose--when--otherwise--多分支选择">4.2 <code>&lt;choose&gt;</code> / <code>&lt;when&gt;</code> / <code>&lt;otherwise&gt;</code> —— 多分支选择</h2>
+<p>类似 Java 中的 <code>switch-case-default</code>，多个条件中只有<strong>第一个</strong>满足的分支会被执行。</p>
+<h3 id="mapper-接口-1">Mapper 接口</h3>
+<pre><code class="language-java">public interface UserMapper {
+    List&lt;User&gt; findByPriority(@Param(&quot;id&quot;) Long id,
+                              @Param(&quot;username&quot;) String username,
+                              @Param(&quot;email&quot;) String email);
+}
+</code></pre>
+<h3 id="xml-映射-1">XML 映射</h3>
+<pre><code class="language-xml">&lt;select id=&quot;findByPriority&quot; resultType=&quot;User&quot;&gt;
+    SELECT id, username, email, age, status, department, create_time, update_time
+    FROM t_user
+    WHERE 1=1
+    &lt;choose&gt;
+        &lt;when test=&quot;id != null&quot;&gt;
+            AND id = #{id}
+        &lt;/when&gt;
+        &lt;when test=&quot;username != null and username != ''&quot;&gt;
+            AND username = #{username}
+        &lt;/when&gt;
+        &lt;when test=&quot;email != null and email != ''&quot;&gt;
+            AND email = #{email}
+        &lt;/when&gt;
+        &lt;otherwise&gt;
+            AND status = 1
+        &lt;/otherwise&gt;
+    &lt;/choose&gt;
+&lt;/select&gt;
+</code></pre>
+<h3 id="执行逻辑">执行逻辑</h3>
+<ol>
+<li>如果传了 <code>id</code>，只按 <code>id</code> 查询（后续条件不再判断）</li>
+<li>没传 <code>id</code> 但传了 <code>username</code>，按 <code>username</code> 查询</li>
+<li>都没传，走 <code>&lt;otherwise&gt;</code> 默认查询正常状态的用户</li>
+</ol>
+<blockquote>
+<p><strong>与 <code>&lt;if&gt;</code> 的区别：</strong> <code>&lt;if&gt;</code> 各分支相互独立，可以同时生效；<code>&lt;choose&gt;</code> 是互斥的，只生效第一个匹配的分支。</p>
+</blockquote>
+<hr />
+<h2 id="43-where--智能-where-拼接">4.3 <code>&lt;where&gt;</code> —— 智能 WHERE 拼接</h2>
+<h3 id="问题手动拼接-where-11-的尴尬">问题：手动拼接 WHERE 1=1 的尴尬</h3>
+<p>在 4.1 节中，我们用了 <code>WHERE 1=1</code> 来保证无论哪个 <code>&lt;if&gt;</code> 生效，SQL 语法都正确：</p>
+<pre><code class="language-xml">&lt;!-- 手动兜底写法 --&gt;
+&lt;select id=&quot;findByCondition&quot; resultType=&quot;User&quot;&gt;
+    SELECT * FROM t_user
+    WHERE 1=1
+    &lt;if test=&quot;username != null and username != ''&quot;&gt;
+        AND username LIKE CONCAT('%', #{username}, '%')
+    &lt;/if&gt;
+    &lt;if test=&quot;status != null&quot;&gt;
+        AND status = #{status}
+    &lt;/if&gt;
+&lt;/select&gt;
+</code></pre>
+<p>这种写法存在两个问题：</p>
+<ol>
+<li><strong><code>WHERE 1=1</code> 不美观</strong>，代码审查时经常被质疑</li>
+<li>如果第一个条件不带 <code>AND</code>，而后面的条件带 <code>AND</code>，需要仔细管理每个条件的前缀</li>
+</ol>
+<h3 id="解决方案使用-where-标签">解决方案：使用 <code>&lt;where&gt;</code> 标签</h3>
+<p><code>&lt;where&gt;</code> 标签会智能处理以下逻辑：</p>
+<ul>
+<li>只有在至少一个子元素有内容时，才插入 <code>WHERE</code> 关键字</li>
+<li>自动去除内容开头多余的 <code>AND</code> 或 <code>OR</code></li>
+</ul>
+<h3 id="mapper-接口-2">Mapper 接口</h3>
+<pre><code class="language-java">public interface UserMapper {
+    List&lt;User&gt; searchUsers(@Param(&quot;username&quot;) String username,
+                           @Param(&quot;email&quot;) String email,
+                           @Param(&quot;status&quot;) Integer status,
+                           @Param(&quot;department&quot;) String department);
+}
+</code></pre>
+<h3 id="xml-映射-2">XML 映射</h3>
+<pre><code class="language-xml">&lt;select id=&quot;searchUsers&quot; resultType=&quot;User&quot;&gt;
+    SELECT id, username, email, age, status, department, create_time, update_time
+    FROM t_user
+    &lt;where&gt;
+        &lt;if test=&quot;username != null and username != ''&quot;&gt;
+            AND username LIKE CONCAT('%', #{username}, '%')
+        &lt;/if&gt;
+        &lt;if test=&quot;email != null and email != ''&quot;&gt;
+            AND email = #{email}
+        &lt;/if&gt;
+        &lt;if test=&quot;status != null&quot;&gt;
+            AND status = #{status}
+        &lt;/if&gt;
+        &lt;if test=&quot;department != null and department != ''&quot;&gt;
+            AND department = #{department}
+        &lt;/if&gt;
+    &lt;/where&gt;
+&lt;/select&gt;
+</code></pre>
+<h3 id="对比分析">对比分析</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>手动 WHERE 1=1</th>
+<th>使用 <code>&lt;where&gt;</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>所有条件都为空</td>
+<td><code>WHERE 1=1</code>（返回全部数据）</td>
+<td>无 WHERE 子句（返回全部数据）</td>
+</tr>
+<tr>
+<td>只有 status 有值</td>
+<td><code>WHERE 1=1 AND status = ?</code></td>
+<td><code>WHERE status = ?</code></td>
+</tr>
+<tr>
+<td>username 和 status 都有值</td>
+<td><code>WHERE 1=1 AND username LIKE ? AND status = ?</code></td>
+<td><code>WHERE username LIKE ? AND status = ?</code></td>
+</tr>
+<tr>
+<td>生成的 SQL</td>
+<td>始终带有多余的 <code>1=1</code></td>
+<td>干净、语义明确</td>
+</tr>
+<tr>
+<td>可读性</td>
+<td>一般</td>
+<td>好</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践：</strong> 在所有需要动态 WHERE 条件的场景中，优先使用 <code>&lt;where&gt;</code> 标签代替 <code>WHERE 1=1</code>。</p>
+</blockquote>
+<hr />
+<h2 id="44-set--智能-set-拼接">4.4 <code>&lt;set&gt;</code> —— 智能 SET 拼接</h2>
+<p><code>&lt;set&gt;</code> 是 <code>&lt;where&gt;</code> 在 UPDATE 语句中的对应版本，它解决的是动态更新字段时的逗号问题。</p>
+<h3 id="问题场景">问题场景</h3>
+<p>当我们只想更新用户修改过的字段时，手动拼接 SET 子句需要处理末尾多余的逗号：</p>
+<pre><code class="language-sql">-- 如果只更新了 username，拼出来可能变成：
+UPDATE t_user SET username = ?,  WHERE id = ?
+--                             ↑ 多余的逗号导致语法错误
+</code></pre>
+<h3 id="mapper-接口-3">Mapper 接口</h3>
+<pre><code class="language-java">public interface UserMapper {
+    int updateSelective(User user);
+}
+</code></pre>
+<h3 id="xml-映射-3">XML 映射</h3>
+<pre><code class="language-xml">&lt;update id=&quot;updateSelective&quot;&gt;
+    UPDATE t_user
+    &lt;set&gt;
+        &lt;if test=&quot;username != null and username != ''&quot;&gt;
+            username = #{username},
+        &lt;/if&gt;
+        &lt;if test=&quot;email != null and email != ''&quot;&gt;
+            email = #{email},
+        &lt;/if&gt;
+        &lt;if test=&quot;age != null&quot;&gt;
+            age = #{age},
+        &lt;/if&gt;
+        &lt;if test=&quot;status != null&quot;&gt;
+            status = #{status},
+        &lt;/if&gt;
+        &lt;if test=&quot;department != null and department != ''&quot;&gt;
+            department = #{department},
+        &lt;/if&gt;
+        &lt;if test=&quot;updateTime != null&quot;&gt;
+            update_time = #{updateTime},
+        &lt;/if&gt;
+    &lt;/set&gt;
+    WHERE id = #{id}
+&lt;/update&gt;
+</code></pre>
+<h3 id="set-的行为"><code>&lt;set&gt;</code> 的行为</h3>
+<ol>
+<li>如果至少有一个子元素有内容，自动插入 <code>SET</code> 关键字</li>
+<li><strong>自动去除内容末尾多余的逗号</strong></li>
+<li>如果所有条件都为空，不会插入 <code>SET</code>（此时 SQL 语法错误——调用方应确保至少有一个字段需要更新）</li>
+</ol>
+<blockquote>
+<p><strong>注意：</strong> 每个 <code>&lt;if&gt;</code> 内的赋值语句末尾都带了逗号，这是故意的——<code>&lt;set&gt;</code> 会自动处理最后一个多余的逗号。</p>
+</blockquote>
+<hr />
+<h2 id="45-trim--自定义前缀后缀裁剪">4.5 <code>&lt;trim&gt;</code> —— 自定义前缀/后缀裁剪</h2>
+<p><code>&lt;trim&gt;</code> 是 <code>&lt;where&gt;</code> 和 <code>&lt;set&gt;</code> 的<strong>底层通用实现</strong>。理解了 <code>&lt;trim&gt;</code>，你就理解了 MyBatis 动态 SQL 拼接的核心机制。</p>
+<h3 id="四个核心属性">四个核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>示例值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>prefix</code></td>
+<td>当 trim 元素有内容时，在内容<strong>前面</strong>插入的前缀</td>
+<td><code>WHERE</code>、<code>SET</code>、<code>(</code></td>
+</tr>
+<tr>
+<td><code>prefixOverrides</code></td>
+<td>从内容<strong>开头</strong>去除的多余文本（可用 <code>|</code> 分隔多个值）</td>
+<td><code>AND |OR </code></td>
+</tr>
+<tr>
+<td><code>suffix</code></td>
+<td>当 trim 元素有内容时，在内容<strong>后面</strong>插入的后缀</td>
+<td><code>)</code></td>
+</tr>
+<tr>
+<td><code>suffixOverrides</code></td>
+<td>从内容<strong>末尾</strong>去除的多余文本（可用 <code>|</code> 分隔多个值）</td>
+<td><code>,</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意 <code>prefixOverrides</code> 和 <code>suffixOverrides</code> 中的空格：</strong> <code>AND </code> 后面有空格，这样才能精确匹配 <code>AND username</code> 中的 <code>AND </code>，而不会误匹配 <code>Android</code> 中的 <code>And</code>。</p>
+</blockquote>
+<h3 id="where-本质上就是特殊的-trim"><code>&lt;where&gt;</code> 本质上就是特殊的 <code>&lt;trim&gt;</code></h3>
+<pre><code class="language-xml">&lt;!-- &lt;where&gt; 等价于以下 &lt;trim&gt; --&gt;
+&lt;trim prefix=&quot;WHERE&quot; prefixOverrides=&quot;AND |OR &quot;&gt;
+    ...
+&lt;/trim&gt;
+</code></pre>
+<p>解释：</p>
+<ul>
+<li><code>prefix=&quot;WHERE&quot;</code> —— 如果有内容，前面加上 <code>WHERE</code></li>
+<li><code>prefixOverrides=&quot;AND |OR &quot;</code> —— 去除内容开头多余的 <code>AND </code> 或 <code>OR </code></li>
+</ul>
+<h3 id="set-本质上也是特殊的-trim"><code>&lt;set&gt;</code> 本质上也是特殊的 <code>&lt;trim&gt;</code></h3>
+<pre><code class="language-xml">&lt;!-- &lt;set&gt; 等价于以下 &lt;trim&gt; --&gt;
+&lt;trim prefix=&quot;SET&quot; suffixOverrides=&quot;,&quot;&gt;
+    ...
+&lt;/trim&gt;
+</code></pre>
+<p>解释：</p>
+<ul>
+<li><code>prefix=&quot;SET&quot;</code> —— 如果有内容，前面加上 <code>SET</code></li>
+<li><code>suffixOverrides=&quot;,&quot;</code> —— 去除内容末尾多余的逗号</li>
+</ul>
+<h3 id="用-trim-实现-where-的效果">用 <code>&lt;trim&gt;</code> 实现 <code>&lt;where&gt;</code> 的效果</h3>
+<pre><code class="language-xml">&lt;select id=&quot;searchUsers&quot; resultType=&quot;User&quot;&gt;
+    SELECT id, username, email, age, status
+    FROM t_user
+    &lt;trim prefix=&quot;WHERE&quot; prefixOverrides=&quot;AND |OR &quot;&gt;
+        &lt;if test=&quot;username != null and username != ''&quot;&gt;
+            AND username LIKE CONCAT('%', #{username}, '%')
+        &lt;/if&gt;
+        &lt;if test=&quot;status != null&quot;&gt;
+            AND status = #{status}
+        &lt;/if&gt;
+    &lt;/trim&gt;
+&lt;/select&gt;
+</code></pre>
+<h3 id="用-trim-实现-set-的效果">用 <code>&lt;trim&gt;</code> 实现 <code>&lt;set&gt;</code> 的效果</h3>
+<pre><code class="language-xml">&lt;update id=&quot;updateSelective&quot;&gt;
+    UPDATE t_user
+    &lt;trim prefix=&quot;SET&quot; suffixOverrides=&quot;,&quot;&gt;
+        &lt;if test=&quot;username != null and username != ''&quot;&gt;
+            username = #{username},
+        &lt;/if&gt;
+        &lt;if test=&quot;email != null and email != ''&quot;&gt;
+            email = #{email},
+        &lt;/if&gt;
+    &lt;/trim&gt;
+    WHERE id = #{id}
+&lt;/update&gt;
+</code></pre>
+<h3 id="trim-的高级用法构造插入语句"><code>&lt;trim&gt;</code> 的高级用法：构造插入语句</h3>
+<p><code>&lt;trim&gt;</code> 可以同时使用 <code>prefix</code>、<code>suffix</code>、<code>suffixOverrides</code> 来构造复杂的 SQL 片段：</p>
+<pre><code class="language-xml">&lt;insert id=&quot;insertSelective&quot;&gt;
+    INSERT INTO t_user
+    &lt;trim prefix=&quot;(&quot; suffix=&quot;)&quot; suffixOverrides=&quot;,&quot;&gt;
+        &lt;if test=&quot;username != null&quot;&gt;username,&lt;/if&gt;
+        &lt;if test=&quot;email != null&quot;&gt;email,&lt;/if&gt;
+        &lt;if test=&quot;age != null&quot;&gt;age,&lt;/if&gt;
+        &lt;if test=&quot;status != null&quot;&gt;status,&lt;/if&gt;
+    &lt;/trim&gt;
+    &lt;trim prefix=&quot;VALUES (&quot; suffix=&quot;)&quot; suffixOverrides=&quot;,&quot;&gt;
+        &lt;if test=&quot;username != null&quot;&gt;#{username},&lt;/if&gt;
+        &lt;if test=&quot;email != null&quot;&gt;#{email},&lt;/if&gt;
+        &lt;if test=&quot;age != null&quot;&gt;#{age},&lt;/if&gt;
+        &lt;if test=&quot;status != null&quot;&gt;#{status},&lt;/if&gt;
+    &lt;/trim&gt;
+&lt;/insert&gt;
+</code></pre>
+<p>当只传了 <code>username</code> 和 <code>email</code> 时，生成的 SQL 为：</p>
+<pre><code class="language-sql">INSERT INTO t_user (username, email) VALUES (?, ?)
+</code></pre>
+<blockquote>
+<p><strong>小结：</strong> <code>&lt;where&gt;</code> 和 <code>&lt;set&gt;</code> 是 <code>&lt;trim&gt;</code> 的语法糖。日常开发中优先使用 <code>&lt;where&gt;</code> 和 <code>&lt;set&gt;</code>（更简洁），当需要自定义裁剪逻辑时，使用 <code>&lt;trim&gt;</code>。</p>
+</blockquote>
+<hr />
+<h2 id="46-foreach--集合遍历-">4.6 <code>&lt;foreach&gt;</code> —— 集合遍历 ⭐</h2>
+<p><code>&lt;foreach&gt;</code> 用于遍历集合或数组，生成重复的 SQL 片段。最常见的两个场景是 <strong>IN 查询</strong>和<strong>批量 INSERT</strong>。</p>
+<h3 id="461-属性详解">4.6.1 属性详解</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>collection</code></td>
+<td>要遍历的集合或数组（<strong>取值规则见下方说明</strong>）</td>
+<td>是</td>
+</tr>
+<tr>
+<td><code>item</code></td>
+<td>每次迭代的元素变量名</td>
+<td>是</td>
+</tr>
+<tr>
+<td><code>index</code></td>
+<td>迭代的索引变量名（List 是下标，Map 是 key）</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>open</code></td>
+<td>拼接内容的开始符号</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>close</code></td>
+<td>拼接内容的结束符号</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>separator</code></td>
+<td>每次迭代之间的分隔符</td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+<h4 id="collection-属性取值规则-重点"><code>collection</code> 属性取值规则（⭐ 重点）</h4>
+<p><code>collection</code> 的值取决于参数的传递方式：</p>
+<table>
+<thead>
+<tr>
+<th>参数形式</th>
+<th><code>collection</code> 的值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>List&lt;Long&gt; ids</code>（单个 List 参数，无 @Param）</td>
+<td><code>list</code> 或 <code>collection</code></td>
+<td>MyBatis 对 List 类型自动注册为 <code>list</code> 和 <code>collection</code></td>
+</tr>
+<tr>
+<td><code>Long[] ids</code>（单个数组参数，无 @Param）</td>
+<td><code>array</code></td>
+<td>MyBatis 对数组类型自动注册为 <code>array</code></td>
+</tr>
+<tr>
+<td><code>@Param(&quot;ids&quot;) List&lt;Long&gt; ids</code></td>
+<td><code>ids</code></td>
+<td>使用 @Param 注解指定的名称</td>
+</tr>
+<tr>
+<td><code>@Param(&quot;ids&quot;) Long[] ids</code></td>
+<td><code>ids</code></td>
+<td>使用 @Param 注解指定的名称</td>
+</tr>
+<tr>
+<td>POJO 对象中的属性，如 <code>query.ids</code></td>
+<td><code>ids</code>（属性名）</td>
+<td>直接使用 POJO 中的属性名</td>
+</tr>
+<tr>
+<td><code>Map&lt;String, Object&gt;</code> 中的 key</td>
+<td>Map 中对应的 key</td>
+<td>如 <code>map.put(&quot;ids&quot;, list)</code> 则用 <code>ids</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践：</strong> 始终使用 <code>@Param</code> 注解来明确参数名，避免歧义。这样 <code>collection</code> 的值就是注解中指定的名称，最直观。</p>
+</blockquote>
+<h3 id="462-listarraymap-的遍历写法">4.6.2 List、Array、Map 的遍历写法</h3>
+<h4 id="遍历-list--in-查询">遍历 List —— IN 查询</h4>
+<p><strong>Mapper 接口：</strong></p>
+<pre><code class="language-java">public interface UserMapper {
+    List&lt;User&gt; findByIds(@Param(&quot;ids&quot;) List&lt;Long&gt; ids);
+}
+</code></pre>
+<p><strong>XML 映射：</strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;findByIds&quot; resultType=&quot;User&quot;&gt;
+    SELECT id, username, email, age, status
+    FROM t_user
+    WHERE id IN
+    &lt;foreach collection=&quot;ids&quot; item=&quot;id&quot; open=&quot;(&quot; close=&quot;)&quot; separator=&quot;,&quot;&gt;
+        #{id}
+    &lt;/foreach&gt;
+&lt;/select&gt;
+</code></pre>
+<p><strong>生成的 SQL（假设传入 [1, 2, 3]）：</strong></p>
+<pre><code class="language-sql">SELECT id, username, email, age, status FROM t_user WHERE id IN (1, 2, 3)
+</code></pre>
+<h4 id="遍历-array">遍历 Array</h4>
+<p><strong>Mapper 接口：</strong></p>
+<pre><code class="language-java">public interface UserMapper {
+    List&lt;User&gt; findByStatusArray(@Param(&quot;statusArr&quot;) Integer[] statusArr);
+}
+</code></pre>
+<p><strong>XML 映射：</strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;findByStatusArray&quot; resultType=&quot;User&quot;&gt;
+    SELECT id, username, email, age, status
+    FROM t_user
+    WHERE status IN
+    &lt;foreach collection=&quot;statusArr&quot; item=&quot;s&quot; open=&quot;(&quot; close=&quot;)&quot; separator=&quot;,&quot;&gt;
+        #{s}
+    &lt;/foreach&gt;
+&lt;/select&gt;
+</code></pre>
+<h4 id="遍历-map">遍历 Map</h4>
+<p>遍历 Map 时，<code>index</code> 是 key，<code>item</code> 是 value。常用于动态构建 SET 子句或条件：</p>
+<p><strong>Mapper 接口：</strong></p>
+<pre><code class="language-java">public interface UserMapper {
+    List&lt;User&gt; findByMap(@Param(&quot;conditions&quot;) Map&lt;String, Object&gt; conditions);
+}
+</code></pre>
+<p><strong>XML 映射：</strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;findByMap&quot; resultType=&quot;User&quot;&gt;
+    SELECT id, username, email, age, status
+    FROM t_user
+    &lt;where&gt;
+        &lt;foreach collection=&quot;conditions&quot; index=&quot;column&quot; item=&quot;value&quot;&gt;
+            AND ${column} = #{value}
+        &lt;/foreach&gt;
+    &lt;/where&gt;
+&lt;/select&gt;
+</code></pre>
+<blockquote>
+<p><strong>⚠️ 安全警告：</strong> 上面的 <code>${column}</code> 使用了字符串拼接，存在 SQL 注入风险。在生产环境中，必须对 column 做白名单校验，确保只允许预定义的列名。</p>
+</blockquote>
+<h4 id="不使用-param-时的-collection-值">不使用 @Param 时的 collection 值</h4>
+<pre><code class="language-java">// 单个 List 参数，无 @Param
+List&lt;User&gt; findByIds(List&lt;Long&gt; ids);
+// collection=&quot;list&quot; 或 collection=&quot;collection&quot;
+
+// 单个数组参数，无 @Param  
+List&lt;User&gt; findByIds(Long[] ids);
+// collection=&quot;array&quot;
+</code></pre>
+<p>虽然可以省略 <code>@Param</code>，但<strong>强烈建议始终添加 <code>@Param</code></strong>，提高可读性和可维护性。</p>
+<h3 id="463-批量插入的性能优化">4.6.3 批量插入的性能优化</h3>
+<h4 id="场景一mysql-多行-values-语法推荐">场景一：MySQL 多行 VALUES 语法（推荐）</h4>
+<p>利用 MySQL 支持的 <code>INSERT INTO ... VALUES (...), (...), (...)</code> 语法，一条 SQL 插入多行数据：</p>
+<p><strong>Mapper 接口：</strong></p>
+<pre><code class="language-java">public interface UserMapper {
+    int batchInsert(@Param(&quot;users&quot;) List&lt;User&gt; users);
+}
+</code></pre>
+<p><strong>XML 映射：</strong></p>
+<pre><code class="language-xml">&lt;insert id=&quot;batchInsert&quot;&gt;
+    INSERT INTO t_user (username, email, age, status)
+    VALUES
+    &lt;foreach collection=&quot;users&quot; item=&quot;user&quot; separator=&quot;,&quot;&gt;
+        (#{user.username}, #{user.email}, #{user.age}, #{user.status})
+    &lt;/foreach&gt;
+&lt;/insert&gt;
+</code></pre>
+<p><strong>生成的 SQL（假设传入 3 条数据）：</strong></p>
+<pre><code class="language-sql">INSERT INTO t_user (username, email, age, status)
+VALUES ('张三', 'zs@test.com', 25, 1),
+       ('李四', 'ls@test.com', 30, 1),
+       ('王五', 'ww@test.com', 28, 1)
+</code></pre>
+<h4 id="场景二多条-insert-语句需开启-allowmultiqueries">场景二：多条 INSERT 语句（需开启 allowMultiQueries）</h4>
+<p>另一种方式是生成多条独立的 INSERT 语句，需要在 JDBC URL 中添加 <code>allowMultiQueries=true</code>：</p>
+<pre><code class="language-xml">&lt;insert id=&quot;batchInsertMulti&quot;&gt;
+    &lt;foreach collection=&quot;users&quot; item=&quot;user&quot; separator=&quot;;&quot;&gt;
+        INSERT INTO t_user (username, email, age, status)
+        VALUES (#{user.username}, #{user.email}, #{user.age}, #{user.status})
+    &lt;/foreach&gt;
+&lt;/insert&gt;
+</code></pre>
+<h4 id="两种方式的对比">两种方式的对比</h4>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>多行 VALUES（推荐）</th>
+<th>多条 INSERT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SQL 条数</td>
+<td>1 条</td>
+<td>N 条</td>
+</tr>
+<tr>
+<td>网络开销</td>
+<td>一次请求</td>
+<td>一次请求（但 SQL 文本更长）</td>
+</tr>
+<tr>
+<td>执行效率</td>
+<td>高（MySQL 引擎优化）</td>
+<td>较低</td>
+</tr>
+<tr>
+<td>SQL 长度限制</td>
+<td>受 <code>max_allowed_packet</code> 限制</td>
+<td>同样受限</td>
+</tr>
+<tr>
+<td>事务控制</td>
+<td>天然在一个事务内</td>
+<td>需要手动管理事务</td>
+</tr>
+<tr>
+<td>数据库兼容性</td>
+<td>MySQL、PostgreSQL 等支持</td>
+<td>大多数数据库支持</td>
+</tr>
+</tbody>
+</table>
+<h4 id="批量插入的性能优化策略">批量插入的性能优化策略</h4>
+<p><strong>1. 控制单次批量大小</strong></p>
+<p>MySQL 的 <code>max_allowed_packet</code> 默认为 4MB（可配置），当数据量很大时，一次性拼接所有 VALUES 会导致 SQL 过长。推荐在业务层分批：</p>
+<pre><code class="language-java">public void batchInsertUsers(List&lt;User&gt; users) {
+    int batchSize = 500;
+    List&lt;List&lt;User&gt;&gt; partitions = Lists.partition(users, batchSize);
+    for (List&lt;User&gt; batch : partitions) {
+        userMapper.batchInsert(batch);
+    }
+}
+</code></pre>
+<blockquote>
+<p><code>Lists.partition()</code> 来自 Guava，也可以手动分片。</p>
+</blockquote>
+<p><strong>2. 使用 BATCH 模式的 Executor</strong></p>
+<p>对于超大批量（万级以上），可以使用 MyBatis 的 <code>BATCH</code> 执行器，复用 PreparedStatement：</p>
+<pre><code class="language-java">try (SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
+    UserMapper mapper = session.getMapper(UserMapper.class);
+    for (int i = 0; i &lt; users.size(); i++) {
+        mapper.insertOne(users.get(i));
+        if ((i + 1) % 500 == 0) {
+            session.flushStatements();
+        }
+    }
+    session.flushStatements();
+    session.commit();
+}
+</code></pre>
+<p><strong>3. 性能建议总结</strong></p>
+<table>
+<thead>
+<tr>
+<th>数据量</th>
+<th>推荐方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; 100 条</td>
+<td>多行 VALUES，一次搞定</td>
+</tr>
+<tr>
+<td>100 ~ 5000 条</td>
+<td>多行 VALUES，按 500 条分批</td>
+</tr>
+<tr>
+<td>&gt; 5000 条</td>
+<td>BATCH Executor + 分批 flush</td>
+</tr>
+<tr>
+<td>&gt; 10 万条</td>
+<td>考虑 LOAD DATA INFILE 或数据库原生导入工具</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="47-bind--创建-ognl-变量">4.7 <code>&lt;bind&gt;</code> —— 创建 OGNL 变量</h2>
+<p><code>&lt;bind&gt;</code> 标签允许你在 OGNL 上下文中创建一个变量，然后在后续 SQL 中引用。最典型的场景是<strong>模糊查询</strong>。</p>
+<h3 id="问题场景-1">问题场景</h3>
+<p>模糊查询需要在参数两边拼接 <code>%</code>，常见的做法是用数据库函数 <code>CONCAT</code>：</p>
+<pre><code class="language-xml">&lt;!-- 使用 CONCAT 的写法 --&gt;
+&lt;select id=&quot;findByUsername&quot; resultType=&quot;User&quot;&gt;
+    SELECT * FROM t_user
+    WHERE username LIKE CONCAT('%', #{username}, '%')
+&lt;/select&gt;
+</code></pre>
+<p>这种写法有两个小问题：</p>
+<ol>
+<li><code>CONCAT</code> 是 MySQL 函数，换数据库可能不兼容（Oracle 用 <code>||</code>，SQL Server 用 <code>+</code>）</li>
+<li>如果多处使用，每处都要写 <code>CONCAT</code></li>
+</ol>
+<h3 id="使用-bind-的写法">使用 <code>&lt;bind&gt;</code> 的写法</h3>
+<p><strong>Mapper 接口：</strong></p>
+<pre><code class="language-java">public interface UserMapper {
+    List&lt;User&gt; findByUsernameLike(@Param(&quot;username&quot;) String username);
+}
+</code></pre>
+<p><strong>XML 映射：</strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;findByUsernameLike&quot; resultType=&quot;User&quot;&gt;
+    &lt;bind name=&quot;usernamePattern&quot; value=&quot;'%' + username + '%'&quot; /&gt;
+    SELECT id, username, email, age, status
+    FROM t_user
+    WHERE username LIKE #{usernamePattern}
+&lt;/select&gt;
+</code></pre>
+<h3 id="bind-的属性"><code>&lt;bind&gt;</code> 的属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>新创建的变量名，后续可通过 <code>#{}</code> 或 <code>${}</code> 引用</td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>OGNL 表达式，用于计算变量的值</td>
+</tr>
+</tbody>
+</table>
+<h3 id="多个-bind-变量">多个 bind 变量</h3>
+<pre><code class="language-xml">&lt;select id=&quot;searchByKeyword&quot; resultType=&quot;User&quot;&gt;
+    &lt;bind name=&quot;usernamePattern&quot; value=&quot;'%' + keyword + '%'&quot; /&gt;
+    &lt;bind name=&quot;emailPattern&quot; value=&quot;'%' + keyword + '%'&quot; /&gt;
+    SELECT id, username, email, age, status
+    FROM t_user
+    &lt;where&gt;
+        &lt;if test=&quot;keyword != null and keyword != ''&quot;&gt;
+            username LIKE #{usernamePattern}
+            OR email LIKE #{emailPattern}
+        &lt;/if&gt;
+    &lt;/where&gt;
+&lt;/select&gt;
+</code></pre>
+<h3 id="两种方式对比">两种方式对比</h3>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONCAT('%', #{param}, '%')</code></td>
+<td>直观易懂</td>
+<td>依赖数据库函数，不同数据库语法不同</td>
+</tr>
+<tr>
+<td><code>&lt;bind&gt;</code></td>
+<td>数据库无关，可复用变量</td>
+<td>需要额外一行声明</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>选择建议：</strong> 如果项目只使用 MySQL 且查询较简单，用 <code>CONCAT</code> 更直观；如果需要兼容多种数据库或同一参数多处使用，用 <code>&lt;bind&gt;</code> 更优雅。</p>
+</blockquote>
+<hr />
+<h2 id="48-动态-sql-实战通用条件查询模板">4.8 动态 SQL 实战：通用条件查询模板</h2>
+<p>下面给出一个综合使用多种动态 SQL 标签的实战示例——一个通用的用户搜索功能。</p>
+<h3 id="业务场景">业务场景</h3>
+<p>后台管理系统的用户查询页面，支持以下搜索条件：</p>
+<ul>
+<li>用户名（模糊匹配）</li>
+<li>邮箱（精确匹配）</li>
+<li>年龄范围（最小/最大）</li>
+<li>状态（精确匹配）</li>
+<li>部门（多选，IN 查询）</li>
+<li>创建时间范围</li>
+<li>排序字段和排序方向</li>
+</ul>
+<h3 id="查询条件对象">查询条件对象</h3>
+<pre><code class="language-java">public class UserQuery {
+    private String username;
+    private String email;
+    private Integer minAge;
+    private Integer maxAge;
+    private Integer status;
+    private List&lt;String&gt; departments;
+    private LocalDateTime createTimeStart;
+    private LocalDateTime createTimeEnd;
+    private String orderBy;      // 排序字段：username / create_time / age
+    private String orderDir;     // 排序方向：ASC / DESC
+    // getter/setter 省略
+}
+</code></pre>
+<h3 id="mapper-接口-4">Mapper 接口</h3>
+<pre><code class="language-java">public interface UserMapper {
+    List&lt;User&gt; searchByQuery(@Param(&quot;query&quot;) UserQuery query);
+}
+</code></pre>
+<h3 id="xml-映射完整模板">XML 映射——完整模板</h3>
+<pre><code class="language-xml">&lt;select id=&quot;searchByQuery&quot; resultType=&quot;User&quot;&gt;
+    &lt;!-- 使用 bind 预处理模糊查询参数 --&gt;
+    &lt;if test=&quot;query.username != null and query.username != ''&quot;&gt;
+        &lt;bind name=&quot;usernamePattern&quot; value=&quot;'%' + query.username + '%'&quot; /&gt;
+    &lt;/if&gt;
+
+    SELECT id, username, email, age, status, department, create_time, update_time
+    FROM t_user
+
+    &lt;!-- 使用 where 标签自动管理 WHERE 关键字和多余的 AND --&gt;
+    &lt;where&gt;
+        &lt;!-- 模糊查询：使用 bind 创建的变量 --&gt;
+        &lt;if test=&quot;query.username != null and query.username != ''&quot;&gt;
+            AND username LIKE #{usernamePattern}
+        &lt;/if&gt;
+
+        &lt;!-- 精确匹配 --&gt;
+        &lt;if test=&quot;query.email != null and query.email != ''&quot;&gt;
+            AND email = #{query.email}
+        &lt;/if&gt;
+
+        &lt;!-- 范围查询 --&gt;
+        &lt;if test=&quot;query.minAge != null&quot;&gt;
+            AND age &amp;gt;= #{query.minAge}
+        &lt;/if&gt;
+        &lt;if test=&quot;query.maxAge != null&quot;&gt;
+            AND age &amp;lt;= #{query.maxAge}
+        &lt;/if&gt;
+
+        &lt;!-- 精确匹配 --&gt;
+        &lt;if test=&quot;query.status != null&quot;&gt;
+            AND status = #{query.status}
+        &lt;/if&gt;
+
+        &lt;!-- IN 查询：使用 foreach 遍历部门列表 --&gt;
+        &lt;if test=&quot;query.departments != null and query.departments.size() &gt; 0&quot;&gt;
+            AND department IN
+            &lt;foreach collection=&quot;query.departments&quot; item=&quot;dept&quot; open=&quot;(&quot; close=&quot;)&quot; separator=&quot;,&quot;&gt;
+                #{dept}
+            &lt;/foreach&gt;
+        &lt;/if&gt;
+
+        &lt;!-- 时间范围 --&gt;
+        &lt;if test=&quot;query.createTimeStart != null&quot;&gt;
+            AND create_time &amp;gt;= #{query.createTimeStart}
+        &lt;/if&gt;
+        &lt;if test=&quot;query.createTimeEnd != null&quot;&gt;
+            AND create_time &amp;lt;= #{query.createTimeEnd}
+        &lt;/if&gt;
+    &lt;/where&gt;
+
+    &lt;!-- 排序：使用 choose 设置默认排序 --&gt;
+    &lt;choose&gt;
+        &lt;when test=&quot;query.orderBy != null and query.orderBy != ''&quot;&gt;
+            ORDER BY ${query.orderBy}
+            &lt;choose&gt;
+                &lt;when test=&quot;query.orderDir != null and query.orderDir == 'ASC'&quot;&gt;ASC&lt;/when&gt;
+                &lt;otherwise&gt;DESC&lt;/otherwise&gt;
+            &lt;/choose&gt;
+        &lt;/when&gt;
+        &lt;otherwise&gt;
+            ORDER BY create_time DESC
+        &lt;/otherwise&gt;
+    &lt;/choose&gt;
+&lt;/select&gt;
+</code></pre>
+<h3 id="sql-片段复用优化">SQL 片段复用优化</h3>
+<p>如果多个查询都使用类似的条件，可以用 <code>&lt;sql&gt;</code> + <code>&lt;include&gt;</code> 抽取公共片段：</p>
+<pre><code class="language-xml">&lt;sql id=&quot;userQueryCondition&quot;&gt;
+    &lt;if test=&quot;query.username != null and query.username != ''&quot;&gt;
+        &lt;bind name=&quot;usernamePattern&quot; value=&quot;'%' + query.username + '%'&quot; /&gt;
+        AND username LIKE #{usernamePattern}
+    &lt;/if&gt;
+    &lt;if test=&quot;query.email != null and query.email != ''&quot;&gt;
+        AND email = #{query.email}
+    &lt;/if&gt;
+    &lt;if test=&quot;query.status != null&quot;&gt;
+        AND status = #{query.status}
+    &lt;/if&gt;
+    &lt;if test=&quot;query.departments != null and query.departments.size() &gt; 0&quot;&gt;
+        AND department IN
+        &lt;foreach collection=&quot;query.departments&quot; item=&quot;dept&quot; open=&quot;(&quot; close=&quot;)&quot; separator=&quot;,&quot;&gt;
+            #{dept}
+        &lt;/foreach&gt;
+    &lt;/if&gt;
+&lt;/sql&gt;
+
+&lt;!-- 查询列表 --&gt;
+&lt;select id=&quot;searchByQuery&quot; resultType=&quot;User&quot;&gt;
+    SELECT id, username, email, age, status, department, create_time, update_time
+    FROM t_user
+    &lt;where&gt;
+        &lt;include refid=&quot;userQueryCondition&quot; /&gt;
+    &lt;/where&gt;
+    ORDER BY create_time DESC
+&lt;/select&gt;
+
+&lt;!-- 统计总数 --&gt;
+&lt;select id=&quot;countByQuery&quot; resultType=&quot;int&quot;&gt;
+    SELECT COUNT(*)
+    FROM t_user
+    &lt;where&gt;
+        &lt;include refid=&quot;userQueryCondition&quot; /&gt;
+    &lt;/where&gt;
+&lt;/select&gt;
+</code></pre>
+<h3 id="安全注意事项">安全注意事项</h3>
+<p>上面排序字段使用了 <code>${query.orderBy}</code>（字符串拼接），存在 SQL 注入风险。生产环境中必须做白名单校验：</p>
+<pre><code class="language-java">private static final Set&lt;String&gt; ALLOWED_ORDER_COLUMNS =
+    Set.of(&quot;username&quot;, &quot;create_time&quot;, &quot;age&quot;, &quot;status&quot;);
+
+public List&lt;User&gt; searchUsers(UserQuery query) {
+    if (query.getOrderBy() != null
+        &amp;&amp; !ALLOWED_ORDER_COLUMNS.contains(query.getOrderBy())) {
+        throw new IllegalArgumentException(&quot;非法排序字段: &quot; + query.getOrderBy());
+    }
+    return userMapper.searchByQuery(query);
+}
+</code></pre>
+<h3 id="调用示例">调用示例</h3>
+<pre><code class="language-java">UserQuery query = new UserQuery();
+query.setUsername(&quot;张&quot;);
+query.setMinAge(20);
+query.setMaxAge(35);
+query.setDepartments(Arrays.asList(&quot;技术部&quot;, &quot;产品部&quot;));
+query.setOrderBy(&quot;create_time&quot;);
+query.setOrderDir(&quot;DESC&quot;);
+
+List&lt;User&gt; users = userMapper.searchByQuery(query);
+</code></pre>
+<p><strong>生成的 SQL：</strong></p>
+<pre><code class="language-sql">SELECT id, username, email, age, status, department, create_time, update_time
+FROM t_user
+WHERE username LIKE '%张%'
+  AND age &gt;= 20
+  AND age &lt;= 35
+  AND department IN ('技术部', '产品部')
+ORDER BY create_time DESC
+</code></pre>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th>作用</th>
+<th>典型场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;if&gt;</code></td>
+<td>条件判断</td>
+<td>动态过滤条件</td>
+</tr>
+<tr>
+<td><code>&lt;choose&gt;</code>/<code>&lt;when&gt;</code>/<code>&lt;otherwise&gt;</code></td>
+<td>多分支选择（互斥）</td>
+<td>按优先级查询</td>
+</tr>
+<tr>
+<td><code>&lt;where&gt;</code></td>
+<td>智能 WHERE 拼接</td>
+<td>替代 WHERE 1=1</td>
+</tr>
+<tr>
+<td><code>&lt;set&gt;</code></td>
+<td>智能 SET 拼接</td>
+<td>动态更新字段</td>
+</tr>
+<tr>
+<td><code>&lt;trim&gt;</code></td>
+<td>自定义前缀/后缀裁剪</td>
+<td>where/set 的底层实现，也可独立使用</td>
+</tr>
+<tr>
+<td><code>&lt;foreach&gt;</code></td>
+<td>集合遍历</td>
+<td>IN 查询、批量插入</td>
+</tr>
+<tr>
+<td><code>&lt;bind&gt;</code></td>
+<td>创建 OGNL 变量</td>
+<td>模糊查询参数预处理</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>核心原则：</strong> 动态 SQL 的目标是让 XML 中的 SQL 尽量<strong>声明式</strong>——描述&quot;要什么&quot;而不是&quot;怎么拼&quot;。善用这些标签，可以写出既安全又可维护的数据访问层代码。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

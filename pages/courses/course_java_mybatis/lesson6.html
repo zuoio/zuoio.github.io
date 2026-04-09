@@ -1,0 +1,1392 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第六章-注解开发-">第六章 注解开发 📖</h1>
+<blockquote>
+<p>简单场景可用注解，复杂 SQL 仍推荐 XML。<br />
+本章系统介绍 MyBatis 注解开发方式，帮助你在适当场景下用更少的文件完成映射配置。</p>
+</blockquote>
+<hr />
+<h2 id="61-select--insert--update--delete--基础注解">6.1 @Select / @Insert / @Update / @Delete —— 基础注解</h2>
+<p>MyBatis 允许直接在 Mapper 接口方法上用注解编写 SQL，省去 XML 文件。四个基础注解分别对应 CRUD 操作。</p>
+<h3 id="完整-crud-示例">完整 CRUD 示例</h3>
+<p>假设数据表 <code>user</code> 结构如下：</p>
+<pre><code class="language-sql">CREATE TABLE user (
+    id          BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username    VARCHAR(50)  NOT NULL,
+    email       VARCHAR(100),
+    age         INT,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+</code></pre>
+<p>对应实体类：</p>
+<pre><code class="language-java">public class User {
+    private Long id;
+    private String username;
+    private String email;
+    private Integer age;
+    private LocalDateTime createTime;
+
+    // getter / setter 省略
+}
+</code></pre>
+<p>Mapper 接口：</p>
+<pre><code class="language-java">public interface UserMapper {
+
+    // ---------- 查询 ----------
+
+    @Select(&quot;SELECT * FROM user WHERE id = #{id}&quot;)
+    User selectById(Long id);
+
+    @Select(&quot;SELECT * FROM user&quot;)
+    List&lt;User&gt; selectAll();
+
+    @Select(&quot;SELECT * FROM user WHERE username LIKE CONCAT('%', #{keyword}, '%')&quot;)
+    List&lt;User&gt; searchByUsername(String keyword);
+
+    // ---------- 插入 ----------
+
+    @Insert(&quot;INSERT INTO user(username, email, age) VALUES(#{username}, #{email}, #{age})&quot;)
+    @Options(useGeneratedKeys = true, keyProperty = &quot;id&quot;)
+    int insert(User user);
+
+    // ---------- 更新 ----------
+
+    @Update(&quot;UPDATE user SET username = #{username}, email = #{email}, age = #{age} WHERE id = #{id}&quot;)
+    int update(User user);
+
+    // ---------- 删除 ----------
+
+    @Delete(&quot;DELETE FROM user WHERE id = #{id}&quot;)
+    int deleteById(Long id);
+}
+</code></pre>
+<p><strong>要点说明：</strong></p>
+<ul>
+<li><code>@Options(useGeneratedKeys = true, keyProperty = &quot;id&quot;)</code>：插入后自动将生成的主键回填到对象的 <code>id</code> 属性，等价于 XML 中 <code>&lt;insert useGeneratedKeys=&quot;true&quot; keyProperty=&quot;id&quot;&gt;</code>。</li>
+<li>参数绑定规则与 XML 一致：单参数直接用 <code>#{参数名}</code>；多参数需配合 <code>@Param</code>。</li>
+</ul>
+<h3 id="多参数示例">多参数示例</h3>
+<pre><code class="language-java">@Select(&quot;SELECT * FROM user WHERE username = #{username} AND age = #{age}&quot;)
+User selectByNameAndAge(@Param(&quot;username&quot;) String username, @Param(&quot;age&quot;) Integer age);
+</code></pre>
+<hr />
+<h2 id="62-results--result--注解版-resultmap">6.2 @Results / @Result —— 注解版 resultMap</h2>
+<p>当数据库字段与 Java 属性名不一致，或需要做复杂映射时，使用 <code>@Results</code> + <code>@Result</code> 替代 XML 的 <code>&lt;resultMap&gt;</code>。</p>
+<h3 id="基础映射">基础映射</h3>
+<pre><code class="language-java">@Select(&quot;SELECT id, username, email, age, create_time FROM user WHERE id = #{id}&quot;)
+@Results(id = &quot;userResultMap&quot;, value = {
+    @Result(property = &quot;id&quot;,         column = &quot;id&quot;,          id = true),
+    @Result(property = &quot;username&quot;,   column = &quot;username&quot;),
+    @Result(property = &quot;email&quot;,      column = &quot;email&quot;),
+    @Result(property = &quot;age&quot;,        column = &quot;age&quot;),
+    @Result(property = &quot;createTime&quot;, column = &quot;create_time&quot;)
+})
+User selectByIdWithMapping(Long id);
+</code></pre>
+<ul>
+<li><code>id = &quot;userResultMap&quot;</code>：为这个映射命名，其他方法可通过 <code>@ResultMap(&quot;userResultMap&quot;)</code> 复用。</li>
+<li><code>id = true</code>：标记主键列，等价于 XML 中 <code>&lt;id&gt;</code>。</li>
+</ul>
+<h3 id="复用已定义的-results">复用已定义的 @Results</h3>
+<pre><code class="language-java">@Select(&quot;SELECT id, username, email, age, create_time FROM user&quot;)
+@ResultMap(&quot;userResultMap&quot;)
+List&lt;User&gt; selectAllWithMapping();
+</code></pre>
+<h3 id="映射复杂属性嵌套对象">映射复杂属性（嵌套对象）</h3>
+<p>假设 <code>User</code> 内嵌一个 <code>Address</code> 对象：</p>
+<pre><code class="language-java">public class Address {
+    private String province;
+    private String city;
+    private String street;
+    // getter / setter 省略
+}
+
+public class UserDetail {
+    private Long id;
+    private String username;
+    private Address address;
+    // getter / setter 省略
+}
+</code></pre>
+<p>数据库字段为 <code>province</code>、<code>city</code>、<code>street</code> 直接平铺在 <code>user_detail</code> 表中时，可以这样映射：</p>
+<pre><code class="language-java">@Select(&quot;SELECT id, username, province, city, street FROM user_detail WHERE id = #{id}&quot;)
+@Results({
+    @Result(property = &quot;id&quot;,               column = &quot;id&quot;, id = true),
+    @Result(property = &quot;username&quot;,         column = &quot;username&quot;),
+    @Result(property = &quot;address.province&quot;, column = &quot;province&quot;),
+    @Result(property = &quot;address.city&quot;,     column = &quot;city&quot;),
+    @Result(property = &quot;address.street&quot;,   column = &quot;street&quot;)
+})
+UserDetail selectUserDetail(Long id);
+</code></pre>
+<blockquote>
+<p><strong>提示：</strong> <code>property = &quot;address.province&quot;</code> 利用了 MyBatis 对嵌套属性的自动赋值能力（需要 <code>Address</code> 有无参构造器）。</p>
+</blockquote>
+<hr />
+<h2 id="63-one--many--注解版关联查询">6.3 @One / @Many —— 注解版关联查询</h2>
+<p><code>@One</code> 和 <code>@Many</code> 分别对应 XML 中 <code>&lt;association&gt;</code> 和 <code>&lt;collection&gt;</code> 的嵌套查询（Nested Select）方式。</p>
+<h3 id="实体类准备">实体类准备</h3>
+<pre><code class="language-java">public class Department {
+    private Long id;
+    private String deptName;
+    private List&lt;Employee&gt; employees;  // 一对多
+    // getter / setter 省略
+}
+
+public class Employee {
+    private Long id;
+    private String empName;
+    private Long deptId;
+    private Department department;     // 一对一（多对一）
+    // getter / setter 省略
+}
+</code></pre>
+<h3 id="one--一对一多对一">@One —— 一对一（多对一）</h3>
+<p>查询员工时，关联查出其所属部门：</p>
+<pre><code class="language-java">public interface EmployeeMapper {
+
+    @Select(&quot;SELECT id, emp_name, dept_id FROM employee WHERE id = #{id}&quot;)
+    @Results({
+        @Result(property = &quot;id&quot;,      column = &quot;id&quot;, id = true),
+        @Result(property = &quot;empName&quot;, column = &quot;emp_name&quot;),
+        @Result(property = &quot;deptId&quot;,  column = &quot;dept_id&quot;),
+        @Result(property = &quot;department&quot;, column = &quot;dept_id&quot;,
+                one = @One(select = &quot;com.example.mapper.DepartmentMapper.selectById&quot;,
+                           fetchType = FetchType.LAZY))
+    })
+    Employee selectWithDepartment(Long id);
+}
+</code></pre>
+<pre><code class="language-java">public interface DepartmentMapper {
+
+    @Select(&quot;SELECT id, dept_name FROM department WHERE id = #{id}&quot;)
+    @Results({
+        @Result(property = &quot;id&quot;,       column = &quot;id&quot;, id = true),
+        @Result(property = &quot;deptName&quot;, column = &quot;dept_name&quot;)
+    })
+    Department selectById(Long id);
+}
+</code></pre>
+<p><strong>说明：</strong></p>
+<ul>
+<li><code>column = &quot;dept_id&quot;</code>：将当前结果集中 <code>dept_id</code> 的值作为参数传给关联查询。</li>
+<li><code>one = @One(select = &quot;...&quot;)</code>：指定关联查询的完整方法路径（namespace + 方法名）。</li>
+<li><code>fetchType = FetchType.LAZY</code>：启用懒加载，只在真正访问 <code>department</code> 属性时才执行子查询。可选值还有 <code>FetchType.EAGER</code>（立即加载）和 <code>FetchType.DEFAULT</code>（跟随全局配置）。</li>
+</ul>
+<h3 id="many--一对多">@Many —— 一对多</h3>
+<p>查询部门时，关联查出该部门下所有员工：</p>
+<pre><code class="language-java">public interface DepartmentMapper {
+
+    @Select(&quot;SELECT id, dept_name FROM department WHERE id = #{id}&quot;)
+    @Results({
+        @Result(property = &quot;id&quot;,       column = &quot;id&quot;, id = true),
+        @Result(property = &quot;deptName&quot;, column = &quot;dept_name&quot;),
+        @Result(property = &quot;employees&quot;, column = &quot;id&quot;,
+                many = @Many(select = &quot;com.example.mapper.EmployeeMapper.selectByDeptId&quot;,
+                             fetchType = FetchType.LAZY))
+    })
+    Department selectWithEmployees(Long id);
+}
+</code></pre>
+<pre><code class="language-java">public interface EmployeeMapper {
+
+    @Select(&quot;SELECT id, emp_name, dept_id FROM employee WHERE dept_id = #{deptId}&quot;)
+    @Results({
+        @Result(property = &quot;id&quot;,      column = &quot;id&quot;, id = true),
+        @Result(property = &quot;empName&quot;, column = &quot;emp_name&quot;),
+        @Result(property = &quot;deptId&quot;,  column = &quot;dept_id&quot;)
+    })
+    List&lt;Employee&gt; selectByDeptId(Long deptId);
+}
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong> <code>@One</code> / <code>@Many</code> 只支持嵌套查询方式（分步查询），不支持嵌套结果映射（JOIN 映射）。如果需要 JOIN 映射复杂结果，建议使用 XML 的 <code>&lt;resultMap&gt;</code> + <code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code>。</p>
+</blockquote>
+<hr />
+<h2 id="64-selectprovider--insertprovider-等--动态-sql-provider">6.4 @SelectProvider / @InsertProvider 等 —— 动态 SQL Provider</h2>
+<p>当 SQL 需要动态拼接但又不想写 XML 时，可以用 Provider 注解将 SQL 构建逻辑委托给一个 Java 方法。</p>
+<p>四个 Provider 注解：</p>
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>对应操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@SelectProvider</code></td>
+<td>查询</td>
+</tr>
+<tr>
+<td><code>@InsertProvider</code></td>
+<td>插入</td>
+</tr>
+<tr>
+<td><code>@UpdateProvider</code></td>
+<td>更新</td>
+</tr>
+<tr>
+<td><code>@DeleteProvider</code></td>
+<td>删除</td>
+</tr>
+</tbody>
+</table>
+<h3 id="使用-sql-构建器new-sql">使用 SQL 构建器（<code>new SQL()</code>）</h3>
+<p>MyBatis 内置了 <code>org.apache.ibatis.jdbc.SQL</code> 构建器，提供链式 API 来生成 SQL 字符串。</p>
+<h4 id="provider-类">Provider 类</h4>
+<pre><code class="language-java">import org.apache.ibatis.jdbc.SQL;
+
+public class UserSqlProvider {
+
+    /**
+     * 根据条件动态构建查询 SQL
+     */
+    public String selectByCondition(final User condition) {
+        return new SQL() {{
+            SELECT(&quot;id, username, email, age, create_time&quot;);
+            FROM(&quot;user&quot;);
+
+            if (condition.getUsername() != null) {
+                WHERE(&quot;username LIKE CONCAT('%', #{username}, '%')&quot;);
+            }
+            if (condition.getEmail() != null) {
+                WHERE(&quot;email = #{email}&quot;);
+            }
+            if (condition.getAge() != null) {
+                WHERE(&quot;age = #{age}&quot;);
+            }
+
+            ORDER_BY(&quot;id DESC&quot;);
+        }}.toString();
+    }
+
+    /**
+     * 动态插入：只插入非空字段
+     */
+    public String insertSelective(final User user) {
+        return new SQL() {{
+            INSERT_INTO(&quot;user&quot;);
+
+            if (user.getUsername() != null) {
+                VALUES(&quot;username&quot;, &quot;#{username}&quot;);
+            }
+            if (user.getEmail() != null) {
+                VALUES(&quot;email&quot;, &quot;#{email}&quot;);
+            }
+            if (user.getAge() != null) {
+                VALUES(&quot;age&quot;, &quot;#{age}&quot;);
+            }
+        }}.toString();
+    }
+
+    /**
+     * 动态更新：只更新非空字段
+     */
+    public String updateSelective(final User user) {
+        return new SQL() {{
+            UPDATE(&quot;user&quot;);
+
+            if (user.getUsername() != null) {
+                SET(&quot;username = #{username}&quot;);
+            }
+            if (user.getEmail() != null) {
+                SET(&quot;email = #{email}&quot;);
+            }
+            if (user.getAge() != null) {
+                SET(&quot;age = #{age}&quot;);
+            }
+
+            WHERE(&quot;id = #{id}&quot;);
+        }}.toString();
+    }
+
+    /**
+     * 根据 ID 删除
+     */
+    public String deleteById(final Long id) {
+        return new SQL() {{
+            DELETE_FROM(&quot;user&quot;);
+            WHERE(&quot;id = #{id}&quot;);
+        }}.toString();
+    }
+}
+</code></pre>
+<h4 id="mapper-接口">Mapper 接口</h4>
+<pre><code class="language-java">public interface UserMapper {
+
+    @SelectProvider(type = UserSqlProvider.class, method = &quot;selectByCondition&quot;)
+    List&lt;User&gt; selectByCondition(User condition);
+
+    @InsertProvider(type = UserSqlProvider.class, method = &quot;insertSelective&quot;)
+    @Options(useGeneratedKeys = true, keyProperty = &quot;id&quot;)
+    int insertSelective(User user);
+
+    @UpdateProvider(type = UserSqlProvider.class, method = &quot;updateSelective&quot;)
+    int updateSelective(User user);
+
+    @DeleteProvider(type = UserSqlProvider.class, method = &quot;deleteById&quot;)
+    int deleteById(Long id);
+}
+</code></pre>
+<h3 id="sql-构建器常用方法速查">SQL 构建器常用方法速查</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SELECT(String...)</code></td>
+<td>添加 SELECT 列</td>
+</tr>
+<tr>
+<td><code>FROM(String...)</code></td>
+<td>添加 FROM 表</td>
+</tr>
+<tr>
+<td><code>WHERE(String...)</code></td>
+<td>添加 WHERE 条件（多个自动用 AND 连接）</td>
+</tr>
+<tr>
+<td><code>OR()</code></td>
+<td>在 WHERE 条件之间插入 OR</td>
+</tr>
+<tr>
+<td><code>SET(String...)</code></td>
+<td>添加 SET 子句</td>
+</tr>
+<tr>
+<td><code>INSERT_INTO(String)</code></td>
+<td>指定插入表名</td>
+</tr>
+<tr>
+<td><code>VALUES(String, String)</code></td>
+<td>添加 VALUES 列和值</td>
+</tr>
+<tr>
+<td><code>DELETE_FROM(String)</code></td>
+<td>指定删除表名</td>
+</tr>
+<tr>
+<td><code>JOIN(String...)</code></td>
+<td>INNER JOIN</td>
+</tr>
+<tr>
+<td><code>LEFT_OUTER_JOIN(String...)</code></td>
+<td>LEFT JOIN</td>
+</tr>
+<tr>
+<td><code>RIGHT_OUTER_JOIN(String...)</code></td>
+<td>RIGHT JOIN</td>
+</tr>
+<tr>
+<td><code>GROUP_BY(String...)</code></td>
+<td>GROUP BY</td>
+</tr>
+<tr>
+<td><code>HAVING(String...)</code></td>
+<td>HAVING</td>
+</tr>
+<tr>
+<td><code>ORDER_BY(String...)</code></td>
+<td>ORDER BY</td>
+</tr>
+<tr>
+<td><code>LIMIT(int)</code></td>
+<td>LIMIT（MyBatis 3.5.2+）</td>
+</tr>
+<tr>
+<td><code>OFFSET(int)</code></td>
+<td>OFFSET（MyBatis 3.5.2+）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="带-param-的多参数场景">带 @Param 的多参数场景</h3>
+<p>当 Mapper 方法有多个 <code>@Param</code> 参数时，Provider 方法可以接收一个 <code>Map</code>：</p>
+<pre><code class="language-java">// Mapper 接口
+@SelectProvider(type = UserSqlProvider.class, method = &quot;selectByNameAndAge&quot;)
+List&lt;User&gt; selectByNameAndAge(@Param(&quot;username&quot;) String username, @Param(&quot;age&quot;) Integer age);
+</code></pre>
+<pre><code class="language-java">// Provider 方法 —— 参数以 Map 形式接收
+public String selectByNameAndAge(Map&lt;String, Object&gt; params) {
+    return new SQL() {{
+        SELECT(&quot;*&quot;);
+        FROM(&quot;user&quot;);
+        if (params.get(&quot;username&quot;) != null) {
+            WHERE(&quot;username = #{username}&quot;);
+        }
+        if (params.get(&quot;age&quot;) != null) {
+            WHERE(&quot;age = #{age}&quot;);
+        }
+    }}.toString();
+}
+</code></pre>
+<hr />
+<h2 id="65-注解-vs-xml-的适用场景对比">6.5 注解 vs XML 的适用场景对比</h2>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>注解方式</th>
+<th>XML 方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>代码位置</strong></td>
+<td>SQL 写在 Java 接口中，接口即文档</td>
+<td>SQL 写在独立 XML 文件中，Java 与 SQL 分离</td>
+</tr>
+<tr>
+<td><strong>可读性</strong></td>
+<td>简单 SQL 直观；复杂 SQL 因字符串拼接变得混乱</td>
+<td>标签结构化，复杂 SQL 可读性更好</td>
+</tr>
+<tr>
+<td><strong>动态 SQL</strong></td>
+<td>需借助 Provider + <code>SQL</code> 构建器，灵活度有限</td>
+<td><code>&lt;if&gt;</code> / <code>&lt;choose&gt;</code> / <code>&lt;foreach&gt;</code> 等标签，表达力强</td>
+</tr>
+<tr>
+<td><strong>结果映射</strong></td>
+<td><code>@Results</code> 只支持嵌套查询，不支持嵌套结果映射</td>
+<td><code>&lt;resultMap&gt;</code> 支持全部映射方式</td>
+</tr>
+<tr>
+<td><strong>复用性</strong></td>
+<td><code>@ResultMap</code> 可引用已命名映射，但不如 XML 灵活</td>
+<td><code>&lt;sql&gt;</code> + <code>&lt;include&gt;</code> 可复用 SQL 片段</td>
+</tr>
+<tr>
+<td><strong>重构友好</strong></td>
+<td>IDE 可直接跳转到方法，重命名同步</td>
+<td>需手动同步 XML namespace 与方法名</td>
+</tr>
+<tr>
+<td><strong>维护成本</strong></td>
+<td>修改 SQL 需重新编译 Java 文件</td>
+<td>修改 XML 后某些场景可热加载</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>单表 CRUD、简单查询、原型快速开发</td>
+<td>多表 JOIN、动态 SQL 复杂、需要精细 resultMap</td>
+</tr>
+<tr>
+<td><strong>团队协作</strong></td>
+<td>适合小型项目、微服务中的简单模块</td>
+<td>适合中大型项目、SQL 审查需求高的团队</td>
+</tr>
+</tbody>
+</table>
+<h3 id="选型建议">选型建议</h3>
+<ul>
+<li><strong>选注解：</strong> 单表增删改查、条件简单的查询、快速原型开发、团队倾向&quot;代码即配置&quot;。</li>
+<li><strong>选 XML：</strong> 涉及多表 JOIN、复杂动态 SQL（多层嵌套条件）、需要嵌套结果映射、SQL 需要独立审查或由 DBA 维护。</li>
+<li><strong>实际项目中：</strong> 两者混合使用最为常见——简单操作用注解、复杂逻辑用 XML。</li>
+</ul>
+<hr />
+<h2 id="66-混合使用注解--xml-的最佳实践">6.6 混合使用：注解 + XML 的最佳实践</h2>
+<p>MyBatis 完全支持同一个 Mapper 接口中，部分方法用注解、部分方法用 XML 映射。两者可以共存，但同一个方法不能同时在注解和 XML 中定义。</p>
+<h3 id="配置要点">配置要点</h3>
+<p><strong>1. 确保 Mapper XML 能被扫描到</strong></p>
+<p>Spring Boot 中配置：</p>
+<pre><code class="language-yaml">mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+</code></pre>
+<p><strong>2. Mapper 接口正常注册</strong></p>
+<p>通过 <code>@MapperScan</code> 或 <code>@Mapper</code> 注解注册即可，MyBatis 会同时收集注解和 XML 中的映射信息。</p>
+<pre><code class="language-java">@MapperScan(&quot;com.example.mapper&quot;)
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+</code></pre>
+<h3 id="混合使用示例">混合使用示例</h3>
+<p>假设 <code>UserMapper</code> 中，简单的单表操作用注解，复杂的多表查询用 XML。</p>
+<p><strong>Mapper 接口：</strong></p>
+<pre><code class="language-java">public interface UserMapper {
+
+    // ===== 注解方式：简单 CRUD =====
+
+    @Select(&quot;SELECT * FROM user WHERE id = #{id}&quot;)
+    User selectById(Long id);
+
+    @Insert(&quot;INSERT INTO user(username, email, age) VALUES(#{username}, #{email}, #{age})&quot;)
+    @Options(useGeneratedKeys = true, keyProperty = &quot;id&quot;)
+    int insert(User user);
+
+    @Update(&quot;UPDATE user SET username = #{username}, email = #{email} WHERE id = #{id}&quot;)
+    int update(User user);
+
+    @Delete(&quot;DELETE FROM user WHERE id = #{id}&quot;)
+    int deleteById(Long id);
+
+    // ===== XML 方式：复杂查询（方法声明在接口中，SQL 写在 XML 文件里）=====
+
+    List&lt;User&gt; selectByCondition(UserQueryParam param);
+
+    UserDetailVO selectUserWithOrders(Long userId);
+}
+</code></pre>
+<p><strong>XML 文件（<code>mapper/UserMapper.xml</code>）：</strong></p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.example.mapper.UserMapper&quot;&gt;
+
+    &lt;!-- 复杂动态查询 --&gt;
+    &lt;select id=&quot;selectByCondition&quot; parameterType=&quot;com.example.param.UserQueryParam&quot;
+            resultType=&quot;com.example.entity.User&quot;&gt;
+        SELECT id, username, email, age, create_time
+        FROM user
+        &lt;where&gt;
+            &lt;if test=&quot;username != null and username != ''&quot;&gt;
+                AND username LIKE CONCAT('%', #{username}, '%')
+            &lt;/if&gt;
+            &lt;if test=&quot;email != null&quot;&gt;
+                AND email = #{email}
+            &lt;/if&gt;
+            &lt;if test=&quot;minAge != null&quot;&gt;
+                AND age &amp;gt;= #{minAge}
+            &lt;/if&gt;
+            &lt;if test=&quot;maxAge != null&quot;&gt;
+                AND age &amp;lt;= #{maxAge}
+            &lt;/if&gt;
+        &lt;/where&gt;
+        ORDER BY id DESC
+    &lt;/select&gt;
+
+    &lt;!-- 多表关联查询 + 嵌套结果映射 --&gt;
+    &lt;resultMap id=&quot;userWithOrdersMap&quot; type=&quot;com.example.vo.UserDetailVO&quot;&gt;
+        &lt;id property=&quot;id&quot; column=&quot;user_id&quot; /&gt;
+        &lt;result property=&quot;username&quot; column=&quot;username&quot; /&gt;
+        &lt;result property=&quot;email&quot; column=&quot;email&quot; /&gt;
+        &lt;collection property=&quot;orders&quot; ofType=&quot;com.example.vo.OrderVO&quot;&gt;
+            &lt;id property=&quot;orderId&quot; column=&quot;order_id&quot; /&gt;
+            &lt;result property=&quot;orderNo&quot; column=&quot;order_no&quot; /&gt;
+            &lt;result property=&quot;amount&quot; column=&quot;amount&quot; /&gt;
+            &lt;result property=&quot;orderTime&quot; column=&quot;order_time&quot; /&gt;
+        &lt;/collection&gt;
+    &lt;/resultMap&gt;
+
+    &lt;select id=&quot;selectUserWithOrders&quot; resultMap=&quot;userWithOrdersMap&quot;&gt;
+        SELECT
+            u.id AS user_id,
+            u.username,
+            u.email,
+            o.id AS order_id,
+            o.order_no,
+            o.amount,
+            o.order_time
+        FROM user u
+        LEFT JOIN orders o ON u.id = o.user_id
+        WHERE u.id = #{userId}
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<h3 id="混合使用的注意事项">混合使用的注意事项</h3>
+<ol>
+<li><strong>同一方法不能同时定义</strong>：如果 <code>selectById</code> 在接口上有 <code>@Select</code> 注解，XML 里就不能再有 <code>&lt;select id=&quot;selectById&quot;&gt;</code>，否则启动时会报冲突。</li>
+<li><strong>namespace 必须一致</strong>：XML 的 <code>namespace</code> 必须是 Mapper 接口的全限定类名。</li>
+<li><strong>注解中引用 XML 的 resultMap</strong>：注解方法可以通过 <code>@ResultMap(&quot;userWithOrdersMap&quot;)</code> 引用 XML 中定义的 <code>&lt;resultMap&gt;</code>，这是一种非常实用的混合技巧。</li>
+</ol>
+<pre><code class="language-java">@Select(&quot;SELECT u.id AS user_id, u.username, u.email, &quot; +
+        &quot;o.id AS order_id, o.order_no, o.amount, o.order_time &quot; +
+        &quot;FROM user u LEFT JOIN orders o ON u.id = o.user_id &quot; +
+        &quot;WHERE u.id = #{userId}&quot;)
+@ResultMap(&quot;userWithOrdersMap&quot;)  // 引用 XML 中定义的 resultMap
+UserDetailVO selectUserWithOrdersByAnnotation(Long userId);
+</code></pre>
+<ol start="4">
+<li><strong>分工原则</strong>：团队内建议约定清晰的分工标准，例如&quot;单表操作一律用注解，涉及 JOIN 或动态条件超过 3 个的用 XML&quot;，避免同一项目中风格混乱。</li>
+</ol>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>核心内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>基础注解</td>
+<td><code>@Select</code> / <code>@Insert</code> / <code>@Update</code> / <code>@Delete</code> + <code>@Options</code></td>
+</tr>
+<tr>
+<td>结果映射</td>
+<td><code>@Results</code> / <code>@Result</code> / <code>@ResultMap</code></td>
+</tr>
+<tr>
+<td>关联查询</td>
+<td><code>@One</code>（一对一）/ <code>@Many</code>（一对多），仅支持嵌套查询方式</td>
+</tr>
+<tr>
+<td>动态 SQL</td>
+<td><code>@SelectProvider</code> 等 + <code>SQL</code> 构建器，适合中等复杂度的动态 SQL</td>
+</tr>
+<tr>
+<td>选型建议</td>
+<td>简单场景用注解提升效率，复杂场景用 XML 保障可维护性</td>
+</tr>
+<tr>
+<td>混合使用</td>
+<td>同一 Mapper 接口可同时拥有注解方法和 XML 方法，灵活组合</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>下一章预告：</strong> 第七章将深入讲解 MyBatis 的缓存机制（一级缓存与二级缓存），这是性能优化的重要手段，也是常见的&quot;踩坑&quot;区域。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

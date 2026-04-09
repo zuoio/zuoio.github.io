@@ -1,0 +1,1890 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第02章-环境搭建">第02章 环境搭建</h1>
+<blockquote>
+<p>本章将手把手指导你搭建 MongoDB 的完整开发环境。我们会介绍两种主流安装方式（Windows 本地安装和 Docker 安装）、MongoDB Shell 的基本使用、可视化管理工具，以及如何在 Spring Boot 项目中集成 MongoDB。</p>
+</blockquote>
+<hr />
+<h2 id="21-mongodb-安装windows--docker-两种方式">2.1 MongoDB 安装（Windows / Docker 两种方式）</h2>
+<h3 id="211-方式一windows-本地安装">2.1.1 方式一：Windows 本地安装</h3>
+<h4 id="第一步下载-mongodb">第一步：下载 MongoDB</h4>
+<ol>
+<li>访问 MongoDB 官方下载页面：<a href="https://www.mongodb.com/try/download/community">https://www.mongodb.com/try/download/community</a></li>
+<li>选择以下选项：
+<ul>
+<li><strong>Version</strong>：选择最新的稳定版本（推荐 7.0.x 或 8.0.x）</li>
+<li><strong>Platform</strong>：Windows</li>
+<li><strong>Package</strong>：MSI（安装包）</li>
+</ul>
+</li>
+</ol>
+<h4 id="第二步运行安装程序">第二步：运行安装程序</h4>
+<ol>
+<li>双击下载的 <code>.msi</code> 文件，启动安装向导。</li>
+<li>选择 <strong>Complete</strong>（完整安装）模式。</li>
+<li><strong>Service Configuration</strong>（服务配置）页面：</li>
+</ol>
+<pre><code>☑ Install MongoDB as a Service（推荐勾选）
+  ○ Run service as Network Service user
+  ● Run service as a local or domain user:
+    Account Name: .\Administrator（或使用默认）
+
+Service Name: MongoDB
+Data Directory: C:\Program Files\MongoDB\Server\7.0\data\
+Log Directory:  C:\Program Files\MongoDB\Server\7.0\log\
+</code></pre>
+<blockquote>
+<p><strong>建议</strong>：勾选&quot;Install MongoDB as a Service&quot;可以让 MongoDB 随系统启动自动运行，省去手动启动的麻烦。</p>
+</blockquote>
+<ol start="4">
+<li>可选：勾选 <strong>Install MongoDB Compass</strong>（图形化管理工具，也可以后面单独安装）。</li>
+<li>点击 <strong>Install</strong> 完成安装。</li>
+</ol>
+<h4 id="第三步配置环境变量">第三步：配置环境变量</h4>
+<p>将 MongoDB 的 <code>bin</code> 目录添加到系统 PATH 环境变量中：</p>
+<pre><code>默认安装路径：C:\Program Files\MongoDB\Server\7.0\bin
+</code></pre>
+<p><strong>配置步骤：</strong></p>
+<ol>
+<li>右键 <strong>此电脑</strong> → <strong>属性</strong> → <strong>高级系统设置</strong> → <strong>环境变量</strong></li>
+<li>在 <strong>系统变量</strong> 中找到 <code>Path</code>，点击 <strong>编辑</strong></li>
+<li>点击 <strong>新建</strong>，添加：<code>C:\Program Files\MongoDB\Server\7.0\bin</code></li>
+<li>点击 <strong>确定</strong> 保存</li>
+</ol>
+<p>或者使用 PowerShell 快速设置：</p>
+<pre><code class="language-powershell"># 以管理员身份运行 PowerShell
+[Environment]::SetEnvironmentVariable(
+    &quot;Path&quot;,
+    $env:Path + &quot;;C:\Program Files\MongoDB\Server\7.0\bin&quot;,
+    [EnvironmentVariableTarget]::Machine
+)
+</code></pre>
+<h4 id="第四步验证安装">第四步：验证安装</h4>
+<p>打开新的命令行窗口，执行以下命令：</p>
+<pre><code class="language-bash"># 查看 MongoDB 服务端版本
+mongod --version
+
+# 输出示例：
+# db version v7.0.x
+# Build Info: ...
+</code></pre>
+<h4 id="第五步安装-mongoshmongodb-shell">第五步：安装 mongosh（MongoDB Shell）</h4>
+<p>MongoDB 7.0 开始，Shell 工具 <code>mongosh</code> 需要单独安装：</p>
+<ol>
+<li>访问：<a href="https://www.mongodb.com/try/download/shell">https://www.mongodb.com/try/download/shell</a></li>
+<li>下载 Windows 版本的 MSI 安装包</li>
+<li>运行安装程序，安装路径会自动添加到 PATH</li>
+</ol>
+<p>验证 mongosh 安装：</p>
+<pre><code class="language-bash">mongosh --version
+
+# 输出示例：
+# 2.x.x
+</code></pre>
+<h4 id="第六步windows-服务管理">第六步：Windows 服务管理</h4>
+<pre><code class="language-powershell"># 查看 MongoDB 服务状态
+Get-Service MongoDB
+
+# 启动服务
+Start-Service MongoDB
+
+# 停止服务
+Stop-Service MongoDB
+
+# 重启服务
+Restart-Service MongoDB
+
+# 也可以使用 net 命令
+net start MongoDB
+net stop MongoDB
+</code></pre>
+<hr />
+<h3 id="212-方式二docker-安装推荐开发环境使用">2.1.2 方式二：Docker 安装（推荐开发环境使用）</h3>
+<p>使用 Docker 安装 MongoDB 更加简洁，不会&quot;污染&quot;主机环境，而且可以轻松管理多个版本。</p>
+<h4 id="前提条件">前提条件</h4>
+<p>确保已安装 Docker Desktop：<a href="https://www.docker.com/products/docker-desktop">https://www.docker.com/products/docker-desktop</a></p>
+<pre><code class="language-bash"># 验证 Docker 已安装
+docker --version
+docker compose version
+</code></pre>
+<h4 id="方式-a使用-docker-run-快速启动">方式 A：使用 docker run 快速启动</h4>
+<pre><code class="language-bash"># 拉取 MongoDB 官方镜像
+docker pull mongodb/mongodb-community-server:7.0-ubi8
+
+# 快速启动（开发测试用）
+docker run -d \
+  --name mongodb \
+  -p 27017:27017 \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=admin123 \
+  -v mongodb_data:/data/db \
+  mongodb/mongodb-community-server:7.0-ubi8
+</code></pre>
+<h4 id="方式-b使用-docker-composeyml推荐">方式 B：使用 docker-compose.yml（推荐）</h4>
+<p>创建一个 <code>docker-compose.yml</code> 文件，方便管理和复用：</p>
+<pre><code class="language-yaml">version: '3.8'
+
+services:
+  mongodb:
+    image: mongodb/mongodb-community-server:7.0-ubi8
+    container_name: mongodb
+    restart: unless-stopped
+    ports:
+      - &quot;27017:27017&quot;
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: myapp
+    volumes:
+      # 数据持久化 —— 容器删除后数据不会丢失
+      - mongodb_data:/data/db
+      # 配置文件（可选）
+      - mongodb_config:/data/configdb
+      # 初始化脚本目录（可选，容器首次启动时自动执行）
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    command: [&quot;mongod&quot;, &quot;--auth&quot;]
+    healthcheck:
+      test: [&quot;CMD&quot;, &quot;mongosh&quot;, &quot;--eval&quot;, &quot;db.adminCommand('ping')&quot;, &quot;-u&quot;, &quot;admin&quot;, &quot;-p&quot;, &quot;admin123&quot;, &quot;--authenticationDatabase&quot;, &quot;admin&quot;]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+</code></pre>
+<p><strong>docker-compose.yml 配置说明：</strong></p>
+<table>
+<thead>
+<tr>
+<th>配置项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>image</code></td>
+<td>使用 MongoDB 官方社区版镜像，版本 7.0</td>
+</tr>
+<tr>
+<td><code>restart: unless-stopped</code></td>
+<td>除非手动停止，否则容器异常退出后自动重启</td>
+</tr>
+<tr>
+<td><code>ports: &quot;27017:27017&quot;</code></td>
+<td>将容器的 27017 端口映射到主机的 27017 端口</td>
+</tr>
+<tr>
+<td><code>MONGO_INITDB_ROOT_USERNAME</code></td>
+<td>root 用户名</td>
+</tr>
+<tr>
+<td><code>MONGO_INITDB_ROOT_PASSWORD</code></td>
+<td>root 密码</td>
+</tr>
+<tr>
+<td><code>MONGO_INITDB_DATABASE</code></td>
+<td>初始化时创建的默认数据库</td>
+</tr>
+<tr>
+<td><code>mongodb_data:/data/db</code></td>
+<td>数据文件持久化到 Docker 命名卷</td>
+</tr>
+<tr>
+<td><code>command: [&quot;mongod&quot;, &quot;--auth&quot;]</code></td>
+<td>启用认证模式</td>
+</tr>
+<tr>
+<td><code>healthcheck</code></td>
+<td>健康检查配置，确保服务正常运行</td>
+</tr>
+</tbody>
+</table>
+<p>（可选）创建初始化脚本 <code>mongo-init/init-user.js</code>，在容器首次启动时自动执行：</p>
+<pre><code class="language-javascript">// mongo-init/init-user.js
+// 该脚本在容器首次启动时自动执行，用于创建应用数据库和用户
+
+db = db.getSiblingDB('myapp');
+
+db.createUser({
+    user: 'app_user',
+    pwd: 'app_password',
+    roles: [
+        { role: 'readWrite', db: 'myapp' }
+    ]
+});
+
+db.createCollection('users');
+
+db.users.insertOne({
+    username: 'admin',
+    email: 'admin@example.com',
+    role: 'ADMIN',
+    createdAt: new Date()
+});
+
+print('✔ 数据库初始化完成：创建了 myapp 数据库、app_user 用户和 users 集合');
+</code></pre>
+<p><strong>启动与管理命令：</strong></p>
+<pre><code class="language-bash"># 启动（后台运行）
+docker compose up -d
+
+# 查看运行状态
+docker compose ps
+
+# 查看日志
+docker compose logs -f mongodb
+
+# 停止
+docker compose down
+
+# 停止并删除数据卷（谨慎！会清除所有数据）
+docker compose down -v
+</code></pre>
+<hr />
+<h3 id="213-验证安装成功">2.1.3 验证安装成功</h3>
+<p>无论哪种安装方式，都可以用以下方式验证 MongoDB 是否正常运行：</p>
+<p><strong>方式1：使用 mongosh 连接</strong></p>
+<pre><code class="language-bash"># 无认证连接（本地安装未开启认证时）
+mongosh
+
+# 带认证连接（Docker 方式）
+mongosh &quot;mongodb://admin:admin123@localhost:27017/admin&quot;
+
+# 或者分步认证
+mongosh --host localhost --port 27017 -u admin -p admin123 --authenticationDatabase admin
+</code></pre>
+<p><strong>方式2：连接后执行测试命令</strong></p>
+<pre><code class="language-javascript">// 连接成功后会看到类似以下提示：
+// Current Mongosh Log ID: 65f3...
+// Connecting to: mongodb://localhost:27017
+// Using MongoDB: 7.0.x
+// mongosh 2.x.x
+
+// 查看 MongoDB 版本
+db.version()
+// 输出：7.0.x
+
+// 查看服务器状态
+db.serverStatus().version
+
+// 执行简单的数据操作测试
+use test_db
+db.test_collection.insertOne({ message: &quot;Hello MongoDB!&quot;, timestamp: new Date() })
+db.test_collection.find()
+
+// 输出：
+// {
+//   _id: ObjectId('65f3...'),
+//   message: 'Hello MongoDB!',
+//   timestamp: ISODate('2024-03-15T...')
+// }
+
+// 清理测试数据
+db.test_collection.drop()
+</code></pre>
+<p>如果以上命令都执行成功，说明 MongoDB 环境已经搭建完毕。</p>
+<hr />
+<h2 id="22-mongodb-shellmongosh的基本使用">2.2 MongoDB Shell（mongosh）的基本使用</h2>
+<p>mongosh（MongoDB Shell）是 MongoDB 官方提供的交互式命令行工具，用于连接和操作 MongoDB 数据库。它基于 Node.js 运行，支持 JavaScript 语法。</p>
+<h3 id="221-连接-mongodb">2.2.1 连接 MongoDB</h3>
+<pre><code class="language-bash"># 最简单的连接方式（连接本地默认端口 27017）
+mongosh
+
+# 指定主机和端口
+mongosh --host 192.168.1.100 --port 27017
+
+# 使用连接字符串
+mongosh &quot;mongodb://localhost:27017&quot;
+
+# 带认证的连接字符串
+mongosh &quot;mongodb://username:password@localhost:27017/mydb?authSource=admin&quot;
+
+# 连接远程数据库（含副本集）
+mongosh &quot;mongodb://user:pass@host1:27017,host2:27017,host3:27017/mydb?replicaSet=rs0&quot;
+</code></pre>
+<p><strong>连接成功后的界面：</strong></p>
+<pre><code>Current Mongosh Log ID: 65f3a1b2c3d4e5f6a7b8c9d0
+Connecting to:          mongodb://127.0.0.1:27017/?directConnection=true
+Using MongoDB:          7.0.12
+Using Mongosh:          2.2.1
+
+For mongosh info see: https://docs.mongodb.com/mongodb-shell/
+
+test&gt;
+</code></pre>
+<p><code>test&gt;</code> 表示当前连接的数据库是 <code>test</code>（默认数据库）。</p>
+<h3 id="222-数据库操作命令">2.2.2 数据库操作命令</h3>
+<pre><code class="language-javascript">// ========== 数据库级别操作 ==========
+
+// 查看所有数据库（只显示有数据的数据库）
+show dbs
+// 输出：
+// admin   100.00 KiB
+// config   72.00 KiB
+// local    72.00 KiB
+// myapp     1.25 MiB
+
+// 切换到指定数据库（不存在则创建）
+use myapp
+
+// 查看当前所在数据库
+db
+// 输出：myapp
+
+// 查看当前数据库的统计信息
+db.stats()
+// 输出：
+// {
+//   db: 'myapp',
+//   collections: 3,
+//   views: 0,
+//   objects: 1520,
+//   avgObjSize: 256.5,
+//   dataSize: 389880,
+//   storageSize: 180224,
+//   indexes: 5,
+//   indexSize: 143360,
+//   totalSize: 323584,
+//   ...
+// }
+
+// 删除当前数据库（谨慎操作！）
+db.dropDatabase()
+</code></pre>
+<h3 id="223-集合操作命令">2.2.3 集合操作命令</h3>
+<pre><code class="language-javascript">// ========== 集合级别操作 ==========
+
+// 查看当前数据库的所有集合
+show collections
+// 输出：
+// users
+// orders
+// products
+
+// 创建集合（通常不需要显式创建）
+db.createCollection(&quot;logs&quot;)
+
+// 创建带选项的集合（如设置上限集合）
+db.createCollection(&quot;capped_logs&quot;, {
+    capped: true,       // 上限集合：固定大小，自动淘汰最老的文档
+    size: 10485760,     // 最大 10MB
+    max: 10000          // 最多 10000 个文档
+})
+
+// 查看集合信息
+db.users.stats()
+
+// 查看集合中的文档数量
+db.users.countDocuments()
+
+// 删除集合
+db.logs.drop()
+
+// 重命名集合
+db.users.renameCollection(&quot;members&quot;)
+</code></pre>
+<h3 id="224-基本-crud-操作演示">2.2.4 基本 CRUD 操作演示</h3>
+<pre><code class="language-javascript">// 切换到演示数据库
+use demo
+
+// ========== 插入文档 ==========
+
+// 插入单个文档
+db.users.insertOne({
+    name: &quot;张三&quot;,
+    age: 28,
+    email: &quot;zhangsan@example.com&quot;,
+    skills: [&quot;Java&quot;, &quot;Spring Boot&quot;, &quot;MongoDB&quot;],
+    address: {
+        city: &quot;北京&quot;,
+        district: &quot;朝阳区&quot;
+    },
+    createdAt: new Date()
+})
+// 输出：
+// {
+//   acknowledged: true,
+//   insertedId: ObjectId('65f3a1b2c3d4e5f6a7b8c9d0')
+// }
+
+// 插入多个文档
+db.users.insertMany([
+    {
+        name: &quot;李四&quot;,
+        age: 32,
+        email: &quot;lisi@example.com&quot;,
+        skills: [&quot;Python&quot;, &quot;Django&quot;],
+        address: { city: &quot;上海&quot;, district: &quot;浦东新区&quot; },
+        createdAt: new Date()
+    },
+    {
+        name: &quot;王五&quot;,
+        age: 25,
+        email: &quot;wangwu@example.com&quot;,
+        skills: [&quot;Java&quot;, &quot;MySQL&quot;, &quot;Redis&quot;],
+        address: { city: &quot;广州&quot;, district: &quot;天河区&quot; },
+        createdAt: new Date()
+    },
+    {
+        name: &quot;赵六&quot;,
+        age: 30,
+        email: &quot;zhaoliu@example.com&quot;,
+        skills: [&quot;Go&quot;, &quot;Docker&quot;, &quot;Kubernetes&quot;],
+        address: { city: &quot;深圳&quot;, district: &quot;南山区&quot; },
+        createdAt: new Date()
+    }
+])
+
+// ========== 查询文档 ==========
+
+// 查询所有文档
+db.users.find()
+
+// 格式化输出（更易读）
+db.users.find().pretty()
+
+// 查询单个文档
+db.users.findOne({ name: &quot;张三&quot; })
+// 输出：
+// {
+//   _id: ObjectId('65f3...'),
+//   name: '张三',
+//   age: 28,
+//   email: 'zhangsan@example.com',
+//   skills: ['Java', 'Spring Boot', 'MongoDB'],
+//   address: { city: '北京', district: '朝阳区' },
+//   createdAt: ISODate('2024-03-15T...')
+// }
+
+// 条件查询：年龄大于 28 的用户
+db.users.find({ age: { $gt: 28 } })
+
+// 嵌套字段查询：城市为北京的用户
+db.users.find({ &quot;address.city&quot;: &quot;北京&quot; })
+
+// 数组包含查询：技能包含 Java 的用户
+db.users.find({ skills: &quot;Java&quot; })
+
+// 投影：只返回 name 和 email 字段
+db.users.find({}, { name: 1, email: 1, _id: 0 })
+// 输出：
+// { name: '张三', email: 'zhangsan@example.com' }
+// { name: '王五', email: 'wangwu@example.com' }
+// ...
+
+// 排序 + 限制：按年龄降序，取前 2 条
+db.users.find().sort({ age: -1 }).limit(2)
+
+// ========== 更新文档 ==========
+
+// 更新单个文档：给张三添加一个字段
+db.users.updateOne(
+    { name: &quot;张三&quot; },
+    { $set: { phone: &quot;13800138000&quot;, updatedAt: new Date() } }
+)
+
+// 更新多个文档：所有北京用户添加标签
+db.users.updateMany(
+    { &quot;address.city&quot;: &quot;北京&quot; },
+    { $set: { region: &quot;华北&quot; } }
+)
+
+// 数组操作：给张三的技能列表追加一项
+db.users.updateOne(
+    { name: &quot;张三&quot; },
+    { $push: { skills: &quot;Docker&quot; } }
+)
+
+// 数值递增：年龄加 1
+db.users.updateOne(
+    { name: &quot;张三&quot; },
+    { $inc: { age: 1 } }
+)
+
+// ========== 删除文档 ==========
+
+// 删除单个文档
+db.users.deleteOne({ name: &quot;赵六&quot; })
+
+// 删除多个文档：删除年龄小于 26 的用户
+db.users.deleteMany({ age: { $lt: 26 } })
+
+// 删除集合中的所有文档（保留集合本身）
+db.users.deleteMany({})
+</code></pre>
+<h3 id="225-常用辅助命令">2.2.5 常用辅助命令</h3>
+<pre><code class="language-javascript">// 查看帮助
+help
+
+// 查看数据库级别帮助
+db.help()
+
+// 查看集合级别帮助
+db.users.help()
+
+// 清屏
+cls
+
+// 退出 mongosh
+exit
+// 或
+quit()
+// 或按 Ctrl + D
+
+// 执行 JavaScript 代码
+const now = new Date();
+print(&quot;当前时间：&quot; + now);
+
+// 循环批量插入测试数据
+for (let i = 1; i &lt;= 100; i++) {
+    db.test_data.insertOne({
+        index: i,
+        value: Math.random() * 100,
+        label: &quot;item_&quot; + i,
+        createdAt: new Date()
+    })
+}
+db.test_data.countDocuments()
+// 输出：100
+</code></pre>
+<hr />
+<h2 id="23-可视化工具介绍mongodb-compass--navicat">2.3 可视化工具介绍（MongoDB Compass / Navicat）</h2>
+<p>虽然 mongosh 很强大，但在日常开发中使用可视化工具会更加高效直观，特别是在浏览数据、构建查询和分析性能时。</p>
+<h3 id="231-mongodb-compass官方免费工具">2.3.1 MongoDB Compass（官方免费工具）</h3>
+<p>MongoDB Compass 是 MongoDB 官方提供的免费图形化管理工具，功能全面且易于使用。</p>
+<h4 id="下载安装">下载安装</h4>
+<ol>
+<li>下载地址：<a href="https://www.mongodb.com/try/download/compass">https://www.mongodb.com/try/download/compass</a></li>
+<li>选择 Windows 平台，下载 <code>.exe</code> 安装包</li>
+<li>运行安装程序，按默认选项安装即可</li>
+</ol>
+<h4 id="连接配置">连接配置</h4>
+<p>启动 Compass 后，在连接界面输入连接字符串：</p>
+<pre><code># 无认证连接
+mongodb://localhost:27017
+
+# 带认证连接
+mongodb://admin:admin123@localhost:27017/?authSource=admin
+
+# 也可以展开&quot;Advanced Connection Options&quot;，分别填写：
+# - Host: localhost
+# - Port: 27017
+# - Authentication: Username / Password
+# - Username: admin
+# - Password: admin123
+# - Authentication Database: admin
+</code></pre>
+<h4 id="主要功能介绍">主要功能介绍</h4>
+<table>
+<thead>
+<tr>
+<th>功能模块</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Databases</strong></td>
+<td>查看所有数据库及其大小、集合数量</td>
+</tr>
+<tr>
+<td><strong>Collections</strong></td>
+<td>浏览集合中的文档，支持列表视图、JSON 视图和表格视图</td>
+</tr>
+<tr>
+<td><strong>Documents</strong></td>
+<td>增删改查文档，支持可视化编辑</td>
+</tr>
+<tr>
+<td><strong>Aggregations</strong></td>
+<td>可视化构建聚合管道，拖拽添加阶段，实时预览每个阶段的输出</td>
+</tr>
+<tr>
+<td><strong>Schema</strong></td>
+<td>自动分析集合的 Schema 分布（字段类型和频率统计）</td>
+</tr>
+<tr>
+<td><strong>Explain Plan</strong></td>
+<td>查看查询的执行计划，分析索引使用情况</td>
+</tr>
+<tr>
+<td><strong>Indexes</strong></td>
+<td>查看、创建和管理索引</td>
+</tr>
+<tr>
+<td><strong>Validation</strong></td>
+<td>配置文档验证规则（Schema Validation）</td>
+</tr>
+<tr>
+<td><strong>Performance</strong></td>
+<td>实时监控数据库性能指标</td>
+</tr>
+</tbody>
+</table>
+<h4 id="compass-使用示例">Compass 使用示例</h4>
+<p><strong>1. 查询文档：</strong> 在查询栏输入过滤条件</p>
+<pre><code class="language-json">{ &quot;age&quot;: { &quot;$gt&quot;: 25 }, &quot;address.city&quot;: &quot;北京&quot; }
+</code></pre>
+<p><strong>2. 构建聚合管道：</strong> 通过可视化界面逐步添加阶段</p>
+<pre><code>Stage 1: $match    → { &quot;status&quot;: &quot;active&quot; }
+Stage 2: $group    → { &quot;_id&quot;: &quot;$city&quot;, &quot;count&quot;: { &quot;$sum&quot;: 1 } }
+Stage 3: $sort     → { &quot;count&quot;: -1 }
+Stage 4: $limit    → 10
+</code></pre>
+<p><strong>3. 查看执行计划：</strong> 点击 Explain Plan 按钮，可以看到：</p>
+<ul>
+<li>查询是否使用了索引（IXSCAN vs COLLSCAN）</li>
+<li>扫描了多少文档</li>
+<li>执行耗时</li>
+</ul>
+<h3 id="232-navicat-for-mongodb">2.3.2 Navicat for MongoDB</h3>
+<p>Navicat 是一款付费的跨平台数据库管理工具，支持 MongoDB、MySQL、PostgreSQL 等多种数据库。如果你的团队已经在使用 Navicat 管理 MySQL，那么用它来管理 MongoDB 可以保持工具的一致性。</p>
+<p><strong>主要特点：</strong></p>
+<ul>
+<li>统一管理多种数据库（MongoDB + MySQL + PostgreSQL 等）</li>
+<li>支持数据建模（ER 图）</li>
+<li>内置查询构建器</li>
+<li>支持数据导入/导出（JSON, CSV 等格式）</li>
+<li>支持数据同步和结构同步</li>
+</ul>
+<p><strong>连接配置：</strong></p>
+<ol>
+<li>打开 Navicat，点击 <strong>连接</strong> → <strong>MongoDB</strong></li>
+<li>填写连接信息：
+<ul>
+<li>连接名：<code>本地MongoDB</code></li>
+<li>主机：<code>localhost</code></li>
+<li>端口：<code>27017</code></li>
+</ul>
+</li>
+<li>如果开启了认证，切换到 <strong>认证</strong> 标签页：
+<ul>
+<li>认证方式：Password</li>
+<li>用户名：<code>admin</code></li>
+<li>密码：<code>admin123</code></li>
+<li>认证数据库：<code>admin</code></li>
+</ul>
+</li>
+<li>点击 <strong>测试连接</strong>，确认连接成功后点击 <strong>确定</strong></li>
+</ol>
+<h3 id="233-其他可视化工具">2.3.3 其他可视化工具</h3>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>类型</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MongoDB Compass</strong></td>
+<td>官方免费</td>
+<td>功能全面，聚合管道可视化，Schema 分析</td>
+</tr>
+<tr>
+<td><strong>Navicat</strong></td>
+<td>商业付费</td>
+<td>多数据库统一管理，数据建模</td>
+</tr>
+<tr>
+<td><strong>Studio 3T</strong></td>
+<td>商业付费（有免费版）</td>
+<td>IntelliShell 智能提示，SQL 转 MQL，数据比较</td>
+</tr>
+<tr>
+<td><strong>NoSQLBooster</strong></td>
+<td>商业付费（有免费版）</td>
+<td>类 IDE 体验，代码补全，内置 AI 查询助手</td>
+</tr>
+<tr>
+<td><strong>DataGrip</strong></td>
+<td>JetBrains 付费</td>
+<td>JetBrains 生态，适合 IDEA 用户，多数据库</td>
+</tr>
+<tr>
+<td><strong>VS Code 插件</strong></td>
+<td>免费</td>
+<td>MongoDB for VS Code 插件，轻量级操作</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>推荐</strong>：初学阶段使用 <strong>MongoDB Compass</strong>（免费、官方、功能强大）；如果你是 JetBrains 用户且已有订阅，<strong>DataGrip</strong> 也是不错的选择。</p>
+</blockquote>
+<hr />
+<h2 id="24-spring-boot-项目初始化与依赖配置">2.4 Spring Boot 项目初始化与依赖配置</h2>
+<p>作为 Java 开发者，我们最终会在 Spring Boot 中操作 MongoDB。本节将引导你从零搭建一个 Spring Boot + MongoDB 的项目骨架。</p>
+<h3 id="241-使用-spring-initializr-创建项目">2.4.1 使用 Spring Initializr 创建项目</h3>
+<p>访问 <a href="https://start.spring.io">https://start.spring.io</a>，配置以下选项：</p>
+<table>
+<thead>
+<tr>
+<th>配置项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Project</strong></td>
+<td>Maven</td>
+</tr>
+<tr>
+<td><strong>Language</strong></td>
+<td>Java</td>
+</tr>
+<tr>
+<td><strong>Spring Boot</strong></td>
+<td>3.3.x（选择最新稳定版）</td>
+</tr>
+<tr>
+<td><strong>Group</strong></td>
+<td>com.example</td>
+</tr>
+<tr>
+<td><strong>Artifact</strong></td>
+<td>mongodb-demo</td>
+</tr>
+<tr>
+<td><strong>Name</strong></td>
+<td>mongodb-demo</td>
+</tr>
+<tr>
+<td><strong>Package name</strong></td>
+<td>com.example.mongodbdemo</td>
+</tr>
+<tr>
+<td><strong>Packaging</strong></td>
+<td>Jar</td>
+</tr>
+<tr>
+<td><strong>Java</strong></td>
+<td>17（或 21）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>添加依赖（Dependencies）：</strong></p>
+<ul>
+<li><strong>Spring Data MongoDB</strong> —— MongoDB 数据访问</li>
+<li><strong>Spring Web</strong> —— Web 支持（可选，后续章节会用到）</li>
+<li><strong>Lombok</strong> —— 简化实体类代码（可选但推荐）</li>
+</ul>
+<p>点击 <strong>Generate</strong> 下载项目压缩包，解压后用 IntelliJ IDEA 打开。</p>
+<h3 id="242-pomxml-依赖配置">2.4.2 pom.xml 依赖配置</h3>
+<p>如果你选择手动配置，以下是关键的依赖片段：</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;3.3.5&lt;/version&gt;
+        &lt;relativePath/&gt;
+    &lt;/parent&gt;
+
+    &lt;groupId&gt;com.example&lt;/groupId&gt;
+    &lt;artifactId&gt;mongodb-demo&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;name&gt;mongodb-demo&lt;/name&gt;
+    &lt;description&gt;Spring Boot + MongoDB 实战演示项目&lt;/description&gt;
+
+    &lt;properties&gt;
+        &lt;java.version&gt;17&lt;/java.version&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;!-- Spring Data MongoDB：核心依赖 --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-data-mongodb&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- Spring Web：提供 REST API 能力 --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- Lombok：简化实体类的 getter/setter/构造器 --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+            &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+            &lt;optional&gt;true&lt;/optional&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- Spring Boot Test --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+                &lt;configuration&gt;
+                    &lt;excludes&gt;
+                        &lt;exclude&gt;
+                            &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+                            &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+                        &lt;/exclude&gt;
+                    &lt;/excludes&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+
+&lt;/project&gt;
+</code></pre>
+<p><strong>依赖说明：</strong></p>
+<table>
+<thead>
+<tr>
+<th>依赖</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>spring-boot-starter-data-mongodb</code></td>
+<td>包含 Spring Data MongoDB、MongoDB Java Driver 等，是操作 MongoDB 的核心依赖</td>
+</tr>
+<tr>
+<td><code>spring-boot-starter-web</code></td>
+<td>提供 Spring MVC、内嵌 Tomcat，用于构建 REST API</td>
+</tr>
+<tr>
+<td><code>lombok</code></td>
+<td>通过注解自动生成 getter/setter/toString 等样板代码</td>
+</tr>
+<tr>
+<td><code>spring-boot-starter-test</code></td>
+<td>测试框架，包含 JUnit 5、Mockito 等</td>
+</tr>
+</tbody>
+</table>
+<h3 id="243-applicationyml-配置">2.4.3 application.yml 配置</h3>
+<p>在 <code>src/main/resources/application.yml</code> 中配置 MongoDB 连接信息：</p>
+<h4 id="配置方式一单机无认证本地开发">配置方式一：单机无认证（本地开发）</h4>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: myapp
+
+# 日志配置：显示 MongoDB 操作日志（开发时建议开启）
+logging:
+  level:
+    org.springframework.data.mongodb: DEBUG
+    org.mongodb.driver: WARN
+</code></pre>
+<h4 id="配置方式二带认证连接推荐">配置方式二：带认证连接（推荐）</h4>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: myapp
+      username: app_user
+      password: app_password
+      authentication-database: admin
+
+logging:
+  level:
+    org.springframework.data.mongodb: DEBUG
+    org.mongodb.driver: WARN
+</code></pre>
+<h4 id="配置方式三使用-uri-连接字符串最灵活">配置方式三：使用 URI 连接字符串（最灵活）</h4>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      uri: mongodb://app_user:app_password@localhost:27017/myapp?authSource=admin
+
+logging:
+  level:
+    org.springframework.data.mongodb: DEBUG
+    org.mongodb.driver: WARN
+</code></pre>
+<h4 id="配置方式四多环境配置">配置方式四：多环境配置</h4>
+<p>实际项目中，不同环境的 MongoDB 配置通常不同。可以使用 Spring Profiles 管理：</p>
+<p><code>application.yml</code>（公共配置）：</p>
+<pre><code class="language-yaml">spring:
+  profiles:
+    active: dev
+
+logging:
+  level:
+    org.springframework.data.mongodb: DEBUG
+</code></pre>
+<p><code>application-dev.yml</code>（开发环境）：</p>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/myapp_dev
+</code></pre>
+<p><code>application-prod.yml</code>（生产环境）：</p>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      uri: mongodb://app_user:${MONGO_PASSWORD}@mongo-host:27017/myapp?authSource=admin&amp;replicaSet=rs0
+
+logging:
+  level:
+    org.springframework.data.mongodb: INFO
+    org.mongodb.driver: WARN
+</code></pre>
+<blockquote>
+<p><strong>安全提示</strong>：生产环境的密码不应写死在配置文件中，应通过环境变量（如 <code>${MONGO_PASSWORD}</code>）或配置中心（如 Nacos、Consul）注入。</p>
+</blockquote>
+<h3 id="244-编写启动测试类验证连接">2.4.4 编写启动测试类验证连接</h3>
+<p>创建一个简单的实体类和启动测试，验证 Spring Boot 能否成功连接 MongoDB。</p>
+<h4 id="步骤一创建实体类">步骤一：创建实体类</h4>
+<pre><code class="language-java">package com.example.mongodbdemo.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Document(collection = &quot;users&quot;)
+public class User {
+
+    @Id
+    private String id;
+
+    private String username;
+
+    private String email;
+
+    private Integer age;
+
+    private LocalDateTime createdAt;
+}
+</code></pre>
+<p><strong>注解说明：</strong></p>
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@Document(collection = &quot;users&quot;)</code></td>
+<td>标记该类映射到 MongoDB 的 <code>users</code> 集合</td>
+</tr>
+<tr>
+<td><code>@Id</code></td>
+<td>标记 <code>id</code> 字段映射到 MongoDB 的 <code>_id</code> 字段</td>
+</tr>
+<tr>
+<td><code>@Data</code></td>
+<td>Lombok 注解，自动生成 getter/setter/toString/equals/hashCode</td>
+</tr>
+<tr>
+<td><code>@NoArgsConstructor</code></td>
+<td>生成无参构造器</td>
+</tr>
+<tr>
+<td><code>@AllArgsConstructor</code></td>
+<td>生成全参构造器</td>
+</tr>
+</tbody>
+</table>
+<h4 id="步骤二创建-repository-接口">步骤二：创建 Repository 接口</h4>
+<pre><code class="language-java">package com.example.mongodbdemo.repository;
+
+import com.example.mongodbdemo.entity.User;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface UserRepository extends MongoRepository&lt;User, String&gt; {
+}
+</code></pre>
+<p>只需要继承 <code>MongoRepository</code> 接口，Spring Data 会自动提供常用的 CRUD 方法，无需编写实现代码。</p>
+<h4 id="步骤三创建启动测试类">步骤三：创建启动测试类</h4>
+<pre><code class="language-java">package com.example.mongodbdemo;
+
+import com.example.mongodbdemo.entity.User;
+import com.example.mongodbdemo.repository.UserRepository;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.time.LocalDateTime;
+
+@SpringBootApplication
+public class MongodbDemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(MongodbDemoApplication.class, args);
+    }
+
+    @Bean
+    CommandLineRunner runner(UserRepository userRepository, MongoTemplate mongoTemplate) {
+        return args -&gt; {
+            System.out.println(&quot;========== MongoDB 连接测试 ==========&quot;);
+
+            // 1. 测试 MongoTemplate 连接
+            String dbName = mongoTemplate.getDb().getName();
+            System.out.println(&quot;成功连接到数据库：&quot; + dbName);
+
+            // 2. 使用 Repository 插入一条测试数据
+            User testUser = new User();
+            testUser.setUsername(&quot;test_user&quot;);
+            testUser.setEmail(&quot;test@example.com&quot;);
+            testUser.setAge(25);
+            testUser.setCreatedAt(LocalDateTime.now());
+
+            userRepository.save(testUser);
+            System.out.println(&quot;插入测试用户成功，ID：&quot; + testUser.getId());
+
+            // 3. 查询刚插入的数据
+            User found = userRepository.findById(testUser.getId()).orElse(null);
+            if (found != null) {
+                System.out.println(&quot;查询到用户：&quot; + found.getUsername() + &quot;, Email: &quot; + found.getEmail());
+            }
+
+            // 4. 统计文档数量
+            long count = userRepository.count();
+            System.out.println(&quot;users 集合当前文档数量：&quot; + count);
+
+            // 5. 删除测试数据
+            userRepository.deleteById(testUser.getId());
+            System.out.println(&quot;已清理测试数据&quot;);
+
+            System.out.println(&quot;========== 连接测试完成 ==========&quot;);
+        };
+    }
+}
+</code></pre>
+<h4 id="步骤四运行并验证">步骤四：运行并验证</h4>
+<p>启动 Spring Boot 应用：</p>
+<pre><code class="language-bash"># 在项目根目录执行
+mvn spring-boot:run
+
+# 或者在 IDEA 中直接运行 MongodbDemoApplication 的 main 方法
+</code></pre>
+<p>如果一切配置正确，你将在控制台看到类似以下输出：</p>
+<pre><code>  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.5)
+
+2024-03-15 10:30:00 INFO  --- MongodbDemoApplication : Starting MongodbDemoApplication
+2024-03-15 10:30:02 INFO  --- MongoClient             : Cluster created with settings {...}
+2024-03-15 10:30:02 INFO  --- MongoClient             : Opened connection to localhost:27017
+========== MongoDB 连接测试 ==========
+成功连接到数据库：myapp
+插入测试用户成功，ID：65f3a1b2c3d4e5f6a7b8c9d0
+查询到用户：test_user, Email: test@example.com
+users 集合当前文档数量：1
+已清理测试数据
+========== 连接测试完成 ==========
+</code></pre>
+<blockquote>
+<p>如果出现连接错误，请检查以下几点：</p>
+<ol>
+<li>MongoDB 服务是否已启动（<code>mongosh</code> 能否连接）</li>
+<li><code>application.yml</code> 中的连接信息是否正确（主机、端口、用户名、密码）</li>
+<li>如果使用 Docker 安装并开启了认证，确保 <code>authSource=admin</code> 已配置</li>
+<li>防火墙是否放行了 27017 端口</li>
+</ol>
+</blockquote>
+<h3 id="245-项目结构概览">2.4.5 项目结构概览</h3>
+<p>完成初始化后，项目的目录结构如下：</p>
+<pre><code>mongodb-demo/
+├── pom.xml
+├── src/
+│   ├── main/
+│   │   ├── java/com/example/mongodbdemo/
+│   │   │   ├── MongodbDemoApplication.java      # 启动类
+│   │   │   ├── entity/
+│   │   │   │   └── User.java                    # 实体类
+│   │   │   └── repository/
+│   │   │       └── UserRepository.java           # 数据访问接口
+│   │   └── resources/
+│   │       ├── application.yml                   # 主配置文件
+│   │       ├── application-dev.yml               # 开发环境配置
+│   │       └── application-prod.yml              # 生产环境配置
+│   └── test/
+│       └── java/com/example/mongodbdemo/
+│           └── MongodbDemoApplicationTests.java   # 测试类
+└── .gitignore
+</code></pre>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<p>本章我们完成了 MongoDB 完整开发环境的搭建：</p>
+<ol>
+<li><strong>安装 MongoDB</strong> —— 掌握了 Windows 本地安装和 Docker 安装两种方式，并学会了验证安装是否成功。</li>
+<li><strong>mongosh 基本使用</strong> —— 学习了连接数据库、数据库/集合操作、基本的 CRUD 命令，这些是后续所有操作的基础。</li>
+<li><strong>可视化工具</strong> —— 了解了 MongoDB Compass（官方免费）和 Navicat 等图形化工具的使用，便于日常开发中浏览和管理数据。</li>
+<li><strong>Spring Boot 集成</strong> —— 完成了 Spring Boot 项目的初始化，配置了 MongoDB 连接，并通过一个启动测试类验证了整个链路的畅通。</li>
+</ol>
+<p>在下一章中，我们将深入学习 MongoDB Shell 中的 CRUD 操作，包括各种查询操作符和更新操作符的详细用法。</p>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

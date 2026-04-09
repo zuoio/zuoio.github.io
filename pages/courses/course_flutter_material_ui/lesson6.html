@@ -1,0 +1,3449 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第06课-组件主题批量定制">第06课 组件主题批量定制</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter Material Design 系统学习<br />
+<strong>前置条件</strong>：已掌握 ThemeData 基础配置和 WidgetState 交互状态机制<br />
+<strong>课程目标</strong>：掌握 Flutter 组件主题的架构与优先级规则，学会批量定制 10+ 组件主题，理解并使用 ThemeExtension 扩展机制，最终为完整 App 构建统一的主题方案</p>
+</blockquote>
+<hr />
+<h2 id="1-组件主题架构概述">1. 组件主题架构概述</h2>
+<h3 id="11-三层架构materialapp--themedata--componenttheme">1.1 三层架构：MaterialApp → ThemeData → ComponentTheme</h3>
+<p>在 Flutter 的 Material Design 体系中，主题的传递和应用遵循一套<strong>三层架构</strong>：</p>
+<pre><code>MaterialApp
+  └── ThemeData（全局主题数据）
+        ├── colorScheme        → 颜色系统
+        ├── textTheme          → 排版系统
+        ├── appBarTheme        → AppBar 组件主题
+        ├── cardTheme          → Card 组件主题
+        ├── elevatedButtonTheme → ElevatedButton 组件主题
+        ├── inputDecorationTheme → 输入框装饰主题
+        ├── ...                → 其他 40+ 组件主题
+        └── extensions         → 自定义主题扩展
+</code></pre>
+<p><strong>核心理念</strong>：每个 Material 组件都有对应的 <code>ComponentTheme</code> 类，通过在 <code>ThemeData</code> 中统一配置，就能实现&quot;一处定义、全局生效&quot;的主题批量定制。</p>
+<pre><code class="language-dart">MaterialApp(
+  theme: ThemeData(
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+    // 各组件主题在此统一注册
+    appBarTheme: const AppBarTheme(
+      centerTitle: true,
+      elevation: 0,
+    ),
+    cardTheme: const CardTheme(
+      elevation: 2,
+    ),
+    // ... 更多组件主题
+  ),
+  home: const MyApp(),
+);
+</code></pre>
+<h3 id="12-组件主题的优先级规则">1.2 组件主题的优先级规则</h3>
+<p>Flutter 对组件样式的解析遵循<strong>四级优先级</strong>，从高到低依次为：</p>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>来源</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>最高</strong></td>
+<td>Widget 参数</td>
+<td>直接在组件构造函数中传入的属性值</td>
+</tr>
+<tr>
+<td><strong>次高</strong></td>
+<td>局部 Theme widget</td>
+<td>在子树中用 <code>Theme(data: ...)</code> 包裹覆盖</td>
+</tr>
+<tr>
+<td><strong>次低</strong></td>
+<td>组件 ThemeData</td>
+<td><code>ThemeData</code> 中对应的组件主题（如 <code>appBarTheme</code>）</td>
+</tr>
+<tr>
+<td><strong>最低</strong></td>
+<td>全局 ThemeData 默认值</td>
+<td><code>ThemeData</code> 中的通用属性（如 <code>colorScheme</code>）</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">// 优先级演示
+MaterialApp(
+  theme: ThemeData(
+    // 【第4级】全局 ThemeData 默认值
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+    // 【第3级】组件 ThemeData
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.green,
+      centerTitle: true,
+    ),
+  ),
+  home: Scaffold(
+    // 【第2级】可通过局部 Theme 覆盖
+    appBar: AppBar(
+      // 【第1级】Widget 参数，最高优先级
+      backgroundColor: Colors.red, // 最终显示红色
+      title: const Text('优先级演示'),
+    ),
+  ),
+);
+</code></pre>
+<p><strong>关键结论</strong>：组件首先查看自身参数，若为 null，就去查找最近的 <code>Theme</code> widget 中的组件主题，再往上查找全局 <code>ThemeData</code>，最终回退到 Material 默认值。</p>
+<blockquote>
+<p><strong>💡 最佳实践</strong></p>
+<ul>
+<li>在 <code>ThemeData</code> 中配置组件主题作为<strong>全局默认值</strong></li>
+<li>仅在特殊场景下使用局部 <code>Theme</code> widget 覆盖</li>
+<li>避免在每个 Widget 中重复设置相同的样式参数——这正是组件主题要解决的问题</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="2-常用组件主题详解">2. 常用组件主题详解</h2>
+<h3 id="21-appbartheme--应用栏主题">2.1 AppBarTheme —— 应用栏主题</h3>
+<p><code>AppBarTheme</code> 控制所有 <code>AppBar</code> 的默认样式，是最常定制的组件主题之一。</p>
+<p><strong>关键属性</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backgroundColor</code></td>
+<td><code>Color?</code></td>
+<td>背景色</td>
+</tr>
+<tr>
+<td><code>foregroundColor</code></td>
+<td><code>Color?</code></td>
+<td>前景色（标题、图标的默认颜色）</td>
+</tr>
+<tr>
+<td><code>elevation</code></td>
+<td><code>double?</code></td>
+<td>静止状态的阴影高度</td>
+</tr>
+<tr>
+<td><code>scrolledUnderElevation</code></td>
+<td><code>double?</code></td>
+<td>内容滚动到 AppBar 下方时的阴影高度</td>
+</tr>
+<tr>
+<td><code>centerTitle</code></td>
+<td><code>bool?</code></td>
+<td>标题是否居中</td>
+</tr>
+<tr>
+<td><code>titleTextStyle</code></td>
+<td><code>TextStyle?</code></td>
+<td>标题文本样式</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">ThemeData(
+  appBarTheme: AppBarTheme(
+    backgroundColor: Colors.white,
+    foregroundColor: Colors.black87,
+    elevation: 0,
+    scrolledUnderElevation: 1,
+    centerTitle: true,
+    titleTextStyle: const TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      color: Colors.black87,
+    ),
+    // 图标主题
+    iconTheme: const IconThemeData(
+      color: Colors.black87,
+      size: 24,
+    ),
+    // 操作按钮图标主题
+    actionsIconTheme: const IconThemeData(
+      color: Colors.black54,
+      size: 22,
+    ),
+    surfaceTintColor: Colors.transparent, // M3 下关闭表面色调叠加
+    shadowColor: Colors.black26,
+  ),
+);
+</code></pre>
+<blockquote>
+<p><strong>⚠️ 注意事项</strong><br />
+Material 3 中，<code>AppBar</code> 默认使用 <code>surface</code> 颜色作为背景并应用 <code>surfaceTint</code> 色调。如果想要纯净的背景色，需要显式设置 <code>surfaceTintColor: Colors.transparent</code>。</p>
+</blockquote>
+<hr />
+<h3 id="22-cardtheme--卡片主题">2.2 CardTheme —— 卡片主题</h3>
+<p><code>CardTheme</code> 统一控制所有 <code>Card</code> 组件的外观。</p>
+<p><strong>关键属性</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>color</code></td>
+<td><code>Color?</code></td>
+<td>卡片背景色</td>
+</tr>
+<tr>
+<td><code>elevation</code></td>
+<td><code>double?</code></td>
+<td>阴影高度</td>
+</tr>
+<tr>
+<td><code>shape</code></td>
+<td><code>ShapeBorder?</code></td>
+<td>卡片形状（圆角、边框等）</td>
+</tr>
+<tr>
+<td><code>surfaceTintColor</code></td>
+<td><code>Color?</code></td>
+<td>表面色调叠加色</td>
+</tr>
+<tr>
+<td><code>margin</code></td>
+<td><code>EdgeInsetsGeometry?</code></td>
+<td>外边距</td>
+</tr>
+<tr>
+<td><code>clipBehavior</code></td>
+<td><code>Clip?</code></td>
+<td>裁剪行为</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">ThemeData(
+  cardTheme: CardTheme(
+    color: Colors.white,
+    elevation: 2,
+    shadowColor: Colors.black.withValues(alpha: 0.1),
+    surfaceTintColor: Colors.transparent,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    clipBehavior: Clip.antiAlias,
+  ),
+);
+</code></pre>
+<blockquote>
+<p><strong>💡 最佳实践</strong><br />
+M3 默认的 <code>Card</code> 带有 <code>surfaceTint</code> 叠加效果，视觉上偏紫色调。如果希望卡片保持纯白背景，可将 <code>surfaceTintColor</code> 设为 <code>Colors.transparent</code>。</p>
+</blockquote>
+<hr />
+<h3 id="23-按钮组件主题">2.3 按钮组件主题</h3>
+<p>Flutter Material 3 提供了五种标准按钮，每种对应一个组件主题，它们都通过 <code>ButtonStyle</code> 来配置样式。</p>
+<h4 id="按钮主题对照表">按钮主题对照表</h4>
+<table>
+<thead>
+<tr>
+<th>按钮类型</th>
+<th>主题类</th>
+<th>ThemeData 属性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ElevatedButton</code></td>
+<td><code>ElevatedButtonThemeData</code></td>
+<td><code>elevatedButtonTheme</code></td>
+</tr>
+<tr>
+<td><code>FilledButton</code></td>
+<td><code>FilledButtonThemeData</code></td>
+<td><code>filledButtonTheme</code></td>
+</tr>
+<tr>
+<td><code>OutlinedButton</code></td>
+<td><code>OutlinedButtonThemeData</code></td>
+<td><code>outlinedButtonTheme</code></td>
+</tr>
+<tr>
+<td><code>TextButton</code></td>
+<td><code>TextButtonThemeData</code></td>
+<td><code>textButtonTheme</code></td>
+</tr>
+<tr>
+<td><code>IconButton</code></td>
+<td><code>IconButtonThemeData</code></td>
+<td><code>iconButtonTheme</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="elevatedbuttontheme">ElevatedButtonTheme</h4>
+<pre><code class="language-dart">ThemeData(
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      // 基础样式
+      backgroundColor: Colors.blue,
+      foregroundColor: Colors.white,
+      disabledBackgroundColor: Colors.grey.shade300,
+      disabledForegroundColor: Colors.grey.shade500,
+      // 阴影与海拔
+      elevation: 2,
+      shadowColor: Colors.blue.withValues(alpha: 0.3),
+      // 形状与尺寸
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      minimumSize: const Size(120, 48),
+      // 文本样式
+      textStyle: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  ),
+);
+</code></pre>
+<h4 id="filledbuttontheme">FilledButtonTheme</h4>
+<pre><code class="language-dart">ThemeData(
+  filledButtonTheme: FilledButtonThemeData(
+    style: FilledButton.styleFrom(
+      backgroundColor: Colors.blue,
+      foregroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      minimumSize: const Size(120, 48),
+      textStyle: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  ),
+);
+</code></pre>
+<h4 id="outlinedbuttontheme">OutlinedButtonTheme</h4>
+<pre><code class="language-dart">ThemeData(
+  outlinedButtonTheme: OutlinedButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      foregroundColor: Colors.blue,
+      side: const BorderSide(color: Colors.blue, width: 1.5),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      minimumSize: const Size(120, 48),
+      textStyle: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  ),
+);
+</code></pre>
+<h4 id="textbuttontheme">TextButtonTheme</h4>
+<pre><code class="language-dart">ThemeData(
+  textButtonTheme: TextButtonThemeData(
+    style: TextButton.styleFrom(
+      foregroundColor: Colors.blue,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      minimumSize: const Size(80, 40),
+      textStyle: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  ),
+);
+</code></pre>
+<h4 id="iconbuttontheme">IconButtonTheme</h4>
+<pre><code class="language-dart">ThemeData(
+  iconButtonTheme: IconButtonThemeData(
+    style: IconButton.styleFrom(
+      foregroundColor: Colors.blue,
+      // 使用 WidgetStateProperty 处理不同状态
+      backgroundColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(8),
+      minimumSize: const Size(48, 48),
+      iconSize: 24,
+    ),
+  ),
+);
+</code></pre>
+<h4 id="使用-widgetstateproperty-进行精细控制">使用 WidgetStateProperty 进行精细控制</h4>
+<p>当 <code>styleFrom</code> 无法满足需求时，可以直接构造 <code>ButtonStyle</code> 并使用 <code>WidgetStateProperty</code> 进行逐状态控制：</p>
+<pre><code class="language-dart">ThemeData(
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return Colors.grey.shade300;
+        }
+        if (states.contains(WidgetState.pressed)) {
+          return Colors.blue.shade700;
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return Colors.blue.shade600;
+        }
+        return Colors.blue;
+      }),
+      foregroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return Colors.grey.shade500;
+        }
+        return Colors.white;
+      }),
+      elevation: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.pressed)) return 0.0;
+        if (states.contains(WidgetState.hovered)) return 4.0;
+        return 2.0;
+      }),
+      overlayColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.pressed)) {
+          return Colors.white.withValues(alpha: 0.1);
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return Colors.white.withValues(alpha: 0.08);
+        }
+        return Colors.transparent;
+      }),
+      shape: WidgetStateProperty.all(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      padding: WidgetStateProperty.all(
+        const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      ),
+    ),
+  ),
+);
+</code></pre>
+<blockquote>
+<p><strong>💡 最佳实践</strong></p>
+<ul>
+<li>简单场景优先使用 <code>styleFrom</code> 快捷方法，可读性更好</li>
+<li>需要区分 hover / pressed / disabled 等状态时，使用 <code>ButtonStyle</code> + <code>WidgetStateProperty.resolveWith</code></li>
+<li>所有按钮类型共享 <code>ButtonStyle</code> 的结构，掌握一种即可类推其余</li>
+</ul>
+</blockquote>
+<hr />
+<h3 id="24-dialogtheme--对话框主题">2.4 DialogTheme —— 对话框主题</h3>
+<p><code>DialogTheme</code> 控制 <code>AlertDialog</code>、<code>SimpleDialog</code> 等对话框的默认外观。</p>
+<p><strong>关键属性</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backgroundColor</code></td>
+<td><code>Color?</code></td>
+<td>对话框背景色</td>
+</tr>
+<tr>
+<td><code>elevation</code></td>
+<td><code>double?</code></td>
+<td>阴影高度</td>
+</tr>
+<tr>
+<td><code>shape</code></td>
+<td><code>ShapeBorder?</code></td>
+<td>对话框形状</td>
+</tr>
+<tr>
+<td><code>titleTextStyle</code></td>
+<td><code>TextStyle?</code></td>
+<td>标题文本样式</td>
+</tr>
+<tr>
+<td><code>contentTextStyle</code></td>
+<td><code>TextStyle?</code></td>
+<td>内容文本样式</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">ThemeData(
+  dialogTheme: DialogTheme(
+    backgroundColor: Colors.white,
+    elevation: 8,
+    shadowColor: Colors.black.withValues(alpha: 0.15),
+    surfaceTintColor: Colors.transparent,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(24),
+    ),
+    titleTextStyle: const TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+      color: Colors.black87,
+    ),
+    contentTextStyle: const TextStyle(
+      fontSize: 14,
+      color: Colors.black54,
+      height: 1.5,
+    ),
+  ),
+);
+</code></pre>
+<hr />
+<h3 id="25-inputdecorationtheme--输入框装饰主题">2.5 InputDecorationTheme —— 输入框装饰主题</h3>
+<p><code>InputDecorationTheme</code> 是最复杂也最实用的组件主题之一，它统一控制 <code>TextField</code>、<code>TextFormField</code> 的输入框装饰。</p>
+<p><strong>关键属性</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>border</code></td>
+<td><code>InputBorder?</code></td>
+<td>默认边框</td>
+</tr>
+<tr>
+<td><code>enabledBorder</code></td>
+<td><code>InputBorder?</code></td>
+<td>启用状态下的边框</td>
+</tr>
+<tr>
+<td><code>focusedBorder</code></td>
+<td><code>InputBorder?</code></td>
+<td>获取焦点时的边框</td>
+</tr>
+<tr>
+<td><code>errorBorder</code></td>
+<td><code>InputBorder?</code></td>
+<td>错误状态下的边框</td>
+</tr>
+<tr>
+<td><code>filled</code></td>
+<td><code>bool?</code></td>
+<td>是否填充背景</td>
+</tr>
+<tr>
+<td><code>fillColor</code></td>
+<td><code>Color?</code></td>
+<td>背景填充色</td>
+</tr>
+<tr>
+<td><code>contentPadding</code></td>
+<td><code>EdgeInsetsGeometry?</code></td>
+<td>内容内边距</td>
+</tr>
+<tr>
+<td><code>floatingLabelStyle</code></td>
+<td><code>TextStyle?</code></td>
+<td>浮动标签样式</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">ThemeData(
+  inputDecorationTheme: InputDecorationTheme(
+    // 背景填充
+    filled: true,
+    fillColor: Colors.grey.shade50,
+    
+    // 各状态边框
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.grey.shade300),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.grey.shade300),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.blue, width: 2),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.red, width: 1),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.red, width: 2),
+    ),
+    
+    // 内边距
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    
+    // 标签样式
+    floatingLabelStyle: const TextStyle(
+      color: Colors.blue,
+      fontWeight: FontWeight.w500,
+    ),
+    labelStyle: TextStyle(
+      color: Colors.grey.shade600,
+    ),
+    
+    // 提示文本样式
+    hintStyle: TextStyle(
+      color: Colors.grey.shade400,
+    ),
+    
+    // 错误文本样式
+    errorStyle: const TextStyle(
+      color: Colors.red,
+      fontSize: 12,
+    ),
+    
+    // 前缀/后缀图标颜色
+    prefixIconColor: WidgetStateColor.resolveWith((states) {
+      if (states.contains(WidgetState.focused)) return Colors.blue;
+      if (states.contains(WidgetState.error)) return Colors.red;
+      return Colors.grey;
+    }),
+  ),
+);
+</code></pre>
+<blockquote>
+<p><strong>⚠️ 注意事项</strong></p>
+<ul>
+<li><code>border</code> 是回退默认值；如果定义了 <code>enabledBorder</code>、<code>focusedBorder</code> 等特定状态的边框，它们会覆盖 <code>border</code></li>
+<li>如果只设置了 <code>border</code> 而没设置特定状态边框，所有状态都会使用 <code>border</code> 的样式</li>
+<li><code>fillColor</code> 仅在 <code>filled: true</code> 时生效</li>
+<li><code>prefixIconColor</code> 和 <code>suffixIconColor</code> 在 Flutter 3.10+ 支持 <code>WidgetStateColor</code></li>
+</ul>
+</blockquote>
+<hr />
+<h3 id="26-listtilethemedata--列表项主题">2.6 ListTileThemeData —— 列表项主题</h3>
+<p><code>ListTileThemeData</code> 控制 <code>ListTile</code> 及其变体（<code>CheckboxListTile</code>、<code>SwitchListTile</code> 等）的默认样式。</p>
+<p><strong>关键属性</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tileColor</code></td>
+<td><code>Color?</code></td>
+<td>默认背景色</td>
+</tr>
+<tr>
+<td><code>selectedTileColor</code></td>
+<td><code>Color?</code></td>
+<td>选中状态背景色</td>
+</tr>
+<tr>
+<td><code>iconColor</code></td>
+<td><code>Color?</code></td>
+<td>默认图标颜色</td>
+</tr>
+<tr>
+<td><code>textColor</code></td>
+<td><code>Color?</code></td>
+<td>默认文本颜色</td>
+</tr>
+<tr>
+<td><code>contentPadding</code></td>
+<td><code>EdgeInsetsGeometry?</code></td>
+<td>内容内边距</td>
+</tr>
+<tr>
+<td><code>dense</code></td>
+<td><code>bool?</code></td>
+<td>是否使用紧凑布局</td>
+</tr>
+<tr>
+<td><code>shape</code></td>
+<td><code>ShapeBorder?</code></td>
+<td>列表项形状</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">ThemeData(
+  listTileTheme: ListTileThemeData(
+    tileColor: Colors.transparent,
+    selectedTileColor: Colors.blue.withValues(alpha: 0.08),
+    iconColor: Colors.grey.shade600,
+    textColor: Colors.black87,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+    dense: false,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    // 选中状态颜色
+    selectedColor: Colors.blue,
+    // 副标题文本样式
+    subtitleTextStyle: TextStyle(
+      color: Colors.grey.shade500,
+      fontSize: 13,
+    ),
+    // 前导组件与文本间距
+    horizontalTitleGap: 12,
+    minVerticalPadding: 8,
+  ),
+);
+</code></pre>
+<hr />
+<h3 id="27-navigationbartheme--底部导航栏主题">2.7 NavigationBarTheme —— 底部导航栏主题</h3>
+<p><code>NavigationBarThemeData</code> 控制 Material 3 的 <code>NavigationBar</code>（底部导航）。</p>
+<p><strong>关键属性</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backgroundColor</code></td>
+<td><code>Color?</code></td>
+<td>导航栏背景色</td>
+</tr>
+<tr>
+<td><code>indicatorColor</code></td>
+<td><code>Color?</code></td>
+<td>选中指示器颜色</td>
+</tr>
+<tr>
+<td><code>labelTextStyle</code></td>
+<td><code>WidgetStateProperty&lt;TextStyle?&gt;?</code></td>
+<td>标签文本样式（支持状态区分）</td>
+</tr>
+<tr>
+<td><code>iconTheme</code></td>
+<td><code>WidgetStateProperty&lt;IconThemeData?&gt;?</code></td>
+<td>图标主题（支持状态区分）</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">ThemeData(
+  navigationBarTheme: NavigationBarThemeData(
+    backgroundColor: Colors.white,
+    elevation: 3,
+    shadowColor: Colors.black26,
+    surfaceTintColor: Colors.transparent,
+    indicatorColor: Colors.blue.withValues(alpha: 0.15),
+    height: 70,
+    // 标签文本样式：区分选中/未选中
+    labelTextStyle: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: Colors.blue,
+        );
+      }
+      return TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        color: Colors.grey.shade600,
+      );
+    }),
+    // 图标主题：区分选中/未选中
+    iconTheme: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return const IconThemeData(
+          color: Colors.blue,
+          size: 24,
+        );
+      }
+      return IconThemeData(
+        color: Colors.grey.shade600,
+        size: 24,
+      );
+    }),
+  ),
+);
+</code></pre>
+<hr />
+<h3 id="28-navigationdrawertheme--侧边抽屉导航主题">2.8 NavigationDrawerTheme —— 侧边抽屉导航主题</h3>
+<p><code>NavigationDrawerThemeData</code> 控制 Material 3 的 <code>NavigationDrawer</code> 组件。</p>
+<p><strong>关键属性</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backgroundColor</code></td>
+<td><code>Color?</code></td>
+<td>抽屉背景色</td>
+</tr>
+<tr>
+<td><code>indicatorColor</code></td>
+<td><code>Color?</code></td>
+<td>选中项指示器颜色</td>
+</tr>
+<tr>
+<td><code>indicatorShape</code></td>
+<td><code>ShapeBorder?</code></td>
+<td>选中项指示器形状</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">ThemeData(
+  navigationDrawerTheme: NavigationDrawerThemeData(
+    backgroundColor: Colors.white,
+    surfaceTintColor: Colors.transparent,
+    elevation: 1,
+    indicatorColor: Colors.blue.withValues(alpha: 0.12),
+    indicatorShape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(28),
+    ),
+    // 标签文本样式
+    labelTextStyle: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return const TextStyle(
+          fontWeight: FontWeight.w600,
+          color: Colors.blue,
+        );
+      }
+      return TextStyle(color: Colors.grey.shade700);
+    }),
+    // 图标主题
+    iconTheme: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return const IconThemeData(color: Colors.blue);
+      }
+      return IconThemeData(color: Colors.grey.shade600);
+    }),
+    tileHeight: 56,
+  ),
+);
+</code></pre>
+<hr />
+<h3 id="29-navigationrailtheme--侧边导航栏主题">2.9 NavigationRailTheme —— 侧边导航栏主题</h3>
+<p><code>NavigationRailThemeData</code> 控制宽屏场景下的 <code>NavigationRail</code> 组件。</p>
+<p><strong>关键属性</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backgroundColor</code></td>
+<td><code>Color?</code></td>
+<td>导航栏背景色</td>
+</tr>
+<tr>
+<td><code>indicatorColor</code></td>
+<td><code>Color?</code></td>
+<td>选中项指示器颜色</td>
+</tr>
+<tr>
+<td><code>indicatorShape</code></td>
+<td><code>ShapeBorder?</code></td>
+<td>选中项指示器形状</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">ThemeData(
+  navigationRailTheme: NavigationRailThemeData(
+    backgroundColor: Colors.grey.shade50,
+    indicatorColor: Colors.blue.withValues(alpha: 0.12),
+    indicatorShape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+    elevation: 0,
+    // 选中标签样式
+    selectedLabelTextStyle: const TextStyle(
+      color: Colors.blue,
+      fontWeight: FontWeight.w600,
+      fontSize: 12,
+    ),
+    // 未选中标签样式
+    unselectedLabelTextStyle: TextStyle(
+      color: Colors.grey.shade600,
+      fontSize: 12,
+    ),
+    // 选中图标主题
+    selectedIconTheme: const IconThemeData(
+      color: Colors.blue,
+      size: 24,
+    ),
+    // 未选中图标主题
+    unselectedIconTheme: IconThemeData(
+      color: Colors.grey.shade600,
+      size: 24,
+    ),
+    useIndicator: true,
+    minWidth: 72,
+  ),
+);
+</code></pre>
+<hr />
+<h3 id="210-tabbartheme--标签栏主题">2.10 TabBarTheme —— 标签栏主题</h3>
+<p><code>TabBarTheme</code> 控制 <code>TabBar</code> 组件的默认外观。</p>
+<p><strong>关键属性</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>labelColor</code></td>
+<td><code>Color?</code></td>
+<td>选中标签颜色</td>
+</tr>
+<tr>
+<td><code>unselectedLabelColor</code></td>
+<td><code>Color?</code></td>
+<td>未选中标签颜色</td>
+</tr>
+<tr>
+<td><code>indicator</code></td>
+<td><code>Decoration?</code></td>
+<td>选中指示器装饰</td>
+</tr>
+<tr>
+<td><code>indicatorSize</code></td>
+<td><code>TabBarIndicatorSize?</code></td>
+<td>指示器大小模式</td>
+</tr>
+<tr>
+<td><code>dividerColor</code></td>
+<td><code>Color?</code></td>
+<td>底部分割线颜色</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">ThemeData(
+  tabBarTheme: TabBarTheme(
+    labelColor: Colors.blue,
+    unselectedLabelColor: Colors.grey.shade500,
+    labelStyle: const TextStyle(
+      fontWeight: FontWeight.w600,
+      fontSize: 14,
+    ),
+    unselectedLabelStyle: const TextStyle(
+      fontWeight: FontWeight.w400,
+      fontSize: 14,
+    ),
+    // 自定义指示器
+    indicator: BoxDecoration(
+      border: Border(
+        bottom: BorderSide(
+          color: Colors.blue,
+          width: 3,
+        ),
+      ),
+    ),
+    indicatorSize: TabBarIndicatorSize.label, // 指示器宽度跟随标签
+    dividerColor: Colors.grey.shade200,
+    dividerHeight: 1,
+    // 水波纹叠加色
+    overlayColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.pressed)) {
+        return Colors.blue.withValues(alpha: 0.1);
+      }
+      if (states.contains(WidgetState.hovered)) {
+        return Colors.blue.withValues(alpha: 0.05);
+      }
+      return Colors.transparent;
+    }),
+  ),
+);
+</code></pre>
+<blockquote>
+<p><strong>💡 最佳实践</strong><br />
+<code>indicatorSize</code> 有两个选项：<code>TabBarIndicatorSize.tab</code>（指示器占满整个标签宽度）和 <code>TabBarIndicatorSize.label</code>（指示器仅覆盖文字宽度）。M3 规范推荐使用 <code>label</code> 模式。</p>
+</blockquote>
+<hr />
+<h3 id="211-开关选择类组件主题">2.11 开关/选择类组件主题</h3>
+<h4 id="switchthemedata">SwitchThemeData</h4>
+<pre><code class="language-dart">ThemeData(
+  switchTheme: SwitchThemeData(
+    thumbColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) return Colors.white;
+      return Colors.grey.shade400;
+    }),
+    trackColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) return Colors.blue;
+      return Colors.grey.shade300;
+    }),
+    trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) return Colors.transparent;
+      return Colors.grey.shade400;
+    }),
+    // Material 3 的拇指图标
+    thumbIcon: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return const Icon(Icons.check, size: 14, color: Colors.blue);
+      }
+      return null;
+    }),
+  ),
+);
+</code></pre>
+<h4 id="checkboxthemedata">CheckboxThemeData</h4>
+<pre><code class="language-dart">ThemeData(
+  checkboxTheme: CheckboxThemeData(
+    fillColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) return Colors.blue;
+      return Colors.transparent;
+    }),
+    checkColor: WidgetStateProperty.all(Colors.white),
+    side: WidgetStateBorderSide.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return const BorderSide(color: Colors.blue, width: 2);
+      }
+      return BorderSide(color: Colors.grey.shade400, width: 2);
+    }),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(4),
+    ),
+  ),
+);
+</code></pre>
+<h4 id="radiothemedata">RadioThemeData</h4>
+<pre><code class="language-dart">ThemeData(
+  radioTheme: RadioThemeData(
+    fillColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) return Colors.blue;
+      return Colors.grey.shade400;
+    }),
+    // 水波纹覆盖色
+    overlayColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.pressed)) {
+        return Colors.blue.withValues(alpha: 0.12);
+      }
+      if (states.contains(WidgetState.hovered)) {
+        return Colors.blue.withValues(alpha: 0.08);
+      }
+      return Colors.transparent;
+    }),
+  ),
+);
+</code></pre>
+<h4 id="sliderthemedata">SliderThemeData</h4>
+<pre><code class="language-dart">ThemeData(
+  sliderTheme: SliderThemeData(
+    activeTrackColor: Colors.blue,
+    inactiveTrackColor: Colors.blue.withValues(alpha: 0.2),
+    thumbColor: Colors.blue,
+    overlayColor: Colors.blue.withValues(alpha: 0.12),
+    // 数值标签样式
+    valueIndicatorColor: Colors.blue,
+    valueIndicatorTextStyle: const TextStyle(
+      color: Colors.white,
+      fontSize: 14,
+    ),
+    // 轨道高度
+    trackHeight: 4,
+    // 拇指形状
+    thumbShape: const RoundSliderThumbShape(
+      enabledThumbRadius: 8,
+    ),
+    // 覆盖层形状
+    overlayShape: const RoundSliderOverlayShape(
+      overlayRadius: 20,
+    ),
+    // 滑动条两端形状
+    trackShape: const RoundedRectSliderTrackShape(),
+  ),
+);
+</code></pre>
+<hr />
+<h3 id="212-其他常用组件主题">2.12 其他常用组件主题</h3>
+<h4 id="bottomsheetthemedata">BottomSheetThemeData</h4>
+<pre><code class="language-dart">ThemeData(
+  bottomSheetTheme: BottomSheetThemeData(
+    backgroundColor: Colors.white,
+    surfaceTintColor: Colors.transparent,
+    elevation: 8,
+    shadowColor: Colors.black26,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(24),
+      ),
+    ),
+    // 拖动手柄
+    showDragHandle: true,
+    dragHandleColor: Colors.grey.shade300,
+    dragHandleSize: const Size(40, 4),
+    // 模态遮罩色
+    modalBarrierColor: Colors.black54,
+    // 约束
+    constraints: const BoxConstraints(maxWidth: 640),
+  ),
+);
+</code></pre>
+<h4 id="snackbarthemedata">SnackBarThemeData</h4>
+<pre><code class="language-dart">ThemeData(
+  snackBarTheme: SnackBarThemeData(
+    backgroundColor: Colors.grey.shade800,
+    contentTextStyle: const TextStyle(
+      color: Colors.white,
+      fontSize: 14,
+    ),
+    actionTextColor: Colors.lightBlueAccent,
+    elevation: 4,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    behavior: SnackBarBehavior.floating,
+    // 浮动时的外边距
+    insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    dismissDirection: DismissDirection.horizontal,
+    width: 400, // 限制宽度，适合大屏
+  ),
+);
+</code></pre>
+<h4 id="chipthemedata">ChipThemeData</h4>
+<pre><code class="language-dart">ThemeData(
+  chipTheme: ChipThemeData(
+    backgroundColor: Colors.grey.shade100,
+    selectedColor: Colors.blue.withValues(alpha: 0.15),
+    disabledColor: Colors.grey.shade200,
+    labelStyle: const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w500,
+    ),
+    secondaryLabelStyle: const TextStyle(
+      fontSize: 13,
+      color: Colors.blue,
+    ),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+    side: BorderSide.none,
+    // 删除图标主题
+    deleteIconColor: Colors.grey.shade600,
+    iconTheme: IconThemeData(
+      color: Colors.grey.shade600,
+      size: 18,
+    ),
+    showCheckmark: true,
+    checkmarkColor: Colors.blue,
+  ),
+);
+</code></pre>
+<hr />
+<h2 id="3-themeextensiont--自定义主题扩展">3. ThemeExtension&lt;T&gt; —— 自定义主题扩展</h2>
+<h3 id="31-为什么需要-themeextension">3.1 为什么需要 ThemeExtension</h3>
+<p><code>ThemeData</code> 内置的属性虽然丰富，但总有它覆盖不到的场景：</p>
+<ul>
+<li>品牌专属颜色（不属于 ColorScheme 的角色）</li>
+<li>应用统一间距系统（类似 CSS 中的 spacing token）</li>
+<li>自定义组件的样式配置</li>
+<li>业务级别的样式语义化（如&quot;成功色&quot;、&quot;警告色&quot;、&quot;信息色&quot;）</li>
+</ul>
+<p><code>ThemeExtension&lt;T&gt;</code> 允许你将自定义数据&quot;挂载&quot;到 <code>ThemeData</code> 上，并通过 <code>Theme.of(context)</code> 统一获取，同时支持亮/暗模式切换和主题动画插值。</p>
+<h3 id="32-完整实现流程">3.2 完整实现流程</h3>
+<h4 id="第一步定义自定义主题数据类">第一步：定义自定义主题数据类</h4>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+/// 应用间距主题扩展
+/// 定义了一套统一的间距 Token，确保整个应用的间距一致性
+class AppSpacing extends ThemeExtension&lt;AppSpacing&gt; {
+  final double xs;  // 4
+  final double sm;  // 8
+  final double md;  // 16
+  final double lg;  // 24
+  final double xl;  // 32
+  final double xxl; // 48
+
+  const AppSpacing({
+    required this.xs,
+    required this.sm,
+    required this.md,
+    required this.lg,
+    required this.xl,
+    required this.xxl,
+  });
+
+  /// 默认间距方案
+  static const standard = AppSpacing(
+    xs: 4,
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32,
+    xxl: 48,
+  );
+
+  /// 紧凑间距方案（适合信息密集型界面）
+  static const compact = AppSpacing(
+    xs: 2,
+    sm: 4,
+    md: 8,
+    lg: 16,
+    xl: 24,
+    xxl: 32,
+  );
+
+  @override
+  AppSpacing copyWith({
+    double? xs,
+    double? sm,
+    double? md,
+    double? lg,
+    double? xl,
+    double? xxl,
+  }) {
+    return AppSpacing(
+      xs: xs ?? this.xs,
+      sm: sm ?? this.sm,
+      md: md ?? this.md,
+      lg: lg ?? this.lg,
+      xl: xl ?? this.xl,
+      xxl: xxl ?? this.xxl,
+    );
+  }
+
+  @override
+  AppSpacing lerp(covariant AppSpacing? other, double t) {
+    if (other == null) return this;
+    return AppSpacing(
+      xs: lerpDouble(xs, other.xs, t) ?? xs,
+      sm: lerpDouble(sm, other.sm, t) ?? sm,
+      md: lerpDouble(md, other.md, t) ?? md,
+      lg: lerpDouble(lg, other.lg, t) ?? lg,
+      xl: lerpDouble(xl, other.xl, t) ?? xl,
+      xxl: lerpDouble(xxl, other.xxl, t) ?? xxl,
+    );
+  }
+}
+</code></pre>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+/// 品牌颜色主题扩展
+/// 定义了超出 ColorScheme 范围的自定义颜色语义
+class BrandColors extends ThemeExtension&lt;BrandColors&gt; {
+  final Color success;
+  final Color warning;
+  final Color info;
+  final Color onSuccess;
+  final Color onWarning;
+  final Color onInfo;
+  final Color successContainer;
+  final Color warningContainer;
+  final Color infoContainer;
+
+  const BrandColors({
+    required this.success,
+    required this.warning,
+    required this.info,
+    required this.onSuccess,
+    required this.onWarning,
+    required this.onInfo,
+    required this.successContainer,
+    required this.warningContainer,
+    required this.infoContainer,
+  });
+
+  /// 亮色模式配色方案
+  static const light = BrandColors(
+    success: Color(0xFF2E7D32),
+    warning: Color(0xFFF57F17),
+    info: Color(0xFF0288D1),
+    onSuccess: Colors.white,
+    onWarning: Colors.white,
+    onInfo: Colors.white,
+    successContainer: Color(0xFFE8F5E9),
+    warningContainer: Color(0xFFFFF8E1),
+    infoContainer: Color(0xFFE1F5FE),
+  );
+
+  /// 暗色模式配色方案
+  static const dark = BrandColors(
+    success: Color(0xFF81C784),
+    warning: Color(0xFFFFD54F),
+    info: Color(0xFF4FC3F7),
+    onSuccess: Colors.black,
+    onWarning: Colors.black,
+    onInfo: Colors.black,
+    successContainer: Color(0xFF1B5E20),
+    warningContainer: Color(0xFFF57F17),
+    infoContainer: Color(0xFF01579B),
+  );
+
+  @override
+  BrandColors copyWith({
+    Color? success,
+    Color? warning,
+    Color? info,
+    Color? onSuccess,
+    Color? onWarning,
+    Color? onInfo,
+    Color? successContainer,
+    Color? warningContainer,
+    Color? infoContainer,
+  }) {
+    return BrandColors(
+      success: success ?? this.success,
+      warning: warning ?? this.warning,
+      info: info ?? this.info,
+      onSuccess: onSuccess ?? this.onSuccess,
+      onWarning: onWarning ?? this.onWarning,
+      onInfo: onInfo ?? this.onInfo,
+      successContainer: successContainer ?? this.successContainer,
+      warningContainer: warningContainer ?? this.warningContainer,
+      infoContainer: infoContainer ?? this.infoContainer,
+    );
+  }
+
+  @override
+  BrandColors lerp(covariant BrandColors? other, double t) {
+    if (other == null) return this;
+    return BrandColors(
+      success: Color.lerp(success, other.success, t) ?? success,
+      warning: Color.lerp(warning, other.warning, t) ?? warning,
+      info: Color.lerp(info, other.info, t) ?? info,
+      onSuccess: Color.lerp(onSuccess, other.onSuccess, t) ?? onSuccess,
+      onWarning: Color.lerp(onWarning, other.onWarning, t) ?? onWarning,
+      onInfo: Color.lerp(onInfo, other.onInfo, t) ?? onInfo,
+      successContainer: Color.lerp(successContainer, other.successContainer, t) ?? successContainer,
+      warningContainer: Color.lerp(warningContainer, other.warningContainer, t) ?? warningContainer,
+      infoContainer: Color.lerp(infoContainer, other.infoContainer, t) ?? infoContainer,
+    );
+  }
+}
+</code></pre>
+<h4 id="第二步在-themedataextensions-中注册">第二步：在 ThemeData.extensions 中注册</h4>
+<pre><code class="language-dart">ThemeData(
+  colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+  extensions: const &lt;ThemeExtension&gt;[
+    AppSpacing.standard,
+    BrandColors.light,
+  ],
+);
+
+// 暗色主题中注册暗色变体
+ThemeData.dark().copyWith(
+  extensions: const &lt;ThemeExtension&gt;[
+    AppSpacing.standard,
+    BrandColors.dark,
+  ],
+);
+</code></pre>
+<h4 id="第三步通过-themeofcontext-获取">第三步：通过 Theme.of(context) 获取</h4>
+<pre><code class="language-dart">class MyWidget extends StatelessWidget {
+  const MyWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 获取自定义主题扩展
+    final spacing = Theme.of(context).extension&lt;AppSpacing&gt;()!;
+    final brandColors = Theme.of(context).extension&lt;BrandColors&gt;()!;
+
+    return Padding(
+      padding: EdgeInsets.all(spacing.md),
+      child: Column(
+        spacing: spacing.sm,
+        children: [
+          // 使用品牌颜色
+          Container(
+            padding: EdgeInsets.all(spacing.md),
+            decoration: BoxDecoration(
+              color: brandColors.successContainer,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.check_circle, color: brandColors.success),
+                SizedBox(width: spacing.sm),
+                Text(
+                  '操作成功',
+                  style: TextStyle(color: brandColors.success),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(spacing.md),
+            decoration: BoxDecoration(
+              color: brandColors.warningContainer,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.warning, color: brandColors.warning),
+                SizedBox(width: spacing.sm),
+                Text(
+                  '请注意',
+                  style: TextStyle(color: brandColors.warning),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h4 id="便捷访问扩展方法推荐">便捷访问扩展方法（推荐）</h4>
+<p>为了避免每次都写 <code>Theme.of(context).extension&lt;T&gt;()!</code>，可以通过 BuildContext 扩展简化访问：</p>
+<pre><code class="language-dart">/// 在项目中定义一个全局的 BuildContext 扩展
+extension ThemeExtensions on BuildContext {
+  AppSpacing get spacing =&gt; Theme.of(this).extension&lt;AppSpacing&gt;()!;
+  BrandColors get brandColors =&gt; Theme.of(this).extension&lt;BrandColors&gt;()!;
+}
+
+// 使用时更加简洁
+class MyWidget extends StatelessWidget {
+  const MyWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(context.spacing.md),
+      child: Container(
+        color: context.brandColors.successContainer,
+        child: const Text('简洁访问'),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>💡 最佳实践</strong></p>
+<ul>
+<li><code>ThemeExtension</code> 必须实现 <code>copyWith</code> 和 <code>lerp</code> 两个方法，前者用于局部修改，后者用于主题切换动画插值</li>
+<li><code>lerp</code> 方法中，数值用 <code>lerpDouble</code>，颜色用 <code>Color.lerp</code>，确保主题切换时有平滑过渡</li>
+<li>为常用的 <code>ThemeExtension</code> 定义静态常量（如 <code>AppSpacing.standard</code>），避免每次创建新实例</li>
+<li>使用 BuildContext 扩展方法简化访问，提高代码可读性</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="4-copywith-模式基于现有主题局部修改">4. copyWith 模式：基于现有主题局部修改</h2>
+<p><code>copyWith</code> 是 Flutter 主题系统中最核心的模式之一，它允许你在保留现有主题大部分设置的基础上，仅修改特定的属性。</p>
+<h3 id="41-themedata-级别的-copywith">4.1 ThemeData 级别的 copyWith</h3>
+<pre><code class="language-dart">// 基于默认亮色主题进行修改
+final myTheme = ThemeData.light().copyWith(
+  colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+  appBarTheme: const AppBarTheme(
+    centerTitle: true,
+    elevation: 0,
+  ),
+);
+</code></pre>
+<h3 id="42-组件主题级别的-copywith">4.2 组件主题级别的 copyWith</h3>
+<pre><code class="language-dart">// 获取当前主题的 AppBarTheme 并进行修改
+Widget build(BuildContext context) {
+  final currentAppBarTheme = Theme.of(context).appBarTheme;
+
+  return Theme(
+    data: Theme.of(context).copyWith(
+      appBarTheme: currentAppBarTheme.copyWith(
+        backgroundColor: Colors.red,
+        // 其他属性保持不变
+      ),
+    ),
+    child: const MySubPage(),
+  );
+}
+</code></pre>
+<h3 id="43-buttonstyle-级别的-copywith">4.3 ButtonStyle 级别的 copyWith</h3>
+<pre><code class="language-dart">// 基于主题中的按钮样式进行微调
+final baseStyle = Theme.of(context).elevatedButtonTheme.style;
+final customStyle = (baseStyle ?? const ButtonStyle()).copyWith(
+  backgroundColor: WidgetStateProperty.all(Colors.orange),
+);
+
+ElevatedButton(
+  style: customStyle,
+  onPressed: () {},
+  child: const Text('自定义按钮'),
+);
+</code></pre>
+<h3 id="44-链式-copywith">4.4 链式 copyWith</h3>
+<pre><code class="language-dart">// 多层嵌套的 copyWith
+final theme = ThemeData(
+  colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+).copyWith(
+  appBarTheme: const AppBarTheme(elevation: 0),
+).copyWith(
+  cardTheme: const CardTheme(elevation: 2),
+);
+</code></pre>
+<blockquote>
+<p><strong>⚠️ 注意事项</strong></p>
+<ul>
+<li><code>copyWith</code> 返回的是一个新对象，不会修改原始对象</li>
+<li>传 <code>null</code> 给 <code>copyWith</code> 的参数<strong>不等于</strong>把该属性设为 null，而是保留原值</li>
+<li>如果确实需要将某个属性重置为 null，通常需要创建一个全新的对象</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="5-theme-继承与局部覆盖">5. Theme 继承与局部覆盖</h2>
+<h3 id="51-使用-theme-widget-覆盖子树主题">5.1 使用 Theme widget 覆盖子树主题</h3>
+<p>通过在 Widget 树中插入 <code>Theme</code> widget，可以为特定子树覆盖主题，而不影响应用的其他部分。</p>
+<pre><code class="language-dart">class ThemeOverrideDemo extends StatelessWidget {
+  const ThemeOverrideDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // 使用全局主题
+        ElevatedButton(
+          onPressed: () {},
+          child: const Text('全局主题按钮'),
+        ),
+
+        // 局部覆盖主题
+        Theme(
+          data: Theme.of(context).copyWith(
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: const StadiumBorder(),
+              ),
+            ),
+          ),
+          child: ElevatedButton(
+            onPressed: () {},
+            child: const Text('局部主题按钮（红色圆角）'),
+          ),
+        ),
+
+        // 不受局部 Theme 影响
+        ElevatedButton(
+          onPressed: () {},
+          child: const Text('全局主题按钮（不受影响）'),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="52-典型应用场景">5.2 典型应用场景</h3>
+<p><strong>场景一：深色区域内的亮色子区</strong></p>
+<pre><code class="language-dart">class DarkSectionDemo extends StatelessWidget {
+  const DarkSectionDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          // 普通亮色区域
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('这是亮色区域'),
+          ),
+
+          // 深色区域
+          Theme(
+            data: ThemeData.dark().copyWith(
+              cardTheme: CardTheme(
+                color: Colors.grey.shade900,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+            child: Container(
+              color: Colors.grey.shade900,
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Text(
+                    '这是深色区域',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  // 子组件会自动继承深色主题
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('深色区域内的按钮'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>场景二：特殊页面主题</strong></p>
+<pre><code class="language-dart">// 错误页面使用红色主题
+class ErrorPage extends StatelessWidget {
+  const ErrorPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.red,
+          brightness: Theme.of(context).brightness,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.red,
+          foregroundColor: Colors.white,
+        ),
+      ),
+      child: Scaffold(
+        appBar: AppBar(title: const Text('出错了')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              const SizedBox(height: 16),
+              const Text('页面加载失败'),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () {},
+                child: const Text('重试'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>💡 最佳实践</strong></p>
+<ul>
+<li>始终使用 <code>Theme.of(context).copyWith(...)</code> 而非创建全新的 <code>ThemeData</code>，这样可以继承全局主题中未覆盖的属性</li>
+<li>局部 <code>Theme</code> 的作用范围仅限其 <code>child</code> 子树，不会&quot;泄漏&quot;到外部</li>
+<li>对于整个页面的主题覆盖，将 <code>Theme</code> widget 包裹在 <code>Scaffold</code> 外层</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="6-实战完整-app-主题配置方案">6. 实战：完整 App 主题配置方案</h2>
+<p>下面我们构建一个真实项目级别的主题配置工具类 <code>AppTheme</code>，覆盖 10+ 组件主题，并集成 <code>ThemeExtension</code>。</p>
+<h3 id="61-自定义-themeextension-定义">6.1 自定义 ThemeExtension 定义</h3>
+<pre><code class="language-dart">// lib/theme/app_spacing.dart
+
+import 'dart:ui';
+import 'package:flutter/material.dart';
+
+class AppSpacing extends ThemeExtension&lt;AppSpacing&gt; {
+  final double xs;
+  final double sm;
+  final double md;
+  final double lg;
+  final double xl;
+  final double xxl;
+  final double borderRadius;
+  final double borderRadiusLg;
+
+  const AppSpacing({
+    required this.xs,
+    required this.sm,
+    required this.md,
+    required this.lg,
+    required this.xl,
+    required this.xxl,
+    required this.borderRadius,
+    required this.borderRadiusLg,
+  });
+
+  static const standard = AppSpacing(
+    xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48,
+    borderRadius: 12, borderRadiusLg: 24,
+  );
+
+  @override
+  AppSpacing copyWith({
+    double? xs, double? sm, double? md,
+    double? lg, double? xl, double? xxl,
+    double? borderRadius, double? borderRadiusLg,
+  }) {
+    return AppSpacing(
+      xs: xs ?? this.xs,
+      sm: sm ?? this.sm,
+      md: md ?? this.md,
+      lg: lg ?? this.lg,
+      xl: xl ?? this.xl,
+      xxl: xxl ?? this.xxl,
+      borderRadius: borderRadius ?? this.borderRadius,
+      borderRadiusLg: borderRadiusLg ?? this.borderRadiusLg,
+    );
+  }
+
+  @override
+  AppSpacing lerp(covariant AppSpacing? other, double t) {
+    if (other == null) return this;
+    return AppSpacing(
+      xs: lerpDouble(xs, other.xs, t) ?? xs,
+      sm: lerpDouble(sm, other.sm, t) ?? sm,
+      md: lerpDouble(md, other.md, t) ?? md,
+      lg: lerpDouble(lg, other.lg, t) ?? lg,
+      xl: lerpDouble(xl, other.xl, t) ?? xl,
+      xxl: lerpDouble(xxl, other.xxl, t) ?? xxl,
+      borderRadius: lerpDouble(borderRadius, other.borderRadius, t) ?? borderRadius,
+      borderRadiusLg: lerpDouble(borderRadiusLg, other.borderRadiusLg, t) ?? borderRadiusLg,
+    );
+  }
+}
+</code></pre>
+<pre><code class="language-dart">// lib/theme/brand_colors.dart
+
+import 'package:flutter/material.dart';
+
+class BrandColors extends ThemeExtension&lt;BrandColors&gt; {
+  final Color success;
+  final Color warning;
+  final Color info;
+  final Color onSuccess;
+  final Color onWarning;
+  final Color onInfo;
+  final Color successContainer;
+  final Color warningContainer;
+  final Color infoContainer;
+  final Color gradient1;
+  final Color gradient2;
+
+  const BrandColors({
+    required this.success,
+    required this.warning,
+    required this.info,
+    required this.onSuccess,
+    required this.onWarning,
+    required this.onInfo,
+    required this.successContainer,
+    required this.warningContainer,
+    required this.infoContainer,
+    required this.gradient1,
+    required this.gradient2,
+  });
+
+  static const light = BrandColors(
+    success: Color(0xFF2E7D32),
+    warning: Color(0xFFF57F17),
+    info: Color(0xFF0288D1),
+    onSuccess: Colors.white,
+    onWarning: Colors.white,
+    onInfo: Colors.white,
+    successContainer: Color(0xFFE8F5E9),
+    warningContainer: Color(0xFFFFF8E1),
+    infoContainer: Color(0xFFE1F5FE),
+    gradient1: Color(0xFF1565C0),
+    gradient2: Color(0xFF42A5F5),
+  );
+
+  static const dark = BrandColors(
+    success: Color(0xFF81C784),
+    warning: Color(0xFFFFD54F),
+    info: Color(0xFF4FC3F7),
+    onSuccess: Colors.black,
+    onWarning: Colors.black,
+    onInfo: Colors.black,
+    successContainer: Color(0xFF1B5E20),
+    warningContainer: Color(0xFF4E3800),
+    infoContainer: Color(0xFF01579B),
+    gradient1: Color(0xFF42A5F5),
+    gradient2: Color(0xFF90CAF9),
+  );
+
+  @override
+  BrandColors copyWith({
+    Color? success, Color? warning, Color? info,
+    Color? onSuccess, Color? onWarning, Color? onInfo,
+    Color? successContainer, Color? warningContainer, Color? infoContainer,
+    Color? gradient1, Color? gradient2,
+  }) {
+    return BrandColors(
+      success: success ?? this.success,
+      warning: warning ?? this.warning,
+      info: info ?? this.info,
+      onSuccess: onSuccess ?? this.onSuccess,
+      onWarning: onWarning ?? this.onWarning,
+      onInfo: onInfo ?? this.onInfo,
+      successContainer: successContainer ?? this.successContainer,
+      warningContainer: warningContainer ?? this.warningContainer,
+      infoContainer: infoContainer ?? this.infoContainer,
+      gradient1: gradient1 ?? this.gradient1,
+      gradient2: gradient2 ?? this.gradient2,
+    );
+  }
+
+  @override
+  BrandColors lerp(covariant BrandColors? other, double t) {
+    if (other == null) return this;
+    return BrandColors(
+      success: Color.lerp(success, other.success, t) ?? success,
+      warning: Color.lerp(warning, other.warning, t) ?? warning,
+      info: Color.lerp(info, other.info, t) ?? info,
+      onSuccess: Color.lerp(onSuccess, other.onSuccess, t) ?? onSuccess,
+      onWarning: Color.lerp(onWarning, other.onWarning, t) ?? onWarning,
+      onInfo: Color.lerp(onInfo, other.onInfo, t) ?? onInfo,
+      successContainer: Color.lerp(successContainer, other.successContainer, t) ?? successContainer,
+      warningContainer: Color.lerp(warningContainer, other.warningContainer, t) ?? warningContainer,
+      infoContainer: Color.lerp(infoContainer, other.infoContainer, t) ?? infoContainer,
+      gradient1: Color.lerp(gradient1, other.gradient1, t) ?? gradient1,
+      gradient2: Color.lerp(gradient2, other.gradient2, t) ?? gradient2,
+    );
+  }
+}
+</code></pre>
+<h3 id="62-apptheme-工具类完整的主题配置文件">6.2 AppTheme 工具类——完整的主题配置文件</h3>
+<pre><code class="language-dart">// lib/theme/app_theme.dart
+
+import 'package:flutter/material.dart';
+import 'app_spacing.dart';
+import 'brand_colors.dart';
+
+/// 应用主题配置工具类
+/// 统一管理亮色/暗色主题，覆盖 10+ 组件主题
+class AppTheme {
+  AppTheme._(); // 禁止实例化
+
+  // ==================== 设计 Token ====================
+  static const _seedColor = Color(0xFF1565C0);
+  static const _borderRadius = 12.0;
+  static const _borderRadiusLg = 24.0;
+
+  // ==================== 亮色主题 ====================
+  static ThemeData get light {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: _seedColor,
+      brightness: Brightness.light,
+    );
+    return _buildTheme(colorScheme, Brightness.light);
+  }
+
+  // ==================== 暗色主题 ====================
+  static ThemeData get dark {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: _seedColor,
+      brightness: Brightness.dark,
+    );
+    return _buildTheme(colorScheme, Brightness.dark);
+  }
+
+  // ==================== 构建主题 ====================
+  static ThemeData _buildTheme(ColorScheme colorScheme, Brightness brightness) {
+    final isLight = brightness == Brightness.light;
+
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      brightness: brightness,
+
+      // ---------- ThemeExtension 注册 ----------
+      extensions: &lt;ThemeExtension&gt;[
+        AppSpacing.standard,
+        isLight ? BrandColors.light : BrandColors.dark,
+      ],
+
+      // ---------- 1. AppBarTheme ----------
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
+        elevation: 0,
+        scrolledUnderElevation: 1,
+        centerTitle: true,
+        surfaceTintColor: Colors.transparent,
+        titleTextStyle: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: colorScheme.onSurface,
+        ),
+        iconTheme: IconThemeData(color: colorScheme.onSurface),
+      ),
+
+      // ---------- 2. CardTheme ----------
+      cardTheme: CardTheme(
+        elevation: 0,
+        color: isLight ? Colors.white : colorScheme.surfaceContainerHigh,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+          side: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+          ),
+        ),
+        clipBehavior: Clip.antiAlias,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      ),
+
+      // ---------- 3. ElevatedButtonTheme ----------
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(_borderRadius),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          minimumSize: const Size(120, 48),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+
+      // ---------- 4. FilledButtonTheme ----------
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(_borderRadius),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          minimumSize: const Size(120, 48),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+
+      // ---------- 5. OutlinedButtonTheme ----------
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: colorScheme.primary,
+          side: BorderSide(color: colorScheme.outline),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(_borderRadius),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          minimumSize: const Size(120, 48),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+
+      // ---------- 6. TextButtonTheme ----------
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: colorScheme.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(_borderRadius),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          textStyle: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+
+      // ---------- 7. IconButtonTheme ----------
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(_borderRadius),
+          ),
+          minimumSize: const Size(44, 44),
+        ),
+      ),
+
+      // ---------- 8. InputDecorationTheme ----------
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: isLight ? Colors.grey.shade50 : colorScheme.surfaceContainerHigh,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+          borderSide: BorderSide(color: colorScheme.outline),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+          borderSide: BorderSide(color: colorScheme.outlineVariant),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+          borderSide: BorderSide(color: colorScheme.error),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+          borderSide: BorderSide(color: colorScheme.error, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        floatingLabelStyle: TextStyle(
+          color: colorScheme.primary,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+
+      // ---------- 9. DialogTheme ----------
+      dialogTheme: DialogTheme(
+        backgroundColor: colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 6,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(_borderRadiusLg),
+        ),
+        titleTextStyle: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: colorScheme.onSurface,
+        ),
+        contentTextStyle: TextStyle(
+          fontSize: 14,
+          color: colorScheme.onSurfaceVariant,
+          height: 1.5,
+        ),
+      ),
+
+      // ---------- 10. ListTileTheme ----------
+      listTileTheme: ListTileThemeData(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+        ),
+        selectedTileColor: colorScheme.primaryContainer.withValues(alpha: 0.3),
+        selectedColor: colorScheme.primary,
+        iconColor: colorScheme.onSurfaceVariant,
+        horizontalTitleGap: 12,
+      ),
+
+      // ---------- 11. NavigationBarTheme ----------
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: colorScheme.surface,
+        elevation: 2,
+        surfaceTintColor: Colors.transparent,
+        indicatorColor: colorScheme.primaryContainer,
+        height: 70,
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return TextStyle(
+            fontSize: 12,
+            fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+            color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+          );
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return IconThemeData(
+            color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+            size: 24,
+          );
+        }),
+      ),
+
+      // ---------- 12. NavigationDrawerTheme ----------
+      navigationDrawerTheme: NavigationDrawerThemeData(
+        backgroundColor: colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        indicatorColor: colorScheme.primaryContainer,
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28),
+        ),
+      ),
+
+      // ---------- 13. NavigationRailTheme ----------
+      navigationRailTheme: NavigationRailThemeData(
+        backgroundColor: colorScheme.surface,
+        indicatorColor: colorScheme.primaryContainer,
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+        ),
+        selectedIconTheme: IconThemeData(color: colorScheme.onPrimaryContainer),
+        unselectedIconTheme: IconThemeData(color: colorScheme.onSurfaceVariant),
+        selectedLabelTextStyle: TextStyle(
+          color: colorScheme.primary,
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+        ),
+        unselectedLabelTextStyle: TextStyle(
+          color: colorScheme.onSurfaceVariant,
+          fontSize: 12,
+        ),
+        useIndicator: true,
+      ),
+
+      // ---------- 14. TabBarTheme ----------
+      tabBarTheme: TabBarTheme(
+        labelColor: colorScheme.primary,
+        unselectedLabelColor: colorScheme.onSurfaceVariant,
+        labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+        indicatorSize: TabBarIndicatorSize.label,
+        dividerColor: colorScheme.outlineVariant,
+        indicator: UnderlineTabIndicator(
+          borderSide: BorderSide(color: colorScheme.primary, width: 3),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+        ),
+      ),
+
+      // ---------- 15. SwitchTheme ----------
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return colorScheme.onPrimary;
+          return colorScheme.outline;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return colorScheme.primary;
+          return colorScheme.surfaceContainerHighest;
+        }),
+      ),
+
+      // ---------- 16. CheckboxTheme ----------
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return colorScheme.primary;
+          return Colors.transparent;
+        }),
+        checkColor: WidgetStateProperty.all(colorScheme.onPrimary),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      ),
+
+      // ---------- 17. RadioTheme ----------
+      radioTheme: RadioThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return colorScheme.primary;
+          return colorScheme.onSurfaceVariant;
+        }),
+      ),
+
+      // ---------- 18. SliderTheme ----------
+      sliderTheme: SliderThemeData(
+        activeTrackColor: colorScheme.primary,
+        inactiveTrackColor: colorScheme.primary.withValues(alpha: 0.2),
+        thumbColor: colorScheme.primary,
+        overlayColor: colorScheme.primary.withValues(alpha: 0.12),
+        trackHeight: 4,
+      ),
+
+      // ---------- 19. BottomSheetTheme ----------
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: colorScheme.surface,
+        surfaceTintColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        showDragHandle: true,
+        dragHandleColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+      ),
+
+      // ---------- 20. SnackBarTheme ----------
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: isLight ? Colors.grey.shade800 : colorScheme.inverseSurface,
+        contentTextStyle: TextStyle(
+          color: isLight ? Colors.white : colorScheme.onInverseSurface,
+          fontSize: 14,
+        ),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+        ),
+      ),
+
+      // ---------- 21. ChipTheme ----------
+      chipTheme: ChipThemeData(
+        backgroundColor: colorScheme.surfaceContainerLow,
+        selectedColor: colorScheme.primaryContainer,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        side: BorderSide.none,
+        labelStyle: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+          color: colorScheme.onSurface,
+        ),
+        showCheckmark: true,
+        checkmarkColor: colorScheme.primary,
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="63-buildcontext-扩展简化主题访问">6.3 BuildContext 扩展——简化主题访问</h3>
+<pre><code class="language-dart">// lib/theme/theme_extensions.dart
+
+import 'package:flutter/material.dart';
+import 'app_spacing.dart';
+import 'brand_colors.dart';
+
+extension AppThemeExtension on BuildContext {
+  /// 颜色方案快捷访问
+  ColorScheme get colorScheme =&gt; Theme.of(this).colorScheme;
+
+  /// 文本主题快捷访问
+  TextTheme get textTheme =&gt; Theme.of(this).textTheme;
+
+  /// 间距主题快捷访问
+  AppSpacing get spacing =&gt; Theme.of(this).extension&lt;AppSpacing&gt;()!;
+
+  /// 品牌颜色快捷访问
+  BrandColors get brandColors =&gt; Theme.of(this).extension&lt;BrandColors&gt;()!;
+
+  /// 是否为暗色模式
+  bool get isDark =&gt; Theme.of(this).brightness == Brightness.dark;
+}
+</code></pre>
+<h3 id="64-在-materialapp-中使用">6.4 在 MaterialApp 中使用</h3>
+<pre><code class="language-dart">// lib/main.dart
+
+import 'package:flutter/material.dart';
+import 'theme/app_theme.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State&lt;MyApp&gt; createState() =&gt; _MyAppState();
+}
+
+class _MyAppState extends State&lt;MyApp&gt; {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  void _toggleTheme() {
+    setState(() {
+      _themeMode = _themeMode == ThemeMode.light
+          ? ThemeMode.dark
+          : ThemeMode.light;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '组件主题定制演示',
+      theme: AppTheme.light,          // 亮色主题
+      darkTheme: AppTheme.dark,       // 暗色主题
+      themeMode: _themeMode,          // 主题模式
+      home: ThemeShowcasePage(
+        onToggleTheme: _toggleTheme,
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="65-主题效果展示页面">6.5 主题效果展示页面</h3>
+<pre><code class="language-dart">// lib/pages/theme_showcase_page.dart
+
+import 'package:flutter/material.dart';
+import '../theme/theme_extensions.dart';
+
+class ThemeShowcasePage extends StatefulWidget {
+  final VoidCallback onToggleTheme;
+
+  const ThemeShowcasePage({super.key, required this.onToggleTheme});
+
+  @override
+  State&lt;ThemeShowcasePage&gt; createState() =&gt; _ThemeShowcasePageState();
+}
+
+class _ThemeShowcasePageState extends State&lt;ThemeShowcasePage&gt;
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+  int _navIndex = 0;
+  bool _switchValue = true;
+  bool _checkValue = false;
+  double _sliderValue = 0.5;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('主题定制展示'),
+        actions: [
+          IconButton(
+            icon: Icon(context.isDark ? Icons.light_mode : Icons.dark_mode),
+            onPressed: widget.onToggleTheme,
+          ),
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: '按钮'),
+            Tab(text: '输入'),
+            Tab(text: '其他'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // 按钮展示
+          _buildButtonSection(),
+          // 输入展示
+          _buildInputSection(),
+          // 其他组件展示
+          _buildOtherSection(),
+        ],
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _navIndex,
+        onDestinationSelected: (i) =&gt; setState(() =&gt; _navIndex = i),
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home), label: '首页'),
+          NavigationDestination(icon: Icon(Icons.explore), label: '发现'),
+          NavigationDestination(icon: Icon(Icons.person), label: '我的'),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _buildButtonSection() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(context.spacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 12,
+        children: [
+          // 卡片内的按钮
+          Card(
+            child: Padding(
+              padding: EdgeInsets.all(context.spacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 12,
+                children: [
+                  Text('按钮组件', style: context.textTheme.titleMedium),
+                  Wrap(
+                    spacing: context.spacing.sm,
+                    runSpacing: context.spacing.sm,
+                    children: [
+                      ElevatedButton(onPressed: () {}, child: const Text('Elevated')),
+                      FilledButton(onPressed: () {}, child: const Text('Filled')),
+                      OutlinedButton(onPressed: () {}, child: const Text('Outlined')),
+                      TextButton(onPressed: () {}, child: const Text('Text')),
+                    ],
+                  ),
+                  Wrap(
+                    spacing: context.spacing.sm,
+                    children: [
+                      ElevatedButton(onPressed: null, child: const Text('Disabled')),
+                      IconButton(onPressed: () {}, icon: const Icon(Icons.favorite)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // 品牌颜色展示
+          Card(
+            child: Padding(
+              padding: EdgeInsets.all(context.spacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8,
+                children: [
+                  Text('品牌颜色（ThemeExtension）',
+                      style: context.textTheme.titleMedium),
+                  _buildStatusBanner(
+                    Icons.check_circle,
+                    '操作成功',
+                    context.brandColors.success,
+                    context.brandColors.successContainer,
+                  ),
+                  _buildStatusBanner(
+                    Icons.warning,
+                    '请注意操作',
+                    context.brandColors.warning,
+                    context.brandColors.warningContainer,
+                  ),
+                  _buildStatusBanner(
+                    Icons.info,
+                    '提示信息',
+                    context.brandColors.info,
+                    context.brandColors.infoContainer,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusBanner(
+    IconData icon, String text, Color foreground, Color background,
+  ) {
+    return Container(
+      padding: EdgeInsets.all(context.spacing.sm),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: foreground, size: 20),
+          SizedBox(width: context.spacing.sm),
+          Text(text, style: TextStyle(color: foreground)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputSection() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(context.spacing.md),
+      child: Column(
+        spacing: 16,
+        children: [
+          Card(
+            child: Padding(
+              padding: EdgeInsets.all(context.spacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 16,
+                children: [
+                  Text('输入组件', style: context.textTheme.titleMedium),
+                  const TextField(
+                    decoration: InputDecoration(
+                      labelText: '用户名',
+                      prefixIcon: Icon(Icons.person),
+                    ),
+                  ),
+                  const TextField(
+                    decoration: InputDecoration(
+                      labelText: '密码',
+                      prefixIcon: Icon(Icons.lock),
+                      suffixIcon: Icon(Icons.visibility_off),
+                    ),
+                    obscureText: true,
+                  ),
+                  const TextField(
+                    decoration: InputDecoration(
+                      labelText: '错误状态',
+                      errorText: '请输入有效的邮箱地址',
+                      prefixIcon: Icon(Icons.email),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOtherSection() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(context.spacing.md),
+      child: Column(
+        spacing: 12,
+        children: [
+          // 列表项
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.settings),
+                  title: const Text('设置项'),
+                  subtitle: const Text('这是描述文字'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: const Icon(Icons.notifications),
+                  title: const Text('通知'),
+                  trailing: Switch(
+                    value: _switchValue,
+                    onChanged: (v) =&gt; setState(() =&gt; _switchValue = v),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 选择类组件
+          Card(
+            child: Padding(
+              padding: EdgeInsets.all(context.spacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8,
+                children: [
+                  Text('选择组件', style: context.textTheme.titleMedium),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _checkValue,
+                        onChanged: (v) =&gt; setState(() =&gt; _checkValue = v!),
+                      ),
+                      const Text('同意用户协议'),
+                    ],
+                  ),
+                  Slider(
+                    value: _sliderValue,
+                    onChanged: (v) =&gt; setState(() =&gt; _sliderValue = v),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Chip 组件
+          Card(
+            child: Padding(
+              padding: EdgeInsets.all(context.spacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8,
+                children: [
+                  Text('标签组件', style: context.textTheme.titleMedium),
+                  Wrap(
+                    spacing: context.spacing.sm,
+                    children: [
+                      const Chip(label: Text('Flutter')),
+                      const Chip(label: Text('Dart')),
+                      FilterChip(
+                        label: const Text('Material 3'),
+                        selected: true,
+                        onSelected: (_) {},
+                      ),
+                      ActionChip(
+                        label: const Text('操作'),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // 对话框与底部弹出按钮
+          Card(
+            child: Padding(
+              padding: EdgeInsets.all(context.spacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 8,
+                children: [
+                  Text('弹出组件', style: context.textTheme.titleMedium),
+                  FilledButton(
+                    onPressed: () =&gt; _showThemeDialog(context),
+                    child: const Text('显示对话框'),
+                  ),
+                  OutlinedButton(
+                    onPressed: () =&gt; _showThemeBottomSheet(context),
+                    child: const Text('显示底部弹出'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('这是一条 SnackBar 消息')),
+                      );
+                    },
+                    child: const Text('显示 SnackBar'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showThemeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) =&gt; AlertDialog(
+        title: const Text('主题对话框'),
+        content: const Text('这是一个使用了自定义 DialogTheme 的对话框示例。'),
+        actions: [
+          TextButton(onPressed: () =&gt; Navigator.pop(context), child: const Text('取消')),
+          FilledButton(onPressed: () =&gt; Navigator.pop(context), child: const Text('确定')),
+        ],
+      ),
+    );
+  }
+
+  void _showThemeBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) =&gt; SizedBox(
+        height: 300,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('底部弹出面板', style: context.textTheme.titleLarge),
+              const SizedBox(height: 8),
+              Text('使用了自定义 BottomSheetTheme',
+                  style: context.textTheme.bodyMedium),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="66-项目文件结构">6.6 项目文件结构</h3>
+<pre><code>lib/
+├── main.dart                     // 入口，配置 MaterialApp
+├── theme/
+│   ├── app_theme.dart            // 核心主题配置（亮色/暗色）
+│   ├── app_spacing.dart          // 间距 ThemeExtension
+│   ├── brand_colors.dart         // 品牌颜色 ThemeExtension
+│   └── theme_extensions.dart     // BuildContext 扩展方法
+└── pages/
+    └── theme_showcase_page.dart  // 主题效果展示页面
+</code></pre>
+<hr />
+<h2 id="本课小结">本课小结</h2>
+<p>本课系统讲解了 Flutter 组件主题批量定制的完整知识体系：</p>
+<ol>
+<li>
+<p><strong>三层架构</strong>：<code>MaterialApp → ThemeData → ComponentTheme</code>，通过在 <code>ThemeData</code> 中注册各组件主题，实现&quot;一处定义、全局生效&quot;。</p>
+</li>
+<li>
+<p><strong>四级优先级</strong>：<code>Widget 参数 &gt; 局部 Theme widget &gt; 组件 ThemeData &gt; 全局 ThemeData 默认值</code>。理解优先级规则是调试主题问题的关键。</p>
+</li>
+<li>
+<p><strong>21 种组件主题详解</strong>：从 <code>AppBarTheme</code> 到 <code>ChipThemeData</code>，每种都有其关键属性和配置方式。掌握这些组件主题能覆盖 90% 以上的界面定制需求。</p>
+</li>
+<li>
+<p><strong>ThemeExtension&lt;T&gt;</strong>：当内置主题属性不够用时，通过自定义 <code>ThemeExtension</code> 扩展主题数据（如品牌颜色、间距系统），实现 <code>copyWith</code> 和 <code>lerp</code> 以支持局部修改和动画插值。</p>
+</li>
+<li>
+<p><strong>copyWith 模式</strong>：基于现有主题进行安全的局部修改，是 Flutter 主题定制的核心手法。</p>
+</li>
+<li>
+<p><strong>局部覆盖</strong>：通过 <code>Theme</code> widget 在子树中覆盖主题，实现深色区域、特殊页面等局部主题需求。</p>
+</li>
+<li>
+<p><strong>实战方案</strong>：通过 <code>AppTheme</code> 工具类 + <code>BuildContext</code> 扩展方法，构建了一个生产级的完整主题配置方案。</p>
+</li>
+</ol>
+<blockquote>
+<p><strong>🔑 核心理念</strong><br />
+组件主题是 Flutter 开发效率的<strong>倍增器</strong>——前期投入时间配置一套完整的主题方案，后续开发中所有组件自动获得一致的视觉风格，无需在每个页面重复设置样式。</p>
+</blockquote>
+<hr />
+<h2 id="课后练习">课后练习</h2>
+<h3 id="练习1组件主题探索基础">练习1：组件主题探索（基础）</h3>
+<p>创建一个页面，在页面上放置以下组件：<code>AppBar</code>、<code>Card</code>、<code>ElevatedButton</code>、<code>TextField</code>、<code>ListTile</code>、<code>Switch</code>。然后仅通过修改 <code>ThemeData</code> 中的组件主题（不在组件上直接设置样式参数），使这些组件呈现出统一的蓝色主题风格（圆角12、主色蓝色）。</p>
+<h3 id="练习2优先级验证实验基础">练习2：优先级验证实验（基础）</h3>
+<p>设计一个实验来验证四级优先级规则：</p>
+<ul>
+<li>在全局 <code>ThemeData</code> 中将 <code>ElevatedButton</code> 背景设为蓝色</li>
+<li>用局部 <code>Theme</code> widget 包裹一个区域，将按钮背景改为绿色</li>
+<li>在某个按钮上直接通过 <code>style</code> 参数设为红色</li>
+<li>在页面上同时展示三种情况的按钮，观察颜色差异</li>
+</ul>
+<h3 id="练习3自定义-themeextension中级">练习3：自定义 ThemeExtension（中级）</h3>
+<p>实现一个 <code>AppShadows</code> 主题扩展类，包含以下阴影定义：</p>
+<ul>
+<li><code>sm</code>：小阴影（用于 Chip、小按钮等）</li>
+<li><code>md</code>：中阴影（用于 Card、Dialog 等）</li>
+<li><code>lg</code>：大阴影（用于浮层、Drawer 等）</li>
+<li>每个阴影用 <code>List&lt;BoxShadow&gt;</code> 类型</li>
+<li>分别实现亮色/暗色版本（暗色模式阴影更浓）</li>
+<li>实现 <code>copyWith</code> 和 <code>lerp</code> 方法（<code>lerp</code> 中使用 <code>BoxShadow.lerpList</code>）</li>
+<li>注册到 <code>ThemeData.extensions</code> 并在组件中使用</li>
+</ul>
+<h3 id="练习4完整-app-主题配置进阶">练习4：完整 App 主题配置（进阶）</h3>
+<p>基于本课实战部分的 <code>AppTheme</code>，完成以下扩展：</p>
+<ol>
+<li>添加一个 <code>AppTypography</code> 主题扩展，定义应用专属的文字样式（pageTitle、sectionTitle、caption 等）</li>
+<li>在 <code>AppTheme</code> 中增加 <code>FloatingActionButtonTheme</code>、<code>SegmentedButtonTheme</code>、<code>SearchBarTheme</code> 三个组件主题</li>
+<li>支持用户从三种预设种子颜色中选择（蓝色、绿色、紫色），动态切换主题</li>
+<li>使用 <code>AnimatedTheme</code> 让主题切换有平滑的过渡动画</li>
+</ol>
+<h3 id="练习5综合思考题">练习5：综合思考题</h3>
+<p>回答以下问题（建议查阅源码验证）：</p>
+<ol>
+<li><code>ThemeExtension.lerp</code> 方法在什么场景下会被调用？如果不正确实现 <code>lerp</code> 会产生什么后果？</li>
+<li>一个 <code>Theme</code> widget 嵌套另一个 <code>Theme</code> widget 时，内层 <code>Theme</code> 是否会继承外层的所有属性？为什么？</li>
+<li>为什么推荐使用 <code>colorScheme</code> 中的颜色角色来配置组件主题，而不是直接使用 <code>Colors.blue</code> 这样的硬编码颜色？</li>
+</ol>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：<a href="lesson07_material_motion.md">第07课 Material 动效规范</a> —— 学习 Material Motion 四大转场模式、Easing 曲线规范和页面路由转场定制。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

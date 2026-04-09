@@ -1,0 +1,3930 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第25课-综合实战---构建完整应用页面">第25课 综合实战 - 构建完整应用页面</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter 常用组件系统学习<br />
+<strong>适用人群</strong>：已完成前 24 课学习，希望将所学知识综合运用的开发者<br />
+<strong>课程目标</strong>：通过两个完整的实战项目，将前 24 课所学的全部组件知识融会贯通，掌握项目组织、性能优化和组件封装的最佳实践</p>
+</blockquote>
+<hr />
+<p>恭喜你来到本课程的最后一课！经过前 24 课的系统学习，你已经掌握了 Flutter 中绝大多数常用组件的用法。本课将是你的&quot;毕业设计&quot;——我们将构建两个贴近真实场景的完整应用页面，综合运用所有已学知识，并在此过程中学习项目组织、性能优化和组件封装的最佳实践。</p>
+<hr />
+<h2 id="1-项目结构组织与组件拆分最佳实践">1. 项目结构组织与组件拆分最佳实践</h2>
+<p>在动手写代码之前，我们先来讨论如何组织一个 Flutter 项目。良好的项目结构是代码可维护性和团队协作的基石。</p>
+<h3 id="11-推荐的项目目录结构">1.1 推荐的项目目录结构</h3>
+<p>Flutter 项目的目录结构没有唯一正解，但业界有两种被广泛采用的组织方式：</p>
+<p><strong>方式一：按层级（Layer-first）</strong></p>
+<pre><code>lib/
+├── main.dart                  # 应用入口
+├── app.dart                   # MaterialApp 配置
+├── models/                    # 数据模型
+│   ├── user.dart
+│   └── product.dart
+├── screens/                   # 页面（整屏级别）
+│   ├── home_screen.dart
+│   ├── profile_screen.dart
+│   └── product_detail_screen.dart
+├── widgets/                   # 通用/可复用组件
+│   ├── common/
+│   │   ├── app_cached_image.dart
+│   │   └── loading_indicator.dart
+│   └── product/
+│       ├── product_card.dart
+│       └── product_grid.dart
+├── theme/                     # 主题配置
+│   ├── app_theme.dart
+│   └── app_colors.dart
+├── utils/                     # 工具函数
+│   └── formatters.dart
+└── constants/                 # 常量定义
+    └── app_constants.dart
+</code></pre>
+<p><strong>方式二：按功能（Feature-first）</strong></p>
+<pre><code>lib/
+├── main.dart
+├── app.dart
+├── core/                      # 核心公用模块
+│   ├── theme/
+│   ├── widgets/
+│   ├── utils/
+│   └── constants/
+├── features/                  # 按功能模块组织
+│   ├── profile/
+│   │   ├── models/
+│   │   ├── screens/
+│   │   │   └── profile_screen.dart
+│   │   └── widgets/
+│   │       ├── profile_header.dart
+│   │       ├── profile_stats.dart
+│   │       └── profile_tabs.dart
+│   ├── shop/
+│   │   ├── models/
+│   │   ├── screens/
+│   │   │   └── shop_home_screen.dart
+│   │   └── widgets/
+│   │       ├── product_card.dart
+│   │       └── banner_carousel.dart
+│   └── cart/
+│       ├── models/
+│       ├── screens/
+│       └── widgets/
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：小型项目推荐按层级组织，结构简洁清晰；中大型项目推荐按功能组织，每个功能模块自成一体，便于团队分工和模块化管理。两种方式也可以混合使用。</p>
+</blockquote>
+<h3 id="12-组件拆分原则">1.2 组件拆分原则</h3>
+<p><strong>三大核心原则：</strong></p>
+<table>
+<thead>
+<tr>
+<th>原则</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>单一职责</strong></td>
+<td>每个 Widget 只负责一件事</td>
+<td><code>ProductCard</code> 只负责展示单个商品卡片</td>
+</tr>
+<tr>
+<td><strong>可复用性</strong></td>
+<td>提取在多处使用的 UI 片段</td>
+<td><code>AppCachedImage</code> 封装图片加载和缓存逻辑</td>
+</tr>
+<tr>
+<td><strong>合理粒度</strong></td>
+<td>不要过度拆分，也不要一个 Widget 写上千行</td>
+<td>一个 <code>build</code> 方法不超过 80-100 行为宜</td>
+</tr>
+</tbody>
+</table>
+<p><strong>何时应当提取为独立 Widget：</strong></p>
+<ol>
+<li><strong>嵌套超过 3 层</strong>：<code>build</code> 方法中出现过深的嵌套，降低了可读性</li>
+<li><strong>需要独立 State</strong>：某个 UI 片段有自己的状态（如展开/收起、计数器），提取后可以独立管理状态，避免不相关的 <code>setState</code> 触发整棵子树重建</li>
+<li><strong>需要复用</strong>：相同或相似的 UI 片段出现在两个及以上的位置</li>
+<li><strong>逻辑复杂度高</strong>：某段 UI 有较多条件判断或数据转换</li>
+</ol>
+<h3 id="13-提取为方法-vs-提取为-widget">1.3 提取为方法 vs 提取为 Widget</h3>
+<p>这是一个 Flutter 开发者经常遇到的选择，两者有本质区别：</p>
+<p><strong>提取为方法（Helper Method）：</strong></p>
+<pre><code class="language-dart">class MyScreen extends StatefulWidget {
+  // ...
+}
+
+class _MyScreenState extends State&lt;MyScreen&gt; {
+  int _counter = 0;
+
+  // 提取为方法 —— 仍然是当前 Widget 的一部分
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Text('计数器: $_counter'),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _buildHeader(),
+        // ...
+      ],
+    );
+  }
+}
+</code></pre>
+<p><strong>提取为独立 Widget：</strong></p>
+<pre><code class="language-dart">// 独立 Widget —— 拥有自己的 Element，独立参与重建判断
+class CounterHeader extends StatelessWidget {
+  const CounterHeader({super.key, required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Text('计数器: $count'),
+    );
+  }
+}
+</code></pre>
+<p><strong>关键区别：</strong></p>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>提取为方法</th>
+<th>提取为独立 Widget</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>重建范围</strong></td>
+<td>父 Widget 重建时，方法返回的 Widget 总是重建</td>
+<td>框架可以通过 <code>canUpdate</code> 判断是否需要重建</td>
+</tr>
+<tr>
+<td><strong>性能</strong></td>
+<td>无法独立优化</td>
+<td>可以使用 <code>const</code> 构造函数避免不必要重建</td>
+</tr>
+<tr>
+<td><strong>状态管理</strong></td>
+<td>共享父 Widget 的 State</td>
+<td>可以拥有自己的 State</td>
+</tr>
+<tr>
+<td><strong>可复用性</strong></td>
+<td>仅限当前类内使用</td>
+<td>任何地方都可以使用</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>简单的 UI 分块、仅为提高可读性</td>
+<td>需要复用、需要独立状态、需要性能优化</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：当只是为了减少 <code>build</code> 方法的长度时，可以先提取为方法；当需要复用、独立状态管理或性能优化时，应提取为独立 Widget。优先选择提取为 Widget，因为它几乎没有副作用，且对性能更友好。</p>
+</blockquote>
+<hr />
+<h2 id="2-实战项目一仿社交应用个人主页">2. 实战项目一：仿社交应用个人主页</h2>
+<p>我们将构建一个仿 Instagram/微博 风格的社交应用个人主页，展示用户资料、统计数据、动态列表、照片墙等内容。</p>
+<p><strong>该项目将综合运用以下知识：</strong></p>
+<ul>
+<li><code>CustomScrollView</code> + <code>SliverAppBar</code>（第13课）</li>
+<li><code>SliverPersistentHeader</code> + <code>SliverList</code> / <code>SliverGrid</code>（第13课）</li>
+<li><code>TabBar</code> + <code>TabBarView</code>（第11课）</li>
+<li><code>CircleAvatar</code>、<code>Card</code>、<code>ListTile</code>、<code>Chip</code>、<code>Icon</code>（第4、16课）</li>
+<li><code>Hero</code> 动画（第21课）</li>
+<li><code>ClipRRect</code>、<code>BoxDecoration</code>（第5、19课）</li>
+<li><code>GestureDetector</code>、<code>InkWell</code>（第18课）</li>
+<li><code>Container</code>、<code>Row</code>、<code>Column</code>、<code>Expanded</code>（第5、6课）</li>
+</ul>
+<h3 id="21-数据模型">2.1 数据模型</h3>
+<pre><code class="language-dart">// models/user_profile.dart
+
+class UserProfile {
+  final String id;
+  final String name;
+  final String username;
+  final String avatarUrl;
+  final String coverUrl;
+  final String bio;
+  final int postsCount;
+  final int followersCount;
+  final int followingCount;
+  final List&lt;String&gt; tags;
+  final bool isFollowing;
+
+  const UserProfile({
+    required this.id,
+    required this.name,
+    required this.username,
+    required this.avatarUrl,
+    required this.coverUrl,
+    required this.bio,
+    required this.postsCount,
+    required this.followersCount,
+    required this.followingCount,
+    this.tags = const [],
+    this.isFollowing = false,
+  });
+}
+
+class Post {
+  final String id;
+  final String userId;
+  final String content;
+  final String? imageUrl;
+  final DateTime createdAt;
+  final int likes;
+  final int comments;
+  final bool isLiked;
+
+  const Post({
+    required this.id,
+    required this.userId,
+    required this.content,
+    this.imageUrl,
+    required this.createdAt,
+    this.likes = 0,
+    this.comments = 0,
+    this.isLiked = false,
+  });
+}
+
+class PhotoItem {
+  final String id;
+  final String imageUrl;
+  final String? caption;
+
+  const PhotoItem({
+    required this.id,
+    required this.imageUrl,
+    this.caption,
+  });
+}
+
+class FavoriteItem {
+  final String id;
+  final String title;
+  final String subtitle;
+  final String imageUrl;
+  final String type;
+
+  const FavoriteItem({
+    required this.id,
+    required this.title,
+    required this.subtitle,
+    required this.imageUrl,
+    required this.type,
+  });
+}
+</code></pre>
+<h3 id="22-模拟数据">2.2 模拟数据</h3>
+<pre><code class="language-dart">// data/mock_profile_data.dart
+
+import '../models/user_profile.dart';
+
+class MockProfileData {
+  static const userProfile = UserProfile(
+    id: 'user_001',
+    name: '张小明',
+    username: '@zhangxiaoming',
+    avatarUrl: 'https://picsum.photos/200',
+    coverUrl: 'https://picsum.photos/800/400',
+    bio: 'Flutter 开发者 | 热爱开源 | 分享技术与生活',
+    postsCount: 128,
+    followersCount: 5680,
+    followingCount: 326,
+    tags: ['Flutter', 'Dart', '移动开发', '开源爱好者'],
+    isFollowing: false,
+  );
+
+  static List&lt;Post&gt; get posts =&gt; List.generate(
+        20,
+        (index) =&gt; Post(
+          id: 'post_$index',
+          userId: 'user_001',
+          content: _postContents[index % _postContents.length],
+          imageUrl: index % 3 != 0
+              ? 'https://picsum.photos/400/300?random=$index'
+              : null,
+          createdAt: DateTime.now().subtract(Duration(hours: index * 3)),
+          likes: (index + 1) * 12,
+          comments: (index + 1) * 3,
+          isLiked: index % 2 == 0,
+        ),
+      );
+
+  static List&lt;PhotoItem&gt; get photos =&gt; List.generate(
+        30,
+        (index) =&gt; PhotoItem(
+          id: 'photo_$index',
+          imageUrl: 'https://picsum.photos/300/300?random=${index + 100}',
+          caption: '照片 ${index + 1}',
+        ),
+      );
+
+  static List&lt;FavoriteItem&gt; get favorites =&gt; List.generate(
+        15,
+        (index) =&gt; FavoriteItem(
+          id: 'fav_$index',
+          title: _favoriteTitles[index % _favoriteTitles.length],
+          subtitle: _favoriteSubtitles[index % _favoriteSubtitles.length],
+          imageUrl: 'https://picsum.photos/100/100?random=${index + 200}',
+          type: index % 3 == 0 ? '文章' : (index % 3 == 1 ? '视频' : '音乐'),
+        ),
+      );
+
+  static const _postContents = [
+    '今天学完了 Flutter 的 CustomScrollView，Sliver 系列组件真的很强大！🚀',
+    '分享一个 Dart 小技巧：使用 extension 方法可以让代码更简洁优雅。',
+    '周末去了趟咖啡店，写了一下午代码，产出满满。',
+    '新的 Flutter 版本发布了，Material 3 支持越来越完善。',
+    '推荐大家学习 CustomPaint，自定义绘制能力是进阶的关键。',
+  ];
+
+  static const _favoriteTitles = [
+    'Flutter 性能优化指南',
+    '深入理解 Dart 异步编程',
+    'Material Design 3 设计规范',
+    '状态管理方案对比',
+    '从零构建 Flutter 插件',
+  ];
+
+  static const _favoriteSubtitles = [
+    '收藏于 3 天前',
+    '收藏于 1 周前',
+    '收藏于 2 周前',
+    '收藏于 1 个月前',
+    '收藏于 2 个月前',
+  ];
+}
+</code></pre>
+<h3 id="23-个人主页主入口">2.3 个人主页主入口</h3>
+<pre><code class="language-dart">// screens/profile_screen.dart
+
+import 'package:flutter/material.dart';
+import '../data/mock_profile_data.dart';
+import '../models/user_profile.dart';
+import '../widgets/profile/profile_sliver_app_bar.dart';
+import '../widgets/profile/profile_sticky_tab_bar.dart';
+import '../widgets/profile/posts_list.dart';
+import '../widgets/profile/photos_grid.dart';
+import '../widgets/profile/favorites_list.dart';
+import 'avatar_preview_screen.dart';
+
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  State&lt;ProfileScreen&gt; createState() =&gt; _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State&lt;ProfileScreen&gt;
+    with TickerProviderStateMixin {
+  late final TabController _tabController;
+  late final UserProfile _profile;
+  late bool _isFollowing;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _profile = MockProfileData.userProfile;
+    _isFollowing = _profile.isFollowing;
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _onAvatarTap() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) =&gt; AvatarPreviewScreen(
+          imageUrl: _profile.avatarUrl,
+          heroTag: 'avatar_${_profile.id}',
+        ),
+      ),
+    );
+  }
+
+  void _onFollowTap() {
+    setState(() {
+      _isFollowing = !_isFollowing;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_isFollowing ? '已关注' : '已取消关注'),
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            // 可折叠的 AppBar（头像、背景、用户信息）
+            ProfileSliverAppBar(
+              profile: _profile,
+              isFollowing: _isFollowing,
+              onAvatarTap: _onAvatarTap,
+              onFollowTap: _onFollowTap,
+            ),
+            // 吸顶的 TabBar
+            ProfileStickyTabBar(tabController: _tabController),
+          ];
+        },
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            // 动态列表
+            PostsList(posts: MockProfileData.posts),
+            // 照片墙
+            PhotosGrid(photos: MockProfileData.photos),
+            // 收藏列表
+            FavoritesList(favorites: MockProfileData.favorites),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="24-可折叠-sliverappbar-组件">2.4 可折叠 SliverAppBar 组件</h3>
+<pre><code class="language-dart">// widgets/profile/profile_sliver_app_bar.dart
+
+import 'package:flutter/material.dart';
+import '../../models/user_profile.dart';
+import 'profile_stats_row.dart';
+
+class ProfileSliverAppBar extends StatelessWidget {
+  const ProfileSliverAppBar({
+    super.key,
+    required this.profile,
+    required this.isFollowing,
+    required this.onAvatarTap,
+    required this.onFollowTap,
+  });
+
+  final UserProfile profile;
+  final bool isFollowing;
+  final VoidCallback onAvatarTap;
+  final VoidCallback onFollowTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return SliverAppBar(
+      expandedHeight: 360,
+      pinned: true,
+      // 折叠后显示的标题
+      title: const Text('个人主页'),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.share_outlined),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: const Icon(Icons.more_vert),
+          onPressed: () {},
+        ),
+      ],
+      flexibleSpace: FlexibleSpaceBar(
+        background: _ProfileHeaderContent(
+          profile: profile,
+          isFollowing: isFollowing,
+          onAvatarTap: onAvatarTap,
+          onFollowTap: onFollowTap,
+          theme: theme,
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileHeaderContent extends StatelessWidget {
+  const _ProfileHeaderContent({
+    required this.profile,
+    required this.isFollowing,
+    required this.onAvatarTap,
+    required this.onFollowTap,
+    required this.theme,
+  });
+
+  final UserProfile profile;
+  final bool isFollowing;
+  final VoidCallback onAvatarTap;
+  final VoidCallback onFollowTap;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // 顶部封面区域
+        _buildCoverSection(context),
+        // 用户信息区域
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                // 名字和关注按钮
+                _buildNameAndFollowRow(),
+                const SizedBox(height: 4),
+                // 用户名
+                Text(
+                  profile.username,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // 个人简介
+                Text(profile.bio, style: theme.textTheme.bodyMedium),
+                const SizedBox(height: 8),
+                // 标签
+                _buildTagsRow(),
+                const Spacer(),
+                // 统计数据
+                ProfileStatsRow(
+                  postsCount: profile.postsCount,
+                  followersCount: profile.followersCount,
+                  followingCount: profile.followingCount,
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCoverSection(BuildContext context) {
+    return SizedBox(
+      height: 160,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // 封面图
+          Positioned.fill(
+            child: Image.network(
+              profile.coverUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) =&gt; Container(
+                color: theme.colorScheme.primaryContainer,
+              ),
+            ),
+          ),
+          // 渐变遮罩
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.3),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // 头像（溢出到下方）
+          Positioned(
+            bottom: -36,
+            left: 16,
+            child: GestureDetector(
+              onTap: onAvatarTap,
+              child: Hero(
+                tag: 'avatar_${profile.id}',
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 8,
+                      ),
+                    ],
+                  ),
+                  child: CircleAvatar(
+                    radius: 40,
+                    backgroundImage: NetworkImage(profile.avatarUrl),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNameAndFollowRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            profile.name,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        FilledButton.icon(
+          onPressed: onFollowTap,
+          icon: Icon(
+            isFollowing ? Icons.check : Icons.add,
+            size: 18,
+          ),
+          label: Text(isFollowing ? '已关注' : '关注'),
+          style: FilledButton.styleFrom(
+            backgroundColor:
+                isFollowing ? Colors.grey[300] : theme.colorScheme.primary,
+            foregroundColor:
+                isFollowing ? Colors.black87 : Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTagsRow() {
+    return Wrap(
+      spacing: 6,
+      runSpacing: 4,
+      children: profile.tags
+          .map(
+            (tag) =&gt; Chip(
+              label: Text(tag, style: const TextStyle(fontSize: 12)),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+              padding: EdgeInsets.zero,
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+</code></pre>
+<h3 id="25-统计数据行组件">2.5 统计数据行组件</h3>
+<pre><code class="language-dart">// widgets/profile/profile_stats_row.dart
+
+import 'package:flutter/material.dart';
+
+class ProfileStatsRow extends StatelessWidget {
+  const ProfileStatsRow({
+    super.key,
+    required this.postsCount,
+    required this.followersCount,
+    required this.followingCount,
+  });
+
+  final int postsCount;
+  final int followersCount;
+  final int followingCount;
+
+  String _formatCount(int count) {
+    if (count &gt;= 10000) {
+      return '${(count / 10000).toStringAsFixed(1)}万';
+    } else if (count &gt;= 1000) {
+      return '${(count / 1000).toStringAsFixed(1)}k';
+    }
+    return count.toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _StatItem(label: '动态', value: _formatCount(postsCount)),
+        _buildDivider(),
+        _StatItem(label: '关注', value: _formatCount(followingCount)),
+        _buildDivider(),
+        _StatItem(label: '粉丝', value: _formatCount(followersCount)),
+      ],
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(
+      width: 1,
+      height: 24,
+      color: Colors.grey[300],
+    );
+  }
+}
+
+class _StatItem extends StatelessWidget {
+  const _StatItem({
+    required this.label,
+    required this.value,
+  });
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Colors.grey[600],
+              ),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="26-吸顶-tabbar-组件">2.6 吸顶 TabBar 组件</h3>
+<pre><code class="language-dart">// widgets/profile/profile_sticky_tab_bar.dart
+
+import 'package:flutter/material.dart';
+
+class ProfileStickyTabBar extends StatelessWidget {
+  const ProfileStickyTabBar({
+    super.key,
+    required this.tabController,
+  });
+
+  final TabController tabController;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPersistentHeader(
+      pinned: true,
+      delegate: _StickyTabBarDelegate(
+        tabController: tabController,
+        color: Theme.of(context).scaffoldBackgroundColor,
+      ),
+    );
+  }
+}
+
+class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
+  const _StickyTabBarDelegate({
+    required this.tabController,
+    required this.color,
+  });
+
+  final TabController tabController;
+  final Color color;
+
+  @override
+  double get minExtent =&gt; 48;
+
+  @override
+  double get maxExtent =&gt; 48;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Container(
+      color: color,
+      child: TabBar(
+        controller: tabController,
+        labelColor: Theme.of(context).colorScheme.primary,
+        unselectedLabelColor: Colors.grey,
+        indicatorSize: TabBarIndicatorSize.label,
+        tabs: const [
+          Tab(icon: Icon(Icons.grid_on), text: '动态'),
+          Tab(icon: Icon(Icons.photo_library), text: '照片'),
+          Tab(icon: Icon(Icons.bookmark), text: '收藏'),
+        ],
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _StickyTabBarDelegate oldDelegate) {
+    return tabController != oldDelegate.tabController ||
+        color != oldDelegate.color;
+  }
+}
+</code></pre>
+<h3 id="27-动态列表组件">2.7 动态列表组件</h3>
+<pre><code class="language-dart">// widgets/profile/posts_list.dart
+
+import 'package:flutter/material.dart';
+import '../../models/user_profile.dart';
+import 'post_card.dart';
+
+class PostsList extends StatelessWidget {
+  const PostsList({super.key, required this.posts});
+
+  final List&lt;Post&gt; posts;
+
+  @override
+  Widget build(BuildContext context) {
+    // 使用 ListView.builder 实现懒加载
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: posts.length,
+      itemBuilder: (context, index) {
+        return PostCard(post: posts[index]);
+      },
+    );
+  }
+}
+</code></pre>
+<h3 id="28-动态卡片组件">2.8 动态卡片组件</h3>
+<pre><code class="language-dart">// widgets/profile/post_card.dart
+
+import 'package:flutter/material.dart';
+import '../../models/user_profile.dart';
+
+class PostCard extends StatefulWidget {
+  const PostCard({super.key, required this.post});
+
+  final Post post;
+
+  @override
+  State&lt;PostCard&gt; createState() =&gt; _PostCardState();
+}
+
+class _PostCardState extends State&lt;PostCard&gt; {
+  late bool _isLiked;
+  late int _likesCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLiked = widget.post.isLiked;
+    _likesCount = widget.post.likes;
+  }
+
+  void _toggleLike() {
+    setState(() {
+      _isLiked = !_isLiked;
+      _likesCount += _isLiked ? 1 : -1;
+    });
+  }
+
+  String _formatTime(DateTime dateTime) {
+    final diff = DateTime.now().difference(dateTime);
+    if (diff.inMinutes &lt; 60) return '${diff.inMinutes}分钟前';
+    if (diff.inHours &lt; 24) return '${diff.inHours}小时前';
+    if (diff.inDays &lt; 30) return '${diff.inDays}天前';
+    return '${dateTime.month}月${dateTime.day}日';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 发布时间
+            Text(
+              _formatTime(widget.post.createdAt),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: Colors.grey[500],
+              ),
+            ),
+            const SizedBox(height: 8),
+            // 动态内容
+            Text(
+              widget.post.content,
+              style: theme.textTheme.bodyMedium,
+            ),
+            // 动态图片
+            if (widget.post.imageUrl != null) ...[
+              const SizedBox(height: 10),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  widget.post.imageUrl!,
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) =&gt; Container(
+                    height: 200,
+                    color: Colors.grey[200],
+                    child: const Center(child: Icon(Icons.broken_image)),
+                  ),
+                ),
+              ),
+            ],
+            const SizedBox(height: 10),
+            // 互动按钮行
+            Row(
+              children: [
+                // 点赞按钮
+                InkWell(
+                  onTap: _toggleLike,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _isLiked ? Icons.favorite : Icons.favorite_border,
+                          size: 20,
+                          color: _isLiked ? Colors.red : Colors.grey,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '$_likesCount',
+                          style: TextStyle(
+                            color: _isLiked ? Colors.red : Colors.grey,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // 评论按钮
+                InkWell(
+                  onTap: () {},
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.chat_bubble_outline,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${widget.post.comments}',
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                // 分享按钮
+                IconButton(
+                  icon: const Icon(Icons.share_outlined, size: 20),
+                  color: Colors.grey,
+                  onPressed: () {},
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="29-照片墙组件">2.9 照片墙组件</h3>
+<pre><code class="language-dart">// widgets/profile/photos_grid.dart
+
+import 'package:flutter/material.dart';
+import '../../models/user_profile.dart';
+
+class PhotosGrid extends StatelessWidget {
+  const PhotosGrid({super.key, required this.photos});
+
+  final List&lt;PhotoItem&gt; photos;
+
+  @override
+  Widget build(BuildContext context) {
+    // 使用 GridView.builder 实现懒加载
+    return GridView.builder(
+      padding: const EdgeInsets.all(4),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+      ),
+      itemCount: photos.length,
+      itemBuilder: (context, index) {
+        return _PhotoTile(photo: photos[index]);
+      },
+    );
+  }
+}
+
+class _PhotoTile extends StatelessWidget {
+  const _PhotoTile({required this.photo});
+
+  final PhotoItem photo;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // 点击查看大图（可扩展为图片浏览器）
+        showDialog(
+          context: context,
+          builder: (_) =&gt; Dialog(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                photo.imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) =&gt; const SizedBox(
+                  height: 300,
+                  child: Center(child: Icon(Icons.broken_image, size: 48)),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(2),
+        child: Image.network(
+          photo.imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) =&gt; Container(
+            color: Colors.grey[300],
+            child: const Icon(Icons.image, color: Colors.grey),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="210-收藏列表组件">2.10 收藏列表组件</h3>
+<pre><code class="language-dart">// widgets/profile/favorites_list.dart
+
+import 'package:flutter/material.dart';
+import '../../models/user_profile.dart';
+
+class FavoritesList extends StatelessWidget {
+  const FavoritesList({super.key, required this.favorites});
+
+  final List&lt;FavoriteItem&gt; favorites;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: favorites.length,
+      separatorBuilder: (_, __) =&gt; const Divider(height: 1, indent: 80),
+      itemBuilder: (context, index) {
+        return _FavoriteTile(item: favorites[index]);
+      },
+    );
+  }
+}
+
+class _FavoriteTile extends StatelessWidget {
+  const _FavoriteTile({required this.item});
+
+  final FavoriteItem item;
+
+  IconData _getTypeIcon() {
+    switch (item.type) {
+      case '文章':
+        return Icons.article;
+      case '视频':
+        return Icons.play_circle_outline;
+      case '音乐':
+        return Icons.music_note;
+      default:
+        return Icons.bookmark;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.network(
+          item.imageUrl,
+          width: 56,
+          height: 56,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) =&gt; Container(
+            width: 56,
+            height: 56,
+            color: Colors.grey[300],
+            child: const Icon(Icons.image),
+          ),
+        ),
+      ),
+      title: Text(item.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+      subtitle: Text(item.subtitle),
+      trailing: Icon(_getTypeIcon(), color: Colors.grey),
+      onTap: () {},
+    );
+  }
+}
+</code></pre>
+<h3 id="211-头像大图预览页面hero-动画">2.11 头像大图预览页面（Hero 动画）</h3>
+<pre><code class="language-dart">// screens/avatar_preview_screen.dart
+
+import 'package:flutter/material.dart';
+
+class AvatarPreviewScreen extends StatelessWidget {
+  const AvatarPreviewScreen({
+    super.key,
+    required this.imageUrl,
+    required this.heroTag,
+  });
+
+  final String imageUrl;
+  final String heroTag;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      extendBodyBehindAppBar: true,
+      body: GestureDetector(
+        onTap: () =&gt; Navigator.of(context).pop(),
+        child: Center(
+          child: Hero(
+            tag: heroTag,
+            child: InteractiveViewer(
+              minScale: 0.5,
+              maxScale: 4.0,
+              child: CircleAvatar(
+                radius: 150,
+                backgroundImage: NetworkImage(imageUrl),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="212-应用入口">2.12 应用入口</h3>
+<pre><code class="language-dart">// main.dart （社交应用个人主页完整入口）
+
+import 'package:flutter/material.dart';
+import 'screens/profile_screen.dart';
+
+void main() {
+  runApp(const SocialProfileApp());
+}
+
+class SocialProfileApp extends StatelessWidget {
+  const SocialProfileApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '社交应用 - 个人主页',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+      ),
+      home: const ProfileScreen(),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：本项目的核心架构是 <code>NestedScrollView</code> 配合 <code>SliverAppBar</code> 和 <code>SliverPersistentHeader</code>，实现了外部滚动折叠 AppBar + 内部 TabBarView 独立滚动的嵌套滚动效果。这是社交类应用中非常经典的页面结构。<code>Hero</code> 动画的 <code>tag</code> 必须在同一路由栈中保持唯一，否则会产生冲突。</p>
+</blockquote>
+<hr />
+<h2 id="3-实战项目二仿电商首页">3. 实战项目二：仿电商首页</h2>
+<p>我们将构建一个仿淘宝/京东风格的电商首页，包含搜索栏、轮播图、分类入口、促销横滑列表、商品网格和底部导航。</p>
+<p><strong>该项目将综合运用以下知识：</strong></p>
+<ul>
+<li><code>Scaffold</code> + <code>AppBar</code>（第10课）</li>
+<li><code>PageView</code> + 自动播放 + 指示器（第11课）</li>
+<li><code>GridView</code>（第13课）</li>
+<li><code>ListView</code> 横向滑动（第12课）</li>
+<li><code>BottomNavigationBar</code>（第10课）</li>
+<li><code>RefreshIndicator</code>（第12课）</li>
+<li><code>Timer</code>、<code>AnimatedContainer</code>（第20、22课）</li>
+<li><code>Container</code>、<code>Column</code>、<code>Row</code>、<code>Stack</code>、<code>ClipRRect</code> 等布局和装饰组件</li>
+</ul>
+<h3 id="31-数据模型">3.1 数据模型</h3>
+<pre><code class="language-dart">// models/shop_models.dart
+
+class BannerItem {
+  final String id;
+  final String imageUrl;
+  final String title;
+
+  const BannerItem({
+    required this.id,
+    required this.imageUrl,
+    required this.title,
+  });
+}
+
+class Category {
+  final String id;
+  final String name;
+  final IconData icon;
+
+  const Category({
+    required this.id,
+    required this.name,
+    required this.icon,
+  });
+}
+
+class Product {
+  final String id;
+  final String name;
+  final String imageUrl;
+  final double price;
+  final double? originalPrice;
+  final double rating;
+  final int salesCount;
+  final String? tag;
+
+  const Product({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.price,
+    this.originalPrice,
+    required this.rating,
+    required this.salesCount,
+    this.tag,
+  });
+}
+
+class PromotionItem {
+  final String id;
+  final String title;
+  final String subtitle;
+  final String imageUrl;
+  final String badgeText;
+  final Color badgeColor;
+
+  const PromotionItem({
+    required this.id,
+    required this.title,
+    required this.subtitle,
+    required this.imageUrl,
+    required this.badgeText,
+    required this.badgeColor,
+  });
+}
+</code></pre>
+<h3 id="32-模拟数据">3.2 模拟数据</h3>
+<pre><code class="language-dart">// data/mock_shop_data.dart
+
+import 'package:flutter/material.dart';
+import '../models/shop_models.dart';
+
+class MockShopData {
+  static const banners = [
+    BannerItem(
+      id: 'b1',
+      imageUrl: 'https://picsum.photos/800/360?random=1',
+      title: '春季新品上市 全场8折',
+    ),
+    BannerItem(
+      id: 'b2',
+      imageUrl: 'https://picsum.photos/800/360?random=2',
+      title: '数码家电 限时特惠',
+    ),
+    BannerItem(
+      id: 'b3',
+      imageUrl: 'https://picsum.photos/800/360?random=3',
+      title: '美食节 满100减50',
+    ),
+    BannerItem(
+      id: 'b4',
+      imageUrl: 'https://picsum.photos/800/360?random=4',
+      title: '新人专享 首单立减20',
+    ),
+  ];
+
+  static const categories = [
+    Category(id: 'c1', name: '服饰', icon: Icons.checkroom),
+    Category(id: 'c2', name: '数码', icon: Icons.phone_android),
+    Category(id: 'c3', name: '食品', icon: Icons.restaurant),
+    Category(id: 'c4', name: '家居', icon: Icons.home),
+    Category(id: 'c5', name: '美妆', icon: Icons.face),
+    Category(id: 'c6', name: '运动', icon: Icons.fitness_center),
+    Category(id: 'c7', name: '图书', icon: Icons.menu_book),
+    Category(id: 'c8', name: '更多', icon: Icons.grid_view),
+  ];
+
+  static const promotions = [
+    PromotionItem(
+      id: 'p1',
+      title: '限时秒杀',
+      subtitle: '每日10点开抢',
+      imageUrl: 'https://picsum.photos/200/150?random=10',
+      badgeText: '热门',
+      badgeColor: Colors.red,
+    ),
+    PromotionItem(
+      id: 'p2',
+      title: '品牌闪购',
+      subtitle: '大牌低至3折',
+      imageUrl: 'https://picsum.photos/200/150?random=11',
+      badgeText: '新品',
+      badgeColor: Colors.orange,
+    ),
+    PromotionItem(
+      id: 'p3',
+      title: '拼团特惠',
+      subtitle: '人越多越便宜',
+      imageUrl: 'https://picsum.photos/200/150?random=12',
+      badgeText: '省钱',
+      badgeColor: Colors.green,
+    ),
+    PromotionItem(
+      id: 'p4',
+      title: '新人福利',
+      subtitle: '注册即享优惠',
+      imageUrl: 'https://picsum.photos/200/150?random=13',
+      badgeText: '专属',
+      badgeColor: Colors.purple,
+    ),
+    PromotionItem(
+      id: 'p5',
+      title: '积分商城',
+      subtitle: '积分兑好礼',
+      imageUrl: 'https://picsum.photos/200/150?random=14',
+      badgeText: '兑换',
+      badgeColor: Colors.teal,
+    ),
+  ];
+
+  static List&lt;Product&gt; get products =&gt; List.generate(
+        20,
+        (index) =&gt; Product(
+          id: 'prod_$index',
+          name: _productNames[index % _productNames.length],
+          imageUrl: 'https://picsum.photos/300/300?random=${index + 50}',
+          price: (index + 1) * 29.9,
+          originalPrice:
+              index % 3 == 0 ? (index + 1) * 29.9 * 1.5 : null,
+          rating: 4.0 + (index % 10) / 10,
+          salesCount: (index + 1) * 156,
+          tag: index % 4 == 0 ? '新品' : (index % 5 == 0 ? '热销' : null),
+        ),
+      );
+
+  static const _productNames = [
+    '简约时尚运动鞋 透气网面',
+    '无线蓝牙降噪耳机 旗舰版',
+    '有机绿茶礼盒装 特级龙井',
+    '北欧风格落地灯 智能调光',
+    '天然植物护肤套装 补水保湿',
+    '瑜伽健身垫 加厚防滑',
+    'Python 编程入门经典',
+    '全自动咖啡机 意式浓缩',
+    '纯棉四件套 北欧简约风',
+    '机械键盘 红轴 RGB背光',
+  ];
+}
+</code></pre>
+<h3 id="33-电商首页主入口">3.3 电商首页主入口</h3>
+<pre><code class="language-dart">// screens/shop_home_screen.dart
+
+import 'package:flutter/material.dart';
+import '../data/mock_shop_data.dart';
+import '../models/shop_models.dart';
+import '../widgets/shop/search_app_bar.dart';
+import '../widgets/shop/banner_carousel.dart';
+import '../widgets/shop/category_grid.dart';
+import '../widgets/shop/promotion_list.dart';
+import '../widgets/shop/product_grid.dart';
+import '../widgets/shop/section_header.dart';
+
+class ShopHomeScreen extends StatefulWidget {
+  const ShopHomeScreen({super.key});
+
+  @override
+  State&lt;ShopHomeScreen&gt; createState() =&gt; _ShopHomeScreenState();
+}
+
+class _ShopHomeScreenState extends State&lt;ShopHomeScreen&gt; {
+  List&lt;Product&gt; _products = [];
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _products = MockShopData.products;
+  }
+
+  Future&lt;void&gt; _onRefresh() async {
+    setState(() =&gt; _isLoading = true);
+    // 模拟网络请求
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      _products = MockShopData.products;
+      _isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // 自定义搜索栏
+      appBar: const SearchAppBar(),
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: CustomScrollView(
+          slivers: [
+            // 轮播图
+            SliverToBoxAdapter(
+              child: BannerCarousel(banners: MockShopData.banners),
+            ),
+            // 分类入口
+            SliverToBoxAdapter(
+              child: CategoryGrid(categories: MockShopData.categories),
+            ),
+            // &quot;限时活动&quot;标题
+            const SliverToBoxAdapter(
+              child: SectionHeader(
+                title: '限时活动',
+                actionText: '更多',
+              ),
+            ),
+            // 促销活动横向列表
+            SliverToBoxAdapter(
+              child: PromotionList(promotions: MockShopData.promotions),
+            ),
+            // &quot;为你推荐&quot;标题
+            const SliverToBoxAdapter(
+              child: SectionHeader(
+                title: '为你推荐',
+                actionText: '查看全部',
+              ),
+            ),
+            // 商品网格
+            ProductGrid(products: _products),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="34-搜索栏-appbar">3.4 搜索栏 AppBar</h3>
+<pre><code class="language-dart">// widgets/shop/search_app_bar.dart
+
+import 'package:flutter/material.dart';
+
+class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const SearchAppBar({super.key});
+
+  @override
+  Size get preferredSize =&gt; const Size.fromHeight(56);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return AppBar(
+      backgroundColor: theme.colorScheme.primary,
+      title: GestureDetector(
+        onTap: () {
+          // 跳转到搜索页面
+        },
+        child: Container(
+          height: 38,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const Row(
+            children: [
+              SizedBox(width: 12),
+              Icon(Icons.search, color: Colors.grey, size: 20),
+              SizedBox(width: 8),
+              Text(
+                '搜索商品、品牌',
+                style: TextStyle(color: Colors.grey, fontSize: 14),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: const Icon(Icons.message_outlined, color: Colors.white),
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="35-轮播图组件自动播放--指示器">3.5 轮播图组件（自动播放 + 指示器）</h3>
+<pre><code class="language-dart">// widgets/shop/banner_carousel.dart
+
+import 'dart:async';
+import 'package:flutter/material.dart';
+import '../../models/shop_models.dart';
+
+class BannerCarousel extends StatefulWidget {
+  const BannerCarousel({super.key, required this.banners});
+
+  final List&lt;BannerItem&gt; banners;
+
+  @override
+  State&lt;BannerCarousel&gt; createState() =&gt; _BannerCarouselState();
+}
+
+class _BannerCarouselState extends State&lt;BannerCarousel&gt; {
+  late final PageController _pageController;
+  int _currentPage = 0;
+  Timer? _autoPlayTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    _startAutoPlay();
+  }
+
+  @override
+  void dispose() {
+    _autoPlayTimer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _startAutoPlay() {
+    _autoPlayTimer = Timer.periodic(
+      const Duration(seconds: 4),
+      (_) {
+        if (!mounted) return;
+        final nextPage = (_currentPage + 1) % widget.banners.length;
+        _pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 180,
+      child: Stack(
+        children: [
+          // 轮播页面
+          PageView.builder(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() =&gt; _currentPage = index);
+            },
+            itemCount: widget.banners.length,
+            itemBuilder: (context, index) {
+              final banner = widget.banners[index];
+              return _BannerPage(banner: banner);
+            },
+          ),
+          // 底部指示器
+          Positioned(
+            bottom: 12,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                widget.banners.length,
+                (index) =&gt; AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  width: _currentPage == index ? 20 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: _currentPage == index
+                        ? Colors.white
+                        : Colors.white.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BannerPage extends StatelessWidget {
+  const _BannerPage({required this.banner});
+
+  final BannerItem banner;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Image.network(
+          banner.imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) =&gt; Container(
+            color: Colors.grey[300],
+            child: const Center(child: Icon(Icons.image, size: 48)),
+          ),
+        ),
+        // 底部渐变遮罩 + 标题
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+                  Colors.black.withValues(alpha: 0.6),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+            child: Text(
+              banner.title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="36-分类网格组件">3.6 分类网格组件</h3>
+<pre><code class="language-dart">// widgets/shop/category_grid.dart
+
+import 'package:flutter/material.dart';
+import '../../models/shop_models.dart';
+
+class CategoryGrid extends StatelessWidget {
+  const CategoryGrid({super.key, required this.categories});
+
+  final List&lt;Category&gt; categories;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      color: Colors.white,
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4,
+          childAspectRatio: 1.1,
+        ),
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          return _CategoryItem(category: categories[index]);
+        },
+      ),
+    );
+  }
+}
+
+class _CategoryItem extends StatelessWidget {
+  const _CategoryItem({required this.category});
+
+  final Category category;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {},
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: Theme.of(context)
+                  .colorScheme
+                  .primaryContainer
+                  .withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              category.icon,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            category.name,
+            style: const TextStyle(fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="37-板块标题组件">3.7 板块标题组件</h3>
+<pre><code class="language-dart">// widgets/shop/section_header.dart
+
+import 'package:flutter/material.dart';
+
+class SectionHeader extends StatelessWidget {
+  const SectionHeader({
+    super.key,
+    required this.title,
+    this.actionText,
+    this.onActionTap,
+  });
+
+  final String title;
+  final String? actionText;
+  final VoidCallback? onActionTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          if (actionText != null)
+            GestureDetector(
+              onTap: onActionTap,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    actionText!,
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 13,
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Colors.grey[600],
+                    size: 18,
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="38-促销活动横向列表">3.8 促销活动横向列表</h3>
+<pre><code class="language-dart">// widgets/shop/promotion_list.dart
+
+import 'package:flutter/material.dart';
+import '../../models/shop_models.dart';
+
+class PromotionList extends StatelessWidget {
+  const PromotionList({super.key, required this.promotions});
+
+  final List&lt;PromotionItem&gt; promotions;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 140,
+      color: Colors.white,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        itemCount: promotions.length,
+        itemBuilder: (context, index) {
+          return _PromotionCard(promotion: promotions[index]);
+        },
+      ),
+    );
+  }
+}
+
+class _PromotionCard extends StatelessWidget {
+  const _PromotionCard({required this.promotion});
+
+  final PromotionItem promotion;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 130,
+      margin: const EdgeInsets.only(right: 10),
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 图片
+                Expanded(
+                  child: Image.network(
+                    promotion.imageUrl,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =&gt; Container(
+                      color: Colors.grey[200],
+                      child: const Center(child: Icon(Icons.image)),
+                    ),
+                  ),
+                ),
+                // 标题和副标题
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        promotion.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        promotion.subtitle,
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 11,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            // 角标
+            Positioned(
+              top: 6,
+              left: 6,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: promotion.badgeColor,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  promotion.badgeText,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="39-商品网格组件">3.9 商品网格组件</h3>
+<pre><code class="language-dart">// widgets/shop/product_grid.dart
+
+import 'package:flutter/material.dart';
+import '../../models/shop_models.dart';
+import 'product_card.dart';
+
+class ProductGrid extends StatelessWidget {
+  const ProductGrid({super.key, required this.products});
+
+  final List&lt;Product&gt; products;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.all(8),
+      sliver: SliverGrid(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) =&gt; ProductCard(product: products[index]),
+          childCount: products.length,
+        ),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: 0.65,
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="310-商品卡片组件">3.10 商品卡片组件</h3>
+<pre><code class="language-dart">// widgets/shop/product_card.dart
+
+import 'package:flutter/material.dart';
+import '../../models/shop_models.dart';
+
+class ProductCard extends StatelessWidget {
+  const ProductCard({super.key, required this.product});
+
+  final Product product;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          // 跳转到商品详情页
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 商品图片
+            Expanded(
+              flex: 3,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(
+                    product.imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =&gt; Container(
+                      color: Colors.grey[200],
+                      child: const Center(
+                        child: Icon(Icons.image, size: 40, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                  // 标签（新品/热销）
+                  if (product.tag != null)
+                    Positioned(
+                      top: 6,
+                      left: 6,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: product.tag == '新品'
+                              ? Colors.blue
+                              : Colors.red,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          product.tag!,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            // 商品信息
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 商品名称
+                    Text(
+                      product.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 13, height: 1.3),
+                    ),
+                    const Spacer(),
+                    // 评分和销量
+                    Row(
+                      children: [
+                        Icon(Icons.star, size: 14, color: Colors.amber[700]),
+                        const SizedBox(width: 2),
+                        Text(
+                          product.rating.toStringAsFixed(1),
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '已售${product.salesCount}',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    // 价格
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '¥',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: theme.colorScheme.error,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          product.price.toStringAsFixed(1),
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: theme.colorScheme.error,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (product.originalPrice != null) ...[
+                          const SizedBox(width: 4),
+                          Text(
+                            '¥${product.originalPrice!.toStringAsFixed(1)}',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey[500],
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="311-底部导航与完整入口">3.11 底部导航与完整入口</h3>
+<pre><code class="language-dart">// screens/shop_main_screen.dart
+
+import 'package:flutter/material.dart';
+import 'shop_home_screen.dart';
+
+class ShopMainScreen extends StatefulWidget {
+  const ShopMainScreen({super.key});
+
+  @override
+  State&lt;ShopMainScreen&gt; createState() =&gt; _ShopMainScreenState();
+}
+
+class _ShopMainScreenState extends State&lt;ShopMainScreen&gt; {
+  int _currentIndex = 0;
+
+  // 使用 IndexedStack 保持各页面状态
+  final List&lt;Widget&gt; _pages = const [
+    ShopHomeScreen(),
+    _PlaceholderPage(title: '分类', icon: Icons.category),
+    _PlaceholderPage(title: '购物车', icon: Icons.shopping_cart),
+    _PlaceholderPage(title: '我的', icon: Icons.person),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _pages,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() =&gt; _currentIndex = index);
+        },
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: '首页',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.category_outlined),
+            activeIcon: Icon(Icons.category),
+            label: '分类',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart_outlined),
+            activeIcon: Icon(Icons.shopping_cart),
+            label: '购物车',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: '我的',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PlaceholderPage extends StatelessWidget {
+  const _PlaceholderPage({required this.title, required this.icon});
+
+  final String title;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              '$title 页面（待开发）',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[500],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="312-应用入口">3.12 应用入口</h3>
+<pre><code class="language-dart">// main.dart （电商首页完整入口）
+
+import 'package:flutter/material.dart';
+import 'screens/shop_main_screen.dart';
+
+void main() {
+  runApp(const ShopApp());
+}
+
+class ShopApp extends StatelessWidget {
+  const ShopApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '电商应用',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepOrange,
+        ),
+        useMaterial3: true,
+      ),
+      home: const ShopMainScreen(),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：电商首页使用 <code>CustomScrollView</code> + 多种 <code>Sliver</code> 组件来构建，轮播图、分类和促销列表通过 <code>SliverToBoxAdapter</code> 嵌入，而商品网格直接使用 <code>SliverGrid</code>。这种方式相比嵌套 <code>SingleChildScrollView</code> + <code>Column</code> 的方式，滚动性能更好，支持懒加载。轮播图的自动播放使用 <code>Timer.periodic</code>，注意在 <code>dispose</code> 中取消定时器以防止内存泄漏。</p>
+</blockquote>
+<hr />
+<h2 id="4-性能优化要点">4. 性能优化要点</h2>
+<p>在构建真实应用时，性能是不可忽视的话题。以下是 Flutter 开发中最常用且效果最显著的性能优化技巧。</p>
+<h3 id="41-const-构造函数减少不必要的-widget-重建">4.1 const 构造函数：减少不必要的 Widget 重建</h3>
+<p><code>const</code> 修饰的 Widget 在编译时就已经确定了值，Flutter 框架可以直接跳过对它的重建判断，从而提升性能。</p>
+<p><strong>优化前：</strong></p>
+<pre><code class="language-dart">class MyWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // 每次父 Widget 重建时，这些都会被重新创建
+        Padding(
+          padding: EdgeInsets.all(16),
+          child: Text(
+            '标题文字',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Divider(height: 1, color: Colors.grey),
+        Icon(Icons.star, color: Colors.amber, size: 32),
+      ],
+    );
+  }
+}
+</code></pre>
+<p><strong>优化后：</strong></p>
+<pre><code class="language-dart">class MyWidget extends StatelessWidget {
+  const MyWidget({super.key}); // Widget 本身也声明为 const
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      children: [
+        // const Widget 不会被重新创建，框架直接复用
+        Padding(
+          padding: EdgeInsets.all(16),
+          child: Text(
+            '标题文字',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Divider(height: 1, color: Colors.grey),
+        Icon(Icons.star, color: Colors.amber, size: 32),
+      ],
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：在 <code>analysis_options.yaml</code> 中启用 <code>prefer_const_constructors</code> 和 <code>prefer_const_declarations</code> lint 规则，IDE 会自动提示你添加 <code>const</code>。</p>
+</blockquote>
+<h3 id="42-repaintboundary隔离重绘区域">4.2 RepaintBoundary：隔离重绘区域</h3>
+<p>当页面中某个区域频繁刷新（如动画、计时器）时，默认情况下可能会导致整个父级重绘。使用 <code>RepaintBoundary</code> 可以将该区域隔离，使其重绘不会影响其他区域。</p>
+<p><strong>优化前：</strong></p>
+<pre><code class="language-dart">class DashboardScreen extends StatelessWidget {
+  const DashboardScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // 这个实时时钟频繁重绘，会拖带整个 Column 重绘
+        LiveClock(),
+        const ExpensiveChartWidget(),
+        const StaticInfoPanel(),
+      ],
+    );
+  }
+}
+</code></pre>
+<p><strong>优化后：</strong></p>
+<pre><code class="language-dart">class DashboardScreen extends StatelessWidget {
+  const DashboardScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // RepaintBoundary 隔离重绘，LiveClock 的重绘不会影响其他组件
+        RepaintBoundary(
+          child: LiveClock(),
+        ),
+        const ExpensiveChartWidget(),
+        const StaticInfoPanel(),
+      ],
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：不要滥用 <code>RepaintBoundary</code>，因为每一个 <code>RepaintBoundary</code> 都会创建一个新的绘制图层，过多的图层反而会增加合成开销。只在频繁重绘且与周围组件独立的地方使用。</p>
+</blockquote>
+<h3 id="43-listviewbuilder--gridviewbuilder懒加载">4.3 ListView.builder / GridView.builder：懒加载</h3>
+<p>这一点在前面的实战中已经大量使用。核心区别如下：</p>
+<p><strong>优化前（一次性创建所有子组件）：</strong></p>
+<pre><code class="language-dart">// 即使有 1000 条数据，也会一次性创建 1000 个 Widget
+ListView(
+  children: items.map((item) =&gt; ItemWidget(item: item)).toList(),
+)
+</code></pre>
+<p><strong>优化后（只创建可见区域的子组件）：</strong></p>
+<pre><code class="language-dart">// 只创建当前可见区域 + 缓存区域内的 Widget
+ListView.builder(
+  itemCount: items.length,
+  itemBuilder: (context, index) =&gt; ItemWidget(item: items[index]),
+)
+</code></pre>
+<h3 id="44-图片缓存策略">4.4 图片缓存策略</h3>
+<p>网络图片应当使用缓存策略避免重复下载。Flutter 自带的 <code>Image.network</code> 会使用内存缓存，但不支持磁盘缓存。推荐使用 <code>cached_network_image</code> 包：</p>
+<pre><code class="language-dart">// pubspec.yaml 中添加依赖：
+// cached_network_image: ^3.3.0
+
+import 'package:cached_network_image/cached_network_image.dart';
+
+class CachedProductImage extends StatelessWidget {
+  const CachedProductImage({
+    super.key,
+    required this.imageUrl,
+    this.width,
+    this.height,
+  });
+
+  final String imageUrl;
+  final double? width;
+  final double? height;
+
+  @override
+  Widget build(BuildContext context) {
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      width: width,
+      height: height,
+      fit: BoxFit.cover,
+      // 加载中占位
+      placeholder: (context, url) =&gt; Container(
+        color: Colors.grey[200],
+        child: const Center(
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      ),
+      // 加载失败占位
+      errorWidget: (context, url, error) =&gt; Container(
+        color: Colors.grey[200],
+        child: const Icon(Icons.broken_image, color: Colors.grey),
+      ),
+      // 内存缓存的最大宽度，防止大图占用过多内存
+      memCacheWidth: 400,
+    );
+  }
+}
+</code></pre>
+<h3 id="45-shouldrepaint--shouldrebuild-优化">4.5 shouldRepaint / shouldRebuild 优化</h3>
+<p>在自定义 <code>CustomPainter</code> 和 <code>SliverPersistentHeaderDelegate</code> 时，正确实现 <code>shouldRepaint</code> / <code>shouldRebuild</code> 可以避免不必要的重绘和重建。</p>
+<p><strong>优化前（总是重绘）：</strong></p>
+<pre><code class="language-dart">class MyPainter extends CustomPainter {
+  final double progress;
+  final Color color;
+
+  MyPainter({required this.progress, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 绘制逻辑...
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    // 总是返回 true，即使属性没有变化也会重绘
+    return true;
+  }
+}
+</code></pre>
+<p><strong>优化后（按需重绘）：</strong></p>
+<pre><code class="language-dart">class MyPainter extends CustomPainter {
+  final double progress;
+  final Color color;
+
+  MyPainter({required this.progress, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 绘制逻辑...
+  }
+
+  @override
+  bool shouldRepaint(covariant MyPainter oldDelegate) {
+    // 只有在属性真正发生变化时才重绘
+    return progress != oldDelegate.progress || color != oldDelegate.color;
+  }
+}
+</code></pre>
+<h3 id="46-key-的正确使用">4.6 Key 的正确使用</h3>
+<p><code>Key</code> 帮助框架正确识别 Widget，尤其在列表增删和动画场景中至关重要。</p>
+<p><strong>优化前（列表项删除后状态混乱）：</strong></p>
+<pre><code class="language-dart">ListView.builder(
+  itemCount: items.length,
+  itemBuilder: (context, index) {
+    // 没有 Key，删除中间一项后，后面的 Widget 会复用被删除项的 Element 和 State
+    return DismissibleItem(item: items[index]);
+  },
+)
+</code></pre>
+<p><strong>优化后（使用 ValueKey 确保正确匹配）：</strong></p>
+<pre><code class="language-dart">ListView.builder(
+  itemCount: items.length,
+  itemBuilder: (context, index) {
+    return DismissibleItem(
+      // 用唯一 ID 作为 Key，确保每个 Widget 与正确的 Element 关联
+      key: ValueKey(items[index].id),
+      item: items[index],
+    );
+  },
+)
+</code></pre>
+<blockquote>
+<p><strong>最佳实践总结</strong>：</p>
+<ul>
+<li><code>const</code> 能加就加，特别是纯展示的子树</li>
+<li>长列表必须使用 <code>builder</code> 构造</li>
+<li>网络图片使用 <code>cached_network_image</code> 做磁盘缓存</li>
+<li>频繁重绘区域使用 <code>RepaintBoundary</code> 隔离</li>
+<li><code>shouldRepaint</code> / <code>shouldRebuild</code> 认真比较属性</li>
+<li>列表项、动画项一定要加合适的 <code>Key</code></li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="5-组件封装与复用技巧">5. 组件封装与复用技巧</h2>
+<p>构建真实应用时，封装通用组件可以大幅提高开发效率和代码一致性。下面介绍几种常用的封装技巧。</p>
+<h3 id="51-封装通用组件的最佳实践">5.1 封装通用组件的最佳实践</h3>
+<p>一个优秀的通用组件应当遵循以下原则：</p>
+<ol>
+<li><strong>提供合理的默认值</strong>：让使用者在最简场景下零配置即可使用</li>
+<li><strong>暴露必要的可选参数</strong>：让使用者在复杂场景下也能灵活定制</li>
+<li><strong>回调函数替代硬编码逻辑</strong>：组件本身不应决定点击后做什么</li>
+<li><strong>良好的命名</strong>：参数名和组件名应该自解释</li>
+</ol>
+<p><strong>示例：封装一个通用的空状态组件</strong></p>
+<pre><code class="language-dart">// widgets/common/empty_state_widget.dart
+
+import 'package:flutter/material.dart';
+
+class EmptyStateWidget extends StatelessWidget {
+  const EmptyStateWidget({
+    super.key,
+    this.icon = Icons.inbox_outlined,
+    this.iconSize = 64,
+    this.iconColor,
+    this.title = '暂无数据',
+    this.subtitle,
+    this.actionText,
+    this.onAction,
+  });
+
+  final IconData icon;
+  final double iconSize;
+  final Color? iconColor;
+  final String title;
+  final String? subtitle;
+  final String? actionText;
+  final VoidCallback? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: iconSize,
+              color: iconColor ?? Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: Colors.grey[600],
+              ),
+            ),
+            if (subtitle != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                subtitle!,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey[500],
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+            if (actionText != null &amp;&amp; onAction != null) ...[
+              const SizedBox(height: 20),
+              FilledButton(
+                onPressed: onAction,
+                child: Text(actionText!),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>使用方式：</strong></p>
+<pre><code class="language-dart">// 最简使用 —— 只用默认值
+const EmptyStateWidget()
+
+// 完整使用 —— 自定义所有属性
+EmptyStateWidget(
+  icon: Icons.search_off,
+  title: '没有搜索结果',
+  subtitle: '换个关键词试试吧',
+  actionText: '清除搜索',
+  onAction: () =&gt; _clearSearch(),
+)
+</code></pre>
+<h3 id="52-使用泛型封装通用列表网格">5.2 使用泛型封装通用列表/网格</h3>
+<p>通过泛型，我们可以封装一个能处理任意数据类型的通用列表组件：</p>
+<pre><code class="language-dart">// widgets/common/generic_list_view.dart
+
+import 'package:flutter/material.dart';
+
+/// 通用列表组件，支持加载状态、空状态、错误状态和下拉刷新
+class GenericListView&lt;T&gt; extends StatelessWidget {
+  const GenericListView({
+    super.key,
+    required this.items,
+    required this.itemBuilder,
+    this.isLoading = false,
+    this.hasError = false,
+    this.errorMessage = '加载失败',
+    this.emptyMessage = '暂无数据',
+    this.onRefresh,
+    this.onRetry,
+    this.separatorBuilder,
+    this.padding,
+  });
+
+  /// 数据列表
+  final List&lt;T&gt; items;
+
+  /// 构建每一项的回调
+  final Widget Function(BuildContext context, T item, int index) itemBuilder;
+
+  /// 是否正在加载
+  final bool isLoading;
+
+  /// 是否加载失败
+  final bool hasError;
+
+  /// 错误提示文字
+  final String errorMessage;
+
+  /// 空状态提示文字
+  final String emptyMessage;
+
+  /// 下拉刷新回调
+  final Future&lt;void&gt; Function()? onRefresh;
+
+  /// 重试回调
+  final VoidCallback? onRetry;
+
+  /// 分割线构建器
+  final Widget Function(BuildContext context, int index)? separatorBuilder;
+
+  /// 内边距
+  final EdgeInsetsGeometry? padding;
+
+  @override
+  Widget build(BuildContext context) {
+    // 加载状态
+    if (isLoading &amp;&amp; items.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // 错误状态
+    if (hasError &amp;&amp; items.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(errorMessage, style: TextStyle(color: Colors.grey[600])),
+            if (onRetry != null) ...[
+              const SizedBox(height: 16),
+              FilledButton(onPressed: onRetry, child: const Text('重试')),
+            ],
+          ],
+        ),
+      );
+    }
+
+    // 空状态
+    if (items.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.inbox_outlined, size: 48, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(emptyMessage, style: TextStyle(color: Colors.grey[600])),
+          ],
+        ),
+      );
+    }
+
+    // 正常列表
+    Widget listView;
+    if (separatorBuilder != null) {
+      listView = ListView.separated(
+        padding: padding,
+        itemCount: items.length,
+        separatorBuilder: separatorBuilder!,
+        itemBuilder: (context, index) =&gt;
+            itemBuilder(context, items[index], index),
+      );
+    } else {
+      listView = ListView.builder(
+        padding: padding,
+        itemCount: items.length,
+        itemBuilder: (context, index) =&gt;
+            itemBuilder(context, items[index], index),
+      );
+    }
+
+    // 包裹下拉刷新
+    if (onRefresh != null) {
+      return RefreshIndicator(onRefresh: onRefresh!, child: listView);
+    }
+
+    return listView;
+  }
+}
+</code></pre>
+<p><strong>使用方式：</strong></p>
+<pre><code class="language-dart">// 商品列表
+GenericListView&lt;Product&gt;(
+  items: products,
+  isLoading: _isLoading,
+  hasError: _hasError,
+  onRefresh: _loadProducts,
+  onRetry: _loadProducts,
+  emptyMessage: '暂无商品',
+  itemBuilder: (context, product, index) {
+    return ProductCard(product: product);
+  },
+)
+
+// 用户列表 —— 同一个组件，不同数据类型
+GenericListView&lt;User&gt;(
+  items: users,
+  isLoading: _isLoading,
+  onRefresh: _loadUsers,
+  separatorBuilder: (_, __) =&gt; const Divider(height: 1),
+  itemBuilder: (context, user, index) {
+    return ListTile(
+      leading: CircleAvatar(backgroundImage: NetworkImage(user.avatar)),
+      title: Text(user.name),
+      subtitle: Text(user.email),
+    );
+  },
+)
+</code></pre>
+<h3 id="53-回调函数设计">5.3 回调函数设计</h3>
+<p>组件不应内置具体的业务逻辑，而应通过回调函数将控制权交给使用者：</p>
+<pre><code class="language-dart">// widgets/common/action_card.dart
+
+import 'package:flutter/material.dart';
+
+/// 可操作卡片 —— 支持点击、长按、滑动删除
+class ActionCard extends StatelessWidget {
+  const ActionCard({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.onLongPress,
+    this.onDismissed,
+    this.confirmDismiss,
+    this.elevation = 1,
+    this.margin,
+    this.borderRadius = 12,
+  });
+
+  final Widget child;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final void Function(DismissDirection)? onDismissed;
+  final Future&lt;bool?&gt; Function(DismissDirection)? confirmDismiss;
+  final double elevation;
+  final EdgeInsetsGeometry? margin;
+  final double borderRadius;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget card = Card(
+      elevation: elevation,
+      margin: margin ?? const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: child,
+      ),
+    );
+
+    if (onDismissed != null) {
+      card = Dismissible(
+        key: key ?? UniqueKey(),
+        onDismissed: onDismissed,
+        confirmDismiss: confirmDismiss,
+        background: Container(
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(right: 20),
+          color: Colors.red,
+          child: const Icon(Icons.delete, color: Colors.white),
+        ),
+        child: card,
+      );
+    }
+
+    return card;
+  }
+}
+</code></pre>
+<h3 id="54-组件的默认值和可选参数设计">5.4 组件的默认值和可选参数设计</h3>
+<p>设计组件 API 时，参数应按重要程度分为三类：</p>
+<pre><code class="language-dart">class AppButton extends StatelessWidget {
+  const AppButton({
+    super.key,
+    // 第一类：必填参数（核心功能不可缺少的）
+    required this.text,
+    required this.onPressed,
+    // 第二类：常用可选参数（有合理默认值）
+    this.icon,
+    this.isLoading = false,
+    this.enabled = true,
+    this.type = AppButtonType.primary,
+    // 第三类：样式定制参数（高级用户才需要）
+    this.backgroundColor,
+    this.foregroundColor,
+    this.borderRadius = 8,
+    this.padding,
+    this.minimumSize,
+  });
+
+  final String text;
+  final VoidCallback? onPressed;
+  final IconData? icon;
+  final bool isLoading;
+  final bool enabled;
+  final AppButtonType type;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final double borderRadius;
+  final EdgeInsetsGeometry? padding;
+  final Size? minimumSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final effectiveOnPressed = enabled &amp;&amp; !isLoading ? onPressed : null;
+
+    final style = ElevatedButton.styleFrom(
+      backgroundColor: backgroundColor ?? _getBackgroundColor(theme),
+      foregroundColor: foregroundColor ?? _getForegroundColor(theme),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      padding: padding,
+      minimumSize: minimumSize,
+    );
+
+    final child = isLoading
+        ? const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          )
+        : (icon != null
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, size: 18),
+                  const SizedBox(width: 6),
+                  Text(text),
+                ],
+              )
+            : Text(text));
+
+    return ElevatedButton(
+      onPressed: effectiveOnPressed,
+      style: style,
+      child: child,
+    );
+  }
+
+  Color _getBackgroundColor(ThemeData theme) {
+    switch (type) {
+      case AppButtonType.primary:
+        return theme.colorScheme.primary;
+      case AppButtonType.secondary:
+        return theme.colorScheme.secondary;
+      case AppButtonType.danger:
+        return theme.colorScheme.error;
+    }
+  }
+
+  Color _getForegroundColor(ThemeData theme) {
+    switch (type) {
+      case AppButtonType.primary:
+        return theme.colorScheme.onPrimary;
+      case AppButtonType.secondary:
+        return theme.colorScheme.onSecondary;
+      case AppButtonType.danger:
+        return theme.colorScheme.onError;
+    }
+  }
+}
+
+enum AppButtonType { primary, secondary, danger }
+</code></pre>
+<p><strong>使用示例：</strong></p>
+<pre><code class="language-dart">// 最简用法
+AppButton(text: '确认', onPressed: _onConfirm)
+
+// 带图标和加载状态
+AppButton(
+  text: '提交订单',
+  icon: Icons.check,
+  isLoading: _isSubmitting,
+  onPressed: _submitOrder,
+)
+
+// 危险操作按钮
+AppButton(
+  text: '删除账号',
+  type: AppButtonType.danger,
+  onPressed: _deleteAccount,
+)
+</code></pre>
+<hr />
+<h2 id="6-课程总结与进阶学习方向">6. 课程总结与进阶学习方向</h2>
+<h3 id="61-25-课知识图谱回顾">6.1 25 课知识图谱回顾</h3>
+<p>恭喜你完成了整个《Flutter 常用组件系统学习》课程！让我们回顾一下 25 课的知识脉络：</p>
+<pre><code>Flutter 常用组件系统学习
+│
+├── 第一部分：基础篇（第01-09课）
+│   ├── 第01课 Widget 体系与基础概念
+│   │   └── 三棵树、StatelessWidget/StatefulWidget、生命周期、Key
+│   ├── 第02课 文本组件
+│   │   └── Text、RichText、SelectableText、DefaultTextStyle
+│   ├── 第03课 按钮组件
+│   │   └── ElevatedButton、TextButton、OutlinedButton、IconButton、FAB
+│   ├── 第04课 图片与图标组件
+│   │   └── Image（asset/network/file）、FadeInImage、Icon、CircleAvatar
+│   ├── 第05课 基础容器组件
+│   │   └── Container、SizedBox、DecoratedBox、Padding、Center
+│   ├── 第06课 线性布局
+│   │   └── Row、Column、Expanded、Flexible、Spacer
+│   ├── 第07课 层叠布局
+│   │   └── Stack、Positioned、Align、IndexedStack
+│   ├── 第08课 弹性与流式布局
+│   │   └── Wrap、Flow、LayoutBuilder、MediaQuery
+│   └── 第09课 约束与尺寸
+│       └── ConstrainedBox、AspectRatio、FittedBox、IntrinsicHeight
+│
+├── 第二部分：页面框架与导航（第10-11课）
+│   ├── 第10课 Scaffold 脚手架
+│   │   └── AppBar、BottomNavigationBar、Drawer、FAB
+│   └── 第11课 Tab 导航与页面切换
+│       └── TabBar、TabBarView、PageView、KeepAlive
+│
+├── 第三部分：列表与滚动（第12-13课）
+│   ├── 第12课 列表与滚动（基础）
+│   │   └── ListView（builder/separated）、ScrollController、RefreshIndicator
+│   └── 第13课 网格与高级滚动
+│       └── GridView、CustomScrollView、Sliver 系列、NestedScrollView
+│
+├── 第四部分：输入与选择（第14-15课）
+│   ├── 第14课 输入组件与表单
+│   │   └── TextField、TextFormField、Form、InputFormatter
+│   └── 第15课 选择类组件
+│       └── Checkbox、Radio、Switch、Slider、Dropdown、DatePicker
+│
+├── 第五部分：信息展示与交互（第16-18课）
+│   ├── 第16课 信息展示组件
+│   │   └── Card、ListTile、ExpansionTile、Chip、DataTable、Stepper
+│   ├── 第17课 对话框与弹出层
+│   │   └── AlertDialog、BottomSheet、SnackBar、Tooltip
+│   └── 第18课 手势与交互
+│       └── GestureDetector、InkWell、Dismissible、Draggable、InteractiveViewer
+│
+├── 第六部分：视觉效果与动画（第19-21课）
+│   ├── 第19课 装饰与裁剪变换
+│   │   └── ClipRRect、Transform、Opacity、BackdropFilter、ShaderMask
+│   ├── 第20课 隐式动画
+│   │   └── AnimatedContainer、AnimatedOpacity、AnimatedSwitcher、TweenAnimationBuilder
+│   └── 第21课 显式动画
+│       └── AnimationController、Tween、Hero、AnimatedList
+│
+├── 第七部分：异步与自定义绘制（第22-23课）
+│   ├── 第22课 异步 UI 组件
+│   │   └── FutureBuilder、StreamBuilder、ValueListenableBuilder
+│   └── 第23课 自定义绘制
+│       └── CustomPaint、Canvas API、Path、TextPainter
+│
+├── 第八部分：主题与实战（第24-25课）
+│   ├── 第24课 主题与样式系统
+│   │   └── ThemeData、ColorScheme、TextTheme、亮/暗模式
+│   └── 第25课 综合实战（本课）
+│       └── 项目组织、实战项目、性能优化、组件封装
+</code></pre>
+<h3 id="62-核心能力总结">6.2 核心能力总结</h3>
+<p>完成本课程后，你应该具备以下核心能力：</p>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>对应课程</th>
+<th>掌握程度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Widget 原理理解</strong></td>
+<td>第01课</td>
+<td>理解三棵树和 Widget 生命周期</td>
+</tr>
+<tr>
+<td><strong>基础 UI 构建</strong></td>
+<td>第02-09课</td>
+<td>熟练使用文本、按钮、图片、容器和各种布局</td>
+</tr>
+<tr>
+<td><strong>页面架构搭建</strong></td>
+<td>第10-11课</td>
+<td>搭建带导航的多页面应用</td>
+</tr>
+<tr>
+<td><strong>列表与滚动</strong></td>
+<td>第12-13课</td>
+<td>构建高性能的列表、网格和复杂滚动效果</td>
+</tr>
+<tr>
+<td><strong>表单与输入</strong></td>
+<td>第14-15课</td>
+<td>构建完整的表单页面和各种选择控件</td>
+</tr>
+<tr>
+<td><strong>信息展示</strong></td>
+<td>第16-17课</td>
+<td>使用各种展示组件和弹出层</td>
+</tr>
+<tr>
+<td><strong>手势交互</strong></td>
+<td>第18课</td>
+<td>实现各种手势操作和拖拽交互</td>
+</tr>
+<tr>
+<td><strong>视觉效果</strong></td>
+<td>第19课</td>
+<td>实现裁剪、变换、毛玻璃等视觉效果</td>
+</tr>
+<tr>
+<td><strong>动画</strong></td>
+<td>第20-21课</td>
+<td>实现隐式动画和显式动画</td>
+</tr>
+<tr>
+<td><strong>异步 UI</strong></td>
+<td>第22课</td>
+<td>处理异步数据的 UI 状态</td>
+</tr>
+<tr>
+<td><strong>自定义绘制</strong></td>
+<td>第23课</td>
+<td>使用 Canvas 绘制自定义图表和图形</td>
+</tr>
+<tr>
+<td><strong>主题系统</strong></td>
+<td>第24课</td>
+<td>构建完整的主题系统并支持亮/暗模式</td>
+</tr>
+<tr>
+<td><strong>综合实战</strong></td>
+<td>第25课</td>
+<td>组织项目结构、封装通用组件、优化性能</td>
+</tr>
+</tbody>
+</table>
+<h3 id="63-推荐进阶学习路径">6.3 推荐进阶学习路径</h3>
+<p>掌握了 Flutter 的常用组件后，下一步应该向以下方向深入：</p>
+<p><strong>1. 状态管理</strong></p>
+<p>组件学习阶段我们主要使用 <code>setState</code> 管理状态，但在真实应用中需要更强大的状态管理方案：</p>
+<ul>
+<li><strong>Provider</strong>：官方推荐的轻量级方案，适合中小型项目</li>
+<li><strong>Riverpod</strong>：Provider 作者的新作，类型安全且功能更强大</li>
+<li><strong>Bloc/Cubit</strong>：基于事件驱动的状态管理，适合大型项目和团队协作</li>
+<li><strong>GetX</strong>：全功能框架（状态管理 + 路由 + 依赖注入），上手快但需注意过度耦合</li>
+</ul>
+<blockquote>
+<p>建议学习顺序：Provider → Riverpod → Bloc</p>
+</blockquote>
+<p><strong>2. 路由管理</strong></p>
+<ul>
+<li><strong>GoRouter</strong>：声明式路由，支持深层链接、重定向、嵌套路由</li>
+<li><strong>Auto Route</strong>：基于代码生成的类型安全路由</li>
+</ul>
+<p><strong>3. 网络请求</strong></p>
+<ul>
+<li><strong>Dio</strong>：功能强大的 HTTP 客户端，支持拦截器、取消请求、文件上传下载</li>
+<li><strong>Retrofit</strong>：基于 Dio 的类型安全 REST 客户端（代码生成）</li>
+<li><strong>GraphQL Flutter</strong>：GraphQL 客户端</li>
+</ul>
+<p><strong>4. 本地存储</strong></p>
+<ul>
+<li><strong>shared_preferences</strong>：简单的键值对存储</li>
+<li><strong>Hive</strong>：高性能的 NoSQL 本地数据库</li>
+<li><strong>Drift (Moor)</strong>：类型安全的 SQLite ORM</li>
+<li><strong>Isar</strong>：高性能、跨平台的本地数据库</li>
+</ul>
+<p><strong>5. 平台通道与插件开发</strong></p>
+<ul>
+<li><strong>Platform Channels</strong>：MethodChannel、EventChannel</li>
+<li><strong>Pigeon</strong>：类型安全的平台通道代码生成</li>
+<li><strong>FFI</strong>：直接调用 C/C++ 代码</li>
+</ul>
+<p><strong>6. 测试</strong></p>
+<ul>
+<li><strong>单元测试</strong>：<code>test</code> 包</li>
+<li><strong>Widget 测试</strong>：<code>flutter_test</code> 包</li>
+<li><strong>集成测试</strong>：<code>integration_test</code> 包</li>
+<li><strong>Golden 测试</strong>：UI 快照对比测试</li>
+</ul>
+<h3 id="64-推荐学习资源">6.4 推荐学习资源</h3>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>链接</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flutter 官方文档</td>
+<td><a href="https://docs.flutter.dev">docs.flutter.dev</a></td>
+<td>最权威的参考资料</td>
+</tr>
+<tr>
+<td>Flutter API 文档</td>
+<td><a href="https://api.flutter.dev">api.flutter.dev</a></td>
+<td>查询 API 用法</td>
+</tr>
+<tr>
+<td>Flutter Widget of the Week</td>
+<td><a href="https://www.youtube.com/playlist?list=PLjxrf2q8roU23XGwz3Km7sQZFTdB996iG">YouTube 播放列表</a></td>
+<td>每周学一个 Widget</td>
+</tr>
+<tr>
+<td>Dart 语言官方文档</td>
+<td><a href="https://dart.dev/guides">dart.dev/guides</a></td>
+<td>Dart 语法参考</td>
+</tr>
+<tr>
+<td>Flutter Cookbook</td>
+<td><a href="https://docs.flutter.dev/cookbook">docs.flutter.dev/cookbook</a></td>
+<td>常见场景解决方案</td>
+</tr>
+<tr>
+<td>pub.dev</td>
+<td><a href="https://pub.dev">pub.dev</a></td>
+<td>Flutter/Dart 包仓库</td>
+</tr>
+<tr>
+<td>Flutter 源码</td>
+<td>GitHub</td>
+<td>Ctrl+Click 进入源码是最好的学习方式</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="写在最后">写在最后</h2>
+<p>本课程的 25 课内容涵盖了 Flutter 日常开发中 95% 以上的常用组件。但学习不能止步于此——组件只是工具，真正的进阶在于<strong>架构设计</strong>、<strong>状态管理</strong>、<strong>性能优化</strong>和<strong>工程化实践</strong>。</p>
+<p>建议你接下来：</p>
+<ol>
+<li><strong>立刻动手</strong>：基于本课的两个实战项目，扩展更多功能（如实际的网络请求、持久化存储、状态管理接入）</li>
+<li><strong>阅读源码</strong>：遇到 Widget 行为不确定时，Ctrl + Click 进入源码阅读是最好的学习方式</li>
+<li><strong>保持实践</strong>：知识只有通过不断实践才能内化为能力</li>
+</ol>
+<p>祝你在 Flutter 开发的道路上越走越远！</p>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

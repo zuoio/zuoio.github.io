@@ -1,0 +1,2640 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第13课-网格与高级滚动组件">第13课 网格与高级滚动组件</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter 常用组件系统学习<br />
+<strong>适用人群</strong>：有 Dart 语言基础，已完成第12课 ListView 学习的开发者<br />
+<strong>课程目标</strong>：掌握 GridView 的各种构造方式，深入理解 Sliver 体系的运作机制，能够使用 CustomScrollView 组合多种滚动组件构建复杂页面布局</p>
+</blockquote>
+<p>上一课我们学习了 ListView 的各种用法，掌握了列表的基本构建方式。本课是列表系列的第二课，也是进阶内容。我们将从 GridView（网格列表）出发，逐步深入到 Flutter 滚动体系的核心——<strong>Sliver</strong>。Sliver 是 Flutter 实现高性能滚动视图的基石，理解它的运作机制，是构建复杂滚动页面（如电商首页、社交应用个人主页）的关键。本课内容较多，建议分模块消化。</p>
+<hr />
+<h2 id="1-gridview-网格布局">1. GridView 网格布局</h2>
+<p>GridView 是 Flutter 中最常用的网格组件，可以将子组件按行列排列展示。它和 ListView 同属于 <code>ScrollView</code> 的子类，核心区别在于 GridView 使用二维网格排列子组件，而 ListView 是一维线性排列。</p>
+<h3 id="11-gridviewcount固定列数网格">1.1 GridView.count：固定列数网格</h3>
+<p><code>GridView.count</code> 是最简单直观的网格构造方式。你只需指定 <code>crossAxisCount</code>（交叉轴方向的子项数量，即列数），Flutter 就会自动将可用空间等分给每一列。</p>
+<p><strong>核心参数</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>crossAxisCount</code></td>
+<td><code>int</code></td>
+<td>交叉轴方向的子项数量（垂直滚动时为列数）</td>
+</tr>
+<tr>
+<td><code>mainAxisSpacing</code></td>
+<td><code>double</code></td>
+<td>主轴方向的间距（垂直滚动时为行间距）</td>
+</tr>
+<tr>
+<td><code>crossAxisSpacing</code></td>
+<td><code>double</code></td>
+<td>交叉轴方向的间距（垂直滚动时为列间距）</td>
+</tr>
+<tr>
+<td><code>childAspectRatio</code></td>
+<td><code>double</code></td>
+<td>子项的宽高比，默认 1.0（正方形）</td>
+</tr>
+<tr>
+<td><code>children</code></td>
+<td><code>List&lt;Widget&gt;</code></td>
+<td>子组件列表</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('GridView.count 示例')),
+        body: GridView.count(
+          crossAxisCount: 3, // 每行 3 列
+          mainAxisSpacing: 8.0, // 行间距 8
+          crossAxisSpacing: 8.0, // 列间距 8
+          padding: const EdgeInsets.all(8.0),
+          childAspectRatio: 1.0, // 宽高比 1:1（正方形）
+          children: List.generate(12, (index) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.primaries[index % Colors.primaries.length],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                '项目 $index',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><code>childAspectRatio</code> 是一个容易被忽略但非常重要的参数。它定义了每个子项的<strong>宽高比</strong>（width / height）。当 <code>childAspectRatio</code> 为 1.0 时，子项为正方形；大于 1.0 时，子项变得扁平（宽 &gt; 高）；小于 1.0 时，子项变得细高（高 &gt; 宽）。</p>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>GridView.count</code> 会一次性创建所有子组件，适合子项数量较少的场景（几十个以内）。如果子项数量很大，应使用 <code>GridView.builder</code> 进行懒加载。</li>
+<li><code>childAspectRatio</code> 只能统一设定所有子项的宽高比。如果需要子项具有不同的高度，需要使用第三方库如 <code>flutter_staggered_grid_view</code>。</li>
+</ul>
+</blockquote>
+<hr />
+<h3 id="12-gridviewextent固定子项最大宽度">1.2 GridView.extent：固定子项最大宽度</h3>
+<p><code>GridView.extent</code> 不指定列数，而是指定每个子项的<strong>最大交叉轴范围</strong>（<code>maxCrossAxisExtent</code>）。Flutter 会根据可用空间自动计算需要多少列。这种方式特别适合<strong>响应式布局</strong>——在不同屏幕宽度下，列数会自动调整。</p>
+<p><strong>核心参数</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>maxCrossAxisExtent</code></td>
+<td><code>double</code></td>
+<td>每个子项在交叉轴方向的最大范围</td>
+</tr>
+<tr>
+<td><code>mainAxisSpacing</code></td>
+<td><code>double</code></td>
+<td>主轴方向的间距</td>
+</tr>
+<tr>
+<td><code>crossAxisSpacing</code></td>
+<td><code>double</code></td>
+<td>交叉轴方向的间距</td>
+</tr>
+<tr>
+<td><code>childAspectRatio</code></td>
+<td><code>double</code></td>
+<td>子项宽高比</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('GridView.extent 示例')),
+        body: GridView.extent(
+          maxCrossAxisExtent: 150, // 每个子项最大宽度 150
+          mainAxisSpacing: 8.0,
+          crossAxisSpacing: 8.0,
+          padding: const EdgeInsets.all(8.0),
+          childAspectRatio: 3 / 4, // 宽高比 3:4，子项略高
+          children: List.generate(20, (index) {
+            return Card(
+              elevation: 2,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.image,
+                    size: 40,
+                    color: Colors.primaries[index % Colors.primaries.length],
+                  ),
+                  const SizedBox(height: 8),
+                  Text('商品 $index'),
+                ],
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong><code>count</code> 与 <code>extent</code> 的选择策略</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>列数固定不变（如照片九宫格）</td>
+<td><code>GridView.count</code></td>
+</tr>
+<tr>
+<td>需要适配不同屏幕宽度</td>
+<td><code>GridView.extent</code></td>
+</tr>
+<tr>
+<td>子项有固定的最佳显示宽度</td>
+<td><code>GridView.extent</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="13-gridviewbuilder懒加载网格">1.3 GridView.builder：懒加载网格</h3>
+<p>当网格中的子项数量很大（或无限）时，<code>GridView.builder</code> 是必须使用的构造方式。它和 <code>ListView.builder</code> 类似，只在子项即将出现在视口中时才创建对应的 Widget，极大节省内存和 CPU 资源。</p>
+<p><code>GridView.builder</code> 需要一个 <code>gridDelegate</code> 参数来指定网格的排列规则。这是我们第一次正式接触 <code>SliverGridDelegate</code>。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('GridView.builder 示例')),
+        body: GridView.builder(
+          padding: const EdgeInsets.all(8.0),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // 每行 2 列
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+            childAspectRatio: 1.0,
+          ),
+          itemCount: 100, // 总共 100 个子项
+          itemBuilder: (context, index) {
+            // 只有当子项即将显示时才会调用此回调
+            return Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.primaries[index % Colors.primaries.length],
+                    Colors.primaries[(index + 3) % Colors.primaries.length],
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                '# $index',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>只要子项数量超过屏幕可见范围，就应该优先使用 <code>GridView.builder</code>。</li>
+<li><code>itemCount</code> 可以不传（默认无限），用于分页加载场景。但如果你能确定总数，传入 <code>itemCount</code> 可以避免越界错误。</li>
+<li>在 <code>itemBuilder</code> 中避免执行耗时操作（网络请求、复杂计算），应该在外部准备好数据后仅负责构建 UI。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="2-slivergriddelegate-详解">2. SliverGridDelegate 详解</h2>
+<p><code>SliverGridDelegate</code> 是控制网格布局的核心类。无论是 <code>GridView.builder</code>、<code>GridView.custom</code>，还是后面将学到的 <code>SliverGrid</code>，都依赖它来决定子项的排列方式。Flutter 提供了两个内置实现：</p>
+<h3 id="21-slivergriddelegatewithfixedcrossaxiscount">2.1 SliverGridDelegateWithFixedCrossAxisCount</h3>
+<p>按<strong>固定交叉轴数量</strong>排列。对应 <code>GridView.count</code> 的底层实现。</p>
+<p><strong>完整参数</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>crossAxisCount</code></td>
+<td><code>int</code></td>
+<td>必填</td>
+<td>交叉轴方向的子项数量</td>
+</tr>
+<tr>
+<td><code>mainAxisSpacing</code></td>
+<td><code>double</code></td>
+<td>0.0</td>
+<td>主轴方向子项之间的间距</td>
+</tr>
+<tr>
+<td><code>crossAxisSpacing</code></td>
+<td><code>double</code></td>
+<td>0.0</td>
+<td>交叉轴方向子项之间的间距</td>
+</tr>
+<tr>
+<td><code>childAspectRatio</code></td>
+<td><code>double</code></td>
+<td>1.0</td>
+<td>子项的宽高比（宽 / 高）</td>
+</tr>
+<tr>
+<td><code>mainAxisExtent</code></td>
+<td><code>double?</code></td>
+<td>null</td>
+<td>子项在主轴方向的固定尺寸（设置后 <code>childAspectRatio</code> 失效）</td>
+</tr>
+</tbody>
+</table>
+<p><code>mainAxisExtent</code> 是一个非常实用的参数。当你需要子项具有固定的高度而非依赖宽高比计算时，直接设置 <code>mainAxisExtent</code> 比反复调试 <code>childAspectRatio</code> 更直观。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('FixedCrossAxisCount 参数演示')),
+        body: GridView.builder(
+          padding: const EdgeInsets.all(12),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            // 使用 mainAxisExtent 直接指定子项高度为 120
+            // 设置此值后 childAspectRatio 将被忽略
+            mainAxisExtent: 120,
+          ),
+          itemCount: 15,
+          itemBuilder: (context, index) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.teal.withValues(alpha: 0.2 + (index % 5) * 0.15),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.teal),
+              ),
+              alignment: Alignment.center,
+              child: Text('高度固定\n120px', textAlign: TextAlign.center),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="22-slivergriddelegatewithmaxcrossaxisextent">2.2 SliverGridDelegateWithMaxCrossAxisExtent</h3>
+<p>按<strong>最大交叉轴范围</strong>排列。对应 <code>GridView.extent</code> 的底层实现。Flutter 会根据可用宽度和 <code>maxCrossAxisExtent</code> 自动计算最佳列数。</p>
+<p><strong>完整参数</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>maxCrossAxisExtent</code></td>
+<td><code>double</code></td>
+<td>必填</td>
+<td>子项在交叉轴方向的最大范围</td>
+</tr>
+<tr>
+<td><code>mainAxisSpacing</code></td>
+<td><code>double</code></td>
+<td>0.0</td>
+<td>主轴方向间距</td>
+</tr>
+<tr>
+<td><code>crossAxisSpacing</code></td>
+<td><code>double</code></td>
+<td>0.0</td>
+<td>交叉轴方向间距</td>
+</tr>
+<tr>
+<td><code>childAspectRatio</code></td>
+<td><code>double</code></td>
+<td>1.0</td>
+<td>子项宽高比</td>
+</tr>
+<tr>
+<td><code>mainAxisExtent</code></td>
+<td><code>double?</code></td>
+<td>null</td>
+<td>子项在主轴方向的固定尺寸</td>
+</tr>
+</tbody>
+</table>
+<p><strong>列数计算公式</strong>：<code>列数 = (可用宽度 / maxCrossAxisExtent).ceil()</code></p>
+<p>例如，屏幕可用宽度为 400px，<code>maxCrossAxisExtent</code> 设为 150：</p>
+<ul>
+<li>计算：400 / 150 = 2.67，向上取整得 3 列</li>
+<li>每列实际宽度：(400 - 间距总和) / 3 ≈ 125px（小于 150，满足约束）</li>
+</ul>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('MaxCrossAxisExtent 参数演示')),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return GridView.builder(
+              padding: const EdgeInsets.all(12),
+              gridDelegate:
+                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200, // 每个子项最宽 200
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 4 / 3, // 宽高比 4:3
+              ),
+              itemCount: 12,
+              itemBuilder: (context, index) {
+                return Card(
+                  elevation: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.photo_album, size: 32),
+                        const SizedBox(height: 8),
+                        Text(
+                          '相册 $index',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          '可用宽度: ${constraints.maxWidth.toStringAsFixed(0)}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>mainAxisExtent</code> 的优先级高于 <code>childAspectRatio</code>。当两者同时设置时，<code>childAspectRatio</code> 会被忽略。</li>
+<li><code>childAspectRatio</code> 的计算基于子项的<strong>实际交叉轴尺寸</strong>（扣除间距后），而不是 <code>maxCrossAxisExtent</code>。</li>
+<li>在 <code>SliverGridDelegateWithMaxCrossAxisExtent</code> 中，子项的实际宽度可能<strong>小于</strong> <code>maxCrossAxisExtent</code>，因为 Flutter 会把空间均匀分配给整数个列。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="3-customscrollview-与-sliver-体系">3. CustomScrollView 与 Sliver 体系</h2>
+<p>从这里开始，我们进入本课的重头戏——<strong>Sliver 体系</strong>。这是 Flutter 滚动系统的核心，也是构建复杂滚动页面不可绕过的知识点。</p>
+<h3 id="31-什么是-sliver">3.1 什么是 Sliver？</h3>
+<p><strong>Sliver</strong>（中文可理解为&quot;条片&quot;）是 Flutter 滚动框架中的一种特殊 RenderObject。与普通的盒子布局（Box layout）不同，Sliver 使用一套专门的<strong>滚动协议</strong>来进行布局：</p>
+<ul>
+<li><strong>普通 Widget（Box）</strong>：接收盒约束（BoxConstraints），返回固定尺寸（Size）</li>
+<li><strong>Sliver Widget</strong>：接收 <code>SliverConstraints</code>（包含视口信息、滚动偏移等），返回 <code>SliverGeometry</code>（描述自己在滚动方向上占用多少空间、绘制多少像素等）</li>
+</ul>
+<p>简单来说，Sliver 是一种<strong>知道自己正处于滚动环境中</strong>的组件，它能根据当前的滚动位置智能地决定&quot;我应该画多少、我占了多大地方&quot;。</p>
+<p><strong>为什么需要 Sliver？</strong></p>
+<p>想象一个电商首页：顶部是一个可折叠的大图 Banner（SliverAppBar），下面是一段推荐文字（普通 Widget），再下面是热门商品网格（SliverGrid），最后是商品列表（SliverList）。这些不同类型的内容需要<strong>在同一个滚动视图中协调滚动</strong>。</p>
+<p>如果用普通的 <code>ListView</code> 或 <code>GridView</code>，你会面临以下问题：</p>
+<ul>
+<li><code>ListView</code> 的 <code>children</code> 必须是同一种排列方式（线性），无法混合网格</li>
+<li>在 <code>ListView</code> 中嵌套 <code>GridView</code> 会产生滚动冲突（两个 <code>ScrollView</code> 各自维护自己的滚动位置）</li>
+<li>给嵌套的 <code>GridView</code> 设置 <code>shrinkWrap: true</code> 虽然能解决，但会失去懒加载优势，所有子项一次性构建</li>
+</ul>
+<p><strong>Sliver 体系正是为了解决这些问题而设计的</strong>。通过 <code>CustomScrollView</code>，你可以将多个 Sliver 组件组合在<strong>同一个滚动视图</strong>中，它们共享同一个滚动位置，各自只渲染视口内可见的部分，既灵活又高效。</p>
+<h3 id="32-customscrollview-基础">3.2 CustomScrollView 基础</h3>
+<p><code>CustomScrollView</code> 是所有 Sliver 组件的容器。它本身不包含任何子组件布局逻辑，而是通过 <code>slivers</code> 参数接收一个 Sliver 列表，由这些 Sliver 自行决定如何渲染。</p>
+<pre><code class="language-dart">CustomScrollView(
+  slivers: [
+    // 这里只能放 Sliver 类型的 Widget
+    SliverAppBar(...),
+    SliverList(...),
+    SliverGrid(...),
+    SliverToBoxAdapter(child: ...),
+  ],
+)
+</code></pre>
+<p><strong>与普通 ScrollView 的对比</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>ListView / GridView</th>
+<th>CustomScrollView</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>子组件类型</td>
+<td>普通 Widget（Box）</td>
+<td>Sliver Widget</td>
+</tr>
+<tr>
+<td>混合布局</td>
+<td>不支持（单一排列方式）</td>
+<td>支持（自由组合多种 Sliver）</td>
+</tr>
+<tr>
+<td>可折叠头部</td>
+<td>不支持</td>
+<td>SliverAppBar</td>
+</tr>
+<tr>
+<td>吸顶效果</td>
+<td>不支持</td>
+<td>SliverPersistentHeader</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>单一布局高效</td>
+<td>混合布局也能保持懒加载</td>
+</tr>
+</tbody>
+</table>
+<p>下面是一个完整的 <code>CustomScrollView</code> 基础示例，展示了如何将不同类型的 Sliver 组合在一起：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            // 1. 应用栏（Sliver 版本）
+            const SliverAppBar(
+              title: Text('CustomScrollView 基础'),
+              floating: true,
+            ),
+
+            // 2. 一段普通文字（需要用 SliverToBoxAdapter 包装）
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  '下面是一个网格区域，再下面是一个列表区域。'
+                  '它们在同一个滚动视图中，共享滚动位置。',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
+
+            // 3. 网格区域
+            SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                childAspectRatio: 1,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    color: Colors.amber[(index % 9 + 1) * 100],
+                    alignment: Alignment.center,
+                    child: Text('网格 $index'),
+                  );
+                },
+                childCount: 9,
+              ),
+            ),
+
+            // 4. 间隔
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  '下面是列表区域：',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+
+            // 5. 列表区域
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return ListTile(
+                    leading: CircleAvatar(child: Text('$index')),
+                    title: Text('列表项 $index'),
+                    subtitle: const Text('这是列表区域的子项'),
+                  );
+                },
+                childCount: 20,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>CustomScrollView</code> 的 <code>slivers</code> 列表中<strong>只能放 Sliver 类型的 Widget</strong>。如果你尝试放入普通 Widget（如 <code>Container</code>、<code>Text</code>），会得到运行时错误。</li>
+<li>如果需要在 Sliver 环境中嵌入普通 Widget，必须使用 <code>SliverToBoxAdapter</code> 包装（后面详述）。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="4-sliverlist-与-slivergrid">4. SliverList 与 SliverGrid</h2>
+<p><code>SliverList</code> 和 <code>SliverGrid</code> 是 <code>CustomScrollView</code> 中最常用的两个内容 Sliver，分别对应普通的 <code>ListView</code> 和 <code>GridView</code>。</p>
+<h3 id="41-sliverlist">4.1 SliverList</h3>
+<p><code>SliverList</code> 在 <code>CustomScrollView</code> 中创建线性列表。它通过一个 <code>delegate</code>（<code>SliverChildDelegate</code>）来生成子组件。</p>
+<p>常用的 delegate 有两种：</p>
+<ul>
+<li><code>SliverChildListDelegate</code>：接收一个完整的子组件列表，类似 <code>ListView(children: [...])</code></li>
+<li><code>SliverChildBuilderDelegate</code>：按需构建子组件，类似 <code>ListView.builder</code></li>
+</ul>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            const SliverAppBar(title: Text('SliverList 示例')),
+
+            // 方式一：SliverChildListDelegate（适合少量固定子项）
+            SliverList(
+              delegate: SliverChildListDelegate([
+                const ListTile(
+                  leading: Icon(Icons.star, color: Colors.orange),
+                  title: Text('固定项 1：VIP 推荐'),
+                ),
+                const ListTile(
+                  leading: Icon(Icons.star, color: Colors.orange),
+                  title: Text('固定项 2：热门活动'),
+                ),
+                const Divider(thickness: 2),
+              ]),
+            ),
+
+            // 方式二：SliverChildBuilderDelegate（适合大量动态子项）
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.blue,
+                      child: Text('${index + 1}'),
+                    ),
+                    title: Text('动态列表项 ${index + 1}'),
+                    subtitle: Text('这是第 ${index + 1} 条内容'),
+                    trailing: const Icon(Icons.chevron_right),
+                  );
+                },
+                childCount: 30,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>Flutter 3.x 新增</strong>：从 Flutter 3.7 开始，你还可以使用更简洁的 <code>SliverList.builder</code>、<code>SliverList.list</code>、<code>SliverList.separated</code> 构造函数，与 <code>ListView</code> 的 API 风格保持一致：</p>
+<pre><code class="language-dart">// 等价于使用 SliverChildBuilderDelegate
+SliverList.builder(
+  itemCount: 20,
+  itemBuilder: (context, index) =&gt; ListTile(title: Text('项目 $index')),
+)
+
+// 等价于使用 SliverChildListDelegate
+SliverList.list(
+  children: [Text('A'), Text('B'), Text('C')],
+)
+
+// 带分割线的列表（类似 ListView.separated）
+SliverList.separated(
+  itemCount: 20,
+  itemBuilder: (context, index) =&gt; ListTile(title: Text('项目 $index')),
+  separatorBuilder: (context, index) =&gt; const Divider(),
+)
+</code></pre>
+</blockquote>
+<h3 id="42-slivergrid">4.2 SliverGrid</h3>
+<p><code>SliverGrid</code> 在 <code>CustomScrollView</code> 中创建网格布局，需要同时提供 <code>gridDelegate</code>（排列规则）和 <code>delegate</code>（子组件生成方式）。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            const SliverAppBar(
+              title: Text('SliverGrid 示例'),
+              backgroundColor: Colors.deepPurple,
+              foregroundColor: Colors.white,
+            ),
+
+            // 标题区域
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  '热门推荐',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+
+            // 网格区域
+            SliverGrid(
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 3 / 4,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return Card(
+                    margin: EdgeInsets.only(
+                      left: index % 2 == 0 ? 12 : 4,
+                      right: index % 2 == 1 ? 12 : 4,
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            color: Colors.primaries[index % Colors.primaries.length]
+                                .withValues(alpha: 0.3),
+                            child: const Icon(Icons.image, size: 48),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '商品 ${index + 1}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  '¥${(index + 1) * 29}.00',
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                childCount: 10,
+              ),
+            ),
+
+            // 网格下方的更多列表内容
+            SliverList.builder(
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: const Icon(Icons.local_offer),
+                  title: Text('优惠活动 ${index + 1}'),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>同样，Flutter 3.7+ 提供了简洁的 <code>SliverGrid.builder</code> 和 <code>SliverGrid.count</code>、<code>SliverGrid.extent</code> 构造函数。</li>
+<li><code>SliverChildBuilderDelegate</code> 有一个 <code>addAutomaticKeepAlives</code> 参数（默认 true），会为每个子项添加 <code>AutomaticKeepAlive</code>。如果子项不需要保持状态，设为 false 可以轻微提升性能。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="5-sliverappbar可折叠应用栏">5. SliverAppBar：可折叠应用栏</h2>
+<p><code>SliverAppBar</code> 是 Sliver 体系中最具视觉冲击力的组件。它能实现随滚动折叠/展开的应用栏效果，是社交应用个人主页、新闻详情页等场景的标配。</p>
+<h3 id="51-核心参数">5.1 核心参数</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>expandedHeight</code></td>
+<td><code>double?</code></td>
+<td>null</td>
+<td>展开时的高度（包含 toolbar 高度）</td>
+</tr>
+<tr>
+<td><code>flexibleSpace</code></td>
+<td><code>Widget?</code></td>
+<td>null</td>
+<td>展开时显示的弹性空间内容，通常用 <code>FlexibleSpaceBar</code></td>
+</tr>
+<tr>
+<td><code>pinned</code></td>
+<td><code>bool</code></td>
+<td>false</td>
+<td>折叠后是否固定在顶部（保留 toolbar）</td>
+</tr>
+<tr>
+<td><code>floating</code></td>
+<td><code>bool</code></td>
+<td>false</td>
+<td>向下滚动时是否立即显示</td>
+</tr>
+<tr>
+<td><code>snap</code></td>
+<td><code>bool</code></td>
+<td>false</td>
+<td>配合 <code>floating</code>，展开/收起时是否自动吸附到完整状态</td>
+</tr>
+<tr>
+<td><code>stretch</code></td>
+<td><code>bool</code></td>
+<td>false</td>
+<td>过度下拉时是否允许拉伸效果</td>
+</tr>
+<tr>
+<td><code>collapsedHeight</code></td>
+<td><code>double?</code></td>
+<td>null</td>
+<td>折叠后的高度</td>
+</tr>
+<tr>
+<td><code>toolbarHeight</code></td>
+<td><code>double</code></td>
+<td>kToolbarHeight</td>
+<td>工具栏部分的高度</td>
+</tr>
+</tbody>
+</table>
+<p><strong>几个关键布尔参数的交互效果</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>pinned</th>
+<th>floating</th>
+<th>snap</th>
+<th>效果描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>true</td>
+<td>false</td>
+<td>false</td>
+<td>折叠后固定在顶部，只有滚动到顶部才会重新展开</td>
+</tr>
+<tr>
+<td>false</td>
+<td>true</td>
+<td>false</td>
+<td>向下滚动时立即开始展开，向上滚动时立即收起</td>
+</tr>
+<tr>
+<td>false</td>
+<td>true</td>
+<td>true</td>
+<td>向下滚动时自动完整展开（吸附效果），向上滚动时自动完整收起</td>
+</tr>
+<tr>
+<td>true</td>
+<td>true</td>
+<td>false</td>
+<td>折叠后固定，向下滚动时 toolbar 立即出现，继续下拉才完全展开</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-flexiblespacebar">5.2 FlexibleSpaceBar</h3>
+<p><code>FlexibleSpaceBar</code> 是 <code>SliverAppBar.flexibleSpace</code> 的标准搭配组件，提供以下效果：</p>
+<ul>
+<li><strong>title</strong>：折叠过程中标题会平滑缩小并移动到 toolbar 位置</li>
+<li><strong>background</strong>：展开时显示的背景内容（通常是图片）</li>
+<li><strong>collapseMode</strong>：折叠模式（<code>parallax</code> 视差效果、<code>pin</code> 固定、<code>none</code> 无效果）</li>
+<li><strong>stretchModes</strong>：过度拉伸时的效果（缩放背景图、模糊背景、渐变标题）</li>
+</ul>
+<h3 id="53-完整折叠效果示例">5.3 完整折叠效果示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const SliverAppBarDemo(),
+    );
+  }
+}
+
+class SliverAppBarDemo extends StatelessWidget {
+  const SliverAppBarDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            // 展开后的总高度（包括 toolbar）
+            expandedHeight: 250.0,
+            // 折叠后固定在顶部，保留 toolbar
+            pinned: true,
+            // 向下滚动时 toolbar 立即出现
+            floating: false,
+            // 过度下拉时允许拉伸
+            stretch: true,
+            // 弹性空间内容
+            flexibleSpace: FlexibleSpaceBar(
+              // 标题会在折叠过程中自动缩小并移动到 toolbar 位置
+              title: const Text('探索世界'),
+              // 视差滚动效果（默认值）
+              collapseMode: CollapseMode.parallax,
+              // 拉伸时的效果
+              stretchModes: const [
+                StretchMode.zoomBackground, // 缩放背景图
+                StretchMode.blurBackground, // 模糊背景
+                StretchMode.fadeTitle, // 标题渐隐
+              ],
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // 背景图片（这里用渐变色代替网络图片）
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xFF1A237E),
+                          Color(0xFF0D47A1),
+                          Color(0xFF01579B),
+                        ],
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.travel_explore,
+                      size: 80,
+                      color: Colors.white24,
+                    ),
+                  ),
+                  // 底部渐变遮罩，确保标题可读
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.transparent, Colors.black54],
+                        stops: [0.6, 1.0],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // AppBar 上的操作按钮
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const Icon(Icons.more_vert),
+                onPressed: () {},
+              ),
+            ],
+          ),
+
+          // 下方的内容列表
+          SliverList.builder(
+            itemCount: 30,
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundColor:
+                      Colors.primaries[index % Colors.primaries.length],
+                  child: Text('${index + 1}'),
+                ),
+                title: Text('景点 ${index + 1}'),
+                subtitle: const Text('一段关于这个景点的简短介绍'),
+                trailing: const Icon(Icons.favorite_border),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="54-floating--snap-效果示例">5.4 floating + snap 效果示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 180.0,
+              // 不固定在顶部
+              pinned: false,
+              // 向下滚动时立即出现
+              floating: true,
+              // 自动吸附到完整展开或完整折叠状态
+              snap: true,
+              flexibleSpace: FlexibleSpaceBar(
+                title: const Text('Floating + Snap'),
+                background: Container(
+                  color: Colors.deepOrange,
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.rocket_launch,
+                    size: 60,
+                    color: Colors.white38,
+                  ),
+                ),
+              ),
+            ),
+            SliverList.builder(
+              itemCount: 50,
+              itemBuilder: (context, index) {
+                return ListTile(title: Text('项目 $index'));
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>snap</code> 只有在 <code>floating</code> 为 true 时才有效。如果设置了 <code>snap: true</code> 但 <code>floating: false</code>，<code>snap</code> 会被忽略。</li>
+<li><code>expandedHeight</code> 包含了 <code>toolbarHeight</code>（默认 56）和 <code>FlexibleSpaceBar</code> 的高度。如果你想让背景图区域为 200px，应该设置 <code>expandedHeight: 200 + kToolbarHeight</code>。</li>
+<li>在使用网络图片作为 <code>FlexibleSpaceBar.background</code> 时，建议配合 <code>Stack</code> 和底部渐变遮罩来确保标题文字的可读性。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="6-slivertoboxadapter在-sliver-中嵌入普通-widget">6. SliverToBoxAdapter：在 Sliver 中嵌入普通 Widget</h2>
+<p><code>SliverToBoxAdapter</code> 是连接 Sliver 世界和普通 Box Widget 世界的桥梁。它将一个普通的 Widget 包装成 Sliver，使其能放入 <code>CustomScrollView</code> 的 <code>slivers</code> 列表中。</p>
+<h3 id="61-为什么需要它">6.1 为什么需要它？</h3>
+<p>在 <code>CustomScrollView</code> 中，<code>slivers</code> 列表只接受 Sliver 类型的 Widget。但实际开发中，我们经常需要在 Sliver 列表中插入一些&quot;一次性&quot;的普通 Widget，如标题文字、分割线、Banner 图片等。这些内容不需要懒加载（只有一个），用 <code>SliverList</code> 包装显得多余，<code>SliverToBoxAdapter</code> 正是为此设计。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            const SliverAppBar(
+              title: Text('SliverToBoxAdapter 示例'),
+              pinned: true,
+            ),
+
+            // 横幅广告（普通 Widget 需要用 SliverToBoxAdapter 包装）
+            SliverToBoxAdapter(
+              child: Container(
+                height: 180,
+                margin: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: const LinearGradient(
+                    colors: [Colors.purple, Colors.deepPurple],
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.campaign, size: 48, color: Colors.white),
+                    SizedBox(height: 8),
+                    Text(
+                      '限时特惠 · 全场 5 折',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // 分类标题
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Text(
+                  '热门分类',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+
+            // 横向滚动的分类列表（注意：SliverToBoxAdapter 也可以包含有自己滚动方向的 Widget）
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 100,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  itemCount: 10,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      width: 80,
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.primaries[index % Colors.primaries.length]
+                            .withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.category,
+                            color:
+                                Colors.primaries[index % Colors.primaries.length],
+                          ),
+                          const SizedBox(height: 4),
+                          Text('分类 $index'),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+            // 商品列表
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Text(
+                  '为你推荐',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+
+            SliverList.builder(
+              itemCount: 20,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.shopping_bag),
+                  ),
+                  title: Text('推荐商品 ${index + 1}'),
+                  subtitle: Text('¥${(index + 1) * 19}.00'),
+                  trailing: const Icon(Icons.add_shopping_cart),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>SliverToBoxAdapter</code> 只适合包装<strong>单个</strong>或<strong>少量固定</strong>的 Widget。如果你需要包装一个列表，应该使用 <code>SliverList</code> 或 <code>SliverGrid</code>，而不是把一个 <code>ListView</code> 放进 <code>SliverToBoxAdapter</code> 中。</li>
+<li><code>SliverToBoxAdapter</code> 中的子 Widget 可以包含自己的滚动方向（如横向的 <code>ListView</code>），只要滚动方向与 <code>CustomScrollView</code> <strong>不同</strong>即可（交叉方向滚动不会冲突）。</li>
+<li>千万不要在 <code>SliverToBoxAdapter</code> 中放一个与 <code>CustomScrollView</code> 同方向滚动的 <code>ListView</code>（即便设了 <code>shrinkWrap: true</code>），这会丢失懒加载优势，直接用 <code>SliverList</code> 代替。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="7-sliverpersistentheader自定义吸顶效果">7. SliverPersistentHeader：自定义吸顶效果</h2>
+<p><code>SliverPersistentHeader</code> 能在滚动时将一个 Widget 固定在视口顶部（&quot;吸顶&quot;效果），常用于分组标题、筛选栏等场景。它比 <code>SliverAppBar</code> 更灵活，因为内容完全由你自定义。</p>
+<h3 id="71-sliverpersistentheaderdelegate">7.1 SliverPersistentHeaderDelegate</h3>
+<p>使用 <code>SliverPersistentHeader</code> 需要提供一个 <code>SliverPersistentHeaderDelegate</code> 子类。这个 delegate 定义了 header 的最大高度、最小高度以及如何构建 header 的 UI。</p>
+<p>必须重写的四个方法/属性：</p>
+<table>
+<thead>
+<tr>
+<th>成员</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>minExtent</code></td>
+<td>header 在完全折叠时的最小高度</td>
+</tr>
+<tr>
+<td><code>maxExtent</code></td>
+<td>header 在完全展开时的最大高度</td>
+</tr>
+<tr>
+<td><code>build(context, shrinkOffset, overlapsContent)</code></td>
+<td>构建 header 的 UI，<code>shrinkOffset</code> 是当前的折叠偏移量</td>
+</tr>
+<tr>
+<td><code>shouldRebuild(oldDelegate)</code></td>
+<td>当 delegate 更新时是否需要重建</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const PersistentHeaderDemo(),
+    );
+  }
+}
+
+/// 自定义 SliverPersistentHeaderDelegate
+class _SectionHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final String title;
+  final Color color;
+  final double expandedHeight;
+  final double collapsedHeight;
+
+  _SectionHeaderDelegate({
+    required this.title,
+    required this.color,
+    this.expandedHeight = 120.0,
+    this.collapsedHeight = 50.0,
+  });
+
+  @override
+  double get maxExtent =&gt; expandedHeight;
+
+  @override
+  double get minExtent =&gt; collapsedHeight;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    // shrinkOffset: 从 0（完全展开）到 maxExtent - minExtent（完全折叠）
+    // 计算折叠进度（0.0 = 展开，1.0 = 折叠）
+    final progress = shrinkOffset / (maxExtent - minExtent);
+    final clampedProgress = progress.clamp(0.0, 1.0);
+
+    return Container(
+      color: Color.lerp(color.withValues(alpha: 0.3), color, clampedProgress),
+      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          Icon(
+            Icons.label,
+            // 图标大小随折叠进度从 32 缩小到 20
+            size: 32 - 12 * clampedProgress,
+            color: Colors.white,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            title,
+            style: TextStyle(
+              color: Colors.white,
+              // 字号随折叠进度从 24 缩小到 16
+              fontSize: 24 - 8 * clampedProgress,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _SectionHeaderDelegate oldDelegate) {
+    return title != oldDelegate.title ||
+        color != oldDelegate.color ||
+        expandedHeight != oldDelegate.expandedHeight ||
+        collapsedHeight != oldDelegate.collapsedHeight;
+  }
+}
+
+class PersistentHeaderDemo extends StatelessWidget {
+  const PersistentHeaderDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          const SliverAppBar(
+            title: Text('SliverPersistentHeader 示例'),
+            pinned: true,
+          ),
+
+          // 第一个分组标题（吸顶）
+          SliverPersistentHeader(
+            pinned: true, // 吸顶
+            delegate: _SectionHeaderDelegate(
+              title: '水果',
+              color: Colors.green,
+            ),
+          ),
+          SliverList.builder(
+            itemCount: 8,
+            itemBuilder: (context, index) {
+              final fruits = ['苹果', '香蕉', '橙子', '葡萄', '草莓', '西瓜', '芒果', '樱桃'];
+              return ListTile(
+                leading: const Icon(Icons.eco, color: Colors.green),
+                title: Text(fruits[index]),
+              );
+            },
+          ),
+
+          // 第二个分组标题（吸顶）
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _SectionHeaderDelegate(
+              title: '蔬菜',
+              color: Colors.orange,
+            ),
+          ),
+          SliverList.builder(
+            itemCount: 8,
+            itemBuilder: (context, index) {
+              final vegetables = ['白菜', '胡萝卜', '土豆', '番茄', '黄瓜', '茄子', '辣椒', '洋葱'];
+              return ListTile(
+                leading: const Icon(Icons.grass, color: Colors.orange),
+                title: Text(vegetables[index]),
+              );
+            },
+          ),
+
+          // 第三个分组标题（吸顶）
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _SectionHeaderDelegate(
+              title: '肉类',
+              color: Colors.red,
+            ),
+          ),
+          SliverList.builder(
+            itemCount: 6,
+            itemBuilder: (context, index) {
+              final meats = ['鸡肉', '猪肉', '牛肉', '羊肉', '鱼肉', '虾'];
+              return ListTile(
+                leading: const Icon(Icons.restaurant, color: Colors.red),
+                title: Text(meats[index]),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="72-pinned-与-floating-的区别">7.2 pinned 与 floating 的区别</h3>
+<p><code>SliverPersistentHeader</code> 也有 <code>pinned</code> 和 <code>floating</code> 参数：</p>
+<ul>
+<li><code>pinned: true</code>：header 折叠后固定在视口顶部，直到对应的分组内容全部滚出视口才被下一个 pinned header 顶走。这就是经典的<strong>分组吸顶</strong>效果。</li>
+<li><code>floating: true</code>：header 在向下滚动时立即出现（类似 <code>SliverAppBar</code> 的 floating 效果）。</li>
+<li>两者都为 false：header 跟随内容正常滚动，没有特殊效果。</li>
+</ul>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li><code>shouldRebuild</code> 方法要认真实现。如果返回 <code>true</code> 过于频繁，会导致不必要的重建；如果返回 <code>false</code> 但数据实际变了，UI 不会更新。</li>
+<li><code>shrinkOffset</code> 的范围是 <code>0</code> 到 <code>maxExtent - minExtent</code>。利用它可以实现丰富的折叠动画效果（渐变颜色、缩放图标、位移文字等）。</li>
+<li>当多个 <code>pinned: true</code> 的 header 同时存在时，后面的 header 滚上来会自动&quot;顶走&quot;前面的 header，形成分组吸顶的连贯效果。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="8-nestedscrollview嵌套滚动协调">8. NestedScrollView：嵌套滚动协调</h2>
+<h3 id="81-为什么需要-nestedscrollview">8.1 为什么需要 NestedScrollView？</h3>
+<p>在实际开发中，有一种非常常见的页面布局：顶部是一个可折叠的 AppBar 和一排 TabBar，下方是一个 <code>TabBarView</code>，每个 Tab 页面内各有一个可滚动的列表。</p>
+<p>如果直接用 <code>CustomScrollView</code> + <code>SliverAppBar</code> + <code>SliverToBoxAdapter(child: TabBarView(...))</code>，你会遇到一个棘手的问题：<strong>TabBarView 内的列表和外层的 CustomScrollView 是两个独立的滚动视图，它们的滚动行为无法协调</strong>。具体表现为：</p>
+<ul>
+<li>手指在列表上滑动时，内层列表滚动了但外层 AppBar 不会折叠</li>
+<li>或者 AppBar 折叠了但内层列表不跟着滚动</li>
+</ul>
+<p><code>NestedScrollView</code> 正是为解决这个问题而设计的。它在内外两个滚动视图之间建立了<strong>协调机制</strong>，使它们能像一个整体一样流畅滚动。</p>
+<h3 id="82-核心参数">8.2 核心参数</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>headerSliverBuilder</code></td>
+<td><code>NestedScrollViewHeaderSliversBuilder</code></td>
+<td>构建头部 Sliver 列表（AppBar、TabBar 等）</td>
+</tr>
+<tr>
+<td><code>body</code></td>
+<td><code>Widget</code></td>
+<td>主体内容（通常是 <code>TabBarView</code> 或可滚动组件）</td>
+</tr>
+<tr>
+<td><code>scrollDirection</code></td>
+<td><code>Axis</code></td>
+<td>滚动方向，默认垂直</td>
+</tr>
+<tr>
+<td><code>controller</code></td>
+<td><code>ScrollController?</code></td>
+<td>外层滚动控制器</td>
+</tr>
+<tr>
+<td><code>floatHeaderSlivers</code></td>
+<td><code>bool</code></td>
+<td>头部 Sliver 是否 float，默认 false</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>headerSliverBuilder</code></strong> 返回一个 Sliver 列表，这些 Sliver 构成了页面的头部区域（在 body 上方）。典型的组合是 <code>SliverAppBar</code>（包含 <code>TabBar</code> 在 <code>bottom</code> 中）。</p>
+<p><strong><code>body</code></strong> 是主体内容区域。body 内的可滚动组件（如 <code>ListView</code>、<code>GridView</code>）会与头部 Sliver 协调滚动。</p>
+<h3 id="83-经典场景tabbar--列表嵌套滚动">8.3 经典场景：TabBar + 列表嵌套滚动</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
+      home: const NestedScrollDemo(),
+    );
+  }
+}
+
+class NestedScrollDemo extends StatefulWidget {
+  const NestedScrollDemo({super.key});
+
+  @override
+  State&lt;NestedScrollDemo&gt; createState() =&gt; _NestedScrollDemoState();
+}
+
+class _NestedScrollDemoState extends State&lt;NestedScrollDemo&gt;
+    with TickerProviderStateMixin {
+  late final TabController _tabController;
+
+  final List&lt;String&gt; _tabs = ['推荐', '热门', '最新', '关注'];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _tabs.length, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          // innerBoxIsScrolled: body 内的滚动视图是否已经开始滚动
+          return [
+            SliverAppBar(
+              expandedHeight: 200.0,
+              pinned: true,
+              // forceElevated 确保在内层列表滚动时 AppBar 显示阴影
+              forceElevated: innerBoxIsScrolled,
+              flexibleSpace: FlexibleSpaceBar(
+                title: const Text('我的主页'),
+                background: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Color(0xFF3949AB), Color(0xFF1A237E)],
+                    ),
+                  ),
+                  child: const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 36,
+                          backgroundColor: Colors.white24,
+                          child: Icon(Icons.person, size: 40, color: Colors.white),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          '用户昵称',
+                          style: TextStyle(color: Colors.white70, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // 将 TabBar 放在 AppBar 的 bottom 位置
+              bottom: TabBar(
+                controller: _tabController,
+                tabs: _tabs.map((name) =&gt; Tab(text: name)).toList(),
+                indicatorColor: Colors.white,
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.white60,
+              ),
+            ),
+          ];
+        },
+        // body 中放 TabBarView
+        body: TabBarView(
+          controller: _tabController,
+          children: _tabs.map((tabName) {
+            return _buildTabContent(tabName);
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabContent(String tabName) {
+    // 每个 Tab 页的内容是一个可滚动的列表
+    // NestedScrollView 会自动协调内外层的滚动
+    return Builder(
+      builder: (context) {
+        return CustomScrollView(
+          // 关键：使用 NestedScrollView 提供的 controller
+          // 这是让内外层滚动协调的核心
+          slivers: [
+            SliverOverlapAbsorber(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              sliver: const SliverToBoxAdapter(child: SizedBox.shrink()),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.all(8.0),
+              sliver: SliverList.builder(
+                itemCount: 30,
+                itemBuilder: (context, index) {
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor:
+                            Colors.primaries[index % Colors.primaries.length],
+                        child: Text('${index + 1}'),
+                      ),
+                      title: Text('$tabName - 内容 ${index + 1}'),
+                      subtitle: Text('这是「$tabName」标签下的第 ${index + 1} 条数据'),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+</code></pre>
+<h3 id="84-更简洁的写法">8.4 更简洁的写法</h3>
+<p>上面的写法使用了 <code>SliverOverlapAbsorber</code> 来处理重叠区域。在大多数简单场景中，如果 body 内直接使用 <code>ListView</code> 而不是 <code>CustomScrollView</code>，可以省去这些复杂处理：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.teal),
+      home: const SimpleNestedScrollDemo(),
+    );
+  }
+}
+
+class SimpleNestedScrollDemo extends StatelessWidget {
+  const SimpleNestedScrollDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final tabs = ['全部', '图片', '视频'];
+
+    return DefaultTabController(
+      length: tabs.length,
+      child: Scaffold(
+        body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                expandedHeight: 160,
+                pinned: true,
+                forceElevated: innerBoxIsScrolled,
+                title: const Text('动态'),
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Container(
+                    color: Colors.teal.withValues(alpha: 0.2),
+                    alignment: Alignment.center,
+                    child: const Padding(
+                      padding: EdgeInsets.only(top: 40),
+                      child: Icon(Icons.dynamic_feed, size: 60, color: Colors.teal),
+                    ),
+                  ),
+                ),
+                bottom: TabBar(
+                  tabs: tabs.map((t) =&gt; Tab(text: t)).toList(),
+                ),
+              ),
+            ];
+          },
+          // 直接使用 TabBarView + ListView.builder
+          body: TabBarView(
+            children: tabs.map((tabName) {
+              return ListView.builder(
+                // 这里不需要手动指定 controller
+                // NestedScrollView 会自动注入 PrimaryScrollController
+                padding: const EdgeInsets.only(top: 8),
+                itemCount: 25,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: Icon(
+                      tabName == '图片'
+                          ? Icons.photo
+                          : tabName == '视频'
+                              ? Icons.videocam
+                              : Icons.article,
+                    ),
+                    title: Text('$tabName · 项目 ${index + 1}'),
+                  );
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>NestedScrollView</code> 的 <code>body</code> 内的可滚动组件<strong>不应该</strong>自己设置 <code>primary: false</code> 或手动指定 <code>ScrollController</code>，否则会破坏内外层的滚动协调。</li>
+<li><code>headerSliverBuilder</code> 的第二个参数 <code>innerBoxIsScrolled</code> 表示 body 内的滚动视图是否已经滚动过（偏移 &gt; 0）。可以利用它来控制 <code>SliverAppBar</code> 的 <code>forceElevated</code>，在内容滚动时显示阴影分隔线。</li>
+<li>如果 <code>TabBarView</code> 中的每个页面需要保持状态（切换 Tab 后不丢失滚动位置），在对应的页面 Widget 中使用 <code>AutomaticKeepAliveClientMixin</code>。</li>
+<li><code>NestedScrollView</code> 目前只能处理一层嵌套。如果你需要多层嵌套滚动（极少见），可能需要自定义 <code>ScrollPhysics</code> 或使用第三方方案。</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>当页面结构为&quot;可折叠头部 + TabBar + 多个列表&quot;时，<code>NestedScrollView</code> 是最标准的解决方案。</li>
+<li>将 <code>TabBar</code> 放在 <code>SliverAppBar.bottom</code> 中，这样 TabBar 会在折叠后自然地固定在顶部。</li>
+<li>如果不需要 Tab 切换，只是想让一个列表和头部协调滚动，直接用 <code>CustomScrollView</code> + <code>SliverAppBar</code> + <code>SliverList</code> 更简单，不需要 <code>NestedScrollView</code>。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="9-sliver-体系整体梳理">9. Sliver 体系整体梳理</h2>
+<p>学习了以上各个 Sliver 组件后，让我们用一张表格做一个整体梳理：</p>
+<table>
+<thead>
+<tr>
+<th>Sliver 组件</th>
+<th>用途</th>
+<th>常见搭配</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SliverAppBar</code></td>
+<td>可折叠应用栏</td>
+<td><code>FlexibleSpaceBar</code>、<code>TabBar</code></td>
+</tr>
+<tr>
+<td><code>SliverList</code></td>
+<td>线性列表</td>
+<td><code>SliverChildBuilderDelegate</code></td>
+</tr>
+<tr>
+<td><code>SliverGrid</code></td>
+<td>网格列表</td>
+<td><code>SliverGridDelegate</code> + <code>SliverChildBuilderDelegate</code></td>
+</tr>
+<tr>
+<td><code>SliverToBoxAdapter</code></td>
+<td>嵌入单个普通 Widget</td>
+<td>标题、Banner、分割线</td>
+</tr>
+<tr>
+<td><code>SliverPersistentHeader</code></td>
+<td>吸顶/浮动 header</td>
+<td>自定义 <code>SliverPersistentHeaderDelegate</code></td>
+</tr>
+<tr>
+<td><code>SliverPadding</code></td>
+<td>为 Sliver 添加内边距</td>
+<td>包裹任何 Sliver</td>
+</tr>
+<tr>
+<td><code>SliverFillRemaining</code></td>
+<td>填充视口剩余空间</td>
+<td>空状态页、底部区域</td>
+</tr>
+<tr>
+<td><code>SliverFixedExtentList</code></td>
+<td>固定高度的列表（比 SliverList 更高效）</td>
+<td>所有子项等高的场景</td>
+</tr>
+</tbody>
+</table>
+<p><strong>选择指南</strong>：</p>
+<ul>
+<li>只有一种内容类型的简单滚动 → <code>ListView</code> 或 <code>GridView</code></li>
+<li>需要混合多种布局（列表 + 网格 + 头部） → <code>CustomScrollView</code> + Sliver 组合</li>
+<li>需要可折叠头部 + TabBar + 内部列表 → <code>NestedScrollView</code></li>
+</ul>
+<hr />
+<h2 id="本课小结">本课小结</h2>
+<p>本课是列表系列的进阶篇，内容量较大，我们来回顾核心知识点：</p>
+<ol>
+<li>
+<p><strong>GridView 三种构造方式</strong>：</p>
+<ul>
+<li><code>GridView.count</code>：固定列数，简单直观，适合列数不变的场景</li>
+<li><code>GridView.extent</code>：固定最大宽度，自动计算列数，适合响应式布局</li>
+<li><code>GridView.builder</code>：懒加载，配合 <code>gridDelegate</code>，适合大量子项</li>
+</ul>
+</li>
+<li>
+<p><strong>SliverGridDelegate</strong>：</p>
+<ul>
+<li><code>SliverGridDelegateWithFixedCrossAxisCount</code>：按固定列数排列</li>
+<li><code>SliverGridDelegateWithMaxCrossAxisExtent</code>：按最大宽度自动排列</li>
+<li><code>mainAxisExtent</code> 优先级高于 <code>childAspectRatio</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Sliver 体系的核心思想</strong>：Sliver 是一种感知滚动环境的特殊组件，通过 <code>SliverConstraints</code> 和 <code>SliverGeometry</code> 进行布局，能在混合布局中保持高效的懒加载</p>
+</li>
+<li>
+<p><strong>CustomScrollView</strong>：Sliver 组件的容器，通过 <code>slivers</code> 列表组合多种 Sliver</p>
+</li>
+<li>
+<p><strong>核心 Sliver 组件</strong>：</p>
+<ul>
+<li><code>SliverList</code> / <code>SliverGrid</code>：列表和网格的 Sliver 版本</li>
+<li><code>SliverAppBar</code>：可折叠应用栏，<code>pinned</code>、<code>floating</code>、<code>snap</code> 控制行为</li>
+<li><code>SliverToBoxAdapter</code>：普通 Widget 到 Sliver 的桥梁</li>
+<li><code>SliverPersistentHeader</code>：自定义吸顶效果</li>
+</ul>
+</li>
+<li>
+<p><strong>NestedScrollView</strong>：解决&quot;可折叠头部 + TabBarView + 内部列表&quot;的滚动协调问题</p>
+</li>
+</ol>
+<hr />
+<h2 id="课后练习">课后练习</h2>
+<h3 id="练习1照片九宫格基础">练习1：照片九宫格（基础）</h3>
+<p>使用 <code>GridView.count</code> 创建一个 3×3 的照片展示页面。要求：</p>
+<ul>
+<li>照片之间有 4px 的间距</li>
+<li>每张照片使用不同的颜色和数字占位</li>
+<li>点击某张照片时，在底部弹出 <code>SnackBar</code> 显示&quot;你点击了照片 X&quot;</li>
+</ul>
+<h3 id="练习2响应式商品网格中级">练习2：响应式商品网格（中级）</h3>
+<p>使用 <code>GridView.builder</code> 和 <code>SliverGridDelegateWithMaxCrossAxisExtent</code> 创建一个商品展示页面。要求：</p>
+<ul>
+<li>每个商品卡片包含图片区域、名称和价格</li>
+<li>在手机竖屏（窄屏）下显示 2 列，横屏或平板（宽屏）下自动变为 3 列或更多</li>
+<li>使用 <code>LayoutBuilder</code> 获取屏幕宽度并展示在页面顶部</li>
+</ul>
+<h3 id="练习3电商首页布局中级">练习3：电商首页布局（中级）</h3>
+<p>使用 <code>CustomScrollView</code> 构建一个模拟电商首页，包含以下区域（从上到下）：</p>
+<ul>
+<li><code>SliverAppBar</code>：可折叠的顶部 Banner（展开高度 200）</li>
+<li><code>SliverToBoxAdapter</code>：搜索栏</li>
+<li><code>SliverToBoxAdapter</code>：横向滚动的分类图标</li>
+<li><code>SliverPersistentHeader</code>：一个吸顶的&quot;热门商品&quot;标题栏</li>
+<li><code>SliverGrid</code>：2 列的商品网格（至少 20 个商品）</li>
+</ul>
+<h3 id="练习4分组吸顶列表中级">练习4：分组吸顶列表（中级）</h3>
+<p>使用 <code>CustomScrollView</code> + 多组 <code>SliverPersistentHeader</code> + <code>SliverList</code> 实现一个通讯录风格的分组列表。要求：</p>
+<ul>
+<li>按字母 A-Z 分组（至少实现 5 个分组）</li>
+<li>每个分组标题在滚动时吸顶</li>
+<li>上方分组标题被下方新的分组标题&quot;顶走&quot;</li>
+<li>分组标题的样式随折叠进度产生颜色或大小变化</li>
+</ul>
+<h3 id="练习5个人主页进阶">练习5：个人主页（进阶）</h3>
+<p>使用 <code>NestedScrollView</code> 实现一个完整的社交应用个人主页。要求：</p>
+<ul>
+<li>顶部 <code>SliverAppBar</code>：展开时显示用户头像、昵称、个人简介，折叠后只显示用户名</li>
+<li><code>SliverAppBar.bottom</code> 放置 3 个 Tab（动态、相册、收藏）</li>
+<li>&quot;动态&quot; Tab：<code>ListView</code> 展示动态列表</li>
+<li>&quot;相册&quot; Tab：<code>GridView</code> 展示照片网格</li>
+<li>&quot;收藏&quot; Tab：<code>ListView</code> 展示收藏内容</li>
+<li>三个 Tab 的滚动与顶部折叠栏协调一致</li>
+<li>切换 Tab 后列表位置不重置（使用 <code>AutomaticKeepAliveClientMixin</code>）</li>
+</ul>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：<a href="lesson14_input_form.md">第14课 输入组件与表单</a> —— 学习 TextField、TextFormField、Form 等表单相关组件，掌握输入框的样式定制、焦点管理、表单验证等实用技巧。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

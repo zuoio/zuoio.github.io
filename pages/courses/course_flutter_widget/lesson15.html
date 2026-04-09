@@ -1,0 +1,2504 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第15课-选择类组件">第15课 选择类组件</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter 常用组件系统学习<br />
+<strong>适用人群</strong>：有 Dart 语言基础，了解 Flutter 基本概念的开发者<br />
+<strong>课程目标</strong>：系统掌握 Flutter 中各类选择组件的使用方式、状态管理方法和适用场景</p>
+</blockquote>
+<hr />
+<p>选择类组件是用户与应用交互的核心手段之一。无论是勾选协议、切换设置、选择日期还是从下拉列表中选值，都离不开这些组件。本课将逐一讲解 Flutter 中最常用的选择组件，帮助你在不同场景下做出正确的组件选型。</p>
+<hr />
+<h2 id="1-checkbox-与-checkboxlisttile">1. Checkbox 与 CheckboxListTile</h2>
+<h3 id="11-使用场景">1.1 使用场景</h3>
+<ul>
+<li><strong>Checkbox</strong> 适用于需要用户做出&quot;是/否&quot;二选一确认的场景，例如&quot;同意用户协议&quot;、&quot;记住密码&quot;。</li>
+<li><strong>CheckboxListTile</strong> 是 Checkbox 与 ListTile 的组合，适用于设置列表中需要在文字旁显示勾选框的场景，点击整行即可切换状态。</li>
+</ul>
+<h3 id="12-核心属性">1.2 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>value</code></td>
+<td><code>bool?</code></td>
+<td>当前勾选状态。<code>true</code>=选中，<code>false</code>=未选中，<code>null</code>=中间态（需启用 tristate）</td>
+</tr>
+<tr>
+<td><code>onChanged</code></td>
+<td><code>ValueChanged&lt;bool?&gt;?</code></td>
+<td>状态变化回调，设为 <code>null</code> 则禁用</td>
+</tr>
+<tr>
+<td><code>tristate</code></td>
+<td><code>bool</code></td>
+<td>是否支持三态（默认 <code>false</code>）</td>
+</tr>
+<tr>
+<td><code>activeColor</code></td>
+<td><code>Color?</code></td>
+<td>选中时的填充颜色</td>
+</tr>
+<tr>
+<td><code>checkColor</code></td>
+<td><code>Color?</code></td>
+<td>选中时对勾的颜色</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13-基础用法">1.3 基础用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: CheckboxDemoPage()));
+
+class CheckboxDemoPage extends StatefulWidget {
+  const CheckboxDemoPage({super.key});
+
+  @override
+  State&lt;CheckboxDemoPage&gt; createState() =&gt; _CheckboxDemoPageState();
+}
+
+class _CheckboxDemoPageState extends State&lt;CheckboxDemoPage&gt; {
+  bool _agreeTerms = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Checkbox 演示')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 基础 Checkbox：通常需要搭配 Text 一起使用
+            Row(
+              children: [
+                Checkbox(
+                  value: _agreeTerms,
+                  activeColor: Colors.teal,
+                  checkColor: Colors.white,
+                  onChanged: (bool? newValue) {
+                    setState(() {
+                      _agreeTerms = newValue ?? false;
+                    });
+                  },
+                ),
+                GestureDetector(
+                  onTap: () =&gt; setState(() =&gt; _agreeTerms = !_agreeTerms),
+                  child: const Text('我已阅读并同意用户协议'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              // 未勾选时禁用按钮
+              onPressed: _agreeTerms ? () {} : null,
+              child: const Text('注册'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="14-三态-checkboxtristate">1.4 三态 Checkbox（tristate）</h3>
+<p>三态复选框在&quot;全选/部分选/全不选&quot;场景中非常有用，例如管理子项的批量勾选。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: TristateCheckboxPage()));
+
+class TristateCheckboxPage extends StatefulWidget {
+  const TristateCheckboxPage({super.key});
+
+  @override
+  State&lt;TristateCheckboxPage&gt; createState() =&gt; _TristateCheckboxPageState();
+}
+
+class _TristateCheckboxPageState extends State&lt;TristateCheckboxPage&gt; {
+  // 子项选中状态
+  final List&lt;bool&gt; _items = [true, false, false];
+  final List&lt;String&gt; _labels = ['苹果', '香蕉', '橙子'];
+
+  // 计算父级复选框的状态
+  bool? get _parentValue {
+    final allSelected = _items.every((v) =&gt; v);
+    final noneSelected = _items.every((v) =&gt; !v);
+    if (allSelected) return true;
+    if (noneSelected) return false;
+    return null; // 部分选中 → 中间态
+  }
+
+  void _onParentChanged(bool? value) {
+    setState(() {
+      // 点击父级时：如果当前是部分选中或未选中，则全选；否则全不选
+      final newValue = value ?? false;
+      for (int i = 0; i &lt; _items.length; i++) {
+        _items[i] = newValue;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('三态 Checkbox 演示')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // 父级三态复选框
+            CheckboxListTile(
+              title: const Text('全选水果',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              value: _parentValue,
+              tristate: true, // 启用三态
+              onChanged: _onParentChanged,
+            ),
+            const Divider(),
+            // 子项复选框
+            ...List.generate(_items.length, (index) {
+              return CheckboxListTile(
+                title: Text(_labels[index]),
+                value: _items[index],
+                activeColor: Colors.green,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _items[index] = value ?? false;
+                  });
+                },
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>Checkbox</code> 本身不维护状态，必须通过 <code>setState</code> 在 <code>onChanged</code> 回调中更新 <code>value</code>。</li>
+<li><code>CheckboxListTile</code> 整行可点击，用户体验优于单独的 <code>Checkbox</code> + <code>Text</code> 组合。</li>
+<li>三态模式下 <code>value</code> 为 <code>null</code> 时显示横线（dash），表示&quot;部分选中&quot;。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="2-radio-与-radiolisttile">2. Radio 与 RadioListTile</h2>
+<h3 id="21-使用场景">2.1 使用场景</h3>
+<p>Radio 用于<strong>互斥的单选</strong>场景，即一组选项中只能选择一个。典型场景包括：性别选择、支付方式选择、主题模式选择等。</p>
+<h3 id="22-核心属性">2.2 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>value</code></td>
+<td><code>T</code></td>
+<td>当前 Radio 代表的值</td>
+</tr>
+<tr>
+<td><code>groupValue</code></td>
+<td><code>T?</code></td>
+<td>当前选中的值（整组共享同一个 groupValue）</td>
+</tr>
+<tr>
+<td><code>onChanged</code></td>
+<td><code>ValueChanged&lt;T?&gt;?</code></td>
+<td>选中时的回调</td>
+</tr>
+</tbody>
+</table>
+<p><code>Radio</code> 是一个泛型类 <code>Radio&lt;T&gt;</code>，<code>T</code> 可以是 <code>int</code>、<code>String</code>、<code>enum</code> 等任意类型。推荐使用枚举来保证类型安全。</p>
+<h3 id="23-使用枚举的-radio-示例">2.3 使用枚举的 Radio 示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+// 定义枚举，让选项具有类型安全
+enum PaymentMethod { alipay, wechat, bankCard }
+
+void main() =&gt; runApp(const MaterialApp(home: RadioDemoPage()));
+
+class RadioDemoPage extends StatefulWidget {
+  const RadioDemoPage({super.key});
+
+  @override
+  State&lt;RadioDemoPage&gt; createState() =&gt; _RadioDemoPageState();
+}
+
+class _RadioDemoPageState extends State&lt;RadioDemoPage&gt; {
+  // groupValue 代表当前选中的支付方式
+  PaymentMethod? _selectedPayment;
+
+  String _paymentLabel(PaymentMethod method) {
+    return switch (method) {
+      PaymentMethod.alipay =&gt; '支付宝',
+      PaymentMethod.wechat =&gt; '微信支付',
+      PaymentMethod.bankCard =&gt; '银行卡',
+    };
+  }
+
+  IconData _paymentIcon(PaymentMethod method) {
+    return switch (method) {
+      PaymentMethod.alipay =&gt; Icons.account_balance_wallet,
+      PaymentMethod.wechat =&gt; Icons.chat,
+      PaymentMethod.bankCard =&gt; Icons.credit_card,
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Radio 演示')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('选择支付方式', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 12),
+
+            // 使用 RadioListTile 构建单选列表
+            ...PaymentMethod.values.map((method) {
+              return RadioListTile&lt;PaymentMethod&gt;(
+                title: Text(_paymentLabel(method)),
+                secondary: Icon(_paymentIcon(method)),
+                value: method, // 此 Radio 代表的值
+                groupValue: _selectedPayment, // 当前选中值
+                onChanged: (PaymentMethod? value) {
+                  setState(() {
+                    _selectedPayment = value;
+                  });
+                },
+              );
+            }),
+
+            const Divider(height: 32),
+            Text(
+              _selectedPayment != null
+                  ? '已选择：${_paymentLabel(_selectedPayment!)}'
+                  : '请选择支付方式',
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="24-使用裸-radio-的场景">2.4 使用裸 Radio 的场景</h3>
+<p>当你需要自定义布局而不想使用 ListTile 样式时，可以直接使用 <code>Radio</code> 组件：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: RawRadioDemoPage()));
+
+class RawRadioDemoPage extends StatefulWidget {
+  const RawRadioDemoPage({super.key});
+
+  @override
+  State&lt;RawRadioDemoPage&gt; createState() =&gt; _RawRadioDemoPageState();
+}
+
+class _RawRadioDemoPageState extends State&lt;RawRadioDemoPage&gt; {
+  int _selectedSize = 0;
+  final List&lt;String&gt; _sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('裸 Radio 自定义布局')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('选择尺码：', style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 8),
+            // 横向排列的 Radio 组
+            Row(
+              children: List.generate(_sizes.length, (index) {
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Radio&lt;int&gt;(
+                      value: index,
+                      groupValue: _selectedSize,
+                      onChanged: (int? value) {
+                        setState(() =&gt; _selectedSize = value!);
+                      },
+                    ),
+                    Text(_sizes[index]),
+                    const SizedBox(width: 8),
+                  ],
+                );
+              }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li>优先使用枚举作为 Radio 的泛型类型，避免使用魔法数字或字符串。</li>
+<li>当选项超过 5 个时，考虑使用 <code>DropdownButton</code> 或 <code>DropdownMenu</code> 代替 Radio，避免界面过于拥挤。</li>
+<li><code>RadioListTile</code> 整行可点击，比 <code>Radio</code> + <code>Text</code> 的组合体验更好。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="3-switch-与-switchlisttile">3. Switch 与 SwitchListTile</h2>
+<h3 id="31-使用场景">3.1 使用场景</h3>
+<p>Switch 用于<strong>开关型的二选一切换</strong>，典型场景：开启/关闭通知、启用深色模式、Wi-Fi 开关等。它与 Checkbox 的语义区别在于：<strong>Checkbox 表示&quot;选中/不选中&quot;，Switch 表示&quot;开启/关闭&quot;</strong>。</p>
+<h3 id="32-核心属性">3.2 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>value</code></td>
+<td><code>bool</code></td>
+<td>当前开关状态</td>
+</tr>
+<tr>
+<td><code>onChanged</code></td>
+<td><code>ValueChanged&lt;bool&gt;?</code></td>
+<td>状态变化回调</td>
+</tr>
+<tr>
+<td><code>activeColor</code></td>
+<td><code>Color?</code></td>
+<td>开启时滑块（thumb）的颜色</td>
+</tr>
+<tr>
+<td><code>activeTrackColor</code></td>
+<td><code>Color?</code></td>
+<td>开启时轨道（track）的颜色</td>
+</tr>
+<tr>
+<td><code>inactiveThumbColor</code></td>
+<td><code>Color?</code></td>
+<td>关闭时滑块的颜色</td>
+</tr>
+<tr>
+<td><code>inactiveTrackColor</code></td>
+<td><code>Color?</code></td>
+<td>关闭时轨道的颜色</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-完整示例">3.3 完整示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: SwitchDemoPage()));
+
+class SwitchDemoPage extends StatefulWidget {
+  const SwitchDemoPage({super.key});
+
+  @override
+  State&lt;SwitchDemoPage&gt; createState() =&gt; _SwitchDemoPageState();
+}
+
+class _SwitchDemoPageState extends State&lt;SwitchDemoPage&gt; {
+  bool _darkMode = false;
+  bool _notifications = true;
+  bool _autoUpdate = false;
+  bool _locationService = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Switch 演示')),
+      body: ListView(
+        children: [
+          // 基础 Switch + 自定义颜色
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('深色模式（自定义颜色）', style: TextStyle(fontSize: 16)),
+                Switch(
+                  value: _darkMode,
+                  activeColor: Colors.amber,
+                  activeTrackColor: Colors.amber.shade100,
+                  inactiveThumbColor: Colors.grey,
+                  inactiveTrackColor: Colors.grey.shade300,
+                  onChanged: (bool value) {
+                    setState(() =&gt; _darkMode = value);
+                  },
+                ),
+              ],
+            ),
+          ),
+          const Divider(),
+
+          // SwitchListTile：设置列表中最常用的形式
+          SwitchListTile(
+            title: const Text('推送通知'),
+            subtitle: const Text('接收新消息和活动提醒'),
+            secondary: const Icon(Icons.notifications),
+            value: _notifications,
+            onChanged: (bool value) {
+              setState(() =&gt; _notifications = value);
+            },
+          ),
+          SwitchListTile(
+            title: const Text('自动更新'),
+            subtitle: const Text('在 Wi-Fi 环境下自动更新应用'),
+            secondary: const Icon(Icons.system_update),
+            value: _autoUpdate,
+            onChanged: (bool value) {
+              setState(() =&gt; _autoUpdate = value);
+            },
+          ),
+          SwitchListTile(
+            title: const Text('定位服务'),
+            subtitle: const Text('允许应用获取您的位置信息'),
+            secondary: const Icon(Icons.location_on),
+            value: _locationService,
+            onChanged: (bool value) {
+              setState(() =&gt; _locationService = value);
+            },
+          ),
+
+          // 禁用状态
+          SwitchListTile(
+            title: const Text('飞行模式（禁用示例）'),
+            secondary: const Icon(Icons.airplanemode_active),
+            value: false,
+            onChanged: null, // 设为 null 即禁用
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li>Material 3 中的 Switch 外观发生了较大变化（更圆润、更大），可通过 <code>SwitchThemeData</code> 统一定制样式。</li>
+<li>Switch 和 Checkbox 语义不同：用户期望 Switch 代表&quot;即时生效的操作&quot;（如开关 Wi-Fi），而 Checkbox 代表&quot;标记/勾选&quot;（如同意协议后再提交）。</li>
+<li><code>SwitchListTile</code> 的 <code>secondary</code> 属性用于放置前导图标（等价于 ListTile 的 <code>leading</code>）。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="4-slider-与-rangeslider">4. Slider 与 RangeSlider</h2>
+<h3 id="41-使用场景">4.1 使用场景</h3>
+<ul>
+<li><strong>Slider</strong> 用于在一个连续或离散的范围内选取<strong>单个值</strong>，如音量调节、亮度调节、字体大小选择。</li>
+<li><strong>RangeSlider</strong> 用于选取<strong>一个区间</strong>（两个值），如价格范围筛选、日期范围筛选。</li>
+</ul>
+<h3 id="42-核心属性">4.2 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>value</code> / <code>values</code></td>
+<td>Slider 用 <code>double value</code>；RangeSlider 用 <code>RangeValues values</code></td>
+</tr>
+<tr>
+<td><code>onChanged</code></td>
+<td>值变化回调</td>
+</tr>
+<tr>
+<td><code>min</code> / <code>max</code></td>
+<td>范围的最小值和最大值（默认 0.0 ~ 1.0）</td>
+</tr>
+<tr>
+<td><code>divisions</code></td>
+<td>将范围等分为多少段（不设则为连续滑动）</td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td>滑块上方的气泡标签文字</td>
+</tr>
+<tr>
+<td><code>activeColor</code></td>
+<td>已选区间的颜色</td>
+</tr>
+<tr>
+<td><code>inactiveColor</code></td>
+<td>未选区间的颜色</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-slider-示例">4.3 Slider 示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: SliderDemoPage()));
+
+class SliderDemoPage extends StatefulWidget {
+  const SliderDemoPage({super.key});
+
+  @override
+  State&lt;SliderDemoPage&gt; createState() =&gt; _SliderDemoPageState();
+}
+
+class _SliderDemoPageState extends State&lt;SliderDemoPage&gt; {
+  double _fontSize = 16.0;
+  double _volume = 50;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Slider 演示')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 连续 Slider：字体大小调节
+            Text('字体大小：${_fontSize.toStringAsFixed(1)}',
+                style: Theme.of(context).textTheme.titleMedium),
+            Slider(
+              value: _fontSize,
+              min: 10,
+              max: 40,
+              activeColor: Colors.deepPurple,
+              onChanged: (double value) {
+                setState(() =&gt; _fontSize = value);
+              },
+            ),
+            // 实时预览效果
+            Text(
+              '这是预览文字',
+              style: TextStyle(fontSize: _fontSize),
+            ),
+
+            const Divider(height: 40),
+
+            // 离散 Slider：音量调节（带 divisions 和 label）
+            Text('音量：${_volume.round()}',
+                style: Theme.of(context).textTheme.titleMedium),
+            Slider(
+              value: _volume,
+              min: 0,
+              max: 100,
+              divisions: 20, // 分为 20 档，每档步进 5
+              label: '${_volume.round()}', // 拖动时显示气泡标签
+              activeColor: Colors.orange,
+              onChanged: (double value) {
+                setState(() =&gt; _volume = value);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="44-rangeslider-示例">4.4 RangeSlider 示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: RangeSliderDemoPage()));
+
+class RangeSliderDemoPage extends StatefulWidget {
+  const RangeSliderDemoPage({super.key});
+
+  @override
+  State&lt;RangeSliderDemoPage&gt; createState() =&gt; _RangeSliderDemoPageState();
+}
+
+class _RangeSliderDemoPageState extends State&lt;RangeSliderDemoPage&gt; {
+  RangeValues _priceRange = const RangeValues(100, 500);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('RangeSlider 演示')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('价格筛选', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Text(
+              '¥${_priceRange.start.round()} — ¥${_priceRange.end.round()}',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            RangeSlider(
+              values: _priceRange,
+              min: 0,
+              max: 1000,
+              divisions: 100, // 每档 10 元
+              labels: RangeLabels(
+                '¥${_priceRange.start.round()}',
+                '¥${_priceRange.end.round()}',
+              ),
+              activeColor: Colors.redAccent,
+              onChanged: (RangeValues values) {
+                setState(() =&gt; _priceRange = values);
+              },
+            ),
+            const SizedBox(height: 16),
+            // 模拟筛选结果
+            Text('符合条件的商品（¥${_priceRange.start.round()} ~ ¥${_priceRange.end.round()}）：'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li>使用 <code>divisions</code> 让滑块吸附到特定刻度，避免用户选到无意义的小数值。</li>
+<li>搭配 <code>label</code> 显示气泡提示，让用户清楚当前选择的值。</li>
+<li>可通过 <code>SliderThemeData</code> 全局定制 Slider 的外观（轨道高度、滑块形状等）。</li>
+<li><code>onChangeStart</code> 和 <code>onChangeEnd</code> 回调可用于在开始/结束拖拽时执行操作（如发起网络请求筛选）。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="5-dropdownbutton-与-dropdownmenumaterial-3">5. DropdownButton 与 DropdownMenu（Material 3）</h2>
+<h3 id="51-使用场景">5.1 使用场景</h3>
+<p>当备选项较多（通常超过 5 个）且不适合全部展示在界面上时，使用下拉选择。例如：选择国家/地区、选择分类、选择排序方式。</p>
+<h3 id="52-dropdownbutton-基础用法">5.2 DropdownButton 基础用法</h3>
+<p><code>DropdownButton</code> 是 Flutter 早期就存在的经典下拉组件。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: DropdownButtonDemoPage()));
+
+class DropdownButtonDemoPage extends StatefulWidget {
+  const DropdownButtonDemoPage({super.key});
+
+  @override
+  State&lt;DropdownButtonDemoPage&gt; createState() =&gt; _DropdownButtonDemoPageState();
+}
+
+class _DropdownButtonDemoPageState extends State&lt;DropdownButtonDemoPage&gt; {
+  String? _selectedCity;
+
+  final List&lt;String&gt; _cities = [
+    '北京', '上海', '广州', '深圳', '杭州', '成都', '武汉', '南京',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('DropdownButton 演示')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('选择城市', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 12),
+
+            // DropdownButton 需要手动添加装饰
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: DropdownButton&lt;String&gt;(
+                value: _selectedCity,
+                hint: const Text('请选择城市'),
+                isExpanded: true, // 让下拉按钮撑满容器宽度
+                underline: const SizedBox(), // 去掉默认下划线
+                items: _cities.map((city) {
+                  return DropdownMenuItem&lt;String&gt;(
+                    value: city,
+                    child: Text(city),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  setState(() =&gt; _selectedCity = value);
+                },
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // DropdownButtonFormField：适合表单场景，自带下划线装饰和验证
+            DropdownButtonFormField&lt;String&gt;(
+              value: _selectedCity,
+              decoration: const InputDecoration(
+                labelText: '城市（表单版）',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.location_city),
+              ),
+              items: _cities.map((city) {
+                return DropdownMenuItem&lt;String&gt;(
+                  value: city,
+                  child: Text(city),
+                );
+              }).toList(),
+              onChanged: (String? value) {
+                setState(() =&gt; _selectedCity = value);
+              },
+              validator: (value) {
+                if (value == null) return '请选择一个城市';
+                return null;
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="53-dropdownmenumaterial-3-推荐">5.3 DropdownMenu（Material 3 推荐）</h3>
+<p><code>DropdownMenu</code> 是 Flutter 3.7+ 引入的 Material 3 下拉菜单组件，相比 <code>DropdownButton</code> 有以下优势：</p>
+<ul>
+<li><strong>内置搜索/过滤</strong>功能（<code>enableFilter</code> / <code>enableSearch</code>）</li>
+<li><strong>内置输入框装饰</strong>，无需手动包装</li>
+<li><strong>支持 <code>menuStyle</code></strong> 定制下拉菜单外观</li>
+<li><strong>更符合 Material 3 设计规范</strong></li>
+</ul>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(MaterialApp(
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
+      home: const DropdownMenuDemoPage(),
+    ));
+
+class DropdownMenuDemoPage extends StatefulWidget {
+  const DropdownMenuDemoPage({super.key});
+
+  @override
+  State&lt;DropdownMenuDemoPage&gt; createState() =&gt; _DropdownMenuDemoPageState();
+}
+
+class _DropdownMenuDemoPageState extends State&lt;DropdownMenuDemoPage&gt; {
+  String? _selectedLanguage;
+
+  // DropdownMenuEntry 是 DropdownMenu 的选项类型
+  static final List&lt;DropdownMenuEntry&lt;String&gt;&gt; _languageEntries = [
+    const DropdownMenuEntry(value: 'dart', label: 'Dart', leadingIcon: Icon(Icons.code)),
+    const DropdownMenuEntry(value: 'kotlin', label: 'Kotlin', leadingIcon: Icon(Icons.android)),
+    const DropdownMenuEntry(value: 'swift', label: 'Swift', leadingIcon: Icon(Icons.apple)),
+    const DropdownMenuEntry(value: 'python', label: 'Python', leadingIcon: Icon(Icons.terminal)),
+    const DropdownMenuEntry(value: 'rust', label: 'Rust', leadingIcon: Icon(Icons.settings)),
+    const DropdownMenuEntry(value: 'go', label: 'Go', leadingIcon: Icon(Icons.cloud)),
+    const DropdownMenuEntry(value: 'typescript', label: 'TypeScript', leadingIcon: Icon(Icons.web)),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('DropdownMenu 演示')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Material 3 DropdownMenu',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 12),
+
+            // 基础用法
+            DropdownMenu&lt;String&gt;(
+              label: const Text('选择编程语言'),
+              leadingIcon: const Icon(Icons.language),
+              initialSelection: _selectedLanguage,
+              dropdownMenuEntries: _languageEntries,
+              onSelected: (String? value) {
+                setState(() =&gt; _selectedLanguage = value);
+              },
+            ),
+
+            const SizedBox(height: 24),
+
+            // 带搜索过滤功能
+            DropdownMenu&lt;String&gt;(
+              label: const Text('搜索编程语言'),
+              leadingIcon: const Icon(Icons.search),
+              enableFilter: true, // 启用过滤：输入文字后仅显示匹配项
+              enableSearch: true, // 启用搜索：输入文字后高亮匹配项
+              dropdownMenuEntries: _languageEntries,
+              // 自定义菜单样式
+              menuStyle: MenuStyle(
+                maximumSize: const WidgetStatePropertyAll(Size(300, 300)),
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+              onSelected: (String? value) {
+                setState(() =&gt; _selectedLanguage = value);
+              },
+            ),
+
+            const SizedBox(height: 24),
+            if (_selectedLanguage != null)
+              Text('已选择：$_selectedLanguage',
+                  style: const TextStyle(fontSize: 16)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="54-dropdownbutton-vs-dropdownmenu-对比">5.4 DropdownButton vs DropdownMenu 对比</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>DropdownButton</th>
+<th>DropdownMenu（推荐）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Material 版本</td>
+<td>Material 2</td>
+<td><strong>Material 3</strong></td>
+</tr>
+<tr>
+<td>内置输入框装饰</td>
+<td>❌ 需手动包装</td>
+<td>✅ 自带</td>
+</tr>
+<tr>
+<td>搜索/过滤</td>
+<td>❌ 不支持</td>
+<td>✅ <code>enableFilter</code> / <code>enableSearch</code></td>
+</tr>
+<tr>
+<td>菜单样式定制</td>
+<td>有限</td>
+<td>✅ <code>menuStyle</code></td>
+</tr>
+<tr>
+<td>表单集成</td>
+<td><code>DropdownButtonFormField</code></td>
+<td>需手动处理</td>
+</tr>
+<tr>
+<td>推荐程度</td>
+<td>旧项目兼容</td>
+<td><strong>新项目首选</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li><strong>新项目中推荐使用 <code>DropdownMenu</code></strong>，它是 Material 3 设计语言的一部分，功能更强大。</li>
+<li>如果需要在 <code>Form</code> 中使用并利用 <code>validator</code> 校验，<code>DropdownButtonFormField</code> 仍然是便捷之选。</li>
+<li>当选项特别多时（如国家列表），务必开启 <code>enableFilter</code>，让用户可以通过输入快速定位。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="6-popupmenubutton">6. PopupMenuButton</h2>
+<h3 id="61-使用场景">6.1 使用场景</h3>
+<p><code>PopupMenuButton</code> 用于弹出一个上下文菜单，常见于 AppBar 的&quot;更多操作&quot;按钮（三个点）、列表项的操作菜单等。</p>
+<h3 id="62-核心属性">6.2 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>itemBuilder</code></td>
+<td><code>PopupMenuItemBuilder&lt;T&gt;</code></td>
+<td>构建菜单项列表（必需）</td>
+</tr>
+<tr>
+<td><code>onSelected</code></td>
+<td><code>PopupMenuItemSelected&lt;T&gt;?</code></td>
+<td>选中某项后的回调</td>
+</tr>
+<tr>
+<td><code>onCanceled</code></td>
+<td><code>PopupMenuCanceled?</code></td>
+<td>用户未选择任何项就关闭菜单的回调</td>
+</tr>
+<tr>
+<td><code>offset</code></td>
+<td><code>Offset</code></td>
+<td>菜单相对于按钮的偏移量</td>
+</tr>
+<tr>
+<td><code>icon</code></td>
+<td><code>Widget?</code></td>
+<td>自定义触发图标</td>
+</tr>
+<tr>
+<td><code>initialValue</code></td>
+<td><code>T?</code></td>
+<td>菜单打开时高亮显示的项</td>
+</tr>
+</tbody>
+</table>
+<h3 id="63-完整示例">6.3 完整示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+enum SortOption { nameAsc, nameDesc, dateNew, dateOld }
+
+void main() =&gt; runApp(const MaterialApp(home: PopupMenuDemoPage()));
+
+class PopupMenuDemoPage extends StatefulWidget {
+  const PopupMenuDemoPage({super.key});
+
+  @override
+  State&lt;PopupMenuDemoPage&gt; createState() =&gt; _PopupMenuDemoPageState();
+}
+
+class _PopupMenuDemoPageState extends State&lt;PopupMenuDemoPage&gt; {
+  SortOption _currentSort = SortOption.nameAsc;
+
+  String _sortLabel(SortOption option) {
+    return switch (option) {
+      SortOption.nameAsc =&gt; '名称升序',
+      SortOption.nameDesc =&gt; '名称降序',
+      SortOption.dateNew =&gt; '最新优先',
+      SortOption.dateOld =&gt; '最旧优先',
+    };
+  }
+
+  IconData _sortIcon(SortOption option) {
+    return switch (option) {
+      SortOption.nameAsc =&gt; Icons.sort_by_alpha,
+      SortOption.nameDesc =&gt; Icons.sort_by_alpha,
+      SortOption.dateNew =&gt; Icons.arrow_downward,
+      SortOption.dateOld =&gt; Icons.arrow_upward,
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('PopupMenuButton 演示'),
+        actions: [
+          // AppBar 中的更多操作按钮
+          PopupMenuButton&lt;String&gt;(
+            icon: const Icon(Icons.more_vert),
+            offset: const Offset(0, 50), // 菜单向下偏移，避免遮挡按钮
+            onSelected: (String value) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('选择了：$value')),
+              );
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem(value: '分享', child: ListTile(
+                  leading: Icon(Icons.share),
+                  title: Text('分享'),
+                  contentPadding: EdgeInsets.zero,
+                )),
+                const PopupMenuItem(value: '收藏', child: ListTile(
+                  leading: Icon(Icons.favorite_border),
+                  title: Text('收藏'),
+                  contentPadding: EdgeInsets.zero,
+                )),
+                const PopupMenuDivider(), // 分割线
+                const PopupMenuItem(value: '举报', child: ListTile(
+                  leading: Icon(Icons.flag, color: Colors.red),
+                  title: Text('举报', style: TextStyle(color: Colors.red)),
+                  contentPadding: EdgeInsets.zero,
+                )),
+              ];
+            },
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 排序选项菜单
+            Row(
+              children: [
+                Text('排序方式：${_sortLabel(_currentSort)}',
+                    style: const TextStyle(fontSize: 16)),
+                const Spacer(),
+                PopupMenuButton&lt;SortOption&gt;(
+                  initialValue: _currentSort,
+                  onSelected: (SortOption value) {
+                    setState(() =&gt; _currentSort = value);
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return SortOption.values.map((option) {
+                      return PopupMenuItem&lt;SortOption&gt;(
+                        value: option,
+                        child: Row(
+                          children: [
+                            Icon(_sortIcon(option), size: 20),
+                            const SizedBox(width: 12),
+                            Text(_sortLabel(option)),
+                            if (option == _currentSort) ...[
+                              const Spacer(),
+                              const Icon(Icons.check, size: 18, color: Colors.blue),
+                            ],
+                          ],
+                        ),
+                      );
+                    }).toList();
+                  },
+                  child: const Chip(
+                    avatar: Icon(Icons.sort, size: 18),
+                    label: Text('排序'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>PopupMenuButton</code> 没有 <code>child</code> 参数时默认显示三个点图标（<code>Icons.more_vert</code>）。提供 <code>child</code> 后，该 child 将作为触发区域。</li>
+<li><code>PopupMenuDivider</code> 可用于在菜单项之间添加分割线。</li>
+<li>使用 <code>CheckedPopupMenuItem</code> 可以创建带勾选标记的菜单项。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="7-showdatepicker-与-showtimepicker">7. showDatePicker 与 showTimePicker</h2>
+<h3 id="71-使用场景">7.1 使用场景</h3>
+<p>当用户需要选择日期或时间时使用，如选择出生日期、预约时间、航班日期等。Flutter 提供了 Material 风格的日期和时间选择器。</p>
+<h3 id="72-showdatepicker-核心参数">7.2 showDatePicker 核心参数</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>context</code></td>
+<td><code>BuildContext</code></td>
+<td>构建上下文</td>
+</tr>
+<tr>
+<td><code>initialDate</code></td>
+<td><code>DateTime</code></td>
+<td>初始选中日期</td>
+</tr>
+<tr>
+<td><code>firstDate</code></td>
+<td><code>DateTime</code></td>
+<td>可选范围的起始日期</td>
+</tr>
+<tr>
+<td><code>lastDate</code></td>
+<td><code>DateTime</code></td>
+<td>可选范围的结束日期</td>
+</tr>
+<tr>
+<td><code>initialDatePickerMode</code></td>
+<td><code>DatePickerMode</code></td>
+<td>初始模式（日历/年份）</td>
+</tr>
+<tr>
+<td><code>builder</code></td>
+<td><code>TransitionBuilder?</code></td>
+<td>用于自定义主题或包裹对话框</td>
+</tr>
+</tbody>
+</table>
+<h3 id="73-showtimepicker-核心参数">7.3 showTimePicker 核心参数</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>context</code></td>
+<td><code>BuildContext</code></td>
+<td>构建上下文</td>
+</tr>
+<tr>
+<td><code>initialTime</code></td>
+<td><code>TimeOfDay</code></td>
+<td>初始选中时间</td>
+</tr>
+<tr>
+<td><code>initialEntryMode</code></td>
+<td><code>TimePickerEntryMode</code></td>
+<td>输入模式（拨盘/输入框）</td>
+</tr>
+<tr>
+<td><code>builder</code></td>
+<td><code>TransitionBuilder?</code></td>
+<td>用于自定义主题或切换 24 小时制</td>
+</tr>
+</tbody>
+</table>
+<h3 id="74-完整示例">7.4 完整示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(MaterialApp(
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
+      home: const DateTimePickerDemoPage(),
+    ));
+
+class DateTimePickerDemoPage extends StatefulWidget {
+  const DateTimePickerDemoPage({super.key});
+
+  @override
+  State&lt;DateTimePickerDemoPage&gt; createState() =&gt; _DateTimePickerDemoPageState();
+}
+
+class _DateTimePickerDemoPageState extends State&lt;DateTimePickerDemoPage&gt; {
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
+  DateTimeRange? _selectedDateRange;
+
+  // 选择日期
+  Future&lt;void&gt; _pickDate() async {
+    final DateTime? result = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+      helpText: '选择出生日期', // 顶部提示文字
+      cancelText: '取消',
+      confirmText: '确定',
+      // 通过 builder 自定义主题
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.indigo, // 选中日期的背景色
+              onPrimary: Colors.white, // 选中日期的文字色
+              surface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (result != null) {
+      setState(() =&gt; _selectedDate = result);
+    }
+  }
+
+  // 选择时间
+  Future&lt;void&gt; _pickTime() async {
+    final TimeOfDay? result = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime ?? TimeOfDay.now(),
+      helpText: '选择预约时间',
+      // 切换为 24 小时制
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            alwaysUse24HourFormat: true,
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (result != null) {
+      setState(() =&gt; _selectedTime = result);
+    }
+  }
+
+  // 选择日期范围
+  Future&lt;void&gt; _pickDateRange() async {
+    final DateTimeRange? result = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+      initialDateRange: _selectedDateRange,
+      helpText: '选择入住 — 退房日期',
+      saveText: '确定',
+    );
+
+    if (result != null) {
+      setState(() =&gt; _selectedDateRange = result);
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}年${date.month}月${date.day}日';
+  }
+
+  String _formatTime(TimeOfDay time) {
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('日期与时间选择器')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 选择日期
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.calendar_today),
+                title: const Text('选择日期'),
+                subtitle: Text(
+                  _selectedDate != null
+                      ? _formatDate(_selectedDate!)
+                      : '未选择',
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: _pickDate,
+              ),
+            ),
+
+            // 选择时间
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.access_time),
+                title: const Text('选择时间'),
+                subtitle: Text(
+                  _selectedTime != null
+                      ? _formatTime(_selectedTime!)
+                      : '未选择',
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: _pickTime,
+              ),
+            ),
+
+            // 选择日期范围
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.date_range),
+                title: const Text('选择日期范围'),
+                subtitle: Text(
+                  _selectedDateRange != null
+                      ? '${_formatDate(_selectedDateRange!.start)} — ${_formatDate(_selectedDateRange!.end)}'
+                      : '未选择',
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: _pickDateRange,
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // 综合展示
+            if (_selectedDate != null &amp;&amp; _selectedTime != null)
+              Card(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    '预约时间：${_formatDate(_selectedDate!)} ${_formatTime(_selectedTime!)}',
+                    style: Theme.of(context).textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li><code>showDatePicker</code> 和 <code>showTimePicker</code> 都返回 <code>Future</code>，使用 <code>await</code> 获取结果，结果为 <code>null</code> 表示用户取消了选择。</li>
+<li>通过 <code>builder</code> 参数包裹 <code>Theme</code>，可以在不改变全局主题的情况下定制选择器的配色。</li>
+<li>对于 24 小时制需求，在 <code>builder</code> 中通过 <code>MediaQuery</code> 设置 <code>alwaysUse24HourFormat: true</code>。</li>
+<li><code>showDateRangePicker</code> 可用于选择日期区间（如酒店入住/退房）。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="8-cupertinodatepicker-与-cupertinopicker">8. CupertinoDatePicker 与 CupertinoPicker</h2>
+<h3 id="81-使用场景">8.1 使用场景</h3>
+<p>当应用需要呈现 <strong>iOS 原生风格</strong>的选择器时使用。在跨平台应用中，可根据当前平台决定使用 Material 风格还是 Cupertino 风格。</p>
+<h3 id="82-cupertinodatepicker-核心属性">8.2 CupertinoDatePicker 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mode</code></td>
+<td><code>CupertinoDatePickerMode</code></td>
+<td><code>.date</code>（仅日期）、<code>.time</code>（仅时间）、<code>.dateAndTime</code>（日期+时间）、<code>.monthYear</code>（年月）</td>
+</tr>
+<tr>
+<td><code>onDateTimeChanged</code></td>
+<td><code>ValueChanged&lt;DateTime&gt;</code></td>
+<td>值变化回调（必需）</td>
+</tr>
+<tr>
+<td><code>initialDateTime</code></td>
+<td><code>DateTime?</code></td>
+<td>初始日期时间</td>
+</tr>
+<tr>
+<td><code>minimumDate</code> / <code>maximumDate</code></td>
+<td><code>DateTime?</code></td>
+<td>可选范围</td>
+</tr>
+<tr>
+<td><code>use24hFormat</code></td>
+<td><code>bool</code></td>
+<td>是否使用 24 小时制</td>
+</tr>
+</tbody>
+</table>
+<h3 id="83-cupertinopicker-核心属性">8.3 CupertinoPicker 核心属性</h3>
+<p><code>CupertinoPicker</code> 是通用的 iOS 风格滚轮选择器，不限于日期。</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>itemExtent</code></td>
+<td><code>double</code></td>
+<td>每个选项的高度（必需）</td>
+</tr>
+<tr>
+<td><code>onSelectedItemChanged</code></td>
+<td><code>ValueChanged&lt;int&gt;</code></td>
+<td>选中索引变化回调</td>
+</tr>
+<tr>
+<td><code>children</code></td>
+<td><code>List&lt;Widget&gt;</code></td>
+<td>选项列表</td>
+</tr>
+<tr>
+<td><code>scrollController</code></td>
+<td><code>FixedExtentScrollController?</code></td>
+<td>控制滚动位置</td>
+</tr>
+</tbody>
+</table>
+<h3 id="84-cupertinodatepicker-示例">8.4 CupertinoDatePicker 示例</h3>
+<p>iOS 风格的日期选择器通常以 bottom sheet 的形式从底部弹出。</p>
+<pre><code class="language-dart">import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: CupertinoPickerDemoPage()));
+
+class CupertinoPickerDemoPage extends StatefulWidget {
+  const CupertinoPickerDemoPage({super.key});
+
+  @override
+  State&lt;CupertinoPickerDemoPage&gt; createState() =&gt;
+      _CupertinoPickerDemoPageState();
+}
+
+class _CupertinoPickerDemoPageState extends State&lt;CupertinoPickerDemoPage&gt; {
+  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedTime = DateTime.now();
+
+  String _formatDate(DateTime date) {
+    return '${date.year}年${date.month}月${date.day}日';
+  }
+
+  String _formatTime(DateTime date) {
+    return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  // 弹出 iOS 风格日期选择器
+  void _showCupertinoDatePicker() {
+    DateTime tempDate = _selectedDate;
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 300,
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: Column(
+            children: [
+              // 顶部操作栏
+              SizedBox(
+                height: 44,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      child: const Text('取消'),
+                      onPressed: () =&gt; Navigator.of(context).pop(),
+                    ),
+                    CupertinoButton(
+                      child: const Text('确定'),
+                      onPressed: () {
+                        setState(() =&gt; _selectedDate = tempDate);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 0),
+              // 日期选择器主体
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date, // 仅日期
+                  initialDateTime: _selectedDate,
+                  minimumDate: DateTime(2020),
+                  maximumDate: DateTime(2030),
+                  onDateTimeChanged: (DateTime newDate) {
+                    tempDate = newDate;
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // 弹出 iOS 风格时间选择器
+  void _showCupertinoTimePicker() {
+    DateTime tempTime = _selectedTime;
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 300,
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 44,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      child: const Text('取消'),
+                      onPressed: () =&gt; Navigator.of(context).pop(),
+                    ),
+                    CupertinoButton(
+                      child: const Text('确定'),
+                      onPressed: () {
+                        setState(() =&gt; _selectedTime = tempTime);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 0),
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.time, // 仅时间
+                  initialDateTime: _selectedTime,
+                  use24hFormat: true, // 24 小时制
+                  onDateTimeChanged: (DateTime newTime) {
+                    tempTime = newTime;
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Cupertino 日期时间选择器')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Card(
+              child: ListTile(
+                leading: const Icon(CupertinoIcons.calendar),
+                title: const Text('iOS 风格日期选择'),
+                subtitle: Text(_formatDate(_selectedDate)),
+                trailing: const Icon(CupertinoIcons.chevron_right),
+                onTap: _showCupertinoDatePicker,
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: const Icon(CupertinoIcons.clock),
+                title: const Text('iOS 风格时间选择'),
+                subtitle: Text(_formatTime(_selectedTime)),
+                trailing: const Icon(CupertinoIcons.chevron_right),
+                onTap: _showCupertinoTimePicker,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="85-cupertinopicker-通用滚轮选择器">8.5 CupertinoPicker 通用滚轮选择器</h3>
+<p><code>CupertinoPicker</code> 不局限于日期时间，可用于任何自定义选项的滚轮选择。</p>
+<pre><code class="language-dart">import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: CupertinoWheelPickerPage()));
+
+class CupertinoWheelPickerPage extends StatefulWidget {
+  const CupertinoWheelPickerPage({super.key});
+
+  @override
+  State&lt;CupertinoWheelPickerPage&gt; createState() =&gt;
+      _CupertinoWheelPickerPageState();
+}
+
+class _CupertinoWheelPickerPageState extends State&lt;CupertinoWheelPickerPage&gt; {
+  int _selectedProvinceIndex = 0;
+
+  final List&lt;String&gt; _provinces = [
+    '北京市', '天津市', '上海市', '重庆市',
+    '河北省', '山西省', '辽宁省', '吉林省',
+    '黑龙江省', '江苏省', '浙江省', '安徽省',
+    '福建省', '江西省', '山东省', '河南省',
+    '湖北省', '湖南省', '广东省', '四川省',
+  ];
+
+  void _showProvincePicker() {
+    int tempIndex = _selectedProvinceIndex;
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 300,
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 44,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoButton(
+                      child: const Text('取消'),
+                      onPressed: () =&gt; Navigator.of(context).pop(),
+                    ),
+                    CupertinoButton(
+                      child: const Text('确定'),
+                      onPressed: () {
+                        setState(() =&gt; _selectedProvinceIndex = tempIndex);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 0),
+              Expanded(
+                child: CupertinoPicker(
+                  itemExtent: 36, // 每项高度
+                  scrollController: FixedExtentScrollController(
+                    initialItem: _selectedProvinceIndex,
+                  ),
+                  onSelectedItemChanged: (int index) {
+                    tempIndex = index;
+                  },
+                  children: _provinces.map((province) {
+                    return Center(
+                      child: Text(province, style: const TextStyle(fontSize: 18)),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('CupertinoPicker 演示')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Card(
+              child: ListTile(
+                leading: const Icon(CupertinoIcons.map),
+                title: const Text('选择省份'),
+                subtitle: Text(_provinces[_selectedProvinceIndex]),
+                trailing: const Icon(CupertinoIcons.chevron_right),
+                onTap: _showProvincePicker,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li><code>CupertinoDatePicker</code> 不像 <code>showDatePicker</code> 那样自带对话框，需要手动使用 <code>showCupertinoModalPopup</code> 包装弹出。</li>
+<li><code>onDateTimeChanged</code> 会在滚轮<strong>每次滚动时</strong>实时触发，而非最终确认时触发。建议使用临时变量暂存值，在用户点击&quot;确定&quot;后再更新状态。</li>
+<li>跨平台应用可通过 <code>Platform.isIOS</code> 判断平台，分别使用 Cupertino 和 Material 风格的选择器。</li>
+<li><code>CupertinoPicker</code> 的 <code>itemExtent</code> 是必需参数，它决定了滚轮中每个选项的高度。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="本课小结">本课小结</h2>
+<p>本课系统讲解了 Flutter 中 8 类常用选择组件：</p>
+<ol>
+<li><strong>Checkbox / CheckboxListTile</strong>：勾选确认场景，支持三态（全选/部分选/全不选）。</li>
+<li><strong>Radio / RadioListTile</strong>：互斥单选场景，推荐使用枚举作为泛型类型。</li>
+<li><strong>Switch / SwitchListTile</strong>：开关切换场景，语义上表示&quot;即时生效&quot;的操作。</li>
+<li><strong>Slider / RangeSlider</strong>：在数值范围内选值/选区间，<code>divisions</code> 控制离散档位。</li>
+<li><strong>DropdownButton / DropdownMenu</strong>：下拉选择，新项目推荐 Material 3 的 <code>DropdownMenu</code>，支持搜索和过滤。</li>
+<li><strong>PopupMenuButton</strong>：弹出上下文菜单，适用于操作菜单和选项菜单。</li>
+<li><strong>showDatePicker / showTimePicker</strong>：Material 风格的日期和时间选择器，通过 <code>builder</code> 自定义主题。</li>
+<li><strong>CupertinoDatePicker / CupertinoPicker</strong>：iOS 风格的滚轮选择器，需搭配 <code>showCupertinoModalPopup</code> 使用。</li>
+</ol>
+<p><strong>所有选择组件的状态管理核心</strong>：组件本身不维护状态，必须在 <code>onChanged</code> 回调中通过 <code>setState</code> 更新对应的 <code>value</code> / <code>groupValue</code> / <code>values</code> 变量，形成&quot;数据驱动 UI&quot;的模式。</p>
+<hr />
+<h2 id="课后练习">课后练习</h2>
+<h3 id="练习1设置页面基础">练习1：设置页面（基础）</h3>
+<p>创建一个&quot;应用设置&quot;页面，包含以下选择组件：</p>
+<ul>
+<li>一个 <code>SwitchListTile</code> 控制&quot;深色模式&quot;</li>
+<li>一个 <code>SwitchListTile</code> 控制&quot;消息通知&quot;</li>
+<li>一组 <code>RadioListTile</code> 选择&quot;语言&quot;（中文/英文/日文）</li>
+<li>一个 <code>Slider</code> 调节&quot;字体大小&quot;（12 ~ 24，步进 2）</li>
+<li>一个 <code>DropdownMenu</code> 选择&quot;主题色&quot;</li>
+</ul>
+<p>所有选择的结果实时显示在页面底部的摘要卡片中。</p>
+<h3 id="练习2商品筛选器中级">练习2：商品筛选器（中级）</h3>
+<p>创建一个商品筛选侧边栏，包含：</p>
+<ul>
+<li>多个 <code>Checkbox</code> 选择品牌（支持三态的&quot;全选&quot;父复选框）</li>
+<li>一个 <code>RangeSlider</code> 筛选价格范围</li>
+<li>一组 <code>Radio</code> 选择排序方式</li>
+<li>一个 <code>DropdownMenu</code>（带 <code>enableFilter</code>）选择商品分类</li>
+<li>底部有&quot;重置&quot;和&quot;应用筛选&quot;按钮</li>
+</ul>
+<h3 id="练习3预约表单中级">练习3：预约表单（中级）</h3>
+<p>创建一个&quot;预约挂号&quot;表单页面：</p>
+<ul>
+<li>使用 <code>DropdownMenu</code> 选择科室</li>
+<li>使用 <code>showDatePicker</code> 选择预约日期（只能选未来 30 天内，排除周末）</li>
+<li>使用 <code>showTimePicker</code> 选择预约时段（限制为 8:00 ~ 17:00）</li>
+<li>使用 <code>Checkbox</code> 勾选&quot;是否需要医保&quot;</li>
+<li>提交前验证所有字段</li>
+</ul>
+<h3 id="练习4跨平台选择器进阶">练习4：跨平台选择器（进阶）</h3>
+<p>封装一个 <code>AdaptiveDatePicker</code> 组件：</p>
+<ul>
+<li>在 iOS 上使用 <code>CupertinoDatePicker</code>（底部弹出滚轮样式）</li>
+<li>在 Android 上使用 <code>showDatePicker</code>（Material 日历样式）</li>
+<li>通过 <code>Platform.isIOS</code> 判断平台</li>
+<li>对外暴露统一的 <code>onDateSelected</code> 回调</li>
+</ul>
+<h3 id="练习5综合思考题">练习5：综合思考题</h3>
+<ol>
+<li><code>Checkbox</code> 的 <code>onChanged</code> 回调类型是 <code>ValueChanged&lt;bool?&gt;</code>（可空 bool），而 <code>Switch</code> 的 <code>onChanged</code> 类型是 <code>ValueChanged&lt;bool&gt;</code>（非空 bool）。为什么 <code>Checkbox</code> 用可空类型？</li>
+<li><code>DropdownButton</code> 的 <code>value</code> 必须是 <code>items</code> 中某个 <code>DropdownMenuItem</code> 的 <code>value</code>，否则会报错。如何优雅地处理&quot;初始未选择&quot;的状态？</li>
+<li>如果在 <code>CupertinoDatePicker</code> 的 <code>onDateTimeChanged</code> 回调中直接调用 <code>setState</code>，会导致什么问题？为什么要用临时变量暂存？</li>
+</ol>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：<a href="lesson16_display.md">第16课 信息展示组件</a> —— 学习 Card、ListTile、ExpansionTile、DataTable、Chip 系列等数据展示组件的使用技巧。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

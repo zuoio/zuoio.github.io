@@ -1,0 +1,2061 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第09章-事务与数据一致性">第09章 事务与数据一致性</h1>
+<blockquote>
+<p>MongoDB 并非一开始就支持多文档事务，但它对单文档操作天然具有原子性。随着 4.0 和 4.2 版本的迭代，MongoDB 已经具备了完整的 ACID 事务能力。本章将从单文档原子性出发，逐步深入多文档事务，并重点讲解如何在 Spring Boot 中优雅地管理事务。</p>
+</blockquote>
+<hr />
+<h2 id="91-mongodb-事务的发展历程与支持范围">9.1 MongoDB 事务的发展历程与支持范围</h2>
+<h3 id="911-事务支持的演进">9.1.1 事务支持的演进</h3>
+<p>MongoDB 的事务支持经历了三个关键阶段：</p>
+<table>
+<thead>
+<tr>
+<th>版本</th>
+<th>事务能力</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MongoDB 3.x 及之前</td>
+<td>仅单文档原子性</td>
+<td>单个文档的增删改操作是原子的</td>
+</tr>
+<tr>
+<td>MongoDB 4.0（2018）</td>
+<td><strong>副本集</strong>多文档事务</td>
+<td>首次支持跨多个文档的 ACID 事务，但仅限副本集部署</td>
+</tr>
+<tr>
+<td>MongoDB 4.2（2019）</td>
+<td><strong>分片集群</strong>多文档事务</td>
+<td>事务能力扩展到分片集群，支持跨分片的分布式事务</td>
+</tr>
+</tbody>
+</table>
+<h3 id="912-mongodb-40副本集多文档事务">9.1.2 MongoDB 4.0：副本集多文档事务</h3>
+<p>MongoDB 4.0 是一个里程碑版本，它在副本集（Replica Set）环境中引入了多文档事务。这意味着：</p>
+<ul>
+<li>可以在一个事务中对<strong>同一个副本集</strong>内的多个集合、多个文档进行读写操作</li>
+<li>事务中的所有操作要么全部提交，要么全部回滚</li>
+<li>需要注意：<strong>独立模式（Standalone）不支持事务</strong>，至少需要一个单节点副本集</li>
+</ul>
+<h3 id="913-mongodb-42分片集群事务">9.1.3 MongoDB 4.2：分片集群事务</h3>
+<p>MongoDB 4.2 将事务能力扩展到了分片集群：</p>
+<ul>
+<li>支持跨多个分片的分布式事务</li>
+<li>使用两阶段提交（Two-Phase Commit）协议确保一致性</li>
+<li>事务可以跨越多个分片上的多个集合</li>
+</ul>
+<h3 id="914-事务的-acid-保证">9.1.4 事务的 ACID 保证</h3>
+<p>MongoDB 的多文档事务提供完整的 ACID 保证：</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Atomicity（原子性）</strong></td>
+<td>事务中的所有操作要么全部成功提交，要么全部回滚，不存在部分成功的情况</td>
+</tr>
+<tr>
+<td><strong>Consistency（一致性）</strong></td>
+<td>事务执行前后，数据库保持一致状态，所有约束（如唯一索引）都会被校验</td>
+</tr>
+<tr>
+<td><strong>Isolation（隔离性）</strong></td>
+<td>使用快照隔离（Snapshot Isolation），事务内读取的是事务开始时的数据快照</td>
+</tr>
+<tr>
+<td><strong>Durability（持久性）</strong></td>
+<td>事务提交后，数据会持久化到磁盘（通过写关注 <code>writeConcern: &quot;majority&quot;</code> 保证）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="915-与关系型数据库事务的对比">9.1.5 与关系型数据库事务的对比</h3>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>关系型数据库（如 MySQL）</th>
+<th>MongoDB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>事务支持时间</td>
+<td>从诞生起就支持</td>
+<td>4.0 版本开始支持多文档事务</td>
+</tr>
+<tr>
+<td>单行/单文档原子性</td>
+<td>支持</td>
+<td>天然支持（无需事务）</td>
+</tr>
+<tr>
+<td>多行/多文档事务</td>
+<td>核心特性，使用频繁</td>
+<td>支持但建议谨慎使用</td>
+</tr>
+<tr>
+<td>隔离级别</td>
+<td>多种级别（RU/RC/RR/Serializable）</td>
+<td>快照隔离（Snapshot Isolation）</td>
+</tr>
+<tr>
+<td>分布式事务</td>
+<td>需要 XA 等协议</td>
+<td>4.2 起原生支持分片集群事务</td>
+</tr>
+<tr>
+<td>设计哲学</td>
+<td>依赖事务保证一致性</td>
+<td>优先通过文档模型设计减少事务需求</td>
+</tr>
+<tr>
+<td>性能影响</td>
+<td>事务是常规操作</td>
+<td>事务有额外开销，建议控制使用范围</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>核心理念</strong>：在 MongoDB 中，良好的文档模型设计可以大幅减少对多文档事务的依赖。MongoDB 鼓励将相关数据内嵌在同一个文档中，利用单文档原子性来满足大部分一致性需求。多文档事务应作为&quot;最后手段&quot;使用。</p>
+</blockquote>
+<hr />
+<h2 id="92-单文档原子性操作">9.2 单文档原子性操作</h2>
+<h3 id="921-天然的单文档原子性">9.2.1 天然的单文档原子性</h3>
+<p>MongoDB 对单个文档的任何写操作都是原子的，无论该文档有多少嵌套字段或数组元素。这意味着：</p>
+<ul>
+<li>一次 <code>updateOne</code> 中使用 <code>$set</code> 修改多个字段，这些修改要么全部生效，要么全部不生效</li>
+<li>一次 <code>$push</code> 向数组添加元素的同时 <code>$inc</code> 某个计数器，这两个操作是原子的</li>
+<li>其他客户端不会看到&quot;修改了一半&quot;的文档</li>
+</ul>
+<p>这是 MongoDB 与关系型数据库最大的区别之一——在关系型数据库中，修改多个列虽然也是原子的，但修改多张表的关联数据就必须使用事务。而在 MongoDB 中，如果你把关联数据内嵌在同一个文档里，就天然具有原子性。</p>
+<h3 id="922-findoneandupdate">9.2.2 findOneAndUpdate</h3>
+<p><code>findOneAndUpdate</code> 在一次原子操作中查找并更新文档，同时返回更新前或更新后的文档。</p>
+<p><strong>Shell 示例：</strong></p>
+<pre><code class="language-javascript">// 场景：商品库存扣减（原子操作，避免超卖）
+// 只有库存 &gt;= 1 时才扣减，并返回更新后的文档
+db.products.findOneAndUpdate(
+    { _id: ObjectId(&quot;665a1b2c3d4e5f6a7b8c9d0e&quot;), stock: { $gte: 1 } },
+    {
+        $inc: { stock: -1, soldCount: 1 },
+        $set: { lastSoldAt: new Date() }
+    },
+    {
+        returnDocument: &quot;after&quot;,  // 返回更新后的文档
+        projection: { name: 1, stock: 1, soldCount: 1 }
+    }
+)
+
+// 返回结果示例：
+// {
+//     _id: ObjectId(&quot;665a1b2c3d4e5f6a7b8c9d0e&quot;),
+//     name: &quot;MongoDB实战指南&quot;,
+//     stock: 49,
+//     soldCount: 151
+// }
+// 如果没有匹配的文档（库存不足），返回 null
+</code></pre>
+<p><strong>Java 示例（MongoTemplate）：</strong></p>
+<pre><code class="language-java">import org.springframework.data.mongodb.core.FindAndModifyOptions;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+
+@Service
+public class ProductService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public ProductService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 原子性扣减库存，返回更新后的商品信息。
+     * 如果库存不足，返回 null。
+     */
+    public Product decrementStock(String productId) {
+        Query query = Query.query(
+            Criteria.where(&quot;_id&quot;).is(productId)
+                    .and(&quot;stock&quot;).gte(1)
+        );
+
+        Update update = new Update()
+                .inc(&quot;stock&quot;, -1)
+                .inc(&quot;soldCount&quot;, 1)
+                .set(&quot;lastSoldAt&quot;, Instant.now());
+
+        FindAndModifyOptions options = FindAndModifyOptions.options()
+                .returnNew(true);  // 返回更新后的文档
+
+        return mongoTemplate.findAndModify(query, update, options, Product.class);
+    }
+}
+</code></pre>
+<h3 id="923-findoneanddelete">9.2.3 findOneAndDelete</h3>
+<p><code>findOneAndDelete</code> 在一次原子操作中查找并删除文档，返回被删除的文档。</p>
+<p><strong>Shell 示例：</strong></p>
+<pre><code class="language-javascript">// 场景：从任务队列中取出一个待处理的任务（取出即删除）
+db.taskQueue.findOneAndDelete(
+    { status: &quot;pending&quot; },
+    {
+        sort: { priority: -1, createdAt: 1 }  // 优先级最高、最早创建的优先
+    }
+)
+
+// 返回被删除的文档：
+// {
+//     _id: ObjectId(&quot;...&quot;),
+//     taskType: &quot;sendEmail&quot;,
+//     payload: { to: &quot;user@example.com&quot;, subject: &quot;Welcome&quot; },
+//     status: &quot;pending&quot;,
+//     priority: 10,
+//     createdAt: ISODate(&quot;2025-03-01T10:00:00Z&quot;)
+// }
+</code></pre>
+<p><strong>Java 示例：</strong></p>
+<pre><code class="language-java">public Task pollTask() {
+    Query query = Query.query(Criteria.where(&quot;status&quot;).is(&quot;pending&quot;))
+            .with(Sort.by(Sort.Direction.DESC, &quot;priority&quot;)
+                       .and(Sort.by(Sort.Direction.ASC, &quot;createdAt&quot;)));
+
+    return mongoTemplate.findAndRemove(query, Task.class);
+}
+</code></pre>
+<h3 id="924-findoneandreplace">9.2.4 findOneAndReplace</h3>
+<p><code>findOneAndReplace</code> 在一次原子操作中查找并替换整个文档。</p>
+<p><strong>Shell 示例：</strong></p>
+<pre><code class="language-javascript">// 场景：用新版本的配置替换旧版本（保留 _id，替换其他所有字段）
+db.configs.findOneAndReplace(
+    { key: &quot;app_settings&quot;, version: 2 },
+    {
+        key: &quot;app_settings&quot;,
+        version: 3,
+        theme: &quot;dark&quot;,
+        language: &quot;zh-CN&quot;,
+        maxUploadSize: 10485760,
+        updatedAt: new Date()
+    },
+    { returnDocument: &quot;after&quot; }
+)
+</code></pre>
+<p><strong>Java 示例：</strong></p>
+<pre><code class="language-java">public AppConfig replaceConfig(AppConfig newConfig) {
+    Query query = Query.query(
+        Criteria.where(&quot;key&quot;).is(newConfig.getKey())
+                .and(&quot;version&quot;).is(newConfig.getVersion() - 1)
+    );
+
+    return mongoTemplate.findAndReplace(query, newConfig,
+            FindAndReplaceOptions.options().returnNew());
+}
+</code></pre>
+<h3 id="925-set-多个字段的原子性">9.2.5 $set 多个字段的原子性</h3>
+<p>在单次更新操作中使用 <code>$set</code> 修改多个字段，所有修改都是原子的：</p>
+<p><strong>Shell 示例：</strong></p>
+<pre><code class="language-javascript">// 场景：用户完成实名认证，同时更新多个字段
+db.users.updateOne(
+    { _id: ObjectId(&quot;665a1b2c3d4e5f6a7b8c9d0e&quot;) },
+    {
+        $set: {
+            &quot;profile.realName&quot;: &quot;张三&quot;,
+            &quot;profile.idCard&quot;: &quot;110101199001011234&quot;,
+            &quot;profile.verified&quot;: true,
+            &quot;profile.verifiedAt&quot;: new Date(),
+            status: &quot;verified&quot;
+        },
+        $inc: { version: 1 }
+    }
+)
+// 上述所有字段的修改在一次原子操作中完成
+// 其他客户端不会看到&quot;realName已更新但verified还是false&quot;的中间状态
+</code></pre>
+<p><strong>Java 示例：</strong></p>
+<pre><code class="language-java">public UpdateResult verifyUser(String userId, String realName, String idCard) {
+    Query query = Query.query(Criteria.where(&quot;_id&quot;).is(userId));
+
+    Update update = new Update()
+            .set(&quot;profile.realName&quot;, realName)
+            .set(&quot;profile.idCard&quot;, idCard)
+            .set(&quot;profile.verified&quot;, true)
+            .set(&quot;profile.verifiedAt&quot;, Instant.now())
+            .set(&quot;status&quot;, &quot;verified&quot;)
+            .inc(&quot;version&quot;, 1);
+
+    return mongoTemplate.updateFirst(query, update, User.class);
+}
+</code></pre>
+<blockquote>
+<p><strong>小结</strong>：在设计数据模型时，尽量将需要一起修改的数据放在同一个文档中。这样利用单文档原子性，无需事务即可保证数据一致性。</p>
+</blockquote>
+<hr />
+<h2 id="93-多文档事务multi-document-transaction">9.3 多文档事务（Multi-document Transaction）</h2>
+<p>当业务逻辑确实需要跨多个文档或多个集合保证一致性时，就需要使用多文档事务。</p>
+<h3 id="931-事务的基本语法shell">9.3.1 事务的基本语法（Shell）</h3>
+<pre><code class="language-javascript">// 事务的基本结构
+const session = db.getMongo().startSession();
+session.startTransaction({
+    readConcern: { level: &quot;snapshot&quot; },
+    writeConcern: { w: &quot;majority&quot; },
+    readPreference: &quot;primary&quot;
+});
+
+try {
+    const accountsColl = session.getDatabase(&quot;bank&quot;).getCollection(&quot;accounts&quot;);
+
+    // 在事务中执行操作...
+    accountsColl.updateOne(
+        { accountNo: &quot;A001&quot; },
+        { $inc: { balance: -500 } },
+        { session }   // 注意：Shell 中需要传递 session（MongoDB 6.0+ 写法）
+    );
+
+    accountsColl.updateOne(
+        { accountNo: &quot;A002&quot; },
+        { $inc: { balance: 500 } },
+        { session }
+    );
+
+    // 提交事务
+    session.commitTransaction();
+    print(&quot;事务提交成功&quot;);
+} catch (error) {
+    // 回滚事务
+    session.abortTransaction();
+    print(&quot;事务回滚：&quot; + error.message);
+} finally {
+    session.endSession();
+}
+</code></pre>
+<p>核心 API：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>startSession()</code></td>
+<td>创建一个会话（Session）</td>
+</tr>
+<tr>
+<td><code>session.startTransaction(options)</code></td>
+<td>在会话中开始一个事务</td>
+</tr>
+<tr>
+<td><code>session.commitTransaction()</code></td>
+<td>提交事务，使所有变更生效</td>
+</tr>
+<tr>
+<td><code>session.abortTransaction()</code></td>
+<td>中止事务，回滚所有变更</td>
+</tr>
+<tr>
+<td><code>session.endSession()</code></td>
+<td>结束会话，释放资源</td>
+</tr>
+</tbody>
+</table>
+<h3 id="932-完整的-shell-事务示例银行转账">9.3.2 完整的 Shell 事务示例：银行转账</h3>
+<p>这是一个经典的转账场景，需要保证&quot;转出扣款&quot;和&quot;转入加款&quot;要么同时成功，要么同时失败。</p>
+<p><strong>准备数据：</strong></p>
+<pre><code class="language-javascript">// 创建测试数据
+use bank;
+db.accounts.drop();
+db.accounts.insertMany([
+    { accountNo: &quot;A001&quot;, owner: &quot;张三&quot;, balance: 10000 },
+    { accountNo: &quot;A002&quot;, owner: &quot;李四&quot;, balance: 5000 }
+]);
+
+// 转账记录集合
+db.transferLogs.drop();
+</code></pre>
+<p><strong>执行转账事务：</strong></p>
+<pre><code class="language-javascript">// 转账函数：从 fromAccount 转 amount 元到 toAccount
+function transfer(fromAccountNo, toAccountNo, amount) {
+    const session = db.getMongo().startSession();
+
+    session.startTransaction({
+        readConcern: { level: &quot;snapshot&quot; },
+        writeConcern: { w: &quot;majority&quot; }
+    });
+
+    try {
+        const accounts = session.getDatabase(&quot;bank&quot;).getCollection(&quot;accounts&quot;);
+        const transferLogs = session.getDatabase(&quot;bank&quot;).getCollection(&quot;transferLogs&quot;);
+
+        // 1. 检查转出账户余额
+        const fromAccount = accounts.findOne(
+            { accountNo: fromAccountNo },
+            { session }
+        );
+
+        if (!fromAccount) {
+            throw new Error(&quot;转出账户不存在: &quot; + fromAccountNo);
+        }
+        if (fromAccount.balance &lt; amount) {
+            throw new Error(&quot;余额不足，当前余额: &quot; + fromAccount.balance);
+        }
+
+        // 2. 转出方扣款
+        accounts.updateOne(
+            { accountNo: fromAccountNo },
+            {
+                $inc: { balance: -amount },
+                $set: { lastTransferAt: new Date() }
+            },
+            { session }
+        );
+
+        // 3. 转入方加款
+        const toResult = accounts.updateOne(
+            { accountNo: toAccountNo },
+            {
+                $inc: { balance: amount },
+                $set: { lastTransferAt: new Date() }
+            },
+            { session }
+        );
+
+        if (toResult.matchedCount === 0) {
+            throw new Error(&quot;转入账户不存在: &quot; + toAccountNo);
+        }
+
+        // 4. 记录转账日志
+        transferLogs.insertOne({
+            from: fromAccountNo,
+            to: toAccountNo,
+            amount: amount,
+            status: &quot;success&quot;,
+            createdAt: new Date()
+        }, { session });
+
+        // 5. 提交事务
+        session.commitTransaction();
+        print(&quot;转账成功：&quot; + fromAccountNo + &quot; -&gt; &quot; + toAccountNo + &quot;，金额：&quot; + amount);
+
+    } catch (error) {
+        session.abortTransaction();
+        print(&quot;转账失败，事务已回滚：&quot; + error.message);
+    } finally {
+        session.endSession();
+    }
+}
+
+// 执行转账
+transfer(&quot;A001&quot;, &quot;A002&quot;, 2000);
+
+// 验证结果
+db.accounts.find().pretty();
+// 张三余额：8000，李四余额：7000
+
+db.transferLogs.find().pretty();
+// 有一条转账成功的记录
+
+// 测试失败场景：余额不足
+transfer(&quot;A001&quot;, &quot;A002&quot;, 99999);
+// 输出：转账失败，事务已回滚：余额不足，当前余额: 8000
+</code></pre>
+<h3 id="933-使用-mongotemplate-进行手动事务管理">9.3.3 使用 MongoTemplate 进行手动事务管理</h3>
+<p>在 Spring Boot 中，可以使用 <code>MongoTemplate</code> 配合 <code>ClientSession</code> 手动管理事务。</p>
+<p><strong>Java 代码：</strong></p>
+<pre><code class="language-java">import com.mongodb.ClientSessionOptions;
+import com.mongodb.TransactionOptions;
+import com.mongodb.ReadConcern;
+import com.mongodb.WriteConcern;
+import com.mongodb.client.ClientSession;
+import com.mongodb.client.MongoClient;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+
+@Service
+public class TransferService {
+
+    private final MongoClient mongoClient;
+    private final MongoTemplate mongoTemplate;
+
+    public TransferService(MongoClient mongoClient, MongoTemplate mongoTemplate) {
+        this.mongoClient = mongoClient;
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    public void transfer(String fromAccountNo, String toAccountNo, BigDecimal amount) {
+        // 创建 Session
+        ClientSession session = mongoClient.startSession(
+                ClientSessionOptions.builder()
+                        .causallyConsistent(true)
+                        .build()
+        );
+
+        // 配置事务选项
+        TransactionOptions txnOptions = TransactionOptions.builder()
+                .readConcern(ReadConcern.SNAPSHOT)
+                .writeConcern(WriteConcern.MAJORITY)
+                .build();
+
+        try {
+            session.startTransaction(txnOptions);
+
+            // 1. 查询转出账户
+            Query fromQuery = Query.query(Criteria.where(&quot;accountNo&quot;).is(fromAccountNo));
+            Account fromAccount = mongoTemplate.withSession(() -&gt; session)
+                    .execute(template -&gt; template.findOne(fromQuery, Account.class));
+
+            if (fromAccount == null) {
+                throw new RuntimeException(&quot;转出账户不存在: &quot; + fromAccountNo);
+            }
+            if (fromAccount.getBalance().compareTo(amount) &lt; 0) {
+                throw new RuntimeException(&quot;余额不足，当前余额: &quot; + fromAccount.getBalance());
+            }
+
+            // 2. 扣减转出方余额
+            mongoTemplate.withSession(() -&gt; session).execute(template -&gt; {
+                template.updateFirst(
+                        Query.query(Criteria.where(&quot;accountNo&quot;).is(fromAccountNo)),
+                        new Update().inc(&quot;balance&quot;, amount.negate().doubleValue())
+                                    .set(&quot;lastTransferAt&quot;, Instant.now()),
+                        Account.class
+                );
+                return null;
+            });
+
+            // 3. 增加转入方余额
+            mongoTemplate.withSession(() -&gt; session).execute(template -&gt; {
+                var result = template.updateFirst(
+                        Query.query(Criteria.where(&quot;accountNo&quot;).is(toAccountNo)),
+                        new Update().inc(&quot;balance&quot;, amount.doubleValue())
+                                    .set(&quot;lastTransferAt&quot;, Instant.now()),
+                        Account.class
+                );
+                if (result.getMatchedCount() == 0) {
+                    throw new RuntimeException(&quot;转入账户不存在: &quot; + toAccountNo);
+                }
+                return null;
+            });
+
+            // 4. 记录转账日志
+            mongoTemplate.withSession(() -&gt; session).execute(template -&gt; {
+                TransferLog log = new TransferLog();
+                log.setFromAccount(fromAccountNo);
+                log.setToAccount(toAccountNo);
+                log.setAmount(amount);
+                log.setStatus(&quot;success&quot;);
+                log.setCreatedAt(Instant.now());
+                template.insert(log);
+                return null;
+            });
+
+            // 5. 提交事务
+            session.commitTransaction();
+
+        } catch (Exception e) {
+            session.abortTransaction();
+            throw new RuntimeException(&quot;转账失败: &quot; + e.getMessage(), e);
+        } finally {
+            session.close();
+        }
+    }
+}
+</code></pre>
+<p><strong>实体类：</strong></p>
+<pre><code class="language-java">import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.math.BigDecimal;
+import java.time.Instant;
+
+@Document(collection = &quot;accounts&quot;)
+public class Account {
+
+    @Id
+    private String id;
+    private String accountNo;
+    private String owner;
+    private BigDecimal balance;
+    private Instant lastTransferAt;
+
+    // getters / setters 省略
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getAccountNo() { return accountNo; }
+    public void setAccountNo(String accountNo) { this.accountNo = accountNo; }
+    public String getOwner() { return owner; }
+    public void setOwner(String owner) { this.owner = owner; }
+    public BigDecimal getBalance() { return balance; }
+    public void setBalance(BigDecimal balance) { this.balance = balance; }
+    public Instant getLastTransferAt() { return lastTransferAt; }
+    public void setLastTransferAt(Instant lastTransferAt) { this.lastTransferAt = lastTransferAt; }
+}
+
+@Document(collection = &quot;transferLogs&quot;)
+public class TransferLog {
+
+    @Id
+    private String id;
+    private String fromAccount;
+    private String toAccount;
+    private BigDecimal amount;
+    private String status;
+    private Instant createdAt;
+
+    // getters / setters 省略
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getFromAccount() { return fromAccount; }
+    public void setFromAccount(String fromAccount) { this.fromAccount = fromAccount; }
+    public String getToAccount() { return toAccount; }
+    public void setToAccount(String toAccount) { this.toAccount = toAccount; }
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+}
+</code></pre>
+<h3 id="934-事务的超时和重试">9.3.4 事务的超时和重试</h3>
+<h4 id="事务超时">事务超时</h4>
+<p>MongoDB 事务有默认的超时时间：</p>
+<ul>
+<li><strong>事务生命周期超时</strong>：默认 60 秒（<code>transactionLifetimeLimitSeconds</code>），可在服务端配置</li>
+<li><strong>锁等待超时</strong>：默认 5 毫秒（<code>maxTransactionLockRequestTimeoutMillis</code>）</li>
+</ul>
+<p>如果事务在超时时间内没有提交或中止，MongoDB 会自动中止该事务。</p>
+<h4 id="事务重试">事务重试</h4>
+<p>MongoDB 驱动支持两种重试标签：</p>
+<ul>
+<li><strong><code>RetryableWriteError</code></strong>：可重试的写错误</li>
+<li><strong><code>TransientTransactionError</code></strong>：瞬时事务错误（如写冲突），可以安全地重试整个事务</li>
+<li><strong><code>UnknownTransactionCommitResult</code></strong>：提交结果未知，可以安全地重试提交操作</li>
+</ul>
+<p><strong>带重试逻辑的事务模板（Shell）：</strong></p>
+<pre><code class="language-javascript">function runTransactionWithRetry(txnFunc, session) {
+    while (true) {
+        try {
+            txnFunc(session);
+            break;
+        } catch (error) {
+            if (error.hasOwnProperty(&quot;errorLabels&quot;) &amp;&amp;
+                error.errorLabels.includes(&quot;TransientTransactionError&quot;)) {
+                print(&quot;遇到 TransientTransactionError，重试事务...&quot;);
+                continue;
+            }
+            throw error;
+        }
+    }
+}
+
+function commitWithRetry(session) {
+    while (true) {
+        try {
+            session.commitTransaction();
+            print(&quot;事务提交成功&quot;);
+            break;
+        } catch (error) {
+            if (error.hasOwnProperty(&quot;errorLabels&quot;) &amp;&amp;
+                error.errorLabels.includes(&quot;UnknownTransactionCommitResult&quot;)) {
+                print(&quot;提交结果未知，重试提交...&quot;);
+                continue;
+            }
+            throw error;
+        }
+    }
+}
+</code></pre>
+<p><strong>Java 中的重试逻辑：</strong></p>
+<pre><code class="language-java">public void transferWithRetry(String from, String to, BigDecimal amount) {
+    int maxRetries = 3;
+    for (int attempt = 1; attempt &lt;= maxRetries; attempt++) {
+        try {
+            transfer(from, to, amount);
+            return; // 成功则退出
+        } catch (Exception e) {
+            if (isTransientError(e) &amp;&amp; attempt &lt; maxRetries) {
+                System.out.println(&quot;事务瞬时错误，第 &quot; + attempt + &quot; 次重试...&quot;);
+                try {
+                    Thread.sleep(100L * attempt); // 指数退避
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException(ie);
+                }
+            } else {
+                throw e;
+            }
+        }
+    }
+}
+
+private boolean isTransientError(Exception e) {
+    String message = e.getMessage();
+    return message != null &amp;&amp; (
+        message.contains(&quot;TransientTransactionError&quot;) ||
+        message.contains(&quot;WriteConflict&quot;)
+    );
+}
+</code></pre>
+<hr />
+<h2 id="94-在-spring-boot-中使用-transactional-管理-mongodb-事务">9.4 在 Spring Boot 中使用 @Transactional 管理 MongoDB 事务</h2>
+<p>手动管理事务（如 9.3 节所示）虽然灵活，但代码冗长。Spring Boot 提供了声明式事务管理，通过 <code>@Transactional</code> 注解即可自动管理事务的开始、提交和回滚。</p>
+<h3 id="941-配置-mongotransactionmanager-bean">9.4.1 配置 MongoTransactionManager Bean</h3>
+<p>要使用 <code>@Transactional</code>，需要配置 <code>MongoTransactionManager</code>：</p>
+<pre><code class="language-java">import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.MongoTransactionManager;
+
+@Configuration
+public class MongoTransactionConfig {
+
+    @Bean
+    public MongoTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {
+        return new MongoTransactionManager(dbFactory);
+    }
+}
+</code></pre>
+<p>这就是全部配置！Spring Boot 会自动将这个 <code>MongoTransactionManager</code> 与 <code>@Transactional</code> 注解关联。</p>
+<h3 id="942-使用-transactional-注解">9.4.2 使用 @Transactional 注解</h3>
+<p>有了上面的配置，就可以像操作关系型数据库一样使用 <code>@Transactional</code> 了：</p>
+<pre><code class="language-java">import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+
+@Service
+public class AccountService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public AccountService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 使用 @Transactional 声明式事务进行转账。
+     * 如果方法中抛出运行时异常，事务会自动回滚。
+     */
+    @Transactional
+    public void transfer(String fromAccountNo, String toAccountNo, BigDecimal amount) {
+        // 1. 查询转出账户
+        Account fromAccount = mongoTemplate.findOne(
+                Query.query(Criteria.where(&quot;accountNo&quot;).is(fromAccountNo)),
+                Account.class
+        );
+
+        if (fromAccount == null) {
+            throw new RuntimeException(&quot;转出账户不存在: &quot; + fromAccountNo);
+        }
+        if (fromAccount.getBalance().compareTo(amount) &lt; 0) {
+            throw new RuntimeException(&quot;余额不足，当前余额: &quot; + fromAccount.getBalance());
+        }
+
+        // 2. 扣减转出方余额
+        mongoTemplate.updateFirst(
+                Query.query(Criteria.where(&quot;accountNo&quot;).is(fromAccountNo)),
+                new Update().inc(&quot;balance&quot;, amount.negate().doubleValue())
+                            .set(&quot;lastTransferAt&quot;, Instant.now()),
+                Account.class
+        );
+
+        // 3. 增加转入方余额
+        var result = mongoTemplate.updateFirst(
+                Query.query(Criteria.where(&quot;accountNo&quot;).is(toAccountNo)),
+                new Update().inc(&quot;balance&quot;, amount.doubleValue())
+                            .set(&quot;lastTransferAt&quot;, Instant.now()),
+                Account.class
+        );
+
+        if (result.getMatchedCount() == 0) {
+            throw new RuntimeException(&quot;转入账户不存在: &quot; + toAccountNo);
+        }
+
+        // 4. 记录转账日志
+        TransferLog log = new TransferLog();
+        log.setFromAccount(fromAccountNo);
+        log.setToAccount(toAccountNo);
+        log.setAmount(amount);
+        log.setStatus(&quot;success&quot;);
+        log.setCreatedAt(Instant.now());
+        mongoTemplate.insert(log);
+    }
+
+    /**
+     * 删除文章并清理所有评论（事务保证一致性）
+     */
+    @Transactional
+    public void deleteArticleWithComments(String articleId) {
+        // 删除文章
+        mongoTemplate.remove(
+                Query.query(Criteria.where(&quot;_id&quot;).is(articleId)),
+                &quot;articles&quot;
+        );
+
+        // 删除该文章的所有评论
+        mongoTemplate.remove(
+                Query.query(Criteria.where(&quot;articleId&quot;).is(articleId)),
+                &quot;comments&quot;
+        );
+    }
+}
+</code></pre>
+<h3 id="943-重要注意事项mongodb-事务要求副本集部署">9.4.3 重要注意事项：MongoDB 事务要求副本集部署</h3>
+<p><strong>这是初学者最容易踩的坑</strong>：MongoDB 事务（包括 <code>@Transactional</code>）<strong>必须在副本集或分片集群环境下才能使用</strong>，单独的 Standalone 实例不支持事务。</p>
+<p>如果你在 Standalone 模式下使用 <code>@Transactional</code>，会报错：</p>
+<pre><code>com.mongodb.MongoCommandException: Command failed with error 263 (NoReplicationEnabled):
+'Transaction numbers are only allowed on a replica set member or mongos'
+</code></pre>
+<h3 id="944-docker-单节点副本集配置方法">9.4.4 Docker 单节点副本集配置方法</h3>
+<p>在开发环境中，可以使用 Docker 快速启动一个<strong>单节点副本集</strong>来支持事务：</p>
+<p><strong>docker-compose.yml：</strong></p>
+<pre><code class="language-yaml">version: '3.8'
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: mongo-rs
+    ports:
+      - &quot;27017:27017&quot;
+    command: [&quot;mongod&quot;, &quot;--replSet&quot;, &quot;rs0&quot;, &quot;--bind_ip_all&quot;]
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
+</code></pre>
+<p><strong>启动并初始化副本集：</strong></p>
+<pre><code class="language-bash"># 启动容器
+docker-compose up -d
+
+# 进入容器并初始化副本集
+docker exec -it mongo-rs mongosh --eval &quot;
+rs.initiate({
+    _id: 'rs0',
+    members: [{ _id: 0, host: 'localhost:27017' }]
+})
+&quot;
+
+# 验证副本集状态
+docker exec -it mongo-rs mongosh --eval &quot;rs.status().ok&quot;
+# 输出 1 表示成功
+</code></pre>
+<p><strong>application.yml 配置：</strong></p>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/mydb?replicaSet=rs0
+</code></pre>
+<blockquote>
+<p><strong>提示</strong>：使用 <code>replicaSet=rs0</code> 连接参数告诉驱动这是一个副本集。即使只有一个节点，也要这样配置才能使用事务。</p>
+</blockquote>
+<h3 id="945-完整的-java-示例service-层事务方法">9.4.5 完整的 Java 示例（Service 层事务方法）</h3>
+<p>下面是一个完整的订单创建场景，涉及多个集合的操作：</p>
+<p><strong>实体类：</strong></p>
+<pre><code class="language-java">@Document(collection = &quot;orders&quot;)
+public class Order {
+    @Id
+    private String id;
+    private String userId;
+    private List&lt;OrderItem&gt; items;
+    private BigDecimal totalAmount;
+    private String status;  // PENDING, PAID, CANCELLED
+    private Instant createdAt;
+
+    // getters / setters ...
+}
+
+public class OrderItem {
+    private String productId;
+    private String productName;
+    private int quantity;
+    private BigDecimal price;
+
+    // getters / setters ...
+}
+</code></pre>
+<p><strong>Service 层：</strong></p>
+<pre><code class="language-java">import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
+
+@Service
+public class OrderService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public OrderService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 创建订单（事务操作）：
+     * 1. 检查并扣减库存
+     * 2. 创建订单文档
+     * 3. 更新用户购买统计
+     */
+    @Transactional
+    public Order createOrder(String userId, List&lt;OrderItem&gt; items) {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        // 1. 逐个检查并扣减库存
+        for (OrderItem item : items) {
+            Query stockQuery = Query.query(
+                Criteria.where(&quot;_id&quot;).is(item.getProductId())
+                        .and(&quot;stock&quot;).gte(item.getQuantity())
+            );
+            Update stockUpdate = new Update()
+                    .inc(&quot;stock&quot;, -item.getQuantity())
+                    .inc(&quot;soldCount&quot;, item.getQuantity());
+
+            var result = mongoTemplate.updateFirst(stockQuery, stockUpdate, Product.class);
+
+            if (result.getMatchedCount() == 0) {
+                // 抛出异常会触发事务回滚，之前扣减的库存也会恢复
+                throw new RuntimeException(&quot;商品库存不足: &quot; + item.getProductName());
+            }
+
+            totalAmount = totalAmount.add(
+                item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()))
+            );
+        }
+
+        // 2. 创建订单
+        Order order = new Order();
+        order.setUserId(userId);
+        order.setItems(items);
+        order.setTotalAmount(totalAmount);
+        order.setStatus(&quot;PENDING&quot;);
+        order.setCreatedAt(Instant.now());
+
+        mongoTemplate.insert(order);
+
+        // 3. 更新用户购买统计
+        mongoTemplate.updateFirst(
+                Query.query(Criteria.where(&quot;_id&quot;).is(userId)),
+                new Update()
+                        .inc(&quot;stats.orderCount&quot;, 1)
+                        .inc(&quot;stats.totalSpent&quot;, totalAmount.doubleValue())
+                        .set(&quot;stats.lastOrderAt&quot;, Instant.now()),
+                User.class
+        );
+
+        return order;
+    }
+
+    /**
+     * 取消订单（事务操作）：
+     * 1. 将订单状态改为 CANCELLED
+     * 2. 恢复库存
+     */
+    @Transactional
+    public void cancelOrder(String orderId) {
+        Order order = mongoTemplate.findById(orderId, Order.class);
+        if (order == null) {
+            throw new RuntimeException(&quot;订单不存在: &quot; + orderId);
+        }
+        if (!&quot;PENDING&quot;.equals(order.getStatus())) {
+            throw new RuntimeException(&quot;只能取消待支付的订单，当前状态: &quot; + order.getStatus());
+        }
+
+        // 1. 更新订单状态
+        mongoTemplate.updateFirst(
+                Query.query(Criteria.where(&quot;_id&quot;).is(orderId)),
+                new Update().set(&quot;status&quot;, &quot;CANCELLED&quot;)
+                            .set(&quot;cancelledAt&quot;, Instant.now()),
+                Order.class
+        );
+
+        // 2. 恢复库存
+        for (OrderItem item : order.getItems()) {
+            mongoTemplate.updateFirst(
+                    Query.query(Criteria.where(&quot;_id&quot;).is(item.getProductId())),
+                    new Update()
+                            .inc(&quot;stock&quot;, item.getQuantity())
+                            .inc(&quot;soldCount&quot;, -item.getQuantity()),
+                    Product.class
+            );
+        }
+
+        // 3. 更新用户统计
+        mongoTemplate.updateFirst(
+                Query.query(Criteria.where(&quot;_id&quot;).is(order.getUserId())),
+                new Update()
+                        .inc(&quot;stats.orderCount&quot;, -1)
+                        .inc(&quot;stats.totalSpent&quot;, order.getTotalAmount().negate().doubleValue()),
+                User.class
+        );
+    }
+}
+</code></pre>
+<h3 id="946-事务回滚测试">9.4.6 事务回滚测试</h3>
+<p>编写测试验证事务回滚是否正常工作：</p>
+<pre><code class="language-java">import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.*;
+
+@SpringBootTest
+class OrderServiceTest {
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Test
+    void testCreateOrder_shouldRollbackWhenStockInsufficient() {
+        // 准备数据：商品A库存10，商品B库存1
+        Product productA = new Product(&quot;P001&quot;, &quot;商品A&quot;, 10, BigDecimal.valueOf(100));
+        Product productB = new Product(&quot;P002&quot;, &quot;商品B&quot;, 1, BigDecimal.valueOf(200));
+        mongoTemplate.save(productA);
+        mongoTemplate.save(productB);
+
+        // 下单：商品A买2件，商品B买5件（超过库存）
+        List&lt;OrderItem&gt; items = List.of(
+                new OrderItem(&quot;P001&quot;, &quot;商品A&quot;, 2, BigDecimal.valueOf(100)),
+                new OrderItem(&quot;P002&quot;, &quot;商品B&quot;, 5, BigDecimal.valueOf(200))  // 库存不足
+        );
+
+        // 应该抛出异常
+        assertThatThrownBy(() -&gt; orderService.createOrder(&quot;U001&quot;, items))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining(&quot;库存不足&quot;);
+
+        // 验证事务回滚：商品A的库存应该恢复为10（不是8）
+        Product productAAfter = mongoTemplate.findById(&quot;P001&quot;, Product.class);
+        assertThat(productAAfter.getStock()).isEqualTo(10);
+
+        // 验证没有订单被创建
+        long orderCount = mongoTemplate.count(
+                Query.query(Criteria.where(&quot;userId&quot;).is(&quot;U001&quot;)),
+                Order.class
+        );
+        assertThat(orderCount).isEqualTo(0);
+    }
+
+    @Test
+    void testCreateOrder_shouldCommitWhenAllSucceed() {
+        Product productA = new Product(&quot;P001&quot;, &quot;商品A&quot;, 10, BigDecimal.valueOf(100));
+        Product productB = new Product(&quot;P002&quot;, &quot;商品B&quot;, 10, BigDecimal.valueOf(200));
+        mongoTemplate.save(productA);
+        mongoTemplate.save(productB);
+
+        List&lt;OrderItem&gt; items = List.of(
+                new OrderItem(&quot;P001&quot;, &quot;商品A&quot;, 2, BigDecimal.valueOf(100)),
+                new OrderItem(&quot;P002&quot;, &quot;商品B&quot;, 3, BigDecimal.valueOf(200))
+        );
+
+        Order order = orderService.createOrder(&quot;U001&quot;, items);
+
+        // 验证订单创建成功
+        assertThat(order.getId()).isNotNull();
+        assertThat(order.getTotalAmount()).isEqualByComparingTo(BigDecimal.valueOf(800));
+
+        // 验证库存已扣减
+        Product productAAfter = mongoTemplate.findById(&quot;P001&quot;, Product.class);
+        assertThat(productAAfter.getStock()).isEqualTo(8);
+
+        Product productBAfter = mongoTemplate.findById(&quot;P002&quot;, Product.class);
+        assertThat(productBAfter.getStock()).isEqualTo(7);
+    }
+}
+</code></pre>
+<hr />
+<h2 id="95-事务的限制与最佳实践">9.5 事务的限制与最佳实践</h2>
+<h3 id="951-性能影响">9.5.1 性能影响</h3>
+<p>事务相比普通操作有额外的性能开销：</p>
+<ul>
+<li><strong>延迟增加</strong>：事务需要协调多个操作，涉及锁获取、快照管理和提交协议</li>
+<li><strong>资源消耗</strong>：事务会持有锁资源和 WiredTiger 快照，占用更多内存</li>
+<li><strong>吞吐量下降</strong>：长时间运行的事务可能阻塞其他操作</li>
+<li><strong>写冲突</strong>：多个事务修改同一文档时会产生写冲突，导致其中一个需要重试</li>
+</ul>
+<p><strong>性能对比示意：</strong></p>
+<pre><code>普通操作（无事务）：延迟 ~1ms
+单文档原子操作：     延迟 ~1ms
+多文档事务（同节点）：延迟 ~5-10ms
+跨分片事务：         延迟 ~20-50ms（取决于网络和分片数量）
+</code></pre>
+<h3 id="952-时间限制">9.5.2 时间限制</h3>
+<table>
+<thead>
+<tr>
+<th>限制</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>transactionLifetimeLimitSeconds</code></td>
+<td>60 秒</td>
+<td>事务的最大持续时间，超时自动中止</td>
+</tr>
+<tr>
+<td><code>maxTransactionLockRequestTimeoutMillis</code></td>
+<td>5 毫秒</td>
+<td>事务获取锁的等待时间</td>
+</tr>
+</tbody>
+</table>
+<p>可以在服务端修改：</p>
+<pre><code class="language-javascript">// 修改事务最大持续时间为 120 秒（生产环境慎用）
+db.adminCommand({
+    setParameter: 1,
+    transactionLifetimeLimitSeconds: 120
+})
+</code></pre>
+<h3 id="953-大小限制">9.5.3 大小限制</h3>
+<ul>
+<li><strong>oplog 条目大小</strong>：单个事务产生的 oplog 条目不能超过 <strong>16 MB</strong></li>
+<li><strong>如果事务涉及大量写操作</strong>，可能会超过此限制导致事务失败</li>
+<li>每个事务中的操作数没有硬性限制，但受 oplog 大小约束</li>
+</ul>
+<h3 id="954-其他限制">9.5.4 其他限制</h3>
+<ul>
+<li>事务中<strong>不能创建集合</strong>（MongoDB 4.4 起部分支持，但有限制）</li>
+<li>事务中<strong>不能创建索引</strong></li>
+<li>事务<strong>不能跨数据库</strong>使用 <code>$graphLookup</code> 等受限操作</li>
+<li><strong>只读事务</strong>不会获取锁但仍消耗快照资源</li>
+<li><strong>游标</strong>在事务外部不可使用</li>
+</ul>
+<h3 id="955-最佳实践">9.5.5 最佳实践</h3>
+<h4 id="1-优先通过文档设计避免事务">1. 优先通过文档设计避免事务</h4>
+<pre><code>✅ 好的设计：把订单和订单项放在同一个文档中
+{
+    _id: &quot;order-001&quot;,
+    userId: &quot;U001&quot;,
+    items: [
+        { productId: &quot;P001&quot;, quantity: 2, price: 100 },
+        { productId: &quot;P002&quot;, quantity: 1, price: 200 }
+    ],
+    totalAmount: 400,
+    status: &quot;PENDING&quot;
+}
+
+❌ 不好的设计：订单和订单项分成两个集合，每次操作都需要事务
+orders: { _id: &quot;order-001&quot;, userId: &quot;U001&quot;, totalAmount: 400 }
+orderItems: [
+    { orderId: &quot;order-001&quot;, productId: &quot;P001&quot;, quantity: 2 },
+    { orderId: &quot;order-001&quot;, productId: &quot;P002&quot;, quantity: 1 }
+]
+</code></pre>
+<h4 id="2-事务要短小精悍">2. 事务要短小精悍</h4>
+<pre><code class="language-java">// ✅ 好：事务内只做必要的数据库操作
+@Transactional
+public void transfer(String from, String to, BigDecimal amount) {
+    deductBalance(from, amount);
+    addBalance(to, amount);
+    recordLog(from, to, amount);
+}
+
+// ❌ 坏：事务内做了大量非数据库操作
+@Transactional
+public void transfer(String from, String to, BigDecimal amount) {
+    deductBalance(from, amount);
+    sendEmailNotification(from);  // 网络调用，可能很慢！
+    callExternalAPI();            // 外部API调用！
+    addBalance(to, amount);
+    generatePDFReceipt();         // CPU密集型操作！
+    recordLog(from, to, amount);
+}
+</code></pre>
+<h4 id="3-使用重试逻辑">3. 使用重试逻辑</h4>
+<p>事务可能因为瞬时错误（如写冲突）而失败，应实现重试机制：</p>
+<pre><code class="language-java">@Service
+public class ResilientTransferService {
+
+    private final AccountService accountService;
+
+    public ResilientTransferService(AccountService accountService) {
+        this.accountService = accountService;
+    }
+
+    @Retryable(
+        retryFor = { RuntimeException.class },
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 100, multiplier = 2)
+    )
+    public void transferWithRetry(String from, String to, BigDecimal amount) {
+        accountService.transfer(from, to, amount);
+    }
+}
+</code></pre>
+<p>需要在启动类上启用重试功能：</p>
+<pre><code class="language-java">@SpringBootApplication
+@EnableRetry
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+</code></pre>
+<p>并添加 Maven 依赖：</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.retry&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-retry&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-aspects&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h3 id="956-什么时候该用事务什么时候应该通过设计规避">9.5.6 什么时候该用事务，什么时候应该通过设计规避</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>修改单个文档的多个字段</td>
+<td><strong>不需要事务</strong>，单文档操作天然原子</td>
+</tr>
+<tr>
+<td>订单和订单项一起保存</td>
+<td><strong>不需要事务</strong>，将订单项内嵌到订单文档中</td>
+</tr>
+<tr>
+<td>银行转账（A扣款B加款）</td>
+<td><strong>需要事务</strong>，涉及两个不同账户（文档）</td>
+</tr>
+<tr>
+<td>删除文章同时删除评论</td>
+<td><strong>需要事务</strong>，涉及两个集合的操作</td>
+</tr>
+<tr>
+<td>计数器递增 + 记录日志</td>
+<td><strong>视情况而定</strong>，如果日志不写也可接受，则不需要事务</td>
+</tr>
+<tr>
+<td>注册用户时同时创建默认配置</td>
+<td><strong>需要事务</strong>，或者将默认配置内嵌到用户文档中</td>
+</tr>
+<tr>
+<td>批量导入数据</td>
+<td><strong>不建议事务</strong>，使用 <code>bulkWrite</code> + 业务层补偿机制</td>
+</tr>
+<tr>
+<td>修改文档并更新缓存</td>
+<td><strong>不能用事务</strong>，MongoDB 事务不能管理外部系统</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>总结</strong>：MongoDB 的事务是一个强大的工具，但不应该像使用关系型数据库那样频繁地依赖事务。在 MongoDB 的世界里，好的文档设计才是保证数据一致性的第一选择，事务是最后的保障手段。</p>
+</blockquote>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>关键要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>事务发展历程</td>
+<td>4.0 副本集事务 → 4.2 分片集群事务</td>
+</tr>
+<tr>
+<td>单文档原子性</td>
+<td>天然保证，利用 findOneAndUpdate 等操作</td>
+</tr>
+<tr>
+<td>多文档事务</td>
+<td>startSession → startTransaction → commit/abort</td>
+</tr>
+<tr>
+<td>Spring Boot 集成</td>
+<td>配置 MongoTransactionManager + @Transactional</td>
+</tr>
+<tr>
+<td>副本集要求</td>
+<td>事务必须在副本集环境，可用 Docker 搭建单节点副本集</td>
+</tr>
+<tr>
+<td>最佳实践</td>
+<td>优先设计规避 → 事务要短 → 加重试逻辑</td>
+</tr>
+</tbody>
+</table>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2182 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第二章-全局配置文件-mybatis-configxml-">第二章 全局配置文件 mybatis-config.xml 📖</h1>
+<blockquote>
+<p><strong>定位</strong>：理解 MyBatis 的完整配置体系。日常开发中大部分配置已由 Spring Boot 自动接管，但在排查问题、阅读源码或需要精细调优时，必须清楚每个配置项的含义与生效原理。</p>
+</blockquote>
+<hr />
+<h2 id="21-configuration-根标签与子标签加载顺序">2.1 configuration 根标签与子标签加载顺序</h2>
+<p><code>mybatis-config.xml</code> 的根标签是 <code>&lt;configuration&gt;</code>，其内部子标签<strong>必须严格按照以下顺序排列</strong>，否则 XML 校验不通过，MyBatis 启动时会报错：</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE configuration
+  PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+  &quot;https://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+
+&lt;configuration&gt;
+  &lt;!-- ① properties：外部化配置 --&gt;
+  &lt;!-- ② settings：全局行为开关 --&gt;
+  &lt;!-- ③ typeAliases：类型别名 --&gt;
+  &lt;!-- ④ typeHandlers：类型处理器 --&gt;
+  &lt;!-- ⑤ objectFactory：对象工厂 --&gt;
+  &lt;!-- ⑥ objectWrapperFactory：对象包装工厂 --&gt;
+  &lt;!-- ⑦ reflectorFactory：反射工厂 --&gt;
+  &lt;!-- ⑧ plugins：插件（拦截器） --&gt;
+  &lt;!-- ⑨ environments：环境配置（数据源 + 事务管理器） --&gt;
+  &lt;!-- ⑩ databaseIdProvider：多数据库厂商标识 --&gt;
+  &lt;!-- ⑪ mappers：映射器注册 --&gt;
+&lt;/configuration&gt;
+</code></pre>
+<p><strong>完整顺序口诀</strong>（按首字母缩写）：<strong>P-S-T-T-O-O-R-P-E-D-M</strong></p>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>子标签</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>①</td>
+<td><code>properties</code></td>
+<td>加载外部 <code>.properties</code> 文件或直接定义键值对</td>
+</tr>
+<tr>
+<td>②</td>
+<td><code>settings</code></td>
+<td>控制 MyBatis 的全局行为（最常用）</td>
+</tr>
+<tr>
+<td>③</td>
+<td><code>typeAliases</code></td>
+<td>为 Java 全限定类名定义短别名</td>
+</tr>
+<tr>
+<td>④</td>
+<td><code>typeHandlers</code></td>
+<td>注册自定义类型处理器</td>
+</tr>
+<tr>
+<td>⑤</td>
+<td><code>objectFactory</code></td>
+<td>自定义结果对象的实例化方式（极少用）</td>
+</tr>
+<tr>
+<td>⑥</td>
+<td><code>objectWrapperFactory</code></td>
+<td>自定义对象包装器工厂（极少用）</td>
+</tr>
+<tr>
+<td>⑦</td>
+<td><code>reflectorFactory</code></td>
+<td>自定义反射工厂（极少用）</td>
+</tr>
+<tr>
+<td>⑧</td>
+<td><code>plugins</code></td>
+<td>注册拦截器插件</td>
+</tr>
+<tr>
+<td>⑨</td>
+<td><code>environments</code></td>
+<td>配置数据库环境（数据源、事务管理器）</td>
+</tr>
+<tr>
+<td>⑩</td>
+<td><code>databaseIdProvider</code></td>
+<td>多数据库厂商支持</td>
+</tr>
+<tr>
+<td>⑪</td>
+<td><code>mappers</code></td>
+<td>注册 Mapper XML 或 Mapper 接口</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>⚠️ 常见错误</strong>：把 <code>&lt;settings&gt;</code> 写在 <code>&lt;typeAliases&gt;</code> 之后，或把 <code>&lt;mappers&gt;</code> 写在 <code>&lt;environments&gt;</code> 之前，都会导致 DTD 校验失败。错误信息类似：
+<code>The content of element type &quot;configuration&quot; must match &quot;(properties?,settings?,typeAliases?,...)&quot;</code>.</p>
+</blockquote>
+<p><strong>Spring Boot 中的对应</strong>：使用 Spring Boot 时不需要 <code>mybatis-config.xml</code>，所有配置通过 <code>application.yml</code> 完成。但如果仍想使用独立配置文件，可以通过以下方式指定：</p>
+<pre><code class="language-yaml"># application.yml
+mybatis:
+  config-location: classpath:mybatis-config.xml
+</code></pre>
+<hr />
+<h2 id="22-properties--外部化配置与占位符">2.2 properties —— 外部化配置与占位符</h2>
+<p><code>&lt;properties&gt;</code> 标签用于引入外部配置文件或直接定义键值对，在后续的配置中通过 <code>${key}</code> 占位符引用。</p>
+<h3 id="方式一引用外部-properties-文件">方式一：引用外部 .properties 文件</h3>
+<pre><code class="language-xml">&lt;properties resource=&quot;db.properties&quot; /&gt;
+</code></pre>
+<p><code>db.properties</code> 内容：</p>
+<pre><code class="language-properties">db.driver=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/mydb?useSSL=false&amp;serverTimezone=Asia/Shanghai
+db.username=root
+db.password=123456
+</code></pre>
+<h3 id="方式二直接在标签内定义">方式二：直接在标签内定义</h3>
+<pre><code class="language-xml">&lt;properties&gt;
+  &lt;property name=&quot;db.driver&quot; value=&quot;com.mysql.cj.jdbc.Driver&quot;/&gt;
+  &lt;property name=&quot;db.username&quot; value=&quot;root&quot;/&gt;
+&lt;/properties&gt;
+</code></pre>
+<h3 id="方式三两者混用">方式三：两者混用</h3>
+<pre><code class="language-xml">&lt;properties resource=&quot;db.properties&quot;&gt;
+  &lt;property name=&quot;db.username&quot; value=&quot;admin&quot;/&gt;
+&lt;/properties&gt;
+</code></pre>
+<h3 id="属性加载优先级由低到高">属性加载优先级（由低到高）</h3>
+<ol>
+<li><code>&lt;property&gt;</code> 子标签中定义的值</li>
+<li><code>resource</code> / <code>url</code> 指向的外部文件中的值</li>
+<li>通过 <code>SqlSessionFactoryBuilder.build(reader, props)</code> 以方法参数传入的值</li>
+</ol>
+<p><strong>高优先级覆盖低优先级</strong>，即方法参数 &gt; 外部文件 &gt; 标签内定义。</p>
+<h3 id="在后续标签中使用占位符">在后续标签中使用占位符</h3>
+<pre><code class="language-xml">&lt;environments default=&quot;dev&quot;&gt;
+  &lt;environment id=&quot;dev&quot;&gt;
+    &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+    &lt;dataSource type=&quot;POOLED&quot;&gt;
+      &lt;property name=&quot;driver&quot; value=&quot;${db.driver}&quot;/&gt;
+      &lt;property name=&quot;url&quot; value=&quot;${db.url}&quot;/&gt;
+      &lt;property name=&quot;username&quot; value=&quot;${db.username}&quot;/&gt;
+      &lt;property name=&quot;password&quot; value=&quot;${db.password}&quot;/&gt;
+    &lt;/dataSource&gt;
+  &lt;/environment&gt;
+&lt;/environments&gt;
+</code></pre>
+<h3 id="默认值特性mybatis-342">默认值特性（MyBatis 3.4.2+）</h3>
+<p>从 3.4.2 版本开始，占位符支持默认值，但需要先在 <code>&lt;properties&gt;</code> 中启用：</p>
+<pre><code class="language-xml">&lt;properties resource=&quot;db.properties&quot;&gt;
+  &lt;property name=&quot;org.apache.ibatis.parsing.PropertyParser.enable-default-value&quot; value=&quot;true&quot;/&gt;
+&lt;/properties&gt;
+</code></pre>
+<p>启用后可以这样使用：</p>
+<pre><code class="language-xml">&lt;property name=&quot;username&quot; value=&quot;${db.username:root}&quot;/&gt;
+</code></pre>
+<p>如果 <code>db.username</code> 未定义，则使用默认值 <code>root</code>。</p>
+<h3 id="spring-boot-对应写法">Spring Boot 对应写法</h3>
+<p>Spring Boot 本身就使用 <code>application.yml</code> / <code>application.properties</code> 管理所有配置，数据源配置如下：</p>
+<pre><code class="language-yaml">spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mydb?useSSL=false&amp;serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+</code></pre>
+<p>外部化配置可以通过 Spring 的 Profile、环境变量、命令行参数等多种方式实现，比 MyBatis 原生的 <code>&lt;properties&gt;</code> 灵活得多。</p>
+<hr />
+<h2 id="23-settings-重点掌握常用项">2.3 settings（⭐ 重点掌握常用项）</h2>
+<p><code>&lt;settings&gt;</code> 是 MyBatis 中最重要的配置标签，控制框架的全局运行行为。基本语法：</p>
+<pre><code class="language-xml">&lt;settings&gt;
+  &lt;setting name=&quot;配置项名&quot; value=&quot;值&quot;/&gt;
+  &lt;!-- 可以有多个 setting --&gt;
+&lt;/settings&gt;
+</code></pre>
+<h3 id="231-mapunderscoretocamelcase--驼峰映射">2.3.1 mapUnderscoreToCamelCase —— 驼峰映射</h3>
+<p><strong>作用</strong>：将数据库字段名中的下划线风格（<code>user_name</code>）自动映射为 Java 属性的驼峰风格（<code>userName</code>），省去手写 <code>&lt;resultMap&gt;</code> 或列别名。</p>
+<pre><code class="language-xml">&lt;settings&gt;
+  &lt;setting name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>默认值</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td>推荐值</td>
+<td><code>true</code>（几乎所有项目都建议开启）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>示例对比</strong>：</p>
+<pre><code class="language-sql">-- 数据库字段
+SELECT user_name, create_time FROM t_user
+</code></pre>
+<pre><code class="language-java">public class User {
+    private String userName;    // 自动匹配 user_name
+    private Date createTime;    // 自动匹配 create_time
+}
+</code></pre>
+<p>开启后无需额外配置即可完成映射，未开启时需要手动写别名或 <code>&lt;resultMap&gt;</code>。</p>
+<p><strong>Spring Boot 对应写法</strong>：</p>
+<pre><code class="language-yaml">mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+</code></pre>
+<hr />
+<h3 id="232-lazyloadingenabled--aggressivelazyloading--懒加载">2.3.2 lazyLoadingEnabled / aggressiveLazyLoading —— 懒加载</h3>
+<p><strong>作用</strong>：控制关联对象的加载时机。懒加载可以减少不必要的数据库查询，提升性能。</p>
+<pre><code class="language-xml">&lt;settings&gt;
+  &lt;setting name=&quot;lazyLoadingEnabled&quot; value=&quot;true&quot;/&gt;
+  &lt;setting name=&quot;aggressiveLazyLoading&quot; value=&quot;false&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>默认值</th>
+<th>推荐值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lazyLoadingEnabled</code></td>
+<td>全局懒加载开关</td>
+<td><code>false</code></td>
+<td>按需开启</td>
+</tr>
+<tr>
+<td><code>aggressiveLazyLoading</code></td>
+<td>激进懒加载：任意方法调用都会触发全部懒加载属性加载</td>
+<td><code>false</code>（3.4.1+）</td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>工作原理</strong>：</p>
+<ul>
+<li><code>lazyLoadingEnabled=true</code>：关联查询（<code>&lt;association&gt;</code> / <code>&lt;collection&gt;</code> 的嵌套查询）不会立即执行，而是在访问关联属性时才触发 SQL</li>
+<li><code>aggressiveLazyLoading=true</code>：只要调用了对象的<strong>任意方法</strong>（包括 <code>toString()</code>、<code>hashCode()</code>），就会立即加载所有懒加载属性。在 3.4.1 之前默认为 <code>true</code>，会导致懒加载形同虚设</li>
+</ul>
+<p><strong>注意</strong>：懒加载依赖动态代理（cglib 或 javassist），需要确保相关依赖可用。</p>
+<p><strong>Spring Boot 对应写法</strong>：</p>
+<pre><code class="language-yaml">mybatis:
+  configuration:
+    lazy-loading-enabled: true
+    aggressive-lazy-loading: false
+</code></pre>
+<hr />
+<h3 id="233-cacheenabled--全局缓存开关">2.3.3 cacheEnabled —— 全局缓存开关</h3>
+<p><strong>作用</strong>：控制 MyBatis 二级缓存的全局开关。</p>
+<pre><code class="language-xml">&lt;settings&gt;
+  &lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>默认值</th>
+<th>推荐值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cacheEnabled</code></td>
+<td>二级缓存全局开关</td>
+<td><code>true</code></td>
+<td>视项目情况，分布式环境慎用</td>
+</tr>
+</tbody>
+</table>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li>此设置仅控制<strong>二级缓存</strong>（namespace 级别），<strong>一级缓存</strong>（SqlSession 级别）始终开启，无法通过此配置关闭</li>
+<li>即使全局开启，还需要在具体 Mapper XML 中添加 <code>&lt;cache/&gt;</code> 标签才能激活该 namespace 的二级缓存</li>
+<li>在分布式环境下，本地二级缓存可能导致脏读，建议使用 Redis 等分布式缓存方案或直接关闭</li>
+</ul>
+<p><strong>Spring Boot 对应写法</strong>：</p>
+<pre><code class="language-yaml">mybatis:
+  configuration:
+    cache-enabled: true
+</code></pre>
+<hr />
+<h3 id="234-defaultexecutortype--simple--reuse--batch">2.3.4 defaultExecutorType —— SIMPLE / REUSE / BATCH</h3>
+<p><strong>作用</strong>：设定默认的 SQL 执行器类型，影响 Statement 的复用策略和批量执行行为。</p>
+<pre><code class="language-xml">&lt;settings&gt;
+  &lt;setting name=&quot;defaultExecutorType&quot; value=&quot;SIMPLE&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SIMPLE</code></td>
+<td>每次执行都创建新的 <code>PreparedStatement</code>（默认）</td>
+</tr>
+<tr>
+<td><code>REUSE</code></td>
+<td>复用相同 SQL 的 <code>PreparedStatement</code>，减少编译开销</td>
+</tr>
+<tr>
+<td><code>BATCH</code></td>
+<td>批量执行模式，将多条 SQL 攒在一起一次性发送给数据库</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>默认值</th>
+<th>推荐值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>defaultExecutorType</code></td>
+<td>默认执行器类型</td>
+<td><code>SIMPLE</code></td>
+<td>一般用 <code>SIMPLE</code>，批量场景临时切换 <code>BATCH</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>BATCH 模式的注意事项</strong>：</p>
+<ul>
+<li>BATCH 模式下 <code>insert</code> / <code>update</code> / <code>delete</code> 的返回值不可靠（返回的是固定值 <code>BATCH_UPDATE_RETURN_VALUE</code>）</li>
+<li>通常不建议全局设为 BATCH，而是在需要批量操作时通过 <code>SqlSessionFactory.openSession(ExecutorType.BATCH)</code> 临时获取</li>
+</ul>
+<p><strong>Spring Boot 对应写法</strong>：</p>
+<pre><code class="language-yaml">mybatis:
+  configuration:
+    default-executor-type: simple
+</code></pre>
+<hr />
+<h3 id="235-logimpl--日志实现选择">2.3.5 logImpl —— 日志实现选择</h3>
+<p><strong>作用</strong>：指定 MyBatis 使用的日志框架实现，方便在开发阶段输出 SQL 语句、参数和结果。</p>
+<pre><code class="language-xml">&lt;settings&gt;
+  &lt;setting name=&quot;logImpl&quot; value=&quot;SLF4J&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<p>可选值（按优先级自动探测顺序排列）：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>对应日志框架</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SLF4J</code></td>
+<td>SLF4J（推荐，配合 Logback）</td>
+</tr>
+<tr>
+<td><code>LOG4J</code></td>
+<td>Log4j 1.x（已过时）</td>
+</tr>
+<tr>
+<td><code>LOG4J2</code></td>
+<td>Log4j 2.x</td>
+</tr>
+<tr>
+<td><code>JDK_LOGGING</code></td>
+<td>JDK 内置日志（java.util.logging）</td>
+</tr>
+<tr>
+<td><code>COMMONS_LOGGING</code></td>
+<td>Apache Commons Logging</td>
+</tr>
+<tr>
+<td><code>STDOUT_LOGGING</code></td>
+<td>直接输出到标准输出（开发调试用）</td>
+</tr>
+<tr>
+<td><code>NO_LOGGING</code></td>
+<td>关闭日志</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>默认值</th>
+<th>推荐值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>logImpl</code></td>
+<td>日志实现类</td>
+<td>未设置（自动探测）</td>
+<td><code>SLF4J</code>（Spring Boot 项目）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>开发阶段查看 SQL</strong>：如果不想引入额外依赖，可以临时使用 <code>STDOUT_LOGGING</code>：</p>
+<pre><code class="language-xml">&lt;setting name=&quot;logImpl&quot; value=&quot;STDOUT_LOGGING&quot;/&gt;
+</code></pre>
+<p><strong>Spring Boot 对应写法</strong>：</p>
+<p>Spring Boot 项目一般使用 SLF4J + Logback，无需显式指定 <code>logImpl</code>，只需在 <code>application.yml</code> 中配置日志级别即可看到 SQL：</p>
+<pre><code class="language-yaml"># 方式一：通过 mybatis 配置
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+# 方式二（推荐）：通过 Spring Boot 日志级别控制
+logging:
+  level:
+    com.example.mapper: debug   # 将 Mapper 包的日志级别设为 debug
+</code></pre>
+<hr />
+<h3 id="236-其他常用-settings-速查表">2.3.6 其他常用 settings 速查表</h3>
+<p>以下是 MyBatis 全部常用 settings 的完整速查表：</p>
+<table>
+<thead>
+<tr>
+<th>setting 名</th>
+<th>说明</th>
+<th>默认值</th>
+<th>推荐值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mapUnderscoreToCamelCase</code></td>
+<td>下划线字段名自动映射为驼峰属性名</td>
+<td><code>false</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>lazyLoadingEnabled</code></td>
+<td>全局懒加载开关</td>
+<td><code>false</code></td>
+<td>按需</td>
+</tr>
+<tr>
+<td><code>aggressiveLazyLoading</code></td>
+<td>激进懒加载（任意方法触发全部加载）</td>
+<td><code>false</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>cacheEnabled</code></td>
+<td>二级缓存全局开关</td>
+<td><code>true</code></td>
+<td>视项目</td>
+</tr>
+<tr>
+<td><code>defaultExecutorType</code></td>
+<td>默认执行器类型</td>
+<td><code>SIMPLE</code></td>
+<td><code>SIMPLE</code></td>
+</tr>
+<tr>
+<td><code>logImpl</code></td>
+<td>日志实现</td>
+<td>自动探测</td>
+<td><code>SLF4J</code></td>
+</tr>
+<tr>
+<td><code>useGeneratedKeys</code></td>
+<td>全局开启自增主键回填</td>
+<td><code>false</code></td>
+<td>按需（通常在语句级设置）</td>
+</tr>
+<tr>
+<td><code>autoMappingBehavior</code></td>
+<td>自动映射行为：<code>NONE</code> / <code>PARTIAL</code> / <code>FULL</code></td>
+<td><code>PARTIAL</code></td>
+<td><code>PARTIAL</code></td>
+</tr>
+<tr>
+<td><code>autoMappingUnknownColumnBehavior</code></td>
+<td>遇到未知列时的行为：<code>NONE</code> / <code>WARNING</code> / <code>FAILING</code></td>
+<td><code>NONE</code></td>
+<td><code>WARNING</code>（开发期）</td>
+</tr>
+<tr>
+<td><code>defaultStatementTimeout</code></td>
+<td>SQL 执行超时秒数（<code>null</code> 表示不限制）</td>
+<td><code>null</code></td>
+<td>按需设置（如 <code>30</code>）</td>
+</tr>
+<tr>
+<td><code>defaultFetchSize</code></td>
+<td>驱动返回结果集的默认 fetchSize</td>
+<td><code>null</code></td>
+<td>按需</td>
+</tr>
+<tr>
+<td><code>safeRowBoundsEnabled</code></td>
+<td>是否允许在嵌套语句中使用 RowBounds</td>
+<td><code>false</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>safeResultHandlerEnabled</code></td>
+<td>是否允许在嵌套语句中使用 ResultHandler</td>
+<td><code>true</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>multipleResultSetsEnabled</code></td>
+<td>是否允许单条语句返回多结果集</td>
+<td><code>true</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>useColumnLabel</code></td>
+<td>使用列标签而非列名作为映射依据</td>
+<td><code>true</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>callSettersOnNulls</code></td>
+<td>当结果为 null 时是否调用 setter（对 Map 结果有用）</td>
+<td><code>false</code></td>
+<td>按需</td>
+</tr>
+<tr>
+<td><code>returnInstanceForEmptyRow</code></td>
+<td>当所有列都为 null 时是否返回空实例</td>
+<td><code>false</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>logPrefix</code></td>
+<td>日志名称前缀</td>
+<td>无</td>
+<td>按需</td>
+</tr>
+<tr>
+<td><code>lazyLoadTriggerMethods</code></td>
+<td>触发懒加载的方法</td>
+<td><code>equals,clone,hashCode,toString</code></td>
+<td>默认即可</td>
+</tr>
+<tr>
+<td><code>localCacheScope</code></td>
+<td>一级缓存范围：<code>SESSION</code> / <code>STATEMENT</code></td>
+<td><code>SESSION</code></td>
+<td>Spring 下可设为 <code>STATEMENT</code></td>
+</tr>
+<tr>
+<td><code>jdbcTypeForNull</code></td>
+<td>未指定 JDBC 类型时 null 值对应的 JDBC 类型</td>
+<td><code>OTHER</code></td>
+<td>Oracle 需设为 <code>NULL</code></td>
+</tr>
+<tr>
+<td><code>proxyFactory</code></td>
+<td>代理工厂：<code>CGLIB</code> / <code>JAVASSIST</code></td>
+<td><code>JAVASSIST</code></td>
+<td>默认即可</td>
+</tr>
+<tr>
+<td><code>configurationFactory</code></td>
+<td>指定提供 Configuration 实例的工厂类</td>
+<td>无</td>
+<td>极少用</td>
+</tr>
+</tbody>
+</table>
+<p><strong>一个比较完整的 settings 配置示例</strong>：</p>
+<pre><code class="language-xml">&lt;settings&gt;
+  &lt;setting name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+  &lt;setting name=&quot;lazyLoadingEnabled&quot; value=&quot;false&quot;/&gt;
+  &lt;setting name=&quot;aggressiveLazyLoading&quot; value=&quot;false&quot;/&gt;
+  &lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;
+  &lt;setting name=&quot;defaultExecutorType&quot; value=&quot;SIMPLE&quot;/&gt;
+  &lt;setting name=&quot;logImpl&quot; value=&quot;SLF4J&quot;/&gt;
+  &lt;setting name=&quot;useGeneratedKeys&quot; value=&quot;false&quot;/&gt;
+  &lt;setting name=&quot;autoMappingBehavior&quot; value=&quot;PARTIAL&quot;/&gt;
+  &lt;setting name=&quot;defaultStatementTimeout&quot; value=&quot;30&quot;/&gt;
+  &lt;setting name=&quot;localCacheScope&quot; value=&quot;SESSION&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<p><strong>Spring Boot 对应写法（一次性配置多个 settings）</strong>：</p>
+<pre><code class="language-yaml">mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    lazy-loading-enabled: false
+    aggressive-lazy-loading: false
+    cache-enabled: true
+    default-executor-type: simple
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    use-generated-keys: false
+    auto-mapping-behavior: partial
+    default-statement-timeout: 30
+    local-cache-scope: session
+</code></pre>
+<blockquote>
+<p><strong>💡 提示</strong>：Spring Boot 的 <code>mybatis.configuration.*</code> 属性与 <code>mybatis-config.xml</code> 中的 <code>&lt;settings&gt;</code> 是互斥的——如果指定了 <code>mybatis.config-location</code>，则 <code>mybatis.configuration.*</code> 属性将被忽略。二选一即可。</p>
+</blockquote>
+<hr />
+<h2 id="24-typealiases--类型别名">2.4 typeAliases —— 类型别名</h2>
+<p>类型别名可以为 Java 全限定类名定义一个短名称，在 Mapper XML 中使用时更简洁。</p>
+<h3 id="方式一逐个定义别名">方式一：逐个定义别名</h3>
+<pre><code class="language-xml">&lt;typeAliases&gt;
+  &lt;typeAlias alias=&quot;User&quot; type=&quot;com.example.entity.User&quot;/&gt;
+  &lt;typeAlias alias=&quot;Order&quot; type=&quot;com.example.entity.Order&quot;/&gt;
+&lt;/typeAliases&gt;
+</code></pre>
+<h3 id="方式二包扫描推荐">方式二：包扫描（推荐）</h3>
+<pre><code class="language-xml">&lt;typeAliases&gt;
+  &lt;package name=&quot;com.example.entity&quot;/&gt;
+&lt;/typeAliases&gt;
+</code></pre>
+<p>扫描指定包下所有类，默认别名为<strong>类名首字母小写</strong>（实际上 MyBatis 对别名不区分大小写）。例如 <code>com.example.entity.User</code> 的默认别名为 <code>user</code>。</p>
+<p>如果需要自定义别名，可在实体类上添加 <code>@Alias</code> 注解：</p>
+<pre><code class="language-java">@Alias(&quot;sysUser&quot;)
+public class User {
+    // ...
+}
+</code></pre>
+<h3 id="mybatis-内置别名">MyBatis 内置别名</h3>
+<p>MyBatis 预置了一批 Java 常用类型的别名，可以直接在 XML 中使用：</p>
+<table>
+<thead>
+<tr>
+<th>别名</th>
+<th>Java 类型</th>
+<th>别名</th>
+<th>Java 类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int</code></td>
+<td><code>Integer</code></td>
+<td><code>_int</code></td>
+<td><code>int</code>（基本类型）</td>
+</tr>
+<tr>
+<td><code>long</code></td>
+<td><code>Long</code></td>
+<td><code>_long</code></td>
+<td><code>long</code>（基本类型）</td>
+</tr>
+<tr>
+<td><code>double</code></td>
+<td><code>Double</code></td>
+<td><code>_double</code></td>
+<td><code>double</code>（基本类型）</td>
+</tr>
+<tr>
+<td><code>boolean</code></td>
+<td><code>Boolean</code></td>
+<td><code>_boolean</code></td>
+<td><code>boolean</code>（基本类型）</td>
+</tr>
+<tr>
+<td><code>string</code></td>
+<td><code>String</code></td>
+<td><code>date</code></td>
+<td><code>Date</code></td>
+</tr>
+<tr>
+<td><code>map</code></td>
+<td><code>Map</code></td>
+<td><code>hashmap</code></td>
+<td><code>HashMap</code></td>
+</tr>
+<tr>
+<td><code>list</code></td>
+<td><code>List</code></td>
+<td><code>arraylist</code></td>
+<td><code>ArrayList</code></td>
+</tr>
+<tr>
+<td><code>object</code></td>
+<td><code>Object</code></td>
+<td><code>byte[]</code></td>
+<td><code>byte[]</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>：带 <code>_</code> 前缀的是基本类型，不带前缀的是包装类型。</p>
+</blockquote>
+<h3 id="在-mapper-xml-中使用别名">在 Mapper XML 中使用别名</h3>
+<pre><code class="language-xml">&lt;!-- 使用全限定名 --&gt;
+&lt;select id=&quot;findById&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+  SELECT * FROM t_user WHERE id = #{id}
+&lt;/select&gt;
+
+&lt;!-- 使用别名（配置 typeAliases 后） --&gt;
+&lt;select id=&quot;findById&quot; resultType=&quot;User&quot;&gt;
+  SELECT * FROM t_user WHERE id = #{id}
+&lt;/select&gt;
+</code></pre>
+<h3 id="spring-boot-对应写法-1">Spring Boot 对应写法</h3>
+<pre><code class="language-yaml">mybatis:
+  type-aliases-package: com.example.entity
+</code></pre>
+<p>多个包用逗号分隔：</p>
+<pre><code class="language-yaml">mybatis:
+  type-aliases-package: com.example.entity,com.example.dto
+</code></pre>
+<hr />
+<h2 id="25-typehandlers--类型处理器-自定义-typehandler-实战">2.5 typeHandlers —— 类型处理器（⭐ 自定义 TypeHandler 实战）</h2>
+<p>TypeHandler 是 MyBatis 中负责 <strong>Java 类型</strong> 与 <strong>JDBC 类型</strong> 之间相互转换的桥梁。每当 MyBatis 设置 <code>PreparedStatement</code> 参数或从 <code>ResultSet</code> 读取数据时，都会通过 TypeHandler 完成类型转换。</p>
+<h3 id="内置-typehandler">内置 TypeHandler</h3>
+<p>MyBatis 内置了大量 TypeHandler 覆盖常见类型，例如：</p>
+<table>
+<thead>
+<tr>
+<th>TypeHandler</th>
+<th>Java 类型</th>
+<th>JDBC 类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>StringTypeHandler</code></td>
+<td><code>String</code></td>
+<td><code>VARCHAR</code> / <code>CHAR</code></td>
+</tr>
+<tr>
+<td><code>IntegerTypeHandler</code></td>
+<td><code>Integer</code> / <code>int</code></td>
+<td><code>INTEGER</code></td>
+</tr>
+<tr>
+<td><code>LongTypeHandler</code></td>
+<td><code>Long</code> / <code>long</code></td>
+<td><code>BIGINT</code></td>
+</tr>
+<tr>
+<td><code>DateTypeHandler</code></td>
+<td><code>Date</code></td>
+<td><code>TIMESTAMP</code></td>
+</tr>
+<tr>
+<td><code>BooleanTypeHandler</code></td>
+<td><code>Boolean</code> / <code>boolean</code></td>
+<td><code>BOOLEAN</code> / <code>BIT</code></td>
+</tr>
+<tr>
+<td><code>EnumTypeHandler</code></td>
+<td><code>Enum</code></td>
+<td><code>VARCHAR</code>（存枚举名）</td>
+</tr>
+<tr>
+<td><code>EnumOrdinalTypeHandler</code></td>
+<td><code>Enum</code></td>
+<td><code>INTEGER</code>（存枚举序号）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="自定义-typehandler-实战逗号分隔字符串--liststring">自定义 TypeHandler 实战：逗号分隔字符串 ↔ <code>List&lt;String&gt;</code></h3>
+<p>一个常见需求：数据库中用 <code>VARCHAR</code> 存储逗号分隔的标签（如 <code>&quot;java,mybatis,spring&quot;</code>），Java 中用 <code>List&lt;String&gt;</code> 操作。</p>
+<p><strong>第一步：编写 TypeHandler</strong></p>
+<pre><code class="language-java">package com.example.handler;
+
+import org.apache.ibatis.type.BaseTypeHandler;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedJdbcTypes;
+import org.apache.ibatis.type.MappedTypes;
+
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+@MappedTypes(List.class)
+@MappedJdbcTypes(JdbcType.VARCHAR)
+public class StringListTypeHandler extends BaseTypeHandler&lt;List&lt;String&gt;&gt; {
+
+    private static final String DELIMITER = &quot;,&quot;;
+
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i,
+                                     List&lt;String&gt; parameter, JdbcType jdbcType)
+            throws SQLException {
+        ps.setString(i, String.join(DELIMITER, parameter));
+    }
+
+    @Override
+    public List&lt;String&gt; getNullableResult(ResultSet rs, String columnName)
+            throws SQLException {
+        return toList(rs.getString(columnName));
+    }
+
+    @Override
+    public List&lt;String&gt; getNullableResult(ResultSet rs, int columnIndex)
+            throws SQLException {
+        return toList(rs.getString(columnIndex));
+    }
+
+    @Override
+    public List&lt;String&gt; getNullableResult(CallableStatement cs, int columnIndex)
+            throws SQLException {
+        return toList(cs.getString(columnIndex));
+    }
+
+    private List&lt;String&gt; toList(String value) {
+        if (value == null || value.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(value.split(DELIMITER));
+    }
+}
+</code></pre>
+<p><strong>第二步：注册 TypeHandler</strong></p>
+<p>方式一 —— 全局注册（mybatis-config.xml）：</p>
+<pre><code class="language-xml">&lt;typeHandlers&gt;
+  &lt;!-- 逐个注册 --&gt;
+  &lt;typeHandler handler=&quot;com.example.handler.StringListTypeHandler&quot;/&gt;
+
+  &lt;!-- 或包扫描注册 --&gt;
+  &lt;package name=&quot;com.example.handler&quot;/&gt;
+&lt;/typeHandlers&gt;
+</code></pre>
+<p>方式二 —— 在 Mapper XML 中局部指定（不需要全局注册）：</p>
+<pre><code class="language-xml">&lt;!-- 写入时指定 --&gt;
+&lt;insert id=&quot;insertArticle&quot;&gt;
+  INSERT INTO t_article (title, tags)
+  VALUES (#{title}, #{tags, typeHandler=com.example.handler.StringListTypeHandler})
+&lt;/insert&gt;
+
+&lt;!-- 读取时在 resultMap 中指定 --&gt;
+&lt;resultMap id=&quot;articleMap&quot; type=&quot;Article&quot;&gt;
+  &lt;id property=&quot;id&quot; column=&quot;id&quot;/&gt;
+  &lt;result property=&quot;title&quot; column=&quot;title&quot;/&gt;
+  &lt;result property=&quot;tags&quot; column=&quot;tags&quot;
+          typeHandler=&quot;com.example.handler.StringListTypeHandler&quot;/&gt;
+&lt;/resultMap&gt;
+</code></pre>
+<p><strong>第三步：实体类定义</strong></p>
+<pre><code class="language-java">public class Article {
+    private Long id;
+    private String title;
+    private List&lt;String&gt; tags;  // 数据库中存储为 &quot;java,mybatis,spring&quot;
+    // getter / setter 省略
+}
+</code></pre>
+<p><strong>第四步：使用效果</strong></p>
+<pre><code class="language-sql">-- 数据库中的数据
+-- id=1, title='MyBatis入门', tags='java,mybatis,spring'
+</code></pre>
+<pre><code class="language-java">Article article = mapper.findById(1L);
+System.out.println(article.getTags());
+// 输出: [java, mybatis, spring]
+
+article.setTags(Arrays.asList(&quot;java&quot;, &quot;spring-boot&quot;));
+mapper.updateArticle(article);
+// 数据库中 tags 列更新为: &quot;java,spring-boot&quot;
+</code></pre>
+<h3 id="自定义-typehandler-实战补充通用枚举处理器">自定义 TypeHandler 实战（补充）：通用枚举处理器</h3>
+<p>MyBatis 内置的 <code>EnumTypeHandler</code>（存名称）和 <code>EnumOrdinalTypeHandler</code>（存序号）都有局限性。实际项目中更常见的是用自定义的 code 值存储枚举。</p>
+<p><strong>定义枚举接口</strong>：</p>
+<pre><code class="language-java">public interface CodeEnum {
+    int getCode();
+}
+</code></pre>
+<p><strong>定义具体枚举</strong>：</p>
+<pre><code class="language-java">public enum OrderStatus implements CodeEnum {
+    CREATED(0, &quot;已创建&quot;),
+    PAID(1, &quot;已支付&quot;),
+    SHIPPED(2, &quot;已发货&quot;),
+    COMPLETED(3, &quot;已完成&quot;);
+
+    private final int code;
+    private final String desc;
+
+    OrderStatus(int code, String desc) {
+        this.code = code;
+        this.desc = desc;
+    }
+
+    @Override
+    public int getCode() { return code; }
+
+    public String getDesc() { return desc; }
+
+    public static OrderStatus fromCode(int code) {
+        for (OrderStatus status : values()) {
+            if (status.code == code) return status;
+        }
+        throw new IllegalArgumentException(&quot;Unknown OrderStatus code: &quot; + code);
+    }
+}
+</code></pre>
+<p><strong>通用 TypeHandler</strong>：</p>
+<pre><code class="language-java">package com.example.handler;
+
+import com.example.enums.CodeEnum;
+import org.apache.ibatis.type.BaseTypeHandler;
+import org.apache.ibatis.type.JdbcType;
+
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class CodeEnumTypeHandler&lt;E extends Enum&lt;E&gt; &amp; CodeEnum&gt; extends BaseTypeHandler&lt;E&gt; {
+
+    private final Class&lt;E&gt; type;
+    private final E[] enums;
+
+    public CodeEnumTypeHandler(Class&lt;E&gt; type) {
+        this.type = type;
+        this.enums = type.getEnumConstants();
+        if (this.enums == null) {
+            throw new IllegalArgumentException(type.getSimpleName() + &quot; does not represent an enum type.&quot;);
+        }
+    }
+
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType)
+            throws SQLException {
+        ps.setInt(i, parameter.getCode());
+    }
+
+    @Override
+    public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        int code = rs.getInt(columnName);
+        return rs.wasNull() ? null : codeOf(code);
+    }
+
+    @Override
+    public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+        int code = rs.getInt(columnIndex);
+        return rs.wasNull() ? null : codeOf(code);
+    }
+
+    @Override
+    public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        int code = cs.getInt(columnIndex);
+        return cs.wasNull() ? null : codeOf(code);
+    }
+
+    private E codeOf(int code) {
+        for (E e : enums) {
+            if (e.getCode() == code) return e;
+        }
+        throw new IllegalArgumentException(&quot;Unknown enum code &quot; + code + &quot; for &quot; + type.getSimpleName());
+    }
+}
+</code></pre>
+<p><strong>注册方式</strong>：</p>
+<pre><code class="language-xml">&lt;typeHandlers&gt;
+  &lt;typeHandler handler=&quot;com.example.handler.CodeEnumTypeHandler&quot;
+               javaType=&quot;com.example.enums.OrderStatus&quot;/&gt;
+&lt;/typeHandlers&gt;
+</code></pre>
+<h3 id="spring-boot-对应写法-2">Spring Boot 对应写法</h3>
+<pre><code class="language-yaml">mybatis:
+  type-handlers-package: com.example.handler
+</code></pre>
+<blockquote>
+<p><strong>💡 提示</strong>：如果使用 MyBatis-Plus，可以直接使用内置的 <code>MybatisEnumTypeHandler</code>，配合 <code>@EnumValue</code> 注解更加简洁，详见第十一章。</p>
+</blockquote>
+<hr />
+<h2 id="26-plugins--插件注册入口详见第八章">2.6 plugins —— 插件注册入口（详见第八章）</h2>
+<p><code>&lt;plugins&gt;</code> 标签用于注册 MyBatis 拦截器插件。MyBatis 允许在 SQL 执行过程中的四个关键节点进行拦截：</p>
+<ul>
+<li><strong>Executor</strong>：拦截执行器方法（<code>update</code>、<code>query</code>、<code>commit</code>、<code>rollback</code> 等）</li>
+<li><strong>StatementHandler</strong>：拦截 SQL 语句的构建与执行</li>
+<li><strong>ParameterHandler</strong>：拦截参数设置</li>
+<li><strong>ResultSetHandler</strong>：拦截结果集处理</li>
+</ul>
+<h3 id="配置示例">配置示例</h3>
+<pre><code class="language-xml">&lt;plugins&gt;
+  &lt;!-- 自定义 SQL 耗时统计插件 --&gt;
+  &lt;plugin interceptor=&quot;com.example.plugin.SqlCostInterceptor&quot;&gt;
+    &lt;property name=&quot;threshold&quot; value=&quot;100&quot;/&gt;
+  &lt;/plugin&gt;
+
+  &lt;!-- PageHelper 分页插件 --&gt;
+  &lt;plugin interceptor=&quot;com.github.pagehelper.PageInterceptor&quot;&gt;
+    &lt;property name=&quot;helperDialect&quot; value=&quot;mysql&quot;/&gt;
+    &lt;property name=&quot;reasonable&quot; value=&quot;true&quot;/&gt;
+  &lt;/plugin&gt;
+&lt;/plugins&gt;
+</code></pre>
+<blockquote>
+<p><strong>⚠️ 注意</strong>：插件的注册顺序会影响执行顺序。多个插件形成责任链，先注册的后执行（类似栈的 LIFO 结构）。</p>
+</blockquote>
+<h3 id="spring-boot-对应写法-3">Spring Boot 对应写法</h3>
+<p>在 Spring Boot 中，插件通过 Bean 注册更为常见：</p>
+<pre><code class="language-java">@Configuration
+public class MyBatisConfig {
+
+    @Bean
+    public SqlCostInterceptor sqlCostInterceptor() {
+        SqlCostInterceptor interceptor = new SqlCostInterceptor();
+        Properties props = new Properties();
+        props.setProperty(&quot;threshold&quot;, &quot;100&quot;);
+        interceptor.setProperties(props);
+        return interceptor;
+    }
+}
+</code></pre>
+<p>PageHelper 在 Spring Boot 中只需引入 starter 即可自动注册：</p>
+<pre><code class="language-xml">&lt;!-- pom.xml --&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;com.github.pagehelper&lt;/groupId&gt;
+  &lt;artifactId&gt;pagehelper-spring-boot-starter&lt;/artifactId&gt;
+  &lt;version&gt;最新版本&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<pre><code class="language-yaml"># application.yml
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+</code></pre>
+<p>插件的详细原理与自定义实战见<strong>第八章</strong>。</p>
+<hr />
+<h2 id="27-environments--datasource--transactionmanager">2.7 environments / dataSource / transactionManager</h2>
+<p><code>&lt;environments&gt;</code> 用于配置数据库环境，支持定义多个环境（开发、测试、生产），但运行时只能选择其中一个。</p>
+<h3 id="完整配置结构">完整配置结构</h3>
+<pre><code class="language-xml">&lt;environments default=&quot;dev&quot;&gt;
+
+  &lt;!-- 开发环境 --&gt;
+  &lt;environment id=&quot;dev&quot;&gt;
+    &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+    &lt;dataSource type=&quot;POOLED&quot;&gt;
+      &lt;property name=&quot;driver&quot; value=&quot;${db.driver}&quot;/&gt;
+      &lt;property name=&quot;url&quot; value=&quot;${db.url}&quot;/&gt;
+      &lt;property name=&quot;username&quot; value=&quot;${db.username}&quot;/&gt;
+      &lt;property name=&quot;password&quot; value=&quot;${db.password}&quot;/&gt;
+    &lt;/dataSource&gt;
+  &lt;/environment&gt;
+
+  &lt;!-- 测试环境 --&gt;
+  &lt;environment id=&quot;test&quot;&gt;
+    &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+    &lt;dataSource type=&quot;POOLED&quot;&gt;
+      &lt;property name=&quot;driver&quot; value=&quot;com.mysql.cj.jdbc.Driver&quot;/&gt;
+      &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://test-server:3306/mydb&quot;/&gt;
+      &lt;property name=&quot;username&quot; value=&quot;test_user&quot;/&gt;
+      &lt;property name=&quot;password&quot; value=&quot;test_pass&quot;/&gt;
+    &lt;/dataSource&gt;
+  &lt;/environment&gt;
+
+&lt;/environments&gt;
+</code></pre>
+<h3 id="transactionmanager-事务管理器">transactionManager 事务管理器</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>JDBC</code></td>
+<td>直接使用 JDBC 的事务管理（<code>Connection.commit()</code> / <code>rollback()</code>）</td>
+</tr>
+<tr>
+<td><code>MANAGED</code></td>
+<td>将事务交给容器管理（如 JEE 应用服务器），MyBatis 自身不做任何事务操作</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>实际项目</strong>：与 Spring 整合后，事务管理器由 Spring 的 <code>DataSourceTransactionManager</code> 接管，这里的配置不再生效。</p>
+</blockquote>
+<h3 id="datasource-数据源">dataSource 数据源</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UNPOOLED</code></td>
+<td>无连接池，每次请求都打开/关闭连接。仅适合测试或非常简单的应用</td>
+</tr>
+<tr>
+<td><code>POOLED</code></td>
+<td>内置连接池实现，支持基本的池化配置</td>
+</tr>
+<tr>
+<td><code>JNDI</code></td>
+<td>通过 JNDI 查找数据源，适用于 JEE 应用服务器环境</td>
+</tr>
+</tbody>
+</table>
+<p><strong>POOLED 数据源的常用属性</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>poolMaximumActiveConnections</code></td>
+<td>最大活跃连接数</td>
+<td>10</td>
+</tr>
+<tr>
+<td><code>poolMaximumIdleConnections</code></td>
+<td>最大空闲连接数</td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>poolMaximumCheckoutTime</code></td>
+<td>连接被强制归还前的最大使用时间（毫秒）</td>
+<td>20000</td>
+</tr>
+<tr>
+<td><code>poolTimeToWait</code></td>
+<td>获取连接失败时的等待时间（毫秒）</td>
+<td>20000</td>
+</tr>
+<tr>
+<td><code>poolPingEnabled</code></td>
+<td>是否启用连接探活</td>
+<td>false</td>
+</tr>
+<tr>
+<td><code>poolPingQuery</code></td>
+<td>探活 SQL</td>
+<td><code>NO PING QUERY SET</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="spring-boot-对应写法-4">Spring Boot 对应写法</h3>
+<p>Spring Boot 不使用 MyBatis 的 <code>&lt;environments&gt;</code> 配置，而是使用 Spring 自己的数据源管理。推荐使用 HikariCP（Spring Boot 2.x+ 默认）：</p>
+<pre><code class="language-yaml">spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mydb?useSSL=false&amp;serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+</code></pre>
+<p>多环境切换通过 Spring Profile 实现：</p>
+<pre><code class="language-yaml"># application-dev.yml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydb
+
+# application-prod.yml
+spring:
+  datasource:
+    url: jdbc:mysql://prod-server:3306/mydb
+</code></pre>
+<pre><code class="language-bash"># 启动时指定环境
+java -jar app.jar --spring.profiles.active=prod
+</code></pre>
+<hr />
+<h2 id="28-mappers--四种注册-mapper-的方式">2.8 mappers —— 四种注册 Mapper 的方式</h2>
+<p><code>&lt;mappers&gt;</code> 标签用于告诉 MyBatis 去哪里找 Mapper XML 文件或 Mapper 接口。有四种注册方式：</p>
+<h3 id="方式一resource--指定-classpath-下的-xml-文件路径">方式一：resource —— 指定 classpath 下的 XML 文件路径</h3>
+<pre><code class="language-xml">&lt;mappers&gt;
+  &lt;mapper resource=&quot;mapper/UserMapper.xml&quot;/&gt;
+  &lt;mapper resource=&quot;mapper/OrderMapper.xml&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>特点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>路径格式</td>
+<td>classpath 相对路径，使用 <code>/</code> 分隔</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>XML 文件与 Mapper 接口不在同一目录下</td>
+</tr>
+<tr>
+<td>缺点</td>
+<td>每个 Mapper 都要单独配置，文件多时繁琐</td>
+</tr>
+</tbody>
+</table>
+<h3 id="方式二url--指定文件系统绝对路径或网络-url">方式二：url —— 指定文件系统绝对路径或网络 URL</h3>
+<pre><code class="language-xml">&lt;mappers&gt;
+  &lt;mapper url=&quot;file:///D:/config/mapper/UserMapper.xml&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>特点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>路径格式</td>
+<td><code>file:///</code> 开头的绝对路径，或 <code>http://</code> 网络地址</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>极少使用，仅在 Mapper XML 不在 classpath 中时才需要</td>
+</tr>
+<tr>
+<td>缺点</td>
+<td>路径硬编码，可移植性差</td>
+</tr>
+</tbody>
+</table>
+<h3 id="方式三class--指定-mapper-接口的全限定名">方式三：class —— 指定 Mapper 接口的全限定名</h3>
+<pre><code class="language-xml">&lt;mappers&gt;
+  &lt;mapper class=&quot;com.example.mapper.UserMapper&quot;/&gt;
+  &lt;mapper class=&quot;com.example.mapper.OrderMapper&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>特点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>路径格式</td>
+<td>Mapper 接口的全限定类名</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>使用注解开发（<code>@Select</code> 等），或 XML 文件与接口在同包同名</td>
+</tr>
+<tr>
+<td>要求</td>
+<td>如果同时使用 XML，XML 文件必须与接口<strong>同包同名</strong>（如接口 <code>com.example.mapper.UserMapper</code> 对应 <code>com/example/mapper/UserMapper.xml</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="方式四package--包扫描推荐">方式四：package —— 包扫描（推荐）</h3>
+<pre><code class="language-xml">&lt;mappers&gt;
+  &lt;package name=&quot;com.example.mapper&quot;/&gt;
+&lt;/mappers&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>特点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>路径格式</td>
+<td>包名</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>Mapper 数量多时推荐使用，一行搞定</td>
+</tr>
+<tr>
+<td>要求</td>
+<td>与方式三相同，XML 文件必须与接口<strong>同包同名</strong></td>
+</tr>
+<tr>
+<td>优势</td>
+<td>新增 Mapper 无需修改配置</td>
+</tr>
+</tbody>
+</table>
+<h3 id="四种方式对比总结">四种方式对比总结</h3>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>配置目标</th>
+<th>格式要求</th>
+<th>推荐度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resource</code></td>
+<td>XML 文件</td>
+<td>classpath 相对路径</td>
+<td>⭐⭐⭐ 中等</td>
+</tr>
+<tr>
+<td><code>url</code></td>
+<td>XML 文件</td>
+<td>绝对路径 / URL</td>
+<td>⭐ 不推荐</td>
+</tr>
+<tr>
+<td><code>class</code></td>
+<td>接口类</td>
+<td>全限定类名；XML 需同包同名</td>
+<td>⭐⭐⭐ 中等</td>
+</tr>
+<tr>
+<td><code>package</code></td>
+<td>接口包</td>
+<td>包名；XML 需同包同名</td>
+<td>⭐⭐⭐⭐⭐ 推荐</td>
+</tr>
+</tbody>
+</table>
+<h3 id="xml-与接口同包同名的含义">XML 与接口同包同名的含义</h3>
+<p>假设 Mapper 接口为 <code>com.example.mapper.UserMapper</code>，那么 XML 文件应放在 classpath 的 <code>com/example/mapper/</code> 目录下，且文件名为 <code>UserMapper.xml</code>。</p>
+<p>在 Maven 项目中，常见的两种文件组织方式：</p>
+<p><strong>方式 A</strong>：XML 放在 <code>src/main/resources</code> 的对应包路径下</p>
+<pre><code>src/main/java/com/example/mapper/UserMapper.java
+src/main/resources/com/example/mapper/UserMapper.xml
+</code></pre>
+<p><strong>方式 B</strong>：XML 放在 <code>src/main/java</code> 的同包目录下（需要配置 Maven 资源过滤）</p>
+<pre><code>src/main/java/com/example/mapper/UserMapper.java
+src/main/java/com/example/mapper/UserMapper.xml
+</code></pre>
+<p>方式 B 需要在 <code>pom.xml</code> 中添加资源配置，否则 XML 不会被打包：</p>
+<pre><code class="language-xml">&lt;build&gt;
+  &lt;resources&gt;
+    &lt;resource&gt;
+      &lt;directory&gt;src/main/java&lt;/directory&gt;
+      &lt;includes&gt;
+        &lt;include&gt;**/*.xml&lt;/include&gt;
+      &lt;/includes&gt;
+    &lt;/resource&gt;
+    &lt;resource&gt;
+      &lt;directory&gt;src/main/resources&lt;/directory&gt;
+    &lt;/resource&gt;
+  &lt;/resources&gt;
+&lt;/build&gt;
+</code></pre>
+<h3 id="spring-boot-对应写法-5">Spring Boot 对应写法</h3>
+<p>Spring Boot 中有两种方式注册 Mapper：</p>
+<p><strong>方式一</strong>：使用 <code>@MapperScan</code> 注解（推荐）</p>
+<pre><code class="language-java">@SpringBootApplication
+@MapperScan(&quot;com.example.mapper&quot;)
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+</code></pre>
+<p><strong>方式二</strong>：在每个 Mapper 接口上添加 <code>@Mapper</code> 注解</p>
+<pre><code class="language-java">@Mapper
+public interface UserMapper {
+    User findById(Long id);
+}
+</code></pre>
+<p>XML 文件路径通过 <code>mapper-locations</code> 指定（不要求与接口同包同名）：</p>
+<pre><code class="language-yaml">mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+</code></pre>
+<p>这是 Spring Boot 中最常见的写法，XML 统一放在 <code>src/main/resources/mapper/</code> 目录下：</p>
+<pre><code>src/main/resources/mapper/UserMapper.xml
+src/main/resources/mapper/OrderMapper.xml
+</code></pre>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>配置项</th>
+<th>核心要点</th>
+<th>日常开发影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>子标签顺序</td>
+<td>必须严格遵守 DTD 定义的顺序</td>
+<td>Spring Boot 下无需关心</td>
+</tr>
+<tr>
+<td><code>properties</code></td>
+<td>外部化配置，支持优先级覆盖</td>
+<td>被 Spring 配置体系完全替代</td>
+</tr>
+<tr>
+<td><code>settings</code></td>
+<td>控制全局行为，<code>mapUnderscoreToCamelCase</code> 几乎必开</td>
+<td><code>mybatis.configuration.*</code></td>
+</tr>
+<tr>
+<td><code>typeAliases</code></td>
+<td>简化 XML 中的类型引用</td>
+<td><code>mybatis.type-aliases-package</code></td>
+</tr>
+<tr>
+<td><code>typeHandlers</code></td>
+<td>Java ↔ JDBC 类型转换桥梁</td>
+<td><code>mybatis.type-handlers-package</code></td>
+</tr>
+<tr>
+<td><code>plugins</code></td>
+<td>拦截器入口（分页、审计等）</td>
+<td>通过 Spring Bean 注册</td>
+</tr>
+<tr>
+<td><code>environments</code></td>
+<td>数据源与事务管理</td>
+<td>被 Spring 数据源管理完全替代</td>
+</tr>
+<tr>
+<td><code>mappers</code></td>
+<td>四种方式注册，推荐包扫描</td>
+<td><code>@MapperScan</code> + <code>mapper-locations</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>📌 记住</strong>：在 Spring Boot 项目中，以上大部分配置通过 <code>application.yml</code> 的 <code>mybatis.*</code> 前缀完成，无需编写 <code>mybatis-config.xml</code>。但理解原生配置的含义和加载机制，是排查问题和深入理解框架的基础。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

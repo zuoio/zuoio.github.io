@@ -1,0 +1,3149 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第01课-material-design-3-设计体系总览">第01课 Material Design 3 设计体系总览</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter Material Design 系统学习<br />
+<strong>前置条件</strong>：已完成《Flutter 常用组件系统学习》课程（25课），掌握所有常用 Widget 的 API 用法<br />
+<strong>课程定位</strong>：组件课程教你<strong>怎么用</strong>每个 Widget，本课程教你<strong>怎么按 Material 规范把它们组合成专业、一致的界面</strong><br />
+<strong>课程目标</strong>：建立 Material Design 3 设计体系的全局视野，理解从 M1 到 M3 的演进脉络，掌握在 Flutter 中启用和配置 M3 的核心方法</p>
+</blockquote>
+<hr />
+<h2 id="1-material-design-演进从-material-1-到-material-3">1. Material Design 演进：从 Material 1 到 Material 3</h2>
+<p>Material Design 是 Google 于 2014 年推出的设计语言，至今经历了三个大版本。理解这条演进脉络，才能真正理解 Material 3 背后的设计决策。</p>
+<h3 id="11-material-12014-拟物化数字材料">1.1 Material 1（2014）—— 拟物化数字材料</h3>
+<p>Material Design 1.0 在 Google I/O 2014 上首次发布，它的核心理念是<strong>将物理世界的材料属性带入数字界面</strong>。</p>
+<p><strong>核心特征</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>隐喻</td>
+<td>将 UI 元素想象为&quot;纸张&quot;和&quot;墨水&quot;，有真实的厚度和阴影</td>
+</tr>
+<tr>
+<td>阴影</td>
+<td>通过 Elevation（海拔高度）表达层级关系，阴影是核心视觉语言</td>
+</tr>
+<tr>
+<td>颜色</td>
+<td>预定义 19 种颜色色板（Red、Pink、Purple...），每种色板包含 14 个色阶（50~900）</td>
+</tr>
+<tr>
+<td>动效</td>
+<td>强调有意义的动画过渡，模拟物理运动规律</td>
+</tr>
+<tr>
+<td>排版</td>
+<td>使用 Roboto 作为默认字体，定义了有限的文字层级</td>
+</tr>
+</tbody>
+</table>
+<p>Material 1 奠定了整个设计语言的基础，但它有一个明显问题：<strong>所有 Google 产品看起来都一样</strong>。品牌个性很难在这套严格的规范中得到表达。</p>
+<h3 id="12-material-22018-引入主题化与品牌表达">1.2 Material 2（2018）—— 引入主题化与品牌表达</h3>
+<p>Material Design 2.0（也叫 Material Theming）于 Google I/O 2018 推出，核心变化是<strong>让品牌能在 Material 框架内表达自我</strong>。</p>
+<p><strong>核心特征</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>相比 M1 的变化</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主题系统</td>
+<td>引入 Color Theme、Typography Theme、Shape Theme，允许全局定制</td>
+</tr>
+<tr>
+<td>颜色</td>
+<td>从固定色板改为 Primary/Secondary 颜色角色体系</td>
+</tr>
+<tr>
+<td>形状</td>
+<td>允许组件使用不同的形状（圆角、切角等），不再只有直角/小圆角</td>
+</tr>
+<tr>
+<td>排版</td>
+<td>扩展为 13 种文字样式（headline1<del>6、subtitle1</del>2、body1~2、caption、button、overline）</td>
+</tr>
+<tr>
+<td>组件</td>
+<td>新增 Backdrop、Extended FAB 等组件</td>
+</tr>
+<tr>
+<td>暗色主题</td>
+<td>正式定义了 Dark Theme 规范</td>
+</tr>
+</tbody>
+</table>
+<p>Material 2 是 Flutter 早期版本的默认设计语言。如果你之前学习的组件课程中没有特别设置 <code>useMaterial3: true</code>，那么看到的默认样式就是 Material 2。</p>
+<h3 id="13-material-32021-material-you个性化设计">1.3 Material 3（2021）—— Material You，个性化设计</h3>
+<p>Material Design 3（也称 Material You）于 Google I/O 2021 随 Android 12 一同发布，它代表了设计语言的一次根本性转变：<strong>从统一走向个性化</strong>。</p>
+<p><strong>核心特征</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>相比 M2 的变化</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>动态取色</td>
+<td>可从用户壁纸自动提取主题色（Dynamic Color），每个用户看到的界面配色都不同</td>
+</tr>
+<tr>
+<td>颜色系统</td>
+<td>引入 Tonal Palette（色调调色板）和完整的颜色角色体系（Primary、Secondary、Tertiary、Error、Surface 等）</td>
+</tr>
+<tr>
+<td>种子颜色</td>
+<td>从一个&quot;种子色&quot;（Seed Color）算法生成完整的调色板，保证色彩和谐</td>
+</tr>
+<tr>
+<td>形状</td>
+<td>标准化为 7 级形状 Token（None → Extra Small → Small → Medium → Large → Extra Large → Full）</td>
+</tr>
+<tr>
+<td>排版</td>
+<td>简化为 5 大类 × 3 级别 = 15 种文字样式（Display、Headline、Title、Body、Label × Large/Medium/Small）</td>
+</tr>
+<tr>
+<td>阴影</td>
+<td>弱化真实阴影，引入 Surface Tint（表面色调叠加）表达层级</td>
+</tr>
+<tr>
+<td>组件</td>
+<td>大量组件视觉更新，新增 NavigationBar、SegmentedButton、SearchBar 等</td>
+</tr>
+</tbody>
+</table>
+<p><strong>设计理念的根本变化</strong>：</p>
+<pre><code>Material 1: &quot;这是规范，所有人都要遵守&quot;       → 统一但缺乏个性
+Material 2: &quot;这是规范，但你可以自定义主题&quot;    → 品牌可以表达自我
+Material 3: &quot;这是规范，而且会自动适配用户偏好&quot; → 每个用户都独一无二
+</code></pre>
+<h3 id="14-代码示例感受三个版本的设计差异">1.4 代码示例：感受三个版本的设计差异</h3>
+<p>下面的代码通过三个按钮展示不同版本的典型视觉风格。虽然 Flutter 不能真正渲染 Material 1 的样式，但我们可以通过手动配置来模拟三个版本的视觉特征差异：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MaterialEvolutionApp());
+}
+
+class MaterialEvolutionApp extends StatelessWidget {
+  const MaterialEvolutionApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Material 演进',
+      // 使用 Material 3
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+      ),
+      home: const EvolutionDemoPage(),
+    );
+  }
+}
+
+class EvolutionDemoPage extends StatelessWidget {
+  const EvolutionDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Material Design 演进')),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 模拟 Material 1 风格：强阴影、直角/小圆角、固定色板颜色
+            Text('Material 1 风格', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Card(
+              elevation: 6,
+              shadowColor: Colors.black,
+              surfaceTintColor: Colors.transparent, // 关闭 M3 的 surface tint
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(2), // M1 几乎是直角
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text('阴影强烈、几乎直角、预定义色板'),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // 模拟 Material 2 风格：中等阴影、小圆角、主题色
+            Text('Material 2 风格', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Card(
+              elevation: 4,
+              shadowColor: Colors.black,
+              surfaceTintColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4), // M2 小圆角
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text('适度阴影、小圆角、支持品牌主题定制'),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Material 3 风格：使用默认值即可
+            Text('Material 3 风格', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            const Card(
+              // M3 默认：大圆角、surface tint 替代阴影、动态颜色
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Text('大圆角、色调叠加替代阴影、种子色生成配色'),
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // 显示当前 M3 颜色方案的部分角色
+            Text('当前 M3 颜色角色示例：',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _colorChip('Primary', colorScheme.primary, colorScheme.onPrimary),
+                _colorChip('Secondary', colorScheme.secondary, colorScheme.onSecondary),
+                _colorChip('Tertiary', colorScheme.tertiary, colorScheme.onTertiary),
+                _colorChip('Surface', colorScheme.surface, colorScheme.onSurface),
+                _colorChip('Error', colorScheme.error, colorScheme.onError),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _colorChip(String label, Color bg, Color fg) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(label, style: TextStyle(color: fg, fontSize: 12)),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="2-material-3-三大核心支柱">2. Material 3 三大核心支柱</h2>
+<p>Material 3 的设计系统建立在三大核心支柱之上：<strong>Color（颜色）</strong>、<strong>Typography（排版）</strong> 和 <strong>Shape（形状）</strong>。它们共同定义了应用的视觉身份（Visual Identity）。</p>
+<h3 id="21-color--颜色系统">2.1 Color —— 颜色系统</h3>
+<p>颜色是 Material 3 中变化最大、也最核心的部分。</p>
+<p><strong>M3 颜色系统的核心概念</strong>：</p>
+<ul>
+<li><strong>种子颜色（Seed Color）</strong>：只需提供一个品牌色，算法自动生成完整的调色板</li>
+<li><strong>色调调色板（Tonal Palette）</strong>：从种子色生成 5 组色调调色板（Primary、Secondary、Tertiary、Neutral、Neutral Variant），每组包含 13 个色阶</li>
+<li><strong>颜色角色（Color Roles）</strong>：从色调调色板中挑选特定色阶，赋予语义化的角色名（如 <code>primary</code>、<code>onPrimary</code>、<code>primaryContainer</code>、<code>onPrimaryContainer</code>）</li>
+<li><strong>动态颜色（Dynamic Color）</strong>：在 Android 12+ 上可从用户壁纸自动提取种子色</li>
+</ul>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ColorPillarApp());
+}
+
+class ColorPillarApp extends StatelessWidget {
+  const ColorPillarApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Color 支柱',
+      theme: ThemeData(
+        useMaterial3: true,
+        // 只需要一个种子颜色，Flutter 自动生成完整 ColorScheme
+        colorSchemeSeed: const Color(0xFF6750A4), // Material 3 默认紫色
+      ),
+      home: const ColorDemoPage(),
+    );
+  }
+}
+
+class ColorDemoPage extends StatelessWidget {
+  const ColorDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Color 支柱演示')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // Primary 颜色组
+          _buildColorGroup('Primary', [
+            _ColorItem('primary', cs.primary, cs.onPrimary),
+            _ColorItem('onPrimary', cs.onPrimary, cs.primary),
+            _ColorItem('primaryContainer', cs.primaryContainer, cs.onPrimaryContainer),
+            _ColorItem('onPrimaryContainer', cs.onPrimaryContainer, cs.primaryContainer),
+          ]),
+          const SizedBox(height: 16),
+
+          // Secondary 颜色组
+          _buildColorGroup('Secondary', [
+            _ColorItem('secondary', cs.secondary, cs.onSecondary),
+            _ColorItem('onSecondary', cs.onSecondary, cs.secondary),
+            _ColorItem('secondaryContainer', cs.secondaryContainer, cs.onSecondaryContainer),
+            _ColorItem('onSecondaryContainer', cs.onSecondaryContainer, cs.secondaryContainer),
+          ]),
+          const SizedBox(height: 16),
+
+          // Tertiary 颜色组
+          _buildColorGroup('Tertiary', [
+            _ColorItem('tertiary', cs.tertiary, cs.onTertiary),
+            _ColorItem('onTertiary', cs.onTertiary, cs.tertiary),
+            _ColorItem('tertiaryContainer', cs.tertiaryContainer, cs.onTertiaryContainer),
+            _ColorItem('onTertiaryContainer', cs.onTertiaryContainer, cs.tertiaryContainer),
+          ]),
+          const SizedBox(height: 16),
+
+          // Surface 颜色组
+          _buildColorGroup('Surface', [
+            _ColorItem('surface', cs.surface, cs.onSurface),
+            _ColorItem('onSurface', cs.onSurface, cs.surface),
+            _ColorItem('surfaceContainerLowest', cs.surfaceContainerLowest, cs.onSurface),
+            _ColorItem('surfaceContainerLow', cs.surfaceContainerLow, cs.onSurface),
+            _ColorItem('surfaceContainer', cs.surfaceContainer, cs.onSurface),
+            _ColorItem('surfaceContainerHigh', cs.surfaceContainerHigh, cs.onSurface),
+            _ColorItem('surfaceContainerHighest', cs.surfaceContainerHighest, cs.onSurface),
+          ]),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildColorGroup(String title, List&lt;_ColorItem&gt; items) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: items.map((item) {
+            return Container(
+              width: 160,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: item.color,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                item.label,
+                style: TextStyle(color: item.onColor, fontSize: 12),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+}
+
+class _ColorItem {
+  final String label;
+  final Color color;
+  final Color onColor;
+  const _ColorItem(this.label, this.color, this.onColor);
+}
+</code></pre>
+<h3 id="22-typography--排版系统">2.2 Typography —— 排版系统</h3>
+<p>Material 3 将文字样式重新组织为 <strong>5 大类 × 3 个级别 = 15 种样式</strong>，结构比 M2 更清晰：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>Large</th>
+<th>Medium</th>
+<th>Small</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Display</strong></td>
+<td>57sp</td>
+<td>45sp</td>
+<td>36sp</td>
+<td>页面顶级大标题、Hero 数字</td>
+</tr>
+<tr>
+<td><strong>Headline</strong></td>
+<td>32sp</td>
+<td>28sp</td>
+<td>24sp</td>
+<td>区域标题</td>
+</tr>
+<tr>
+<td><strong>Title</strong></td>
+<td>22sp</td>
+<td>16sp(w500)</td>
+<td>14sp(w500)</td>
+<td>卡片标题、对话框标题</td>
+</tr>
+<tr>
+<td><strong>Body</strong></td>
+<td>16sp</td>
+<td>14sp</td>
+<td>12sp</td>
+<td>正文内容</td>
+</tr>
+<tr>
+<td><strong>Label</strong></td>
+<td>14sp(w500)</td>
+<td>12sp(w500)</td>
+<td>11sp(w500)</td>
+<td>按钮文字、标签、辅助文字</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const TypographyPillarApp());
+}
+
+class TypographyPillarApp extends StatelessWidget {
+  const TypographyPillarApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Typography 支柱',
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
+      home: const TypographyDemoPage(),
+    );
+  }
+}
+
+class TypographyDemoPage extends StatelessWidget {
+  const TypographyDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    // M3 的 15 种文字样式
+    final styles = &lt;String, TextStyle?&gt;{
+      'displayLarge': textTheme.displayLarge,
+      'displayMedium': textTheme.displayMedium,
+      'displaySmall': textTheme.displaySmall,
+      'headlineLarge': textTheme.headlineLarge,
+      'headlineMedium': textTheme.headlineMedium,
+      'headlineSmall': textTheme.headlineSmall,
+      'titleLarge': textTheme.titleLarge,
+      'titleMedium': textTheme.titleMedium,
+      'titleSmall': textTheme.titleSmall,
+      'bodyLarge': textTheme.bodyLarge,
+      'bodyMedium': textTheme.bodyMedium,
+      'bodySmall': textTheme.bodySmall,
+      'labelLarge': textTheme.labelLarge,
+      'labelMedium': textTheme.labelMedium,
+      'labelSmall': textTheme.labelSmall,
+    };
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Typography 支柱演示')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: styles.entries.map((entry) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 显示样式名称和具体参数
+                Text(
+                  entry.key,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  '中文排版 Typography',
+                  style: entry.value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  'size: ${entry.value?.fontSize}, '
+                  'weight: ${entry.value?.fontWeight}, '
+                  'letterSpacing: ${entry.value?.letterSpacing}',
+                  style: const TextStyle(fontSize: 10, color: Colors.grey),
+                ),
+                const Divider(),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="23-shape--形状系统">2.3 Shape —— 形状系统</h3>
+<p>Material 3 将形状标准化为 7 个级别，形成统一的形状 Token 体系：</p>
+<table>
+<thead>
+<tr>
+<th>Token 名称</th>
+<th>圆角大小</th>
+<th>典型组件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>None</strong></td>
+<td>0dp</td>
+<td>无圆角的全屏容器</td>
+</tr>
+<tr>
+<td><strong>Extra Small</strong></td>
+<td>4dp</td>
+<td>文本框</td>
+</tr>
+<tr>
+<td><strong>Small</strong></td>
+<td>8dp</td>
+<td>Chip、Snackbar</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td>12dp</td>
+<td>Card、Dialog</td>
+</tr>
+<tr>
+<td><strong>Large</strong></td>
+<td>16dp</td>
+<td>FAB(small)、Navigation Drawer</td>
+</tr>
+<tr>
+<td><strong>Extra Large</strong></td>
+<td>28dp</td>
+<td>FAB(large)、Bottom Sheet</td>
+</tr>
+<tr>
+<td><strong>Full</strong></td>
+<td>50%（圆形）</td>
+<td>Badge、搜索框（Stadium 形状）</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ShapePillarApp());
+}
+
+class ShapePillarApp extends StatelessWidget {
+  const ShapePillarApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Shape 支柱',
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.teal),
+      home: const ShapeDemoPage(),
+    );
+  }
+}
+
+class ShapeDemoPage extends StatelessWidget {
+  const ShapeDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    // M3 的 7 级形状 Token
+    final shapeTokens = &lt;_ShapeToken&gt;[
+      _ShapeToken('None', 0),
+      _ShapeToken('Extra Small', 4),
+      _ShapeToken('Small', 8),
+      _ShapeToken('Medium', 12),
+      _ShapeToken('Large', 16),
+      _ShapeToken('Extra Large', 28),
+      _ShapeToken('Full (Stadium)', -1), // 特殊处理：使用 StadiumBorder
+    ];
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Shape 支柱演示')),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: shapeTokens.length,
+        separatorBuilder: (_, __) =&gt; const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final token = shapeTokens[index];
+          final isStadium = token.radius &lt; 0;
+
+          return Container(
+            height: 72,
+            decoration: ShapeDecoration(
+              color: colorScheme.primaryContainer,
+              shape: isStadium
+                  ? const StadiumBorder()
+                  : RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(token.radius),
+                    ),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              '${token.name}${isStadium ? '' : ' (${token.radius.toInt()}dp)'}',
+              style: TextStyle(
+                color: colorScheme.onPrimaryContainer,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _ShapeToken {
+  final String name;
+  final double radius;
+  const _ShapeToken(this.name, this.radius);
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：不要在组件中硬编码圆角数值，而应该通过组件主题（如 <code>CardTheme</code>、<code>DialogTheme</code>）统一管理形状，确保整个应用的形状语言一致。后续课程（第04课）将深入讲解形状系统的全局定制方案。</p>
+</blockquote>
+<hr />
+<h2 id="3-design-tokens从设计规范到代码的桥梁">3. Design Tokens：从设计规范到代码的桥梁</h2>
+<h3 id="31-什么是-design-tokens">3.1 什么是 Design Tokens</h3>
+<p>Design Tokens 是设计系统中最小的样式单元，它们是<strong>将设计决策从抽象概念转化为具体代码值的桥梁</strong>。</p>
+<p>你可以把 Design Tokens 理解为设计系统的&quot;变量&quot;——它不是某种具体颜色或字号，而是带有语义的命名引用：</p>
+<pre><code>设计规范层：  &quot;主操作按钮背景色&quot;
+    ↓ 映射
+Token 层：    md.sys.color.primary
+    ↓ 映射
+代码层：      ColorScheme.primary → Color(0xFF6750A4)
+</code></pre>
+<h3 id="32-token-的三个层级">3.2 Token 的三个层级</h3>
+<p>Material 3 的 Token 体系分为三个层级：</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>名称</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Reference Token</strong></td>
+<td>参考令牌</td>
+<td>原始设计值的集合，与用途无关</td>
+<td><code>md.ref.palette.primary40</code> = <code>#6750A4</code></td>
+</tr>
+<tr>
+<td><strong>System Token</strong></td>
+<td>系统令牌</td>
+<td>赋予语义角色，引用参考令牌</td>
+<td><code>md.sys.color.primary</code> → <code>md.ref.palette.primary40</code></td>
+</tr>
+<tr>
+<td><strong>Component Token</strong></td>
+<td>组件令牌</td>
+<td>具体组件的样式，引用系统令牌</td>
+<td><code>md.comp.filled-button.container.color</code> → <code>md.sys.color.primary</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-design-tokens-在-flutter-中的映射">3.3 Design Tokens 在 Flutter 中的映射</h3>
+<p>在 Flutter 中，Design Tokens 直接映射到 <code>ThemeData</code> 的各个属性：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const TokenMappingApp());
+}
+
+class TokenMappingApp extends StatelessWidget {
+  const TokenMappingApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Design Tokens 映射',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.deepPurple,
+      ),
+      home: const TokenMappingPage(),
+    );
+  }
+}
+
+class TokenMappingPage extends StatelessWidget {
+  const TokenMappingPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final tt = theme.textTheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Design Tokens 映射演示')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // 演示 Token 的三层映射关系
+          _buildSection('颜色 Token 映射', [
+            _MappingItem(
+              token: 'md.sys.color.primary',
+              flutter: 'colorScheme.primary',
+              value: '#${cs.primary.value.toRadixString(16).toUpperCase()}',
+              color: cs.primary,
+            ),
+            _MappingItem(
+              token: 'md.sys.color.on-primary',
+              flutter: 'colorScheme.onPrimary',
+              value: '#${cs.onPrimary.value.toRadixString(16).toUpperCase()}',
+              color: cs.onPrimary,
+            ),
+            _MappingItem(
+              token: 'md.sys.color.surface',
+              flutter: 'colorScheme.surface',
+              value: '#${cs.surface.value.toRadixString(16).toUpperCase()}',
+              color: cs.surface,
+            ),
+          ]),
+          const SizedBox(height: 24),
+          _buildSection('排版 Token 映射', [
+            _MappingItem(
+              token: 'md.sys.typescale.title-medium',
+              flutter: 'textTheme.titleMedium',
+              value: 'size=${tt.titleMedium?.fontSize}, weight=${tt.titleMedium?.fontWeight}',
+            ),
+            _MappingItem(
+              token: 'md.sys.typescale.body-large',
+              flutter: 'textTheme.bodyLarge',
+              value: 'size=${tt.bodyLarge?.fontSize}, weight=${tt.bodyLarge?.fontWeight}',
+            ),
+            _MappingItem(
+              token: 'md.sys.typescale.label-small',
+              flutter: 'textTheme.labelSmall',
+              value: 'size=${tt.labelSmall?.fontSize}, weight=${tt.labelSmall?.fontWeight}',
+            ),
+          ]),
+
+          const SizedBox(height: 24),
+
+          // 演示组件 Token 如何引用系统 Token
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('组件 Token 示例：FilledButton',
+                      style: tt.titleMedium),
+                  const SizedBox(height: 8),
+                  // FilledButton 的各个组件 Token 映射
+                  const Text('• container.color → sys.color.primary'),
+                  const Text('• label-text.color → sys.color.on-primary'),
+                  const Text('• container.shape → sys.shape.corner.full'),
+                  const Text('• label-text.text-style → sys.typescale.label-large'),
+                  const SizedBox(height: 12),
+                  FilledButton(
+                    onPressed: () {},
+                    child: const Text('我是 FilledButton'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSection(String title, List&lt;_MappingItem&gt; items) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        ...items.map((item) =&gt; Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                children: [
+                  if (item.color != null)
+                    Container(
+                      width: 24,
+                      height: 24,
+                      margin: const EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                        color: item.color,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                    ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(item.token,
+                            style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                                fontFamily: 'monospace')),
+                        Text('Flutter: ${item.flutter}',
+                            style: const TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.w500)),
+                        Text(item.value,
+                            style: const TextStyle(
+                                fontSize: 11,
+                                fontFamily: 'monospace',
+                                color: Colors.blueGrey)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )),
+      ],
+    );
+  }
+}
+
+class _MappingItem {
+  final String token;
+  final String flutter;
+  final String value;
+  final Color? color;
+  const _MappingItem({
+    required this.token,
+    required this.flutter,
+    required this.value,
+    this.color,
+  });
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：Design Tokens 是 Material 3 设计规范的核心概念。Flutter 框架已经将这些 Token 内建到了 <code>ThemeData</code>、<code>ColorScheme</code>、<code>TextTheme</code> 和各组件主题中。开发者不需要手动管理 Token 映射——只需正确配置 <code>ThemeData</code>，Flutter 会自动将 Token 应用到每个组件。</p>
+</blockquote>
+<hr />
+<h2 id="4-flutter-中的-material-3-启用方式">4. Flutter 中的 Material 3 启用方式</h2>
+<h3 id="41-启用-material-3">4.1 启用 Material 3</h3>
+<p>从 Flutter 3.16 开始，Material 3 是<strong>默认启用</strong>的。如果你使用的是较新版本的 Flutter，新创建的项目会自动使用 Material 3。</p>
+<p>对于旧项目或需要显式控制的场景，通过 <code>ThemeData</code> 的 <code>useMaterial3</code> 参数来控制：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const M3EnableApp());
+}
+
+class M3EnableApp extends StatelessWidget {
+  const M3EnableApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'M3 启用方式',
+      theme: ThemeData(
+        // 显式启用 Material 3（Flutter 3.16+ 默认为 true）
+        useMaterial3: true,
+
+        // 方式一：使用种子颜色，自动生成完整 ColorScheme
+        colorSchemeSeed: Colors.deepPurple,
+
+        // 方式二（替代方式一）：手动指定完整 ColorScheme
+        // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+
+        // 方式三（替代方式一）：从预定义 ColorScheme 创建
+        // colorScheme: const ColorScheme.light(
+        //   primary: Color(0xFF6750A4),
+        //   secondary: Color(0xFF625B71),
+        //   // ... 其他颜色角色
+        // ),
+      ),
+      home: const M3EnablePage(),
+    );
+  }
+}
+
+class M3EnablePage extends StatelessWidget {
+  const M3EnablePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Material 3 已启用'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 检查当前是否为 M3
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'useMaterial3: ${theme.useMaterial3}',
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '当前主题亮度: ${theme.brightness}',
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // M3 默认样式的组件展示
+            FilledButton(
+              onPressed: () {},
+              child: const Text('FilledButton（M3 新组件）'),
+            ),
+            const SizedBox(height: 8),
+            FilledButton.tonal(
+              onPressed: () {},
+              child: const Text('FilledButton.tonal（M3 新组件）'),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton(
+              onPressed: () {},
+              child: const Text('OutlinedButton'),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('ElevatedButton'),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="42-themedata-在-m3-下的关键默认值变化">4.2 ThemeData 在 M3 下的关键默认值变化</h3>
+<p>启用 Material 3 后，<code>ThemeData</code> 的很多默认值会发生变化：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>Material 2 默认值</th>
+<th>Material 3 默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>colorScheme</code></td>
+<td>基于 <code>primarySwatch</code> 生成</td>
+<td>基于 <code>colorSchemeSeed</code> 算法生成</td>
+</tr>
+<tr>
+<td><code>appBarTheme.backgroundColor</code></td>
+<td><code>colorScheme.primary</code></td>
+<td><code>colorScheme.surface</code></td>
+</tr>
+<tr>
+<td><code>appBarTheme.foregroundColor</code></td>
+<td><code>colorScheme.onPrimary</code></td>
+<td><code>colorScheme.onSurface</code></td>
+</tr>
+<tr>
+<td><code>cardTheme.elevation</code></td>
+<td>1</td>
+<td>1（但视觉上用 surfaceTint 替代阴影）</td>
+</tr>
+<tr>
+<td><code>dialogTheme.shape</code></td>
+<td><code>RoundedRectangleBorder(4)</code></td>
+<td><code>RoundedRectangleBorder(28)</code></td>
+</tr>
+<tr>
+<td><code>floatingActionButtonTheme.shape</code></td>
+<td><code>CircleBorder</code></td>
+<td><code>RoundedRectangleBorder(16)</code></td>
+</tr>
+<tr>
+<td><code>navigationBarTheme</code></td>
+<td>不存在（使用 BottomNavigationBar）</td>
+<td>M3 风格的 NavigationBar</td>
+</tr>
+<tr>
+<td><code>inputDecorationTheme.border</code></td>
+<td><code>UnderlineInputBorder</code></td>
+<td><code>OutlineInputBorder</code>（视觉不同）</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const DefaultChangesApp());
+}
+
+class DefaultChangesApp extends StatefulWidget {
+  const DefaultChangesApp({super.key});
+
+  @override
+  State&lt;DefaultChangesApp&gt; createState() =&gt; _DefaultChangesAppState();
+}
+
+class _DefaultChangesAppState extends State&lt;DefaultChangesApp&gt; {
+  bool _useM3 = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'M2 vs M3 默认值',
+      theme: ThemeData(
+        useMaterial3: _useM3,
+        colorSchemeSeed: Colors.blue,
+      ),
+      home: DefaultChangesPage(
+        useM3: _useM3,
+        onToggle: () =&gt; setState(() =&gt; _useM3 = !_useM3),
+      ),
+    );
+  }
+}
+
+class DefaultChangesPage extends StatelessWidget {
+  final bool useM3;
+  final VoidCallback onToggle;
+
+  const DefaultChangesPage({
+    super.key,
+    required this.useM3,
+    required this.onToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('当前: Material ${useM3 ? '3' : '2'}'),
+        actions: [
+          TextButton(
+            onPressed: onToggle,
+            child: Text(
+              '切换到 M${useM3 ? '2' : '3'}',
+              style: TextStyle(color: theme.colorScheme.onSurface),
+            ),
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // AppBar 颜色变化
+          Text('默认值对比', style: theme.textTheme.headlineSmall),
+          const SizedBox(height: 8),
+          Text('AppBar 背景: ${useM3 ? &quot;surface (浅色)&quot; : &quot;primary (主题色)&quot;}'),
+          Text('FAB 形状: ${useM3 ? &quot;圆角矩形 (16dp)&quot; : &quot;圆形&quot;}'),
+          Text('Dialog 圆角: ${useM3 ? &quot;28dp&quot; : &quot;4dp&quot;}'),
+          Text('卡片层级表达: ${useM3 ? &quot;Surface Tint&quot; : &quot;阴影&quot;}'),
+          const Divider(height: 32),
+
+          // 实际组件对比
+          const TextField(
+            decoration: InputDecoration(
+              labelText: '输入框默认样式',
+              hintText: '观察边框变化',
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text('Card 组件 —— 观察阴影 vs Surface Tint',
+                  style: theme.textTheme.bodyLarge),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              ElevatedButton(onPressed: () {}, child: const Text('Elevated')),
+              FilledButton(onPressed: () {}, child: const Text('Filled')),
+              OutlinedButton(onPressed: () {}, child: const Text('Outlined')),
+              TextButton(onPressed: () {}, child: const Text('Text')),
+            ],
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>colorSchemeSeed</code> 和 <code>colorScheme</code> <strong>不能同时设置</strong>，它们是互斥的。<code>colorSchemeSeed</code> 是快捷方式，内部会调用 <code>ColorScheme.fromSeed()</code> 生成 <code>ColorScheme</code></li>
+<li>启用 M3 后，部分 M2 专属属性（如 <code>primarySwatch</code>）将被忽略</li>
+<li>Flutter 3.16+ 默认启用 M3，如果你维护旧项目并希望保持 M2 外观，需要显式设置 <code>useMaterial3: false</code></li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="5-material-2-与-material-3-的视觉差异对比">5. Material 2 与 Material 3 的视觉差异对比</h2>
+<p>本节逐一对比主要组件在 M2 和 M3 下的视觉差异。这些差异是升级到 M3 时需要重点关注的。</p>
+<h3 id="51-按钮button">5.1 按钮（Button）</h3>
+<table>
+<thead>
+<tr>
+<th>差异点</th>
+<th>Material 2</th>
+<th>Material 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>形状</td>
+<td>小圆角（4dp）</td>
+<td>大圆角（Stadium 胶囊形）</td>
+</tr>
+<tr>
+<td>ElevatedButton</td>
+<td>有明显阴影</td>
+<td>阴影减弱，使用 surface tint</td>
+</tr>
+<tr>
+<td>新增按钮</td>
+<td>—</td>
+<td><code>FilledButton</code>、<code>FilledButton.tonal</code></td>
+</tr>
+<tr>
+<td>内边距</td>
+<td>较紧凑</td>
+<td>增大 padding，更易于触控</td>
+</tr>
+<tr>
+<td>最小尺寸</td>
+<td>较小</td>
+<td>更大（高度 40dp）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-卡片card">5.2 卡片（Card）</h3>
+<table>
+<thead>
+<tr>
+<th>差异点</th>
+<th>Material 2</th>
+<th>Material 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>层级表达</td>
+<td>真实阴影</td>
+<td>Surface Tint（表面色调叠加）</td>
+</tr>
+<tr>
+<td>圆角</td>
+<td>4dp</td>
+<td>12dp</td>
+</tr>
+<tr>
+<td>Card 变体</td>
+<td>仅一种</td>
+<td>elevated / filled / outlined 三种</td>
+</tr>
+</tbody>
+</table>
+<h3 id="53-导航栏">5.3 导航栏</h3>
+<table>
+<thead>
+<tr>
+<th>差异点</th>
+<th>Material 2</th>
+<th>Material 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>底部导航</td>
+<td><code>BottomNavigationBar</code></td>
+<td><code>NavigationBar</code></td>
+</tr>
+<tr>
+<td>选中指示器</td>
+<td>图标变色/标签高亮</td>
+<td>Pill 形状的背景指示器</td>
+</tr>
+<tr>
+<td>高度</td>
+<td>56dp</td>
+<td>80dp</td>
+</tr>
+<tr>
+<td>图标</td>
+<td>纯色图标</td>
+<td>未选中描边 / 选中填充</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-其他组件差异">5.4 其他组件差异</h3>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>Material 2</th>
+<th>Material 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AppBar</strong></td>
+<td>背景色为 primary</td>
+<td>背景色为 surface</td>
+</tr>
+<tr>
+<td><strong>FAB</strong></td>
+<td>圆形</td>
+<td>圆角矩形（16dp）</td>
+</tr>
+<tr>
+<td><strong>Dialog</strong></td>
+<td>圆角 4dp</td>
+<td>圆角 28dp</td>
+</tr>
+<tr>
+<td><strong>Chip</strong></td>
+<td>圆角 8dp</td>
+<td>圆角 8dp（样式更新，增加选中动画）</td>
+</tr>
+<tr>
+<td><strong>Switch</strong></td>
+<td>较小，无图标</td>
+<td>更大，支持 thumbIcon</td>
+</tr>
+<tr>
+<td><strong>Checkbox</strong></td>
+<td>方形 2dp 圆角</td>
+<td>圆角更大</td>
+</tr>
+<tr>
+<td><strong>Slider</strong></td>
+<td>细轨道</td>
+<td>更粗轨道，端点形状更新</td>
+</tr>
+</tbody>
+</table>
+<h3 id="55-代码示例组件视觉差异一览">5.5 代码示例：组件视觉差异一览</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const VisualDiffApp());
+}
+
+class VisualDiffApp extends StatefulWidget {
+  const VisualDiffApp({super.key});
+
+  @override
+  State&lt;VisualDiffApp&gt; createState() =&gt; _VisualDiffAppState();
+}
+
+class _VisualDiffAppState extends State&lt;VisualDiffApp&gt; {
+  bool _useM3 = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '视觉差异对比',
+      theme: ThemeData(
+        useMaterial3: _useM3,
+        colorSchemeSeed: Colors.indigo,
+      ),
+      home: VisualDiffPage(
+        useM3: _useM3,
+        onToggle: () =&gt; setState(() =&gt; _useM3 = !_useM3),
+      ),
+    );
+  }
+}
+
+class VisualDiffPage extends StatefulWidget {
+  final bool useM3;
+  final VoidCallback onToggle;
+
+  const VisualDiffPage({
+    super.key,
+    required this.useM3,
+    required this.onToggle,
+  });
+
+  @override
+  State&lt;VisualDiffPage&gt; createState() =&gt; _VisualDiffPageState();
+}
+
+class _VisualDiffPageState extends State&lt;VisualDiffPage&gt; {
+  bool _switchValue = true;
+  double _sliderValue = 0.5;
+  int _navIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Material ${widget.useM3 ? '3' : '2'} 组件样式'),
+        actions: [
+          Switch(
+            value: widget.useM3,
+            onChanged: (_) =&gt; widget.onToggle(),
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // 按钮区域
+          Text('按钮', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              ElevatedButton(onPressed: () {}, child: const Text('Elevated')),
+              FilledButton(onPressed: () {}, child: const Text('Filled')),
+              FilledButton.tonal(onPressed: () {}, child: const Text('Tonal')),
+              OutlinedButton(onPressed: () {}, child: const Text('Outlined')),
+              TextButton(onPressed: () {}, child: const Text('Text')),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.favorite),
+                isSelected: true,
+              ),
+            ],
+          ),
+          const Divider(height: 32),
+
+          // 卡片区域
+          Text('卡片', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 8),
+          const Card(
+            elevation: 2,
+            child: ListTile(
+              leading: Icon(Icons.article),
+              title: Text('Card Elevated'),
+              subtitle: Text('观察阴影 vs Surface Tint'),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Card(
+            elevation: 0,
+            color: theme.colorScheme.surfaceContainerHighest,
+            child: const ListTile(
+              leading: Icon(Icons.folder),
+              title: Text('Card Filled'),
+              subtitle: Text('填充样式'),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: theme.colorScheme.outline),
+            ),
+            child: const ListTile(
+              leading: Icon(Icons.inbox),
+              title: Text('Card Outlined'),
+              subtitle: Text('描边样式'),
+            ),
+          ),
+          const Divider(height: 32),
+
+          // FAB 区域
+          Text('FloatingActionButton', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              FloatingActionButton.small(
+                heroTag: 'small',
+                onPressed: () {},
+                child: const Icon(Icons.add),
+              ),
+              const SizedBox(width: 16),
+              FloatingActionButton(
+                heroTag: 'regular',
+                onPressed: () {},
+                child: const Icon(Icons.edit),
+              ),
+              const SizedBox(width: 16),
+              FloatingActionButton.large(
+                heroTag: 'large',
+                onPressed: () {},
+                child: const Icon(Icons.navigation),
+              ),
+              const SizedBox(width: 16),
+              FloatingActionButton.extended(
+                heroTag: 'extended',
+                onPressed: () {},
+                icon: const Icon(Icons.add),
+                label: const Text('创建'),
+              ),
+            ],
+          ),
+          const Divider(height: 32),
+
+          // 开关和滑块
+          Text('开关与滑块', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 8),
+          SwitchListTile(
+            title: const Text('Switch 开关'),
+            subtitle: Text(widget.useM3 ? 'M3: 更大、支持 thumbIcon' : 'M2: 传统样式'),
+            value: _switchValue,
+            onChanged: (v) =&gt; setState(() =&gt; _switchValue = v),
+          ),
+          Slider(
+            value: _sliderValue,
+            onChanged: (v) =&gt; setState(() =&gt; _sliderValue = v),
+          ),
+          const Divider(height: 32),
+
+          // Chip 区域
+          Text('Chip', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              const Chip(label: Text('默认')),
+              ActionChip(label: const Text('Action'), onPressed: () {}),
+              FilterChip(label: const Text('Filter'), selected: true, onSelected: (_) {}),
+              InputChip(label: const Text('Input'), onDeleted: () {}),
+            ],
+          ),
+          const Divider(height: 32),
+
+          // Dialog 触发器
+          Text('Dialog', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 8),
+          FilledButton.tonal(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) =&gt; AlertDialog(
+                  title: const Text('对话框标题'),
+                  content: Text(
+                    '观察 Dialog 的圆角大小：\n'
+                    '${widget.useM3 ? &quot;M3: 28dp 圆角&quot; : &quot;M2: 4dp 圆角&quot;}\n\n'
+                    '以及按钮的排列样式。',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () =&gt; Navigator.of(context).pop(),
+                      child: const Text('取消'),
+                    ),
+                    FilledButton(
+                      onPressed: () =&gt; Navigator.of(context).pop(),
+                      child: const Text('确认'),
+                    ),
+                  ],
+                ),
+              );
+            },
+            child: const Text('打开 Dialog'),
+          ),
+          const SizedBox(height: 80),
+        ],
+      ),
+      // 导航栏对比
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _navIndex,
+        onDestinationSelected: (i) =&gt; setState(() =&gt; _navIndex = i),
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: '首页'),
+          NavigationDestination(icon: Icon(Icons.search), label: '搜索'),
+          NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: '我的'),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="6-materialapp-配置全景">6. MaterialApp 配置全景</h2>
+<p><code>MaterialApp</code> 是 Flutter 应用的根组件，它提供了丰富的主题配置选项来控制整个应用的视觉表现。</p>
+<h3 id="61-核心主题属性一览">6.1 核心主题属性一览</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>theme</code></td>
+<td><code>ThemeData</code></td>
+<td>亮色主题（必配）</td>
+</tr>
+<tr>
+<td><code>darkTheme</code></td>
+<td><code>ThemeData?</code></td>
+<td>暗色主题</td>
+</tr>
+<tr>
+<td><code>themeMode</code></td>
+<td><code>ThemeMode</code></td>
+<td>主题模式：<code>system</code>（跟随系统）/ <code>light</code> / <code>dark</code></td>
+</tr>
+<tr>
+<td><code>highContrastTheme</code></td>
+<td><code>ThemeData?</code></td>
+<td>系统开启高对比度时使用的亮色主题（无障碍）</td>
+</tr>
+<tr>
+<td><code>highContrastDarkTheme</code></td>
+<td><code>ThemeData?</code></td>
+<td>系统开启高对比度时使用的暗色主题（无障碍）</td>
+</tr>
+<tr>
+<td><code>themeAnimationDuration</code></td>
+<td><code>Duration</code></td>
+<td>主题切换动画时长（默认 200ms）</td>
+</tr>
+<tr>
+<td><code>themeAnimationCurve</code></td>
+<td><code>Curve</code></td>
+<td>主题切换动画曲线（默认 <code>Curves.linear</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-完整配置示例">6.2 完整配置示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MaterialAppConfigApp());
+}
+
+class MaterialAppConfigApp extends StatefulWidget {
+  const MaterialAppConfigApp({super.key});
+
+  @override
+  State&lt;MaterialAppConfigApp&gt; createState() =&gt; _MaterialAppConfigAppState();
+}
+
+class _MaterialAppConfigAppState extends State&lt;MaterialAppConfigApp&gt; {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  // 品牌种子颜色
+  static const _seedColor = Color(0xFF1A73E8);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'MaterialApp 配置全景',
+
+      // ========== 亮色主题 ==========
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: _seedColor,
+        brightness: Brightness.light,
+      ),
+
+      // ========== 暗色主题 ==========
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: _seedColor,
+        brightness: Brightness.dark,
+      ),
+
+      // ========== 主题模式 ==========
+      // ThemeMode.system: 跟随系统设置（推荐默认值）
+      // ThemeMode.light:  强制亮色
+      // ThemeMode.dark:   强制暗色
+      themeMode: _themeMode,
+
+      // ========== 高对比度主题（无障碍支持） ==========
+      // 当用户在系统设置中开启&quot;高对比度&quot;时自动生效
+      highContrastTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: _seedColor,
+          brightness: Brightness.light,
+          // 高对比度场景可使用 contrastLevel 参数
+          // 范围 -1.0 到 1.0，1.0 为最高对比度
+        ).copyWith(
+          // 进一步加强对比度
+          primary: Colors.black,
+          onPrimary: Colors.white,
+          surface: Colors.white,
+          onSurface: Colors.black,
+        ),
+      ),
+      highContrastDarkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: _seedColor,
+          brightness: Brightness.dark,
+        ).copyWith(
+          primary: Colors.white,
+          onPrimary: Colors.black,
+          surface: Colors.black,
+          onSurface: Colors.white,
+        ),
+      ),
+
+      // ========== 主题切换动画 ==========
+      themeAnimationDuration: const Duration(milliseconds: 300),
+      themeAnimationCurve: Curves.easeInOut,
+
+      home: ThemeConfigPage(
+        themeMode: _themeMode,
+        onThemeModeChanged: (mode) =&gt; setState(() =&gt; _themeMode = mode),
+      ),
+    );
+  }
+}
+
+class ThemeConfigPage extends StatelessWidget {
+  final ThemeMode themeMode;
+  final ValueChanged&lt;ThemeMode&gt; onThemeModeChanged;
+
+  const ThemeConfigPage({
+    super.key,
+    required this.themeMode,
+    required this.onThemeModeChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('MaterialApp 配置全景'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // 当前主题信息
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('当前主题信息', style: theme.textTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text('useMaterial3: ${theme.useMaterial3}'),
+                  Text('brightness: ${theme.brightness}'),
+                  Text('themeMode: $themeMode'),
+                  Text('primary: #${theme.colorScheme.primary.value.toRadixString(16)}'),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // 主题模式切换
+          Text('主题模式', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 8),
+          SegmentedButton&lt;ThemeMode&gt;(
+            segments: const [
+              ButtonSegment(
+                value: ThemeMode.system,
+                icon: Icon(Icons.brightness_auto),
+                label: Text('跟随系统'),
+              ),
+              ButtonSegment(
+                value: ThemeMode.light,
+                icon: Icon(Icons.light_mode),
+                label: Text('亮色'),
+              ),
+              ButtonSegment(
+                value: ThemeMode.dark,
+                icon: Icon(Icons.dark_mode),
+                label: Text('暗色'),
+              ),
+            ],
+            selected: {themeMode},
+            onSelectionChanged: (selected) {
+              onThemeModeChanged(selected.first);
+            },
+          ),
+          const SizedBox(height: 24),
+
+          // 组件在当前主题下的展示
+          Text('组件展示', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              FilledButton(onPressed: () {}, child: const Text('主要操作')),
+              OutlinedButton(onPressed: () {}, child: const Text('次要操作')),
+              TextButton(onPressed: () {}, child: const Text('文字操作')),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          const TextField(
+            decoration: InputDecoration(
+              labelText: '输入框',
+              hintText: '观察亮色/暗色主题下的样式变化',
+              prefixIcon: Icon(Icons.search),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: theme.colorScheme.primaryContainer,
+                    child: Icon(Icons.person,
+                        color: theme.colorScheme.onPrimaryContainer),
+                  ),
+                  title: const Text('用户名称'),
+                  subtitle: const Text('观察暗色主题下的颜色适配'),
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+                const Divider(height: 1),
+                SwitchListTile(
+                  title: const Text('暗色模式'),
+                  subtitle: Text(isDark ? '已开启' : '已关闭'),
+                  value: isDark,
+                  onChanged: (value) {
+                    onThemeModeChanged(
+                        value ? ThemeMode.dark : ThemeMode.light);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li><strong>始终提供 <code>darkTheme</code></strong>：现代应用应该支持暗色模式，这已经成为用户的基本期望</li>
+<li><strong>默认使用 <code>ThemeMode.system</code></strong>：让应用跟随系统设置，同时提供手动切换选项</li>
+<li><strong>考虑高对比度主题</strong>：这是无障碍（Accessibility）的重要组成部分，虽然不是所有应用都需要，但值得关注</li>
+<li><strong>使用相同的 <code>colorSchemeSeed</code></strong>：亮色和暗色主题使用同一个种子颜色，通过 <code>brightness</code> 参数区分，确保品牌一致性</li>
+<li><strong>主题切换动画时长建议 200~400ms</strong>：过短会显得突兀，过长会让用户等待</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="7-实战m2-与-m3-对比展示页面">7. 实战：M2 与 M3 对比展示页面</h2>
+<p>本节的实战项目是一个完整的 M2 与 M3 对比展示应用，通过切换按钮在两种设计语言之间切换，直观感受同一组组件在不同设计版本下的视觉差异。</p>
+<h3 id="71-实战目标">7.1 实战目标</h3>
+<ul>
+<li>顶部切换按钮控制 Material 2 / Material 3 模式</li>
+<li>展示按钮、卡片、FAB、Dialog、导航栏、开关、Chip 等核心组件</li>
+<li>显示当前主题的关键配置信息</li>
+</ul>
+<h3 id="72-完整可运行代码">7.2 完整可运行代码</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const M2VsM3App());
+}
+
+class M2VsM3App extends StatefulWidget {
+  const M2VsM3App({super.key});
+
+  @override
+  State&lt;M2VsM3App&gt; createState() =&gt; _M2VsM3AppState();
+}
+
+class _M2VsM3AppState extends State&lt;M2VsM3App&gt; {
+  bool _useMaterial3 = true;
+  ThemeMode _themeMode = ThemeMode.light;
+  Color _seedColor = Colors.indigo;
+
+  // 可选的种子颜色列表
+  static const _seedColors = &lt;Color&gt;[
+    Colors.indigo,
+    Colors.teal,
+    Colors.deepOrange,
+    Colors.pink,
+    Colors.green,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'M2 vs M3 对比',
+      theme: ThemeData(
+        useMaterial3: _useMaterial3,
+        colorSchemeSeed: _seedColor,
+        brightness: Brightness.light,
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: _useMaterial3,
+        colorSchemeSeed: _seedColor,
+        brightness: Brightness.dark,
+      ),
+      themeMode: _themeMode,
+      themeAnimationDuration: const Duration(milliseconds: 300),
+      themeAnimationCurve: Curves.easeInOut,
+      home: M2VsM3HomePage(
+        useMaterial3: _useMaterial3,
+        themeMode: _themeMode,
+        seedColor: _seedColor,
+        seedColors: _seedColors,
+        onMaterialVersionToggle: () {
+          setState(() =&gt; _useMaterial3 = !_useMaterial3);
+        },
+        onThemeModeChanged: (mode) {
+          setState(() =&gt; _themeMode = mode);
+        },
+        onSeedColorChanged: (color) {
+          setState(() =&gt; _seedColor = color);
+        },
+      ),
+    );
+  }
+}
+
+class M2VsM3HomePage extends StatefulWidget {
+  final bool useMaterial3;
+  final ThemeMode themeMode;
+  final Color seedColor;
+  final List&lt;Color&gt; seedColors;
+  final VoidCallback onMaterialVersionToggle;
+  final ValueChanged&lt;ThemeMode&gt; onThemeModeChanged;
+  final ValueChanged&lt;Color&gt; onSeedColorChanged;
+
+  const M2VsM3HomePage({
+    super.key,
+    required this.useMaterial3,
+    required this.themeMode,
+    required this.seedColor,
+    required this.seedColors,
+    required this.onMaterialVersionToggle,
+    required this.onThemeModeChanged,
+    required this.onSeedColorChanged,
+  });
+
+  @override
+  State&lt;M2VsM3HomePage&gt; createState() =&gt; _M2VsM3HomePageState();
+}
+
+class _M2VsM3HomePageState extends State&lt;M2VsM3HomePage&gt; {
+  int _navIndex = 0;
+  bool _switchValue = true;
+  bool _checkboxValue = true;
+  double _sliderValue = 0.6;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Material ${widget.useMaterial3 ? '3' : '2'} 展示'),
+        actions: [
+          // 亮色/暗色切换
+          IconButton(
+            icon: Icon(
+              theme.brightness == Brightness.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+            tooltip: '切换亮色/暗色',
+            onPressed: () {
+              widget.onThemeModeChanged(
+                theme.brightness == Brightness.dark
+                    ? ThemeMode.light
+                    : ThemeMode.dark,
+              );
+            },
+          ),
+        ],
+      ),
+
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // ===== 控制面板 =====
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('控制面板', style: textTheme.titleLarge),
+                  const SizedBox(height: 12),
+
+                  // Material 版本切换
+                  Row(
+                    children: [
+                      Text('设计语言: ', style: textTheme.bodyLarge),
+                      const Spacer(),
+                      SegmentedButton&lt;bool&gt;(
+                        segments: const [
+                          ButtonSegment(value: false, label: Text('M2')),
+                          ButtonSegment(value: true, label: Text('M3')),
+                        ],
+                        selected: {widget.useMaterial3},
+                        onSelectionChanged: (_) {
+                          widget.onMaterialVersionToggle();
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  // 种子颜色选择
+                  Row(
+                    children: [
+                      Text('种子颜色: ', style: textTheme.bodyLarge),
+                      const SizedBox(width: 8),
+                      ...widget.seedColors.map((color) {
+                        final isSelected = color == widget.seedColor;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: GestureDetector(
+                            onTap: () =&gt; widget.onSeedColorChanged(color),
+                            child: Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: color,
+                                shape: BoxShape.circle,
+                                border: isSelected
+                                    ? Border.all(
+                                        color: colorScheme.onSurface,
+                                        width: 3,
+                                      )
+                                    : null,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  // 当前主题信息
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '当前配置',
+                          style: textTheme.labelLarge?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text('useMaterial3: ${widget.useMaterial3}',
+                            style: textTheme.bodySmall),
+                        Text('brightness: ${theme.brightness}',
+                            style: textTheme.bodySmall),
+                        Text(
+                          'primary: #${colorScheme.primary.value.toRadixString(16).padLeft(8, '0').toUpperCase()}',
+                          style: textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // ===== 按钮展示 =====
+          _buildSectionTitle(context, '按钮 Buttons'),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              ElevatedButton(onPressed: () {}, child: const Text('Elevated')),
+              FilledButton(onPressed: () {}, child: const Text('Filled')),
+              FilledButton.tonal(onPressed: () {}, child: const Text('Tonal')),
+              OutlinedButton(onPressed: () {}, child: const Text('Outlined')),
+              TextButton(onPressed: () {}, child: const Text('Text')),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.download),
+                label: const Text('下载'),
+              ),
+              FilledButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.send),
+                label: const Text('发送'),
+              ),
+              // 禁用状态
+              const ElevatedButton(onPressed: null, child: Text('禁用')),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            children: [
+              IconButton(onPressed: () {}, icon: const Icon(Icons.favorite_border)),
+              IconButton.filled(onPressed: () {}, icon: const Icon(Icons.favorite)),
+              IconButton.filledTonal(onPressed: () {}, icon: const Icon(Icons.bookmark)),
+              IconButton.outlined(onPressed: () {}, icon: const Icon(Icons.share)),
+            ],
+          ),
+          const Divider(height: 32),
+
+          // ===== 卡片展示 =====
+          _buildSectionTitle(context, '卡片 Cards'),
+          Card(
+            elevation: 1,
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: colorScheme.primaryContainer,
+                child: Icon(Icons.star, color: colorScheme.onPrimaryContainer),
+              ),
+              title: const Text('Elevated Card'),
+              subtitle: Text(widget.useMaterial3
+                  ? 'M3: Surface Tint 表达层级'
+                  : 'M2: 阴影表达层级'),
+              trailing: const Icon(Icons.chevron_right),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Card(
+            elevation: 0,
+            color: colorScheme.surfaceContainerHighest,
+            child: const ListTile(
+              leading: Icon(Icons.folder),
+              title: Text('Filled Card'),
+              subtitle: Text('填充背景色，无阴影'),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: colorScheme.outlineVariant),
+            ),
+            child: const ListTile(
+              leading: Icon(Icons.description),
+              title: Text('Outlined Card'),
+              subtitle: Text('描边样式，无阴影'),
+            ),
+          ),
+          const Divider(height: 32),
+
+          // ===== FAB 展示 =====
+          _buildSectionTitle(context, 'FAB'),
+          Row(
+            children: [
+              FloatingActionButton.small(
+                heroTag: 'fab_s',
+                onPressed: () {},
+                child: const Icon(Icons.add),
+              ),
+              const SizedBox(width: 12),
+              FloatingActionButton(
+                heroTag: 'fab_m',
+                onPressed: () {},
+                child: const Icon(Icons.edit),
+              ),
+              const SizedBox(width: 12),
+              FloatingActionButton.large(
+                heroTag: 'fab_l',
+                onPressed: () {},
+                child: const Icon(Icons.camera_alt),
+              ),
+              const SizedBox(width: 12),
+              FloatingActionButton.extended(
+                heroTag: 'fab_e',
+                onPressed: () {},
+                icon: const Icon(Icons.add),
+                label: const Text('新建'),
+              ),
+            ],
+          ),
+          const Divider(height: 32),
+
+          // ===== Chip 展示 =====
+          _buildSectionTitle(context, 'Chip'),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              const Chip(label: Text('普通 Chip')),
+              ActionChip(label: const Text('Action'), onPressed: () {}),
+              FilterChip(
+                label: const Text('选中'),
+                selected: true,
+                onSelected: (_) {},
+              ),
+              FilterChip(
+                label: const Text('未选中'),
+                selected: false,
+                onSelected: (_) {},
+              ),
+              InputChip(
+                label: const Text('可删除'),
+                onDeleted: () {},
+              ),
+            ],
+          ),
+          const Divider(height: 32),
+
+          // ===== 表单控件 =====
+          _buildSectionTitle(context, '表单控件'),
+          const TextField(
+            decoration: InputDecoration(
+              labelText: '用户名',
+              hintText: '请输入用户名',
+              prefixIcon: Icon(Icons.person),
+            ),
+          ),
+          const SizedBox(height: 12),
+          const TextField(
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: '密码',
+              hintText: '请输入密码',
+              prefixIcon: Icon(Icons.lock),
+              suffixIcon: Icon(Icons.visibility),
+            ),
+          ),
+          const SizedBox(height: 12),
+          SwitchListTile(
+            title: const Text('Switch 开关'),
+            value: _switchValue,
+            onChanged: (v) =&gt; setState(() =&gt; _switchValue = v),
+          ),
+          CheckboxListTile(
+            title: const Text('Checkbox 复选框'),
+            value: _checkboxValue,
+            onChanged: (v) =&gt; setState(() =&gt; _checkboxValue = v ?? false),
+          ),
+          Slider(
+            value: _sliderValue,
+            label: '${(_sliderValue * 100).round()}%',
+            divisions: 10,
+            onChanged: (v) =&gt; setState(() =&gt; _sliderValue = v),
+          ),
+          const Divider(height: 32),
+
+          // ===== Dialog / BottomSheet 触发器 =====
+          _buildSectionTitle(context, '弹出组件'),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              FilledButton.tonal(
+                onPressed: () =&gt; _showDemoDialog(context),
+                child: const Text('打开 Dialog'),
+              ),
+              FilledButton.tonal(
+                onPressed: () =&gt; _showDemoBottomSheet(context),
+                child: const Text('打开 BottomSheet'),
+              ),
+              FilledButton.tonal(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('这是一条 SnackBar'),
+                      action: SnackBarAction(
+                        label: '撤销',
+                        onPressed: () {},
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('显示 SnackBar'),
+              ),
+            ],
+          ),
+          // 底部留白，避免被导航栏遮挡
+          const SizedBox(height: 100),
+        ],
+      ),
+
+      // ===== 底部导航栏 =====
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _navIndex,
+        onDestinationSelected: (i) =&gt; setState(() =&gt; _navIndex = i),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: '首页',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.explore_outlined),
+            selectedIcon: Icon(Icons.explore),
+            label: '发现',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.bookmark_border),
+            selectedIcon: Icon(Icons.bookmark),
+            label: '收藏',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: '我的',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+    );
+  }
+
+  void _showDemoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) =&gt; AlertDialog(
+        icon: const Icon(Icons.info_outline),
+        title: const Text('Material Design 对话框'),
+        content: Text(
+          '这是 Material ${Theme.of(context).useMaterial3 ? '3' : '2'} 风格的对话框。\n\n'
+          '注意观察：\n'
+          '• 圆角大小\n'
+          '• 标题和内容的间距\n'
+          '• 按钮的样式和位置',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () =&gt; Navigator.of(context).pop(),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            onPressed: () =&gt; Navigator.of(context).pop(),
+            child: const Text('确认'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDemoBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      builder: (context) =&gt; SizedBox(
+        height: 300,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('底部弹出面板',
+                  style: Theme.of(context).textTheme.headlineSmall),
+              const SizedBox(height: 8),
+              Text(
+                '观察 BottomSheet 的圆角和拖拽手柄样式',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const Spacer(),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () =&gt; Navigator.of(context).pop(),
+                  child: const Text('关闭'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="73-运行效果说明">7.3 运行效果说明</h3>
+<p>运行上面的代码后，你将看到：</p>
+<ol>
+<li><strong>顶部控制面板</strong>：通过 SegmentedButton 切换 M2/M3，点击色块更换种子颜色，右上角切换亮色/暗色</li>
+<li><strong>按钮区域</strong>：切换后观察按钮的圆角、阴影、内边距变化，M3 新增了 FilledButton 和 IconButton 的填充变体</li>
+<li><strong>卡片区域</strong>：M3 使用 Surface Tint 替代阴影表达层级，支持 Elevated / Filled / Outlined 三种变体</li>
+<li><strong>FAB 区域</strong>：M2 为圆形，M3 为圆角矩形</li>
+<li><strong>Dialog / BottomSheet</strong>：M3 的 Dialog 圆角从 4dp 变为 28dp，BottomSheet 增加了拖拽手柄</li>
+<li><strong>导航栏</strong>：M3 的 NavigationBar 有 Pill 形状的选中指示器</li>
+<li><strong>表单控件</strong>：M3 的 Switch 更大，Slider 轨道更粗</li>
+</ol>
+<blockquote>
+<p><strong>注意事项</strong>：实际切换 M2/M3 时，部分组件（如 <code>SegmentedButton</code>、<code>NavigationBar</code>）是 M3 才有的新组件。在纯 M2 模式下使用它们，Flutter 会尝试渲染但样式可能不完全符合 M2 规范。生产项目中如果需要同时支持 M2 和 M3，应考虑使用条件判断选择不同的组件。</p>
+</blockquote>
+<hr />
+<h2 id="本课小结">本课小结</h2>
+<p>本课作为 Material Design 系列课程的开篇，建立了以下核心认知：</p>
+<ol>
+<li>
+<p><strong>Material Design 演进脉络</strong>：从 M1（拟物化纸墨隐喻）到 M2（品牌主题化）再到 M3（个性化动态取色），每一代都在<strong>统一性</strong>与<strong>个性化</strong>之间寻找更好的平衡点。理解这条演进线索，才能真正理解 M3 的设计决策。</p>
+</li>
+<li>
+<p><strong>三大核心支柱</strong>：Color（颜色系统）基于种子色算法生成完整的色调调色板和颜色角色；Typography（排版系统）简化为 5×3=15 种语义化的文字样式；Shape（形状系统）标准化为 7 级形状 Token。三大支柱共同构成应用的视觉身份。</p>
+</li>
+<li>
+<p><strong>Design Tokens</strong>：是设计规范与代码实现之间的桥梁，分为参考令牌、系统令牌、组件令牌三个层级。在 Flutter 中通过 <code>ThemeData</code>、<code>ColorScheme</code>、<code>TextTheme</code> 等类直接映射。</p>
+</li>
+<li>
+<p><strong>Material 3 启用与配置</strong>：通过 <code>useMaterial3: true</code> 启用（Flutter 3.16+ 默认），使用 <code>colorSchemeSeed</code> 快速生成主题，<code>MaterialApp</code> 提供了 <code>theme</code>、<code>darkTheme</code>、<code>themeMode</code>、<code>highContrastTheme</code> 等完整的主题管理能力。</p>
+</li>
+<li>
+<p><strong>M2 与 M3 视觉差异</strong>：按钮从小圆角变为胶囊形、卡片从阴影变为 Surface Tint、FAB 从圆形变为圆角矩形、Dialog 圆角从 4dp 变为 28dp、导航栏新增 Pill 指示器——这些视觉变化反映了 M3 &quot;更柔和、更有机&quot;的设计哲学。</p>
+</li>
+<li>
+<p><strong>MaterialApp 配置全景</strong>：掌握了 theme/darkTheme/themeMode 三件套、高对比度主题的无障碍支持、以及主题切换动画的配置方式。</p>
+</li>
+</ol>
+<hr />
+<h2 id="课后练习">课后练习</h2>
+<h3 id="练习1主题配置基础基础">练习1：主题配置基础（基础）</h3>
+<p>创建一个应用，使用 <code>ColorScheme.fromSeed</code> 分别从红色、绿色、蓝色三个种子颜色生成 ColorScheme，提供三个按钮切换种子颜色，观察整个应用的配色变化。同时显示当前 ColorScheme 中至少 10 个颜色角色的色块及其名称。</p>
+<h3 id="练习2排版样式展示器基础">练习2：排版样式展示器（基础）</h3>
+<p>创建一个页面，在左侧显示 M3 的 15 种 TextTheme 样式名称，右侧显示对应的效果预览。每种样式下方标注 fontSize、fontWeight 和 letterSpacing 三个参数值。支持在页面顶部切换自定义字体族（至少准备 2 种不同的字体效果）。</p>
+<h3 id="练习3m2-vs-m3-深度对比中级">练习3：M2 vs M3 深度对比（中级）</h3>
+<p>在实战代码基础上扩展，增加以下组件的对比展示：</p>
+<ul>
+<li><code>ProgressIndicator</code>（线性和圆形）</li>
+<li><code>Tooltip</code></li>
+<li><code>PopupMenuButton</code></li>
+<li><code>DatePicker</code>（通过 <code>showDatePicker</code> 触发）</li>
+<li><code>TimePicker</code>（通过 <code>showTimePicker</code> 触发）</li>
+</ul>
+<p>观察并记录这些组件在 M2 和 M3 下的视觉差异。</p>
+<h3 id="练习4品牌主题方案中级">练习4：品牌主题方案（中级）</h3>
+<p>选择一个你喜欢的品牌（如某社交 App、电商 App），分析它的品牌色，然后：</p>
+<ol>
+<li>使用该品牌的主色作为种子颜色创建 M3 主题</li>
+<li>创建亮色和暗色两套主题</li>
+<li>实现一个简单的设置页面，包含主题模式切换（系统/亮色/暗色）</li>
+<li>确保所有组件在亮色和暗色主题下都有良好的可读性</li>
+</ol>
+<h3 id="练习5综合思考题">练习5：综合思考题</h3>
+<p>回答以下问题：</p>
+<ol>
+<li><code>colorSchemeSeed</code> 和 <code>colorScheme</code> 有什么区别？它们能否同时设置？为什么？</li>
+<li>为什么 Material 3 要用 Surface Tint 替代传统阴影来表达层级？从设计和技术两个角度分析。</li>
+<li>如果一个项目正在从 Material 2 迁移到 Material 3，你会建议一次性切换还是渐进式迁移？请说明理由和步骤。</li>
+</ol>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：<a href="lesson02_color_scheme.md">第02课 颜色系统 - ColorScheme 深入</a> —— 深入学习 Material 3 的颜色角色体系、种子色生成算法、动态取色、Surface Tint 机制，以及如何构建一套完整的品牌配色方案。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

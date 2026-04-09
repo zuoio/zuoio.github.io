@@ -1,0 +1,2886 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第07章-聚合管道aggregation-pipeline">第07章 聚合管道（Aggregation Pipeline）</h1>
+<blockquote>
+<p>聚合管道是 MongoDB 最强大的数据处理工具，类似于 SQL 中的 GROUP BY、JOIN、子查询等功能的集合体。本章将以 <code>orders</code>（订单）和 <code>products</code>（商品）两个集合为例，系统学习聚合管道的使用方法，并掌握如何在 Spring Boot 中通过 Aggregation API 实现各种聚合查询。</p>
+</blockquote>
+<hr />
+<h2 id="前置准备示例数据">前置准备：示例数据</h2>
+<p>后续示例统一使用以下两个集合。请在 <code>mongosh</code> 中执行以下脚本插入测试数据：</p>
+<pre><code class="language-javascript">use shop
+
+// 商品集合
+db.products.insertMany([
+  { _id: &quot;P001&quot;, name: &quot;机械键盘&quot;, category: &quot;电脑外设&quot;, price: 399, stock: 200, tags: [&quot;办公&quot;, &quot;游戏&quot;], createdAt: new Date(&quot;2024-01-10&quot;) },
+  { _id: &quot;P002&quot;, name: &quot;无线鼠标&quot;, category: &quot;电脑外设&quot;, price: 129, stock: 500, tags: [&quot;办公&quot;], createdAt: new Date(&quot;2024-01-15&quot;) },
+  { _id: &quot;P003&quot;, name: &quot;27寸显示器&quot;, category: &quot;电脑外设&quot;, price: 1899, stock: 80, tags: [&quot;办公&quot;, &quot;设计&quot;], createdAt: new Date(&quot;2024-02-01&quot;) },
+  { _id: &quot;P004&quot;, name: &quot;Java编程思想&quot;, category: &quot;图书&quot;, price: 89, stock: 1000, tags: [&quot;编程&quot;, &quot;Java&quot;], createdAt: new Date(&quot;2024-02-10&quot;) },
+  { _id: &quot;P005&quot;, name: &quot;MongoDB实战&quot;, category: &quot;图书&quot;, price: 69, stock: 600, tags: [&quot;编程&quot;, &quot;数据库&quot;], createdAt: new Date(&quot;2024-03-01&quot;) },
+  { _id: &quot;P006&quot;, name: &quot;降噪耳机&quot;, category: &quot;音频设备&quot;, price: 899, stock: 150, tags: [&quot;音乐&quot;, &quot;办公&quot;], createdAt: new Date(&quot;2024-03-15&quot;) },
+  { _id: &quot;P007&quot;, name: &quot;蓝牙音箱&quot;, category: &quot;音频设备&quot;, price: 299, stock: 300, tags: [&quot;音乐&quot;], createdAt: new Date(&quot;2024-04-01&quot;) }
+])
+
+// 订单集合
+db.orders.insertMany([
+  { orderNo: &quot;ORD20240001&quot;, customerId: &quot;C001&quot;, customerName: &quot;张三&quot;, items: [{ productId: &quot;P001&quot;, productName: &quot;机械键盘&quot;, quantity: 1, price: 399 }, { productId: &quot;P002&quot;, productName: &quot;无线鼠标&quot;, quantity: 2, price: 129 }], totalAmount: 657, status: &quot;completed&quot;, paymentMethod: &quot;alipay&quot;, orderDate: new Date(&quot;2024-03-10&quot;), completedDate: new Date(&quot;2024-03-12&quot;) },
+  { orderNo: &quot;ORD20240002&quot;, customerId: &quot;C002&quot;, customerName: &quot;李四&quot;, items: [{ productId: &quot;P003&quot;, productName: &quot;27寸显示器&quot;, quantity: 1, price: 1899 }], totalAmount: 1899, status: &quot;completed&quot;, paymentMethod: &quot;wechat&quot;, orderDate: new Date(&quot;2024-03-15&quot;), completedDate: new Date(&quot;2024-03-18&quot;) },
+  { orderNo: &quot;ORD20240003&quot;, customerId: &quot;C001&quot;, customerName: &quot;张三&quot;, items: [{ productId: &quot;P004&quot;, productName: &quot;Java编程思想&quot;, quantity: 2, price: 89 }, { productId: &quot;P005&quot;, productName: &quot;MongoDB实战&quot;, quantity: 1, price: 69 }], totalAmount: 247, status: &quot;completed&quot;, paymentMethod: &quot;alipay&quot;, orderDate: new Date(&quot;2024-04-01&quot;), completedDate: new Date(&quot;2024-04-03&quot;) },
+  { orderNo: &quot;ORD20240004&quot;, customerId: &quot;C003&quot;, customerName: &quot;王五&quot;, items: [{ productId: &quot;P006&quot;, productName: &quot;降噪耳机&quot;, quantity: 1, price: 899 }, { productId: &quot;P001&quot;, productName: &quot;机械键盘&quot;, quantity: 1, price: 399 }], totalAmount: 1298, status: &quot;shipped&quot;, paymentMethod: &quot;credit_card&quot;, orderDate: new Date(&quot;2024-04-10&quot;) },
+  { orderNo: &quot;ORD20240005&quot;, customerId: &quot;C004&quot;, customerName: &quot;赵六&quot;, items: [{ productId: &quot;P004&quot;, productName: &quot;Java编程思想&quot;, quantity: 1, price: 89 }], totalAmount: 89, status: &quot;pending&quot;, paymentMethod: &quot;wechat&quot;, orderDate: new Date(&quot;2024-04-15&quot;) },
+  { orderNo: &quot;ORD20240006&quot;, customerId: &quot;C002&quot;, customerName: &quot;李四&quot;, items: [{ productId: &quot;P007&quot;, productName: &quot;蓝牙音箱&quot;, quantity: 2, price: 299 }, { productId: &quot;P002&quot;, productName: &quot;无线鼠标&quot;, quantity: 1, price: 129 }], totalAmount: 727, status: &quot;completed&quot;, paymentMethod: &quot;alipay&quot;, orderDate: new Date(&quot;2024-05-01&quot;), completedDate: new Date(&quot;2024-05-03&quot;) },
+  { orderNo: &quot;ORD20240007&quot;, customerId: &quot;C005&quot;, customerName: &quot;孙七&quot;, items: [{ productId: &quot;P003&quot;, productName: &quot;27寸显示器&quot;, quantity: 2, price: 1899 }, { productId: &quot;P006&quot;, productName: &quot;降噪耳机&quot;, quantity: 1, price: 899 }], totalAmount: 4697, status: &quot;completed&quot;, paymentMethod: &quot;credit_card&quot;, orderDate: new Date(&quot;2024-05-10&quot;), completedDate: new Date(&quot;2024-05-13&quot;) },
+  { orderNo: &quot;ORD20240008&quot;, customerId: &quot;C001&quot;, customerName: &quot;张三&quot;, items: [{ productId: &quot;P007&quot;, productName: &quot;蓝牙音箱&quot;, quantity: 1, price: 299 }], totalAmount: 299, status: &quot;cancelled&quot;, paymentMethod: &quot;alipay&quot;, orderDate: new Date(&quot;2024-05-15&quot;) }
+])
+</code></pre>
+<hr />
+<h2 id="71-聚合管道概述与执行流程">7.1 聚合管道概述与执行流程</h2>
+<h3 id="711-什么是聚合管道">7.1.1 什么是聚合管道</h3>
+<p>聚合管道（Aggregation Pipeline）是 MongoDB 提供的一套数据处理框架，它允许你对集合中的文档进行一系列<strong>有序的转换操作</strong>，最终输出处理后的结果。</p>
+<p>你可以把它想象成一条工厂流水线：</p>
+<pre><code>原始文档 → [阶段1: 过滤] → [阶段2: 分组] → [阶段3: 计算] → [阶段4: 排序] → 最终结果
+</code></pre>
+<p>每个阶段（Stage）接收上一个阶段的输出作为输入，进行特定的处理后，将结果传递给下一个阶段。</p>
+<p><strong>与 SQL 的对应关系：</strong></p>
+<table>
+<thead>
+<tr>
+<th>SQL 概念</th>
+<th>聚合管道阶段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WHERE</td>
+<td>$match</td>
+</tr>
+<tr>
+<td>GROUP BY</td>
+<td>$group</td>
+</tr>
+<tr>
+<td>SELECT (列选择)</td>
+<td>$project</td>
+</tr>
+<tr>
+<td>ORDER BY</td>
+<td>$sort</td>
+</tr>
+<tr>
+<td>LIMIT</td>
+<td>$limit</td>
+</tr>
+<tr>
+<td>OFFSET / SKIP</td>
+<td>$skip</td>
+</tr>
+<tr>
+<td>COUNT(*)</td>
+<td>$count</td>
+</tr>
+<tr>
+<td>LEFT JOIN</td>
+<td>$lookup</td>
+</tr>
+<tr>
+<td>HAVING</td>
+<td>$match（放在 $group 之后）</td>
+</tr>
+<tr>
+<td>AS (别名)</td>
+<td>$project（字段重命名）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="712-基本语法">7.1.2 基本语法</h3>
+<pre><code class="language-javascript">db.collection.aggregate([
+  { &lt;stage1&gt;: { &lt;stage1-specification&gt; } },
+  { &lt;stage2&gt;: { &lt;stage2-specification&gt; } },
+  { &lt;stage3&gt;: { &lt;stage3-specification&gt; } },
+  // ... 可以有任意多个阶段
+])
+</code></pre>
+<p><strong>最简单的聚合查询示例：</strong></p>
+<pre><code class="language-javascript">// 查询已完成的订单，按金额降序排列，只返回前3条
+db.orders.aggregate([
+  { $match: { status: &quot;completed&quot; } },
+  { $sort: { totalAmount: -1 } },
+  { $limit: 3 }
+])
+</code></pre>
+<h3 id="713-管道执行流程详解">7.1.3 管道执行流程详解</h3>
+<p>以下面这个查询为例，用文字描述每个阶段的数据流转过程：</p>
+<pre><code class="language-javascript">// 需求：统计每个客户的已完成订单总金额，只看金额大于500的客户，按金额降序
+db.orders.aggregate([
+  { $match: { status: &quot;completed&quot; } },
+  { $group: { _id: &quot;$customerId&quot;, totalSpent: { $sum: &quot;$totalAmount&quot; } } },
+  { $match: { totalSpent: { $gt: 500 } } },
+  { $sort: { totalSpent: -1 } }
+])
+</code></pre>
+<p><strong>执行流程：</strong></p>
+<pre><code>┌─────────────────────────────────────────────────────────┐
+│ 原始数据：orders 集合（8 条订单文档）                       │
+└───────────────────────┬─────────────────────────────────┘
+                        ▼
+┌─────────────────────────────────────────────────────────┐
+│ 阶段1: $match { status: &quot;completed&quot; }                   │
+│ 作用：过滤出 status 为 completed 的订单                    │
+│ 输出：5 条文档（ORD001, ORD002, ORD003, ORD006, ORD007） │
+└───────────────────────┬─────────────────────────────────┘
+                        ▼
+┌─────────────────────────────────────────────────────────┐
+│ 阶段2: $group { _id: &quot;$customerId&quot;, ... $sum }          │
+│ 作用：按 customerId 分组，求 totalAmount 的合计            │
+│ 输出：4 条文档                                           │
+│   { _id: &quot;C001&quot;, totalSpent: 904 }                      │
+│   { _id: &quot;C002&quot;, totalSpent: 2626 }                     │
+│   { _id: &quot;C005&quot;, totalSpent: 4697 }                     │
+└───────────────────────┬─────────────────────────────────┘
+                        ▼
+┌─────────────────────────────────────────────────────────┐
+│ 阶段3: $match { totalSpent: { $gt: 500 } }              │
+│ 作用：过滤出总消费大于500的客户（相当于SQL的HAVING）         │
+│ 输出：3 条文档（C001: 904, C002: 2626, C005: 4697）      │
+└───────────────────────┬─────────────────────────────────┘
+                        ▼
+┌─────────────────────────────────────────────────────────┐
+│ 阶段4: $sort { totalSpent: -1 }                         │
+│ 作用：按总消费金额降序排列                                 │
+│ 最终输出：                                               │
+│   { _id: &quot;C005&quot;, totalSpent: 4697 }                     │
+│   { _id: &quot;C002&quot;, totalSpent: 2626 }                     │
+│   { _id: &quot;C001&quot;, totalSpent: 904 }                      │
+└─────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="714-聚合管道的优化原则">7.1.4 聚合管道的优化原则</h3>
+<ol>
+<li><strong>尽早过滤</strong>：将 <code>$match</code> 放在管道的最前面，减少后续阶段处理的文档数量。</li>
+<li><strong>利用索引</strong>：管道中第一个 <code>$match</code> 阶段可以利用索引加速查询。</li>
+<li><strong>减少字段</strong>：尽早使用 <code>$project</code> 去掉不需要的字段，减少内存占用。</li>
+<li><strong>内存限制</strong>：单个聚合管道阶段默认最多使用 100MB 内存。超出时可设置 <code>allowDiskUse: true</code>。</li>
+</ol>
+<pre><code class="language-javascript">// 大数据量时允许使用磁盘
+db.orders.aggregate([
+  { $group: { _id: &quot;$customerId&quot;, total: { $sum: &quot;$totalAmount&quot; } } },
+  { $sort: { total: -1 } }
+], { allowDiskUse: true })
+</code></pre>
+<hr />
+<h2 id="72-常用阶段详解">7.2 常用阶段详解</h2>
+<h3 id="721-match--过滤文档">7.2.1 $match —— 过滤文档</h3>
+<p><code>$match</code> 的语法与 <code>find()</code> 的查询条件完全相同，它会过滤掉不满足条件的文档。</p>
+<p><strong>示例1：简单条件过滤</strong></p>
+<pre><code class="language-javascript">// 查询已完成的订单
+db.orders.aggregate([
+  { $match: { status: &quot;completed&quot; } }
+])
+</code></pre>
+<p><strong>示例2：多条件组合过滤</strong></p>
+<pre><code class="language-javascript">// 查询2024年4月之后、金额大于500的已完成订单
+db.orders.aggregate([
+  {
+    $match: {
+      status: &quot;completed&quot;,
+      orderDate: { $gte: new Date(&quot;2024-04-01&quot;) },
+      totalAmount: { $gt: 500 }
+    }
+  }
+])
+</code></pre>
+<p><strong>示例3：使用 $or 条件</strong></p>
+<pre><code class="language-javascript">// 查询状态为 completed 或 shipped 的订单
+db.orders.aggregate([
+  {
+    $match: {
+      $or: [
+        { status: &quot;completed&quot; },
+        { status: &quot;shipped&quot; }
+      ]
+    }
+  }
+])
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：<code>$match</code> 应尽量放在管道的最前面。放在第一位的 <code>$match</code> 可以使用集合上的索引，大幅提升性能。</p>
+</blockquote>
+<h3 id="722-group--分组聚合">7.2.2 $group —— 分组聚合</h3>
+<p><code>$group</code> 是聚合管道中最核心的阶段，它按照指定字段将文档分组，并对每组文档进行各种聚合运算。</p>
+<p><strong>基本语法：</strong></p>
+<pre><code class="language-javascript">{
+  $group: {
+    _id: &lt;分组表达式&gt;,         // 按什么字段分组，null 表示所有文档为一组
+    &lt;字段名&gt;: { &lt;累加器&gt;: &lt;表达式&gt; },
+    &lt;字段名&gt;: { &lt;累加器&gt;: &lt;表达式&gt; }
+  }
+}
+</code></pre>
+<p><strong>常用累加器（Accumulator）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>累加器</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$sum</td>
+<td>求和</td>
+<td><code>{ $sum: &quot;$totalAmount&quot; }</code></td>
+</tr>
+<tr>
+<td>$avg</td>
+<td>平均值</td>
+<td><code>{ $avg: &quot;$totalAmount&quot; }</code></td>
+</tr>
+<tr>
+<td>$min</td>
+<td>最小值</td>
+<td><code>{ $min: &quot;$totalAmount&quot; }</code></td>
+</tr>
+<tr>
+<td>$max</td>
+<td>最大值</td>
+<td><code>{ $max: &quot;$totalAmount&quot; }</code></td>
+</tr>
+<tr>
+<td>$first</td>
+<td>每组第一个值</td>
+<td><code>{ $first: &quot;$orderNo&quot; }</code></td>
+</tr>
+<tr>
+<td>$last</td>
+<td>每组最后一个值</td>
+<td><code>{ $last: &quot;$orderNo&quot; }</code></td>
+</tr>
+<tr>
+<td>$push</td>
+<td>收集为数组</td>
+<td><code>{ $push: &quot;$orderNo&quot; }</code></td>
+</tr>
+<tr>
+<td>$addToSet</td>
+<td>收集为数组（去重）</td>
+<td><code>{ $addToSet: &quot;$status&quot; }</code></td>
+</tr>
+<tr>
+<td>$count</td>
+<td>计数</td>
+<td><code>{ $count: {} }</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>示例1：统计每个客户的订单数和总金额</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $group: {
+      _id: &quot;$customerId&quot;,
+      customerName: { $first: &quot;$customerName&quot; },
+      orderCount: { $sum: 1 },
+      totalAmount: { $sum: &quot;$totalAmount&quot; }
+    }
+  }
+])
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-javascript">{ _id: &quot;C001&quot;, customerName: &quot;张三&quot;, orderCount: 3, totalAmount: 1203 }
+{ _id: &quot;C002&quot;, customerName: &quot;李四&quot;, orderCount: 2, totalAmount: 2626 }
+{ _id: &quot;C003&quot;, customerName: &quot;王五&quot;, orderCount: 1, totalAmount: 1298 }
+{ _id: &quot;C004&quot;, customerName: &quot;赵六&quot;, orderCount: 1, totalAmount: 89 }
+{ _id: &quot;C005&quot;, customerName: &quot;孙七&quot;, orderCount: 1, totalAmount: 4697 }
+</code></pre>
+<p><strong>示例2：统计每种支付方式的使用次数和平均金额</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $group: {
+      _id: &quot;$paymentMethod&quot;,
+      count: { $sum: 1 },
+      avgAmount: { $avg: &quot;$totalAmount&quot; },
+      minAmount: { $min: &quot;$totalAmount&quot; },
+      maxAmount: { $max: &quot;$totalAmount&quot; }
+    }
+  }
+])
+</code></pre>
+<p><strong>示例3：统计所有订单的汇总信息（不分组）</strong></p>
+<p>当 <code>_id</code> 设置为 <code>null</code> 时，所有文档归为一组：</p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $group: {
+      _id: null,
+      totalOrders: { $sum: 1 },
+      totalRevenue: { $sum: &quot;$totalAmount&quot; },
+      avgOrderAmount: { $avg: &quot;$totalAmount&quot; },
+      maxOrderAmount: { $max: &quot;$totalAmount&quot; },
+      minOrderAmount: { $min: &quot;$totalAmount&quot; }
+    }
+  }
+])
+</code></pre>
+<p><strong>示例4：按多个字段分组</strong></p>
+<pre><code class="language-javascript">// 按客户和支付方式分组统计
+db.orders.aggregate([
+  {
+    $group: {
+      _id: {
+        customer: &quot;$customerId&quot;,
+        payment: &quot;$paymentMethod&quot;
+      },
+      orderCount: { $sum: 1 },
+      totalAmount: { $sum: &quot;$totalAmount&quot; }
+    }
+  }
+])
+</code></pre>
+<p><strong>示例5：使用 $push 收集每个客户的订单号列表</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $group: {
+      _id: &quot;$customerId&quot;,
+      customerName: { $first: &quot;$customerName&quot; },
+      orderNos: { $push: &quot;$orderNo&quot; },
+      statuses: { $addToSet: &quot;$status&quot; }
+    }
+  }
+])
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-javascript">{
+  _id: &quot;C001&quot;,
+  customerName: &quot;张三&quot;,
+  orderNos: [&quot;ORD20240001&quot;, &quot;ORD20240003&quot;, &quot;ORD20240008&quot;],
+  statuses: [&quot;completed&quot;, &quot;cancelled&quot;]   // addToSet 自动去重
+}
+</code></pre>
+<h3 id="723-project--投影--重塑文档">7.2.3 $project —— 投影 / 重塑文档</h3>
+<p><code>$project</code> 用于控制输出文档的结构，可以包含、排除、重命名字段，以及创建计算字段。</p>
+<p><strong>示例1：选择和排除字段</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $project: {
+      _id: 0,                    // 排除 _id
+      orderNo: 1,                // 包含 orderNo
+      customerName: 1,           // 包含 customerName
+      totalAmount: 1,            // 包含 totalAmount
+      status: 1                  // 包含 status
+    }
+  }
+])
+</code></pre>
+<p><strong>示例2：字段重命名</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $project: {
+      _id: 0,
+      订单号: &quot;$orderNo&quot;,
+      客户名: &quot;$customerName&quot;,
+      金额: &quot;$totalAmount&quot;,
+      状态: &quot;$status&quot;
+    }
+  }
+])
+</code></pre>
+<p><strong>示例3：计算字段</strong></p>
+<pre><code class="language-javascript">// 计算每笔订单的商品数量和折扣后金额
+db.orders.aggregate([
+  {
+    $project: {
+      orderNo: 1,
+      customerName: 1,
+      totalAmount: 1,
+      itemCount: { $size: &quot;$items&quot; },
+      discountedAmount: { $multiply: [&quot;$totalAmount&quot;, 0.9] }
+    }
+  }
+])
+</code></pre>
+<p><strong>示例4：嵌套字段提取</strong></p>
+<pre><code class="language-javascript">// 提取订单中第一个商品的名称
+db.orders.aggregate([
+  {
+    $project: {
+      orderNo: 1,
+      customerName: 1,
+      firstProduct: { $arrayElemAt: [&quot;$items.productName&quot;, 0] },
+      totalAmount: 1
+    }
+  }
+])
+</code></pre>
+<h3 id="724-sort--排序">7.2.4 $sort —— 排序</h3>
+<p><strong>示例1：单字段排序</strong></p>
+<pre><code class="language-javascript">// 按订单金额降序
+db.orders.aggregate([
+  { $sort: { totalAmount: -1 } }   // 1 升序，-1 降序
+])
+</code></pre>
+<p><strong>示例2：多字段排序</strong></p>
+<pre><code class="language-javascript">// 先按状态升序，再按金额降序
+db.orders.aggregate([
+  { $sort: { status: 1, totalAmount: -1 } }
+])
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：当 <code>$sort</code> 紧跟在 <code>$match</code> 之后且排序字段有索引时，MongoDB 可以利用索引进行排序，性能更好。</p>
+</blockquote>
+<h3 id="725-limit--skip--限制与跳过">7.2.5 $limit / $skip —— 限制与跳过</h3>
+<p><strong>$limit：限制输出文档数量</strong></p>
+<pre><code class="language-javascript">// 查询金额最高的 3 笔订单
+db.orders.aggregate([
+  { $sort: { totalAmount: -1 } },
+  { $limit: 3 }
+])
+</code></pre>
+<p><strong>$skip：跳过指定数量的文档</strong></p>
+<pre><code class="language-javascript">// 分页查询：第2页，每页3条
+db.orders.aggregate([
+  { $sort: { orderDate: -1 } },
+  { $skip: 3 },    // 跳过前3条（第1页）
+  { $limit: 3 }    // 取3条（第2页）
+])
+</code></pre>
+<blockquote>
+<p><strong>提示</strong>：<code>$skip</code> 和 <code>$limit</code> 通常配合 <code>$sort</code> 使用，确保结果顺序一致。</p>
+</blockquote>
+<h3 id="726-count--计数">7.2.6 $count —— 计数</h3>
+<p><code>$count</code> 阶段统计输入到该阶段的文档数量，并输出一个包含计数的文档。</p>
+<pre><code class="language-javascript">// 统计已完成订单的数量
+db.orders.aggregate([
+  { $match: { status: &quot;completed&quot; } },
+  { $count: &quot;completedOrderCount&quot; }
+])
+// 输出：{ completedOrderCount: 5 }
+</code></pre>
+<pre><code class="language-javascript">// 统计金额超过1000的订单数
+db.orders.aggregate([
+  { $match: { totalAmount: { $gt: 1000 } } },
+  { $count: &quot;highValueOrders&quot; }
+])
+// 输出：{ highValueOrders: 3 }
+</code></pre>
+<h3 id="727-综合示例串联多个阶段">7.2.7 综合示例：串联多个阶段</h3>
+<p><strong>需求</strong>：查询每个客户的已完成订单统计信息，只显示消费总额大于 500 的客户，按总额降序，返回客户名、订单数、总额和平均订单金额。</p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  // 阶段1：过滤已完成订单
+  { $match: { status: &quot;completed&quot; } },
+
+  // 阶段2：按客户分组统计
+  {
+    $group: {
+      _id: &quot;$customerId&quot;,
+      customerName: { $first: &quot;$customerName&quot; },
+      orderCount: { $sum: 1 },
+      totalSpent: { $sum: &quot;$totalAmount&quot; },
+      avgOrderAmount: { $avg: &quot;$totalAmount&quot; }
+    }
+  },
+
+  // 阶段3：过滤总消费大于500的客户（相当于 HAVING）
+  { $match: { totalSpent: { $gt: 500 } } },
+
+  // 阶段4：重塑输出文档
+  {
+    $project: {
+      _id: 0,
+      customerId: &quot;$_id&quot;,
+      customerName: 1,
+      orderCount: 1,
+      totalSpent: 1,
+      avgOrderAmount: { $round: [&quot;$avgOrderAmount&quot;, 2] }
+    }
+  },
+
+  // 阶段5：按总消费降序
+  { $sort: { totalSpent: -1 } }
+])
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-javascript">{ customerId: &quot;C005&quot;, customerName: &quot;孙七&quot;, orderCount: 1, totalSpent: 4697, avgOrderAmount: 4697 }
+{ customerId: &quot;C002&quot;, customerName: &quot;李四&quot;, orderCount: 2, totalSpent: 2626, avgOrderAmount: 1313 }
+{ customerId: &quot;C001&quot;, customerName: &quot;张三&quot;, orderCount: 2, totalSpent: 904, avgOrderAmount: 452 }
+</code></pre>
+<hr />
+<h2 id="73-进阶阶段">7.3 进阶阶段</h2>
+<h3 id="731-lookup--关联查询">7.3.1 $lookup —— 关联查询</h3>
+<p><code>$lookup</code> 实现了类似 SQL 中 <code>LEFT JOIN</code> 的功能，可以将当前集合与另一个集合的数据关联起来。</p>
+<p><strong>基本语法：</strong></p>
+<pre><code class="language-javascript">{
+  $lookup: {
+    from: &quot;&lt;关联的集合名&gt;&quot;,
+    localField: &quot;&lt;当前集合的关联字段&gt;&quot;,
+    foreignField: &quot;&lt;关联集合的匹配字段&gt;&quot;,
+    as: &quot;&lt;输出数组字段名&gt;&quot;
+  }
+}
+</code></pre>
+<p><strong>示例1：订单关联商品详细信息</strong></p>
+<p>假设我们需要展开订单中的每个商品条目，并关联到商品集合获取完整信息：</p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  // 先展开订单中的商品数组
+  { $unwind: &quot;$items&quot; },
+
+  // 关联商品集合
+  {
+    $lookup: {
+      from: &quot;products&quot;,
+      localField: &quot;items.productId&quot;,
+      foreignField: &quot;_id&quot;,
+      as: &quot;productDetail&quot;
+    }
+  },
+
+  // productDetail 是数组，取第一个元素
+  { $unwind: &quot;$productDetail&quot; },
+
+  // 投影输出
+  {
+    $project: {
+      orderNo: 1,
+      customerName: 1,
+      &quot;items.productName&quot;: 1,
+      &quot;items.quantity&quot;: 1,
+      &quot;items.price&quot;: 1,
+      &quot;productDetail.category&quot;: 1,
+      &quot;productDetail.stock&quot;: 1,
+      &quot;productDetail.tags&quot;: 1
+    }
+  }
+])
+</code></pre>
+<p><strong>示例2：查询每个商品被购买的次数</strong></p>
+<pre><code class="language-javascript">db.products.aggregate([
+  // 将 orders 中 items.productId 与 products._id 关联
+  {
+    $lookup: {
+      from: &quot;orders&quot;,
+      let: { pid: &quot;$_id&quot; },
+      pipeline: [
+        { $unwind: &quot;$items&quot; },
+        { $match: { $expr: { $eq: [&quot;$items.productId&quot;, &quot;$$pid&quot;] } } },
+        {
+          $group: {
+            _id: null,
+            totalQuantity: { $sum: &quot;$items.quantity&quot; },
+            orderCount: { $sum: 1 }
+          }
+        }
+      ],
+      as: &quot;salesInfo&quot;
+    }
+  },
+
+  // 展开关联结果（可能为空数组，用 preserveNullAndEmptyArrays 保留没有销售记录的商品）
+  {
+    $unwind: {
+      path: &quot;$salesInfo&quot;,
+      preserveNullAndEmptyArrays: true
+    }
+  },
+
+  // 重塑输出
+  {
+    $project: {
+      name: 1,
+      category: 1,
+      price: 1,
+      totalSold: { $ifNull: [&quot;$salesInfo.totalQuantity&quot;, 0] },
+      orderCount: { $ifNull: [&quot;$salesInfo.orderCount&quot;, 0] }
+    }
+  },
+
+  { $sort: { totalSold: -1 } }
+])
+</code></pre>
+<p><strong>$lookup 的管道语法（Pipeline 形式）：</strong></p>
+<p>上面的示例2使用了 <code>$lookup</code> 的高级语法，它比基本语法更强大，支持在关联时使用额外的过滤条件：</p>
+<pre><code class="language-javascript">{
+  $lookup: {
+    from: &quot;&lt;关联集合&gt;&quot;,
+    let: { &lt;变量名&gt;: &lt;当前集合的字段表达式&gt; },   // 声明变量
+    pipeline: [                                  // 在关联集合上执行的子管道
+      { $match: { $expr: { ... } } },
+      { $project: { ... } }
+    ],
+    as: &quot;&lt;输出字段&gt;&quot;
+  }
+}
+</code></pre>
+<p><strong>示例3：关联时只取特定状态的订单</strong></p>
+<pre><code class="language-javascript">// 查询每个商品的已完成订单销售情况
+db.products.aggregate([
+  {
+    $lookup: {
+      from: &quot;orders&quot;,
+      let: { productId: &quot;$_id&quot; },
+      pipeline: [
+        { $match: { status: &quot;completed&quot; } },
+        { $unwind: &quot;$items&quot; },
+        { $match: { $expr: { $eq: [&quot;$items.productId&quot;, &quot;$$productId&quot;] } } },
+        {
+          $group: {
+            _id: null,
+            revenue: { $sum: { $multiply: [&quot;$items.quantity&quot;, &quot;$items.price&quot;] } }
+          }
+        }
+      ],
+      as: &quot;completedSales&quot;
+    }
+  },
+  {
+    $project: {
+      name: 1,
+      price: 1,
+      revenue: {
+        $ifNull: [{ $arrayElemAt: [&quot;$completedSales.revenue&quot;, 0] }, 0]
+      }
+    }
+  },
+  { $sort: { revenue: -1 } }
+])
+</code></pre>
+<h3 id="732-unwind--展开数组字段">7.3.2 $unwind —— 展开数组字段</h3>
+<p><code>$unwind</code> 将文档中的数组字段拆分，为数组中的每个元素生成一个独立的文档。</p>
+<p><strong>基本语法：</strong></p>
+<pre><code class="language-javascript">// 简写形式
+{ $unwind: &quot;$arrayField&quot; }
+
+// 完整形式
+{
+  $unwind: {
+    path: &quot;$arrayField&quot;,
+    includeArrayIndex: &quot;indexFieldName&quot;,          // 可选：输出数组元素的索引
+    preserveNullAndEmptyArrays: true              // 可选：保留空数组或不存在的字段
+  }
+}
+</code></pre>
+<p><strong>示例1：展开订单的商品列表</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  { $match: { orderNo: &quot;ORD20240001&quot; } },
+  { $unwind: &quot;$items&quot; }
+])
+</code></pre>
+<p>输出：一个文档变成了两个文档（items 数组有 2 个元素）</p>
+<pre><code class="language-javascript">{
+  orderNo: &quot;ORD20240001&quot;, customerName: &quot;张三&quot;,
+  items: { productId: &quot;P001&quot;, productName: &quot;机械键盘&quot;, quantity: 1, price: 399 },
+  totalAmount: 657, status: &quot;completed&quot;
+}
+{
+  orderNo: &quot;ORD20240001&quot;, customerName: &quot;张三&quot;,
+  items: { productId: &quot;P002&quot;, productName: &quot;无线鼠标&quot;, quantity: 2, price: 129 },
+  totalAmount: 657, status: &quot;completed&quot;
+}
+</code></pre>
+<p><strong>示例2：展开并保留数组索引</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  { $match: { orderNo: &quot;ORD20240001&quot; } },
+  {
+    $unwind: {
+      path: &quot;$items&quot;,
+      includeArrayIndex: &quot;itemIndex&quot;
+    }
+  },
+  { $project: { orderNo: 1, itemIndex: 1, &quot;items.productName&quot;: 1, &quot;items.price&quot;: 1 } }
+])
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-javascript">{ orderNo: &quot;ORD20240001&quot;, itemIndex: 0, items: { productName: &quot;机械键盘&quot;, price: 399 } }
+{ orderNo: &quot;ORD20240001&quot;, itemIndex: 1, items: { productName: &quot;无线鼠标&quot;, price: 129 } }
+</code></pre>
+<p><strong>示例3：preserveNullAndEmptyArrays 的作用</strong></p>
+<pre><code class="language-javascript">// 默认行为：如果 items 为空数组或不存在，该文档会被丢弃
+db.orders.aggregate([
+  { $unwind: &quot;$items&quot; }
+])
+
+// 设置 preserveNullAndEmptyArrays: true 后，空数组的文档也会保留
+db.orders.aggregate([
+  {
+    $unwind: {
+      path: &quot;$items&quot;,
+      preserveNullAndEmptyArrays: true
+    }
+  }
+])
+</code></pre>
+<p><strong>示例4：利用 $unwind 实现&quot;最畅销商品&quot;统计</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  { $match: { status: &quot;completed&quot; } },
+  { $unwind: &quot;$items&quot; },
+  {
+    $group: {
+      _id: &quot;$items.productId&quot;,
+      productName: { $first: &quot;$items.productName&quot; },
+      totalQuantity: { $sum: &quot;$items.quantity&quot; },
+      totalRevenue: { $sum: { $multiply: [&quot;$items.quantity&quot;, &quot;$items.price&quot;] } }
+    }
+  },
+  { $sort: { totalQuantity: -1 } },
+  { $limit: 5 }
+])
+</code></pre>
+<h3 id="733-addfields--set--添加计算字段">7.3.3 $addFields / $set —— 添加计算字段</h3>
+<p><code>$addFields</code> 和 <code>$set</code>（MongoDB 4.2+ 的别名）用于向文档中添加新字段或覆盖已有字段，而不影响其他字段。与 <code>$project</code> 不同的是，它不会移除未提及的字段。</p>
+<p><strong>示例1：添加折扣后金额字段</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $addFields: {
+      discountedAmount: { $multiply: [&quot;$totalAmount&quot;, 0.85] },
+      itemCount: { $size: &quot;$items&quot; }
+    }
+  }
+])
+</code></pre>
+<p><strong>示例2：使用 $set（$addFields 的别名）</strong></p>
+<pre><code class="language-javascript">// $set 和 $addFields 功能完全相同，只是名字更简洁
+db.orders.aggregate([
+  {
+    $set: {
+      isHighValue: { $gte: [&quot;$totalAmount&quot;, 1000] },
+      year: { $year: &quot;$orderDate&quot; },
+      month: { $month: &quot;$orderDate&quot; }
+    }
+  }
+])
+</code></pre>
+<p><strong>示例3：基于条件添加字段</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $addFields: {
+      orderLevel: {
+        $switch: {
+          branches: [
+            { case: { $gte: [&quot;$totalAmount&quot;, 3000] }, then: &quot;大额订单&quot; },
+            { case: { $gte: [&quot;$totalAmount&quot;, 1000] }, then: &quot;中额订单&quot; },
+            { case: { $gte: [&quot;$totalAmount&quot;, 500] }, then: &quot;普通订单&quot; }
+          ],
+          default: &quot;小额订单&quot;
+        }
+      }
+    }
+  },
+  { $project: { orderNo: 1, totalAmount: 1, orderLevel: 1 } }
+])
+</code></pre>
+<h3 id="734-bucket--bucketauto--分桶统计">7.3.4 $bucket / $bucketAuto —— 分桶统计</h3>
+<p><code>$bucket</code> 将文档按指定字段的值分成多个范围区间（桶），类似于直方图统计。</p>
+<p><strong>$bucket 语法：</strong></p>
+<pre><code class="language-javascript">{
+  $bucket: {
+    groupBy: &lt;表达式&gt;,           // 分桶依据的字段
+    boundaries: [b1, b2, b3],    // 桶的边界值（左闭右开）
+    default: &quot;&lt;其他桶名&gt;&quot;,        // 超出边界的文档归入此桶
+    output: {                    // 每个桶的输出字段
+      count: { $sum: 1 },
+      ...
+    }
+  }
+}
+</code></pre>
+<p><strong>示例1：按订单金额分桶统计</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $bucket: {
+      groupBy: &quot;$totalAmount&quot;,
+      boundaries: [0, 100, 500, 1000, 5000],
+      default: &quot;5000以上&quot;,
+      output: {
+        count: { $sum: 1 },
+        orders: { $push: &quot;$orderNo&quot; },
+        avgAmount: { $avg: &quot;$totalAmount&quot; }
+      }
+    }
+  }
+])
+</code></pre>
+<p>输出：</p>
+<pre><code class="language-javascript">{ _id: 0,    count: 1, orders: [&quot;ORD20240005&quot;], avgAmount: 89 }          // [0, 100)
+{ _id: 100,  count: 2, orders: [&quot;ORD20240003&quot;, &quot;ORD20240008&quot;], avgAmount: 273 }  // [100, 500)
+{ _id: 500,  count: 2, orders: [&quot;ORD20240001&quot;, &quot;ORD20240006&quot;], avgAmount: 692 }  // [500, 1000)
+{ _id: 1000, count: 3, orders: [&quot;ORD20240002&quot;, &quot;ORD20240004&quot;, &quot;ORD20240007&quot;], avgAmount: 2631.33 } // [1000, 5000)
+</code></pre>
+<p><strong>示例2：按商品价格分桶</strong></p>
+<pre><code class="language-javascript">db.products.aggregate([
+  {
+    $bucket: {
+      groupBy: &quot;$price&quot;,
+      boundaries: [0, 100, 300, 500, 1000, 2000],
+      default: &quot;2000以上&quot;,
+      output: {
+        count: { $sum: 1 },
+        products: { $push: &quot;$name&quot; },
+        avgPrice: { $avg: &quot;$price&quot; }
+      }
+    }
+  }
+])
+</code></pre>
+<p><strong>$bucketAuto —— 自动分桶：</strong></p>
+<p><code>$bucketAuto</code> 让 MongoDB 自动决定桶的边界值，你只需要指定桶的数量。</p>
+<pre><code class="language-javascript">// 将订单自动分成4个桶
+db.orders.aggregate([
+  {
+    $bucketAuto: {
+      groupBy: &quot;$totalAmount&quot;,
+      buckets: 4,
+      output: {
+        count: { $sum: 1 },
+        avgAmount: { $avg: &quot;$totalAmount&quot; },
+        minAmount: { $min: &quot;$totalAmount&quot; },
+        maxAmount: { $max: &quot;$totalAmount&quot; }
+      }
+    }
+  }
+])
+</code></pre>
+<h3 id="735-facet--多面聚合">7.3.5 $facet —— 多面聚合</h3>
+<p><code>$facet</code> 允许在一次聚合操作中并行执行多条管道，每条管道独立计算，最终合并为一个文档输出。非常适合需要从同一数据集中获取多维度统计结果的场景。</p>
+<p><strong>示例1：订单多维度统计看板</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $facet: {
+      // 维度1：按状态统计
+      byStatus: [
+        { $group: { _id: &quot;$status&quot;, count: { $sum: 1 }, total: { $sum: &quot;$totalAmount&quot; } } },
+        { $sort: { count: -1 } }
+      ],
+
+      // 维度2：按支付方式统计
+      byPayment: [
+        { $group: { _id: &quot;$paymentMethod&quot;, count: { $sum: 1 }, total: { $sum: &quot;$totalAmount&quot; } } },
+        { $sort: { total: -1 } }
+      ],
+
+      // 维度3：金额最高的3笔订单
+      topOrders: [
+        { $sort: { totalAmount: -1 } },
+        { $limit: 3 },
+        { $project: { orderNo: 1, customerName: 1, totalAmount: 1 } }
+      ],
+
+      // 维度4：总体汇总
+      summary: [
+        {
+          $group: {
+            _id: null,
+            totalOrders: { $sum: 1 },
+            totalRevenue: { $sum: &quot;$totalAmount&quot; },
+            avgOrderAmount: { $avg: &quot;$totalAmount&quot; }
+          }
+        }
+      ]
+    }
+  }
+])
+</code></pre>
+<p>输出一个包含四个数组字段的文档：</p>
+<pre><code class="language-javascript">{
+  byStatus: [
+    { _id: &quot;completed&quot;, count: 5, total: 8270 },
+    { _id: &quot;shipped&quot;, count: 1, total: 1298 },
+    { _id: &quot;pending&quot;, count: 1, total: 89 },
+    { _id: &quot;cancelled&quot;, count: 1, total: 299 }
+  ],
+  byPayment: [
+    { _id: &quot;alipay&quot;, count: 4, total: 1932 },
+    { _id: &quot;credit_card&quot;, count: 2, total: 5995 },
+    { _id: &quot;wechat&quot;, count: 2, total: 1988 }
+  ],
+  topOrders: [
+    { orderNo: &quot;ORD20240007&quot;, customerName: &quot;孙七&quot;, totalAmount: 4697 },
+    { orderNo: &quot;ORD20240002&quot;, customerName: &quot;李四&quot;, totalAmount: 1899 },
+    { orderNo: &quot;ORD20240004&quot;, customerName: &quot;王五&quot;, totalAmount: 1298 }
+  ],
+  summary: [
+    { _id: null, totalOrders: 8, totalRevenue: 9956, avgOrderAmount: 1244.5 }
+  ]
+}
+</code></pre>
+<p><strong>示例2：分页查询 + 总数（一次请求实现）</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  { $match: { status: &quot;completed&quot; } },
+  {
+    $facet: {
+      // 分页数据
+      data: [
+        { $sort: { orderDate: -1 } },
+        { $skip: 0 },
+        { $limit: 3 },
+        { $project: { orderNo: 1, customerName: 1, totalAmount: 1, orderDate: 1 } }
+      ],
+      // 总数
+      totalCount: [
+        { $count: &quot;count&quot; }
+      ]
+    }
+  }
+])
+</code></pre>
+<hr />
+<h2 id="74-聚合表达式与运算符">7.4 聚合表达式与运算符</h2>
+<p>聚合管道中的表达式和运算符用于在 <code>$project</code>、<code>$addFields</code>、<code>$group</code> 等阶段中执行计算和数据转换。</p>
+<h3 id="741-算术运算符">7.4.1 算术运算符</h3>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>语法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$add</td>
+<td>加法（也可用于日期加毫秒）</td>
+<td><code>{ $add: [expr1, expr2] }</code></td>
+</tr>
+<tr>
+<td>$subtract</td>
+<td>减法（也可用于日期差）</td>
+<td><code>{ $subtract: [expr1, expr2] }</code></td>
+</tr>
+<tr>
+<td>$multiply</td>
+<td>乘法</td>
+<td><code>{ $multiply: [expr1, expr2] }</code></td>
+</tr>
+<tr>
+<td>$divide</td>
+<td>除法</td>
+<td><code>{ $divide: [expr1, expr2] }</code></td>
+</tr>
+<tr>
+<td>$mod</td>
+<td>取模</td>
+<td><code>{ $mod: [expr1, expr2] }</code></td>
+</tr>
+<tr>
+<td>$round</td>
+<td>四舍五入</td>
+<td><code>{ $round: [expr, 小数位数] }</code></td>
+</tr>
+<tr>
+<td>$ceil</td>
+<td>向上取整</td>
+<td><code>{ $ceil: expr }</code></td>
+</tr>
+<tr>
+<td>$floor</td>
+<td>向下取整</td>
+<td><code>{ $floor: expr }</code></td>
+</tr>
+<tr>
+<td>$abs</td>
+<td>绝对值</td>
+<td><code>{ $abs: expr }</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>示例：计算订单的税费和最终价格</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $project: {
+      orderNo: 1,
+      totalAmount: 1,
+      tax: {
+        $round: [{ $multiply: [&quot;$totalAmount&quot;, 0.13] }, 2]
+      },
+      finalPrice: {
+        $round: [{ $multiply: [&quot;$totalAmount&quot;, 1.13] }, 2]
+      },
+      discount: {
+        $subtract: [&quot;$totalAmount&quot;, { $multiply: [&quot;$totalAmount&quot;, 0.85] }]
+      }
+    }
+  }
+])
+</code></pre>
+<p><strong>示例：计算日期差（订单处理天数）</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  { $match: { completedDate: { $exists: true } } },
+  {
+    $project: {
+      orderNo: 1,
+      orderDate: 1,
+      completedDate: 1,
+      processingDays: {
+        $divide: [
+          { $subtract: [&quot;$completedDate&quot;, &quot;$orderDate&quot;] },
+          1000 * 60 * 60 * 24   // 毫秒转天数
+        ]
+      }
+    }
+  }
+])
+</code></pre>
+<h3 id="742-字符串运算符">7.4.2 字符串运算符</h3>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>语法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$concat</td>
+<td>字符串拼接</td>
+<td><code>{ $concat: [str1, str2, ...] }</code></td>
+</tr>
+<tr>
+<td>$substr / $substrBytes</td>
+<td>截取子串</td>
+<td><code>{ $substr: [str, start, length] }</code></td>
+</tr>
+<tr>
+<td>$toUpper</td>
+<td>转大写</td>
+<td><code>{ $toUpper: expr }</code></td>
+</tr>
+<tr>
+<td>$toLower</td>
+<td>转小写</td>
+<td><code>{ $toLower: expr }</code></td>
+</tr>
+<tr>
+<td>$trim</td>
+<td>去除首尾空格</td>
+<td><code>{ $trim: { input: str } }</code></td>
+</tr>
+<tr>
+<td>$split</td>
+<td>按分隔符拆分</td>
+<td><code>{ $split: [str, delimiter] }</code></td>
+</tr>
+<tr>
+<td>$strLenCP</td>
+<td>字符串长度</td>
+<td><code>{ $strLenCP: expr }</code></td>
+</tr>
+<tr>
+<td>$regexMatch</td>
+<td>正则匹配</td>
+<td><code>{ $regexMatch: { input: str, regex: pattern } }</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>示例：格式化订单信息</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $project: {
+      orderInfo: {
+        $concat: [&quot;订单号: &quot;, &quot;$orderNo&quot;, &quot; | 客户: &quot;, &quot;$customerName&quot;]
+      },
+      orderNoUpper: { $toUpper: &quot;$orderNo&quot; },
+      orderPrefix: { $substr: [&quot;$orderNo&quot;, 0, 3] },   // 截取前3个字符
+      customerNameLength: { $strLenCP: &quot;$customerName&quot; }
+    }
+  }
+])
+</code></pre>
+<p><strong>示例：判断客户名中是否包含特定字符</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $project: {
+      orderNo: 1,
+      customerName: 1,
+      isZhang: {
+        $regexMatch: { input: &quot;$customerName&quot;, regex: &quot;^张&quot; }
+      }
+    }
+  }
+])
+</code></pre>
+<h3 id="743-日期运算符">7.4.3 日期运算符</h3>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>语法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$year</td>
+<td>提取年份</td>
+<td><code>{ $year: dateExpr }</code></td>
+</tr>
+<tr>
+<td>$month</td>
+<td>提取月份 (1-12)</td>
+<td><code>{ $month: dateExpr }</code></td>
+</tr>
+<tr>
+<td>$dayOfMonth</td>
+<td>提取日 (1-31)</td>
+<td><code>{ $dayOfMonth: dateExpr }</code></td>
+</tr>
+<tr>
+<td>$dayOfWeek</td>
+<td>星期几 (1=周日, 7=周六)</td>
+<td><code>{ $dayOfWeek: dateExpr }</code></td>
+</tr>
+<tr>
+<td>$hour</td>
+<td>小时 (0-23)</td>
+<td><code>{ $hour: dateExpr }</code></td>
+</tr>
+<tr>
+<td>$dateToString</td>
+<td>日期格式化为字符串</td>
+<td><code>{ $dateToString: { format: ..., date: ... } }</code></td>
+</tr>
+<tr>
+<td>$dateFromString</td>
+<td>字符串解析为日期</td>
+<td><code>{ $dateFromString: { dateString: ..., format: ... } }</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>示例1：按月份统计订单</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $group: {
+      _id: {
+        year: { $year: &quot;$orderDate&quot; },
+        month: { $month: &quot;$orderDate&quot; }
+      },
+      orderCount: { $sum: 1 },
+      totalAmount: { $sum: &quot;$totalAmount&quot; }
+    }
+  },
+  { $sort: { &quot;_id.year&quot;: 1, &quot;_id.month&quot;: 1 } }
+])
+</code></pre>
+<p><strong>示例2：日期格式化输出</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $project: {
+      orderNo: 1,
+      formattedDate: {
+        $dateToString: {
+          format: &quot;%Y年%m月%d日&quot;,
+          date: &quot;$orderDate&quot;,
+          timezone: &quot;Asia/Shanghai&quot;
+        }
+      },
+      year: { $year: &quot;$orderDate&quot; },
+      month: { $month: &quot;$orderDate&quot; },
+      day: { $dayOfMonth: &quot;$orderDate&quot; },
+      weekday: { $dayOfWeek: &quot;$orderDate&quot; }
+    }
+  }
+])
+</code></pre>
+<p><strong>示例3：按季度统计</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $addFields: {
+      quarter: {
+        $ceil: { $divide: [{ $month: &quot;$orderDate&quot; }, 3] }
+      }
+    }
+  },
+  {
+    $group: {
+      _id: {
+        year: { $year: &quot;$orderDate&quot; },
+        quarter: &quot;$quarter&quot;
+      },
+      orderCount: { $sum: 1 },
+      totalAmount: { $sum: &quot;$totalAmount&quot; }
+    }
+  },
+  { $sort: { &quot;_id.year&quot;: 1, &quot;_id.quarter&quot;: 1 } }
+])
+</code></pre>
+<h3 id="744-条件运算符">7.4.4 条件运算符</h3>
+<p><strong>$cond —— 三元条件（if-then-else）</strong></p>
+<pre><code class="language-javascript">// 根据金额标记订单级别
+db.orders.aggregate([
+  {
+    $project: {
+      orderNo: 1,
+      totalAmount: 1,
+      level: {
+        $cond: {
+          if: { $gte: [&quot;$totalAmount&quot;, 1000] },
+          then: &quot;高价值&quot;,
+          else: &quot;普通&quot;
+        }
+      }
+    }
+  }
+])
+
+// 简写形式：$cond: [ &lt;条件&gt;, &lt;true值&gt;, &lt;false值&gt; ]
+db.orders.aggregate([
+  {
+    $project: {
+      orderNo: 1,
+      totalAmount: 1,
+      level: {
+        $cond: [{ $gte: [&quot;$totalAmount&quot;, 1000] }, &quot;高价值&quot;, &quot;普通&quot;]
+      }
+    }
+  }
+])
+</code></pre>
+<p><strong>$ifNull —— 空值替换</strong></p>
+<pre><code class="language-javascript">// 如果 completedDate 为 null，显示 &quot;未完成&quot;
+db.orders.aggregate([
+  {
+    $project: {
+      orderNo: 1,
+      status: 1,
+      completedDate: {
+        $ifNull: [&quot;$completedDate&quot;, &quot;未完成&quot;]
+      }
+    }
+  }
+])
+</code></pre>
+<p><strong>$switch —— 多分支条件（类似 switch-case）</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $project: {
+      orderNo: 1,
+      totalAmount: 1,
+      statusCn: {
+        $switch: {
+          branches: [
+            { case: { $eq: [&quot;$status&quot;, &quot;completed&quot;] }, then: &quot;已完成&quot; },
+            { case: { $eq: [&quot;$status&quot;, &quot;shipped&quot;] }, then: &quot;已发货&quot; },
+            { case: { $eq: [&quot;$status&quot;, &quot;pending&quot;] }, then: &quot;待处理&quot; },
+            { case: { $eq: [&quot;$status&quot;, &quot;cancelled&quot;] }, then: &quot;已取消&quot; }
+          ],
+          default: &quot;未知状态&quot;
+        }
+      }
+    }
+  }
+])
+</code></pre>
+<h3 id="745-数组运算符">7.4.5 数组运算符</h3>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>语法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$size</td>
+<td>数组长度</td>
+<td><code>{ $size: &quot;$arrayField&quot; }</code></td>
+</tr>
+<tr>
+<td>$filter</td>
+<td>过滤数组元素</td>
+<td><code>{ $filter: { input, cond, as } }</code></td>
+</tr>
+<tr>
+<td>$map</td>
+<td>对数组每个元素做变换</td>
+<td><code>{ $map: { input, in, as } }</code></td>
+</tr>
+<tr>
+<td>$arrayElemAt</td>
+<td>取数组指定位置的元素</td>
+<td><code>{ $arrayElemAt: [&quot;$arr&quot;, index] }</code></td>
+</tr>
+<tr>
+<td>$concatArrays</td>
+<td>合并多个数组</td>
+<td><code>{ $concatArrays: [arr1, arr2] }</code></td>
+</tr>
+<tr>
+<td>$in</td>
+<td>判断值是否在数组中</td>
+<td><code>{ $in: [value, &quot;$arr&quot;] }</code></td>
+</tr>
+<tr>
+<td>$reduce</td>
+<td>数组归约</td>
+<td><code>{ $reduce: { input, initialValue, in } }</code></td>
+</tr>
+<tr>
+<td>$slice</td>
+<td>数组切片</td>
+<td><code>{ $slice: [&quot;$arr&quot;, n] }</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>示例1：$size —— 计算每笔订单的商品种类数</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $project: {
+      orderNo: 1,
+      customerName: 1,
+      totalAmount: 1,
+      itemCount: { $size: &quot;$items&quot; }
+    }
+  }
+])
+</code></pre>
+<p><strong>示例2：$filter —— 过滤订单中价格大于200的商品</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $project: {
+      orderNo: 1,
+      customerName: 1,
+      expensiveItems: {
+        $filter: {
+          input: &quot;$items&quot;,
+          as: &quot;item&quot;,
+          cond: { $gt: [&quot;$$item.price&quot;, 200] }
+        }
+      }
+    }
+  }
+])
+</code></pre>
+<p><strong>示例3：$map —— 提取所有商品名称并拼接</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $project: {
+      orderNo: 1,
+      productNames: {
+        $map: {
+          input: &quot;$items&quot;,
+          as: &quot;item&quot;,
+          in: &quot;$$item.productName&quot;
+        }
+      },
+      itemSubtotals: {
+        $map: {
+          input: &quot;$items&quot;,
+          as: &quot;item&quot;,
+          in: {
+            name: &quot;$$item.productName&quot;,
+            subtotal: { $multiply: [&quot;$$item.quantity&quot;, &quot;$$item.price&quot;] }
+          }
+        }
+      }
+    }
+  }
+])
+</code></pre>
+<p><strong>示例4：$reduce —— 手动计算订单总价</strong></p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  {
+    $project: {
+      orderNo: 1,
+      totalAmount: 1,
+      calculatedTotal: {
+        $reduce: {
+          input: &quot;$items&quot;,
+          initialValue: 0,
+          in: {
+            $add: [
+              &quot;$$value&quot;,
+              { $multiply: [&quot;$$this.quantity&quot;, &quot;$$this.price&quot;] }
+            ]
+          }
+        }
+      }
+    }
+  }
+])
+</code></pre>
+<hr />
+<h2 id="75-在-spring-boot-中使用-aggregation-api">7.5 在 Spring Boot 中使用 Aggregation API</h2>
+<p>Spring Data MongoDB 提供了完整的 Aggregation API，可以通过 Java 代码构建聚合管道。</p>
+<h3 id="751-基础用法与核心-api">7.5.1 基础用法与核心 API</h3>
+<p><strong>核心类：</strong></p>
+<table>
+<thead>
+<tr>
+<th>类 / 方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Aggregation.newAggregation(...)</code></td>
+<td>创建聚合管道</td>
+</tr>
+<tr>
+<td><code>Aggregation.match(criteria)</code></td>
+<td>对应 $match</td>
+</tr>
+<tr>
+<td><code>Aggregation.group(fields)</code></td>
+<td>对应 $group</td>
+</tr>
+<tr>
+<td><code>Aggregation.project(fields)</code></td>
+<td>对应 $project</td>
+</tr>
+<tr>
+<td><code>Aggregation.sort(sort)</code></td>
+<td>对应 $sort</td>
+</tr>
+<tr>
+<td><code>Aggregation.limit(n)</code></td>
+<td>对应 $limit</td>
+</tr>
+<tr>
+<td><code>Aggregation.skip(n)</code></td>
+<td>对应 $skip</td>
+</tr>
+<tr>
+<td><code>Aggregation.count()</code></td>
+<td>对应 $count</td>
+</tr>
+<tr>
+<td><code>Aggregation.lookup(...)</code></td>
+<td>对应 $lookup</td>
+</tr>
+<tr>
+<td><code>Aggregation.unwind(field)</code></td>
+<td>对应 $unwind</td>
+</tr>
+<tr>
+<td><code>Aggregation.bucket(...)</code></td>
+<td>对应 $bucket</td>
+</tr>
+<tr>
+<td><code>Aggregation.facet(...)</code></td>
+<td>对应 $facet</td>
+</tr>
+<tr>
+<td><code>AggregationResults&lt;T&gt;</code></td>
+<td>聚合结果封装</td>
+</tr>
+</tbody>
+</table>
+<h3 id="前置准备实体类与结果类">前置准备：实体类与结果类</h3>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Document(collection = &quot;orders&quot;)
+public class Order {
+
+    @Id
+    private String id;
+
+    private String orderNo;
+    private String customerId;
+    private String customerName;
+    private List&lt;OrderItem&gt; items;
+    private Double totalAmount;
+    private String status;
+    private String paymentMethod;
+
+    @Field(&quot;orderDate&quot;)
+    private LocalDateTime orderDate;
+
+    @Field(&quot;completedDate&quot;)
+    private LocalDateTime completedDate;
+
+    // getter / setter 省略，建议使用 Lombok @Data
+}
+</code></pre>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+public class OrderItem {
+
+    private String productId;
+    private String productName;
+    private Integer quantity;
+    private Double price;
+
+    // getter / setter 省略
+}
+</code></pre>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Document(collection = &quot;products&quot;)
+public class Product {
+
+    @Id
+    private String id;
+
+    private String name;
+    private String category;
+    private Double price;
+    private Integer stock;
+    private List&lt;String&gt; tags;
+    private LocalDateTime createdAt;
+
+    // getter / setter 省略
+}
+</code></pre>
+<h3 id="752-示例1简单的-match--group按客户统计订单">7.5.2 示例1：简单的 $match + $group（按客户统计订单）</h3>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class OrderAggregationService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public OrderAggregationService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 统计每个客户的已完成订单数和总金额
+     */
+    public List&lt;CustomerOrderStats&gt; getCustomerOrderStats() {
+        Aggregation aggregation = Aggregation.newAggregation(
+            // $match: 过滤已完成订单
+            Aggregation.match(Criteria.where(&quot;status&quot;).is(&quot;completed&quot;)),
+
+            // $group: 按客户分组
+            Aggregation.group(&quot;customerId&quot;)
+                .first(&quot;customerName&quot;).as(&quot;customerName&quot;)
+                .count().as(&quot;orderCount&quot;)
+                .sum(&quot;totalAmount&quot;).as(&quot;totalAmount&quot;)
+                .avg(&quot;totalAmount&quot;).as(&quot;avgAmount&quot;),
+
+            // $sort: 按总金额降序
+            Aggregation.sort(org.springframework.data.domain.Sort.by(
+                org.springframework.data.domain.Sort.Direction.DESC, &quot;totalAmount&quot;
+            ))
+        );
+
+        AggregationResults&lt;CustomerOrderStats&gt; results =
+            mongoTemplate.aggregate(aggregation, &quot;orders&quot;, CustomerOrderStats.class);
+
+        return results.getMappedResults();
+    }
+
+    // 结果映射类
+    public static class CustomerOrderStats {
+        private String id;           // _id（customerId）
+        private String customerName;
+        private int orderCount;
+        private double totalAmount;
+        private double avgAmount;
+
+        // getter / setter
+        public String getId() { return id; }
+        public void setId(String id) { this.id = id; }
+        public String getCustomerName() { return customerName; }
+        public void setCustomerName(String customerName) { this.customerName = customerName; }
+        public int getOrderCount() { return orderCount; }
+        public void setOrderCount(int orderCount) { this.orderCount = orderCount; }
+        public double getTotalAmount() { return totalAmount; }
+        public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
+        public double getAvgAmount() { return avgAmount; }
+        public void setAvgAmount(double avgAmount) { this.avgAmount = avgAmount; }
+    }
+}
+</code></pre>
+<h3 id="753-示例2match--group--project--sort按月统计销售额">7.5.3 示例2：$match + $group + $project + $sort（按月统计销售额）</h3>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class SalesReportService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public SalesReportService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 按月统计已完成订单的销售额
+     */
+    public List&lt;MonthlySalesReport&gt; getMonthlySales(int year) {
+        Aggregation aggregation = Aggregation.newAggregation(
+            // 过滤指定年份的已完成订单
+            Aggregation.match(
+                Criteria.where(&quot;status&quot;).is(&quot;completed&quot;)
+                    .and(&quot;orderDate&quot;).gte(java.time.LocalDateTime.of(year, 1, 1, 0, 0))
+                    .lt(java.time.LocalDateTime.of(year + 1, 1, 1, 0, 0))
+            ),
+
+            // 按年月分组统计
+            Aggregation.project(&quot;totalAmount&quot;, &quot;orderDate&quot;)
+                .andExpression(&quot;year(orderDate)&quot;).as(&quot;year&quot;)
+                .andExpression(&quot;month(orderDate)&quot;).as(&quot;month&quot;),
+
+            Aggregation.group(&quot;year&quot;, &quot;month&quot;)
+                .count().as(&quot;orderCount&quot;)
+                .sum(&quot;totalAmount&quot;).as(&quot;totalRevenue&quot;)
+                .avg(&quot;totalAmount&quot;).as(&quot;avgOrderAmount&quot;)
+                .max(&quot;totalAmount&quot;).as(&quot;maxOrder&quot;)
+                .min(&quot;totalAmount&quot;).as(&quot;minOrder&quot;),
+
+            // 重塑输出
+            Aggregation.project()
+                .and(&quot;_id.year&quot;).as(&quot;year&quot;)
+                .and(&quot;_id.month&quot;).as(&quot;month&quot;)
+                .andInclude(&quot;orderCount&quot;, &quot;totalRevenue&quot;, &quot;avgOrderAmount&quot;, &quot;maxOrder&quot;, &quot;minOrder&quot;),
+
+            // 按月份排序
+            Aggregation.sort(Sort.by(Sort.Direction.ASC, &quot;month&quot;))
+        );
+
+        AggregationResults&lt;MonthlySalesReport&gt; results =
+            mongoTemplate.aggregate(aggregation, &quot;orders&quot;, MonthlySalesReport.class);
+
+        return results.getMappedResults();
+    }
+
+    public static class MonthlySalesReport {
+        private int year;
+        private int month;
+        private int orderCount;
+        private double totalRevenue;
+        private double avgOrderAmount;
+        private double maxOrder;
+        private double minOrder;
+
+        // getter / setter
+        public int getYear() { return year; }
+        public void setYear(int year) { this.year = year; }
+        public int getMonth() { return month; }
+        public void setMonth(int month) { this.month = month; }
+        public int getOrderCount() { return orderCount; }
+        public void setOrderCount(int orderCount) { this.orderCount = orderCount; }
+        public double getTotalRevenue() { return totalRevenue; }
+        public void setTotalRevenue(double totalRevenue) { this.totalRevenue = totalRevenue; }
+        public double getAvgOrderAmount() { return avgOrderAmount; }
+        public void setAvgOrderAmount(double avgOrderAmount) { this.avgOrderAmount = avgOrderAmount; }
+        public double getMaxOrder() { return maxOrder; }
+        public void setMaxOrder(double maxOrder) { this.maxOrder = maxOrder; }
+        public double getMinOrder() { return minOrder; }
+        public void setMinOrder(double minOrder) { this.minOrder = minOrder; }
+    }
+}
+</code></pre>
+<h3 id="754-示例3unwind--group统计最畅销的商品">7.5.4 示例3：$unwind + $group（统计最畅销的商品）</h3>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class ProductSalesService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public ProductSalesService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 统计已完成订单中最畅销的商品 Top N
+     */
+    public List&lt;ProductSalesStats&gt; getTopSellingProducts(int topN) {
+        Aggregation aggregation = Aggregation.newAggregation(
+            // 只统计已完成订单
+            Aggregation.match(Criteria.where(&quot;status&quot;).is(&quot;completed&quot;)),
+
+            // 展开订单商品数组
+            Aggregation.unwind(&quot;items&quot;),
+
+            // 按商品分组统计
+            Aggregation.group(&quot;items.productId&quot;)
+                .first(&quot;items.productName&quot;).as(&quot;productName&quot;)
+                .sum(&quot;items.quantity&quot;).as(&quot;totalQuantity&quot;)
+                .sum(ArithmeticOperators.Multiply.valueOf(&quot;items.quantity&quot;)
+                    .multiplyBy(&quot;items.price&quot;))
+                .as(&quot;totalRevenue&quot;)
+                .count().as(&quot;orderCount&quot;),
+
+            // 按销售数量降序
+            Aggregation.sort(Sort.by(Sort.Direction.DESC, &quot;totalQuantity&quot;)),
+
+            // 只取前N个
+            Aggregation.limit(topN),
+
+            // 重塑输出
+            Aggregation.project()
+                .and(&quot;_id&quot;).as(&quot;productId&quot;)
+                .andInclude(&quot;productName&quot;, &quot;totalQuantity&quot;, &quot;totalRevenue&quot;, &quot;orderCount&quot;)
+                .andExclude(&quot;_id&quot;)
+        );
+
+        AggregationResults&lt;ProductSalesStats&gt; results =
+            mongoTemplate.aggregate(aggregation, &quot;orders&quot;, ProductSalesStats.class);
+
+        return results.getMappedResults();
+    }
+
+    public static class ProductSalesStats {
+        private String productId;
+        private String productName;
+        private int totalQuantity;
+        private double totalRevenue;
+        private int orderCount;
+
+        // getter / setter
+        public String getProductId() { return productId; }
+        public void setProductId(String productId) { this.productId = productId; }
+        public String getProductName() { return productName; }
+        public void setProductName(String productName) { this.productName = productName; }
+        public int getTotalQuantity() { return totalQuantity; }
+        public void setTotalQuantity(int totalQuantity) { this.totalQuantity = totalQuantity; }
+        public double getTotalRevenue() { return totalRevenue; }
+        public void setTotalRevenue(double totalRevenue) { this.totalRevenue = totalRevenue; }
+        public int getOrderCount() { return orderCount; }
+        public void setOrderCount(int orderCount) { this.orderCount = orderCount; }
+    }
+}
+</code></pre>
+<h3 id="755-示例4lookup-关联查询订单关联商品详情">7.5.5 示例4：$lookup 关联查询（订单关联商品详情）</h3>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.LookupOperation;
+import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class OrderDetailService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public OrderDetailService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 查询订单详情，关联商品的完整信息（含库存、分类）
+     */
+    public List&lt;OrderWithProductDetail&gt; getOrderDetails(String orderNo) {
+        LookupOperation lookupOperation = LookupOperation.newLookup()
+            .from(&quot;products&quot;)
+            .localField(&quot;items.productId&quot;)
+            .foreignField(&quot;_id&quot;)
+            .as(&quot;productDetails&quot;);
+
+        Aggregation aggregation = Aggregation.newAggregation(
+            // 过滤指定订单
+            Aggregation.match(Criteria.where(&quot;orderNo&quot;).is(orderNo)),
+
+            // 展开商品数组
+            Aggregation.unwind(&quot;items&quot;),
+
+            // 关联商品集合
+            LookupOperation.newLookup()
+                .from(&quot;products&quot;)
+                .localField(&quot;items.productId&quot;)
+                .foreignField(&quot;_id&quot;)
+                .as(&quot;productInfo&quot;),
+
+            // 展开关联结果（每个商品只对应一条记录）
+            Aggregation.unwind(&quot;productInfo&quot;),
+
+            // 投影输出
+            Aggregation.project()
+                .and(&quot;orderNo&quot;).as(&quot;orderNo&quot;)
+                .and(&quot;customerName&quot;).as(&quot;customerName&quot;)
+                .and(&quot;items.productName&quot;).as(&quot;productName&quot;)
+                .and(&quot;items.quantity&quot;).as(&quot;quantity&quot;)
+                .and(&quot;items.price&quot;).as(&quot;price&quot;)
+                .and(&quot;productInfo.category&quot;).as(&quot;category&quot;)
+                .and(&quot;productInfo.stock&quot;).as(&quot;currentStock&quot;)
+                .and(&quot;productInfo.tags&quot;).as(&quot;tags&quot;)
+        );
+
+        AggregationResults&lt;OrderWithProductDetail&gt; results =
+            mongoTemplate.aggregate(aggregation, &quot;orders&quot;, OrderWithProductDetail.class);
+
+        return results.getMappedResults();
+    }
+
+    public static class OrderWithProductDetail {
+        private String orderNo;
+        private String customerName;
+        private String productName;
+        private int quantity;
+        private double price;
+        private String category;
+        private int currentStock;
+        private List&lt;String&gt; tags;
+
+        // getter / setter
+        public String getOrderNo() { return orderNo; }
+        public void setOrderNo(String orderNo) { this.orderNo = orderNo; }
+        public String getCustomerName() { return customerName; }
+        public void setCustomerName(String customerName) { this.customerName = customerName; }
+        public String getProductName() { return productName; }
+        public void setProductName(String productName) { this.productName = productName; }
+        public int getQuantity() { return quantity; }
+        public void setQuantity(int quantity) { this.quantity = quantity; }
+        public double getPrice() { return price; }
+        public void setPrice(double price) { this.price = price; }
+        public String getCategory() { return category; }
+        public void setCategory(String category) { this.category = category; }
+        public int getCurrentStock() { return currentStock; }
+        public void setCurrentStock(int currentStock) { this.currentStock = currentStock; }
+        public List&lt;String&gt; getTags() { return tags; }
+        public void setTags(List&lt;String&gt; tags) { this.tags = tags; }
+    }
+}
+</code></pre>
+<h3 id="756-示例5facet-多维统计--addfields-计算字段">7.5.6 示例5：$facet 多维统计 + $addFields 计算字段</h3>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Map;
+
+@Service
+public class DashboardService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public DashboardService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 获取订单看板数据：按状态统计 + 按支付方式统计 + Top3 订单
+     */
+    public Map&lt;String, Object&gt; getDashboardData() {
+        // 按状态统计子管道
+        MatchOperation matchCompleted = Aggregation.match(Criteria.where(&quot;status&quot;).is(&quot;completed&quot;));
+        GroupOperation groupByStatus = Aggregation.group(&quot;status&quot;)
+            .count().as(&quot;count&quot;)
+            .sum(&quot;totalAmount&quot;).as(&quot;total&quot;);
+
+        // 按支付方式统计子管道
+        GroupOperation groupByPayment = Aggregation.group(&quot;paymentMethod&quot;)
+            .count().as(&quot;count&quot;)
+            .sum(&quot;totalAmount&quot;).as(&quot;total&quot;);
+
+        // Top3 订单子管道
+        SortOperation sortByAmount = Aggregation.sort(Sort.by(Sort.Direction.DESC, &quot;totalAmount&quot;));
+        LimitOperation limitTop3 = Aggregation.limit(3);
+        ProjectionOperation projectTop3 = Aggregation.project(&quot;orderNo&quot;, &quot;customerName&quot;, &quot;totalAmount&quot;);
+
+        // 构建 $facet
+        FacetOperation facetOperation = Aggregation.facet(groupByStatus, Aggregation.sort(Sort.by(Sort.Direction.DESC, &quot;count&quot;)))
+            .as(&quot;byStatus&quot;)
+            .and(groupByPayment, Aggregation.sort(Sort.by(Sort.Direction.DESC, &quot;total&quot;)))
+            .as(&quot;byPayment&quot;)
+            .and(sortByAmount, limitTop3, projectTop3)
+            .as(&quot;topOrders&quot;);
+
+        Aggregation aggregation = Aggregation.newAggregation(facetOperation);
+
+        AggregationResults&lt;Map&gt; results =
+            mongoTemplate.aggregate(aggregation, &quot;orders&quot;, Map.class);
+
+        return results.getUniqueMappedResult();
+    }
+}
+</code></pre>
+<h3 id="757-示例6使用-typedaggregation">7.5.7 示例6：使用 TypedAggregation</h3>
+<p><code>TypedAggregation</code> 是一种类型安全的聚合方式，通过指定输入类型，可以在编译期发现字段名错误。</p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import com.example.mongo.entity.Order;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class TypedAggregationService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public TypedAggregationService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 使用 TypedAggregation 统计每种支付方式的使用情况
+     */
+    public List&lt;PaymentStats&gt; getPaymentStatistics() {
+        // TypedAggregation 绑定 Order 类型，集合名从 @Document 注解自动获取
+        TypedAggregation&lt;Order&gt; aggregation = Aggregation.newAggregation(
+            Order.class,
+
+            Aggregation.match(Criteria.where(&quot;status&quot;).ne(&quot;cancelled&quot;)),
+
+            Aggregation.group(&quot;paymentMethod&quot;)
+                .count().as(&quot;usageCount&quot;)
+                .sum(&quot;totalAmount&quot;).as(&quot;totalAmount&quot;)
+                .avg(&quot;totalAmount&quot;).as(&quot;avgAmount&quot;)
+                .min(&quot;totalAmount&quot;).as(&quot;minAmount&quot;)
+                .max(&quot;totalAmount&quot;).as(&quot;maxAmount&quot;),
+
+            Aggregation.project()
+                .and(&quot;_id&quot;).as(&quot;paymentMethod&quot;)
+                .andInclude(&quot;usageCount&quot;, &quot;totalAmount&quot;, &quot;avgAmount&quot;, &quot;minAmount&quot;, &quot;maxAmount&quot;)
+                .andExclude(&quot;_id&quot;),
+
+            Aggregation.sort(Sort.by(Sort.Direction.DESC, &quot;totalAmount&quot;))
+        );
+
+        // 无需手动指定集合名，自动从 Order 的 @Document 注解获取
+        AggregationResults&lt;PaymentStats&gt; results =
+            mongoTemplate.aggregate(aggregation, PaymentStats.class);
+
+        return results.getMappedResults();
+    }
+
+    /**
+     * 使用 TypedAggregation 统计客户消费排行榜
+     */
+    public List&lt;CustomerRanking&gt; getCustomerRanking(int topN) {
+        TypedAggregation&lt;Order&gt; aggregation = Aggregation.newAggregation(
+            Order.class,
+
+            Aggregation.match(Criteria.where(&quot;status&quot;).is(&quot;completed&quot;)),
+
+            Aggregation.group(&quot;customerId&quot;)
+                .first(&quot;customerName&quot;).as(&quot;customerName&quot;)
+                .count().as(&quot;orderCount&quot;)
+                .sum(&quot;totalAmount&quot;).as(&quot;totalSpent&quot;),
+
+            Aggregation.sort(Sort.by(Sort.Direction.DESC, &quot;totalSpent&quot;)),
+
+            Aggregation.limit(topN),
+
+            Aggregation.project()
+                .and(&quot;_id&quot;).as(&quot;customerId&quot;)
+                .andInclude(&quot;customerName&quot;, &quot;orderCount&quot;, &quot;totalSpent&quot;)
+                .andExclude(&quot;_id&quot;)
+        );
+
+        AggregationResults&lt;CustomerRanking&gt; results =
+            mongoTemplate.aggregate(aggregation, CustomerRanking.class);
+
+        return results.getMappedResults();
+    }
+
+    public static class PaymentStats {
+        private String paymentMethod;
+        private int usageCount;
+        private double totalAmount;
+        private double avgAmount;
+        private double minAmount;
+        private double maxAmount;
+
+        // getter / setter
+        public String getPaymentMethod() { return paymentMethod; }
+        public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+        public int getUsageCount() { return usageCount; }
+        public void setUsageCount(int usageCount) { this.usageCount = usageCount; }
+        public double getTotalAmount() { return totalAmount; }
+        public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
+        public double getAvgAmount() { return avgAmount; }
+        public void setAvgAmount(double avgAmount) { this.avgAmount = avgAmount; }
+        public double getMinAmount() { return minAmount; }
+        public void setMinAmount(double minAmount) { this.minAmount = minAmount; }
+        public double getMaxAmount() { return maxAmount; }
+        public void setMaxAmount(double maxAmount) { this.maxAmount = maxAmount; }
+    }
+
+    public static class CustomerRanking {
+        private String customerId;
+        private String customerName;
+        private int orderCount;
+        private double totalSpent;
+
+        // getter / setter
+        public String getCustomerId() { return customerId; }
+        public void setCustomerId(String customerId) { this.customerId = customerId; }
+        public String getCustomerName() { return customerName; }
+        public void setCustomerName(String customerName) { this.customerName = customerName; }
+        public int getOrderCount() { return orderCount; }
+        public void setOrderCount(int orderCount) { this.orderCount = orderCount; }
+        public double getTotalSpent() { return totalSpent; }
+        public void setTotalSpent(double totalSpent) { this.totalSpent = totalSpent; }
+    }
+}
+</code></pre>
+<h3 id="758-示例7完整的-controller--service-聚合查询">7.5.8 示例7：完整的 Controller + Service 聚合查询</h3>
+<p>最后，给出一个从 Controller 到 Service 的完整示例，展示如何在实际项目中使用聚合查询。</p>
+<pre><code class="language-java">package com.example.mongo.controller;
+
+import com.example.mongo.service.OrderAggregationService;
+import com.example.mongo.service.OrderAggregationService.CustomerOrderStats;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping(&quot;/api/stats&quot;)
+public class StatsController {
+
+    private final OrderAggregationService orderAggregationService;
+
+    public StatsController(OrderAggregationService orderAggregationService) {
+        this.orderAggregationService = orderAggregationService;
+    }
+
+    @GetMapping(&quot;/customer-orders&quot;)
+    public ResponseEntity&lt;List&lt;CustomerOrderStats&gt;&gt; getCustomerOrderStats() {
+        return ResponseEntity.ok(orderAggregationService.getCustomerOrderStats());
+    }
+
+    @GetMapping(&quot;/top-products&quot;)
+    public ResponseEntity&lt;List&lt;?&gt;&gt; getTopProducts(
+            @RequestParam(defaultValue = &quot;5&quot;) int topN) {
+        // 调用 ProductSalesService.getTopSellingProducts(topN)
+        return ResponseEntity.ok(List.of());
+    }
+}
+</code></pre>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>核心内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>聚合管道概念</td>
+<td>数据流经多个阶段依次处理，类似工厂流水线</td>
+</tr>
+<tr>
+<td>$match</td>
+<td>过滤文档，语法同 find()，尽量放在管道最前面以利用索引</td>
+</tr>
+<tr>
+<td>$group</td>
+<td>分组聚合，支持 $sum, $avg, $min, $max, $first, $last, $push 等累加器</td>
+</tr>
+<tr>
+<td>$project</td>
+<td>投影 / 重塑文档，支持字段选择、重命名、计算字段</td>
+</tr>
+<tr>
+<td>$sort / $limit / $skip</td>
+<td>排序、限制、跳过，常用于分页场景</td>
+</tr>
+<tr>
+<td>$count</td>
+<td>计算文档数量</td>
+</tr>
+<tr>
+<td>$lookup</td>
+<td>关联查询（LEFT JOIN），支持基本语法和 Pipeline 高级语法</td>
+</tr>
+<tr>
+<td>$unwind</td>
+<td>展开数组字段，每个元素生成独立文档</td>
+</tr>
+<tr>
+<td>$addFields / $set</td>
+<td>添加或覆盖字段，不影响其他字段</td>
+</tr>
+<tr>
+<td>$bucket / $bucketAuto</td>
+<td>按范围分桶统计，适合直方图 / 区间分析</td>
+</tr>
+<tr>
+<td>$facet</td>
+<td>多面聚合，一次查询返回多维度结果</td>
+</tr>
+<tr>
+<td>聚合表达式</td>
+<td>算术、字符串、日期、条件、数组等丰富的运算符</td>
+</tr>
+<tr>
+<td>Spring Boot Aggregation</td>
+<td>使用 Aggregation.newAggregation() 构建管道，MongoTemplate.aggregate() 执行</td>
+</tr>
+<tr>
+<td>TypedAggregation</td>
+<td>类型安全的聚合方式，自动从 @Document 获取集合名</td>
+</tr>
+</tbody>
+</table>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

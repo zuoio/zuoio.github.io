@@ -1,0 +1,2107 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第01课-widget-体系与基础概念">第01课 Widget 体系与基础概念</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter 常用组件系统学习<br />
+<strong>适用人群</strong>：有 Dart 语言基础，了解 Flutter 基本概念的开发者<br />
+<strong>课程目标</strong>：深入理解 Flutter 的 Widget 体系核心原理，为后续组件学习打下坚实基础</p>
+</blockquote>
+<hr />
+<h2 id="1-flutter-三棵树widget-treeelement-treerenderobject-tree">1. Flutter 三棵树：Widget Tree、Element Tree、RenderObject Tree</h2>
+<p>Flutter 框架的 UI 渲染体系建立在<strong>三棵树</strong>之上。理解它们之间的关系，是掌握 Flutter 性能优化和组件工作原理的基础。</p>
+<h3 id="11-三棵树的概念">1.1 三棵树的概念</h3>
+<table>
+<thead>
+<tr>
+<th>树</th>
+<th>核心职责</th>
+<th>特性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Widget Tree</strong></td>
+<td>描述 UI 的配置信息（&quot;蓝图&quot;）</td>
+<td>不可变（immutable），轻量级，频繁重建</td>
+</tr>
+<tr>
+<td><strong>Element Tree</strong></td>
+<td>管理 Widget 和 RenderObject 之间的关系（&quot;管家&quot;）</td>
+<td>可变，持久存在，负责生命周期管理</td>
+</tr>
+<tr>
+<td><strong>RenderObject Tree</strong></td>
+<td>负责实际的布局（layout）和绘制（paint）</td>
+<td>可变，承担真正的渲染计算工作</td>
+</tr>
+</tbody>
+</table>
+<p><strong>类比理解</strong>：可以把 Widget 想象成建筑的设计图纸，Element 是施工项目经理，RenderObject 是真正搬砖盖楼的工人。每次设计变更（Widget 重建），项目经理（Element）会判断哪些地方需要改动，只通知相关工人（RenderObject）去修改，而不是把整栋楼拆了重建。</p>
+<h3 id="12-三棵树的工作流程">1.2 三棵树的工作流程</h3>
+<p>当 Flutter 构建 UI 时：</p>
+<ol>
+<li>开发者编写 Widget 代码，形成 <strong>Widget Tree</strong></li>
+<li>Flutter 框架调用 <code>Widget.createElement()</code> 为每个 Widget 创建对应的 <strong>Element</strong>，形成 <strong>Element Tree</strong></li>
+<li>对于需要渲染的 Widget（<code>RenderObjectWidget</code> 子类），Element 调用 <code>createRenderObject()</code> 创建 <strong>RenderObject</strong>，形成 <strong>RenderObject Tree</strong></li>
+</ol>
+<p>当 UI 需要更新时：</p>
+<ol>
+<li>新的 Widget Tree 被创建</li>
+<li>Element 通过 <code>Widget.canUpdate()</code> 方法（比较 <code>runtimeType</code> 和 <code>key</code>）判断是否可以复用</li>
+<li>如果可以复用，只更新 RenderObject 的属性；如果不能复用，则销毁旧的 Element 和 RenderObject，创建新的</li>
+</ol>
+<h3 id="13-代码示例观察三棵树">1.3 代码示例：观察三棵树</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const TreeDemoApp());
+}
+
+class TreeDemoApp extends StatelessWidget {
+  const TreeDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('三棵树演示')),
+        body: const Center(
+          child: TreeDemoWidget(),
+        ),
+      ),
+    );
+  }
+}
+
+class TreeDemoWidget extends StatefulWidget {
+  const TreeDemoWidget({super.key});
+
+  @override
+  State&lt;TreeDemoWidget&gt; createState() =&gt; _TreeDemoWidgetState();
+}
+
+class _TreeDemoWidgetState extends State&lt;TreeDemoWidget&gt; {
+  Color _color = Colors.blue;
+  int _rebuildCount = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    _rebuildCount++;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // 这个 Container 对应了三棵树中各自的节点：
+        // Widget: Container（配置信息：颜色、尺寸）
+        // Element: StatelessElement（管理 Container 的生命周期）
+        // RenderObject: RenderDecoratedBox + RenderConstrainedBox（实际渲染）
+        Container(
+          width: 150,
+          height: 150,
+          decoration: BoxDecoration(
+            color: _color,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Center(
+            child: Text(
+              '重建次数: $_rebuildCount',
+              style: const TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+        ElevatedButton(
+          onPressed: () {
+            setState(() {
+              // 调用 setState 后，Widget Tree 会重建
+              // 但 Element Tree 会复用已有 Element（因为 runtimeType 和 key 没变）
+              // RenderObject 只更新变化的属性（颜色），而非重新创建
+              _color = _color == Colors.blue ? Colors.orange : Colors.blue;
+            });
+          },
+          child: const Text('切换颜色（触发重建）'),
+        ),
+        const SizedBox(height: 16),
+        // 通过 context（即当前 Element）可以观察树结构
+        ElevatedButton(
+          onPressed: () {
+            // 遍历 Element Tree，打印其中的 Widget 信息
+            _printElementTree(context);
+          },
+          child: const Text('打印 Element Tree 信息'),
+        ),
+      ],
+    );
+  }
+
+  void _printElementTree(BuildContext context) {
+    debugPrint('===== Element Tree 部分结构 =====');
+    // visitChildElements 可以遍历当前 Element 的子节点
+    context.visitChildElements((Element element) {
+      debugPrint('Element: ${element.runtimeType}');
+      debugPrint('  → Widget: ${element.widget.runtimeType}');
+      if (element is RenderObjectElement) {
+        debugPrint('  → RenderObject: ${element.renderObject.runtimeType}');
+      }
+      // 继续遍历子节点（只展开一层示意）
+      element.visitChildElements((child) {
+        debugPrint('  子 Element: ${child.runtimeType}');
+        debugPrint('    → Widget: ${child.widget.runtimeType}');
+      });
+    });
+    debugPrint('================================');
+  }
+}
+</code></pre>
+<h3 id="14-widget-的不可变性与高效重建">1.4 Widget 的不可变性与高效重建</h3>
+<p>一个容易让初学者困惑的问题是：<strong>Widget 频繁重建不会影响性能吗？</strong></p>
+<p>答案是：<strong>通常不会</strong>。原因在于：</p>
+<ul>
+<li>Widget 只是轻量级的配置对象（类似一个 Dart 类的实例），创建和销毁的成本极低</li>
+<li>真正昂贵的操作是布局和绘制，这些工作由 RenderObject 完成</li>
+<li>Element 充当了&quot;差异比较器&quot;的角色，只有属性真正变化时才会更新 RenderObject</li>
+</ul>
+<blockquote>
+<p><strong>最佳实践</strong>：尽量使用 <code>const</code> 构造函数声明 Widget。被 <code>const</code> 修饰的 Widget 在整个应用生命周期内只创建一次，并在重建时被直接复用，不会重复执行 <code>build</code> 方法。</p>
+</blockquote>
+<pre><code class="language-dart">// ✅ 推荐：使用 const，避免不必要的重建
+const Text('这段文字不会变化')
+
+// ❌ 不推荐：每次 build 都会创建新的 Text 实例
+Text('这段文字不会变化')
+</code></pre>
+<hr />
+<h2 id="2-statelesswidget-与-statefulwidget-的本质区别">2. StatelessWidget 与 StatefulWidget 的本质区别</h2>
+<h3 id="21-statelesswidget无状态组件">2.1 StatelessWidget：无状态组件</h3>
+<p>StatelessWidget 是一个<strong>不可变</strong>的组件。一旦创建，它的属性就不会改变。它只依赖传入的参数（构造函数的参数）和 <code>BuildContext</code> 来构建 UI。</p>
+<p><strong>核心特征</strong>：</p>
+<ul>
+<li>没有可变状态</li>
+<li><code>build</code> 方法的输出完全由构造函数参数和 <code>BuildContext</code> 决定</li>
+<li>当父组件重建并传入新参数时，StatelessWidget 也会重建</li>
+</ul>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+/// 一个自定义的用户信息卡片 —— 典型的 StatelessWidget 使用场景
+/// 它只负责展示传入的数据，自身不维护任何状态
+class UserProfileCard extends StatelessWidget {
+  final String name;
+  final String email;
+  final String avatarUrl;
+  final VoidCallback? onTap;
+
+  const UserProfileCard({
+    super.key,
+    required this.name,
+    required this.email,
+    required this.avatarUrl,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(avatarUrl),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      email,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: Colors.grey),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="22-statefulwidget有状态组件">2.2 StatefulWidget：有状态组件</h3>
+<p>StatefulWidget 是一个配合 <strong>State 对象</strong>使用的组件。Widget 本身仍然是不可变的，但它关联的 State 对象是<strong>可变且持久</strong>的。</p>
+<p><strong>核心机制</strong>：</p>
+<ul>
+<li><code>StatefulWidget</code> 本身只是配置，真正的状态存储在 <code>State&lt;T&gt;</code> 对象中</li>
+<li><code>State</code> 对象的生命周期绑定在 <code>Element</code> 上，而非 Widget 上</li>
+<li>当 Widget 重建时，Element 会复用已有的 State 对象，并调用 <code>didUpdateWidget</code></li>
+<li>通过 <code>setState()</code> 通知框架状态发生变化，触发 <code>build</code> 方法重新执行</li>
+</ul>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+/// 一个可交互的计时器组件 —— 典型的 StatefulWidget 使用场景
+/// 它需要维护内部状态（当前秒数、是否运行中）
+class StopwatchWidget extends StatefulWidget {
+  final String label;
+
+  const StopwatchWidget({super.key, this.label = '计时器'});
+
+  @override
+  State&lt;StopwatchWidget&gt; createState() =&gt; _StopwatchWidgetState();
+}
+
+class _StopwatchWidgetState extends State&lt;StopwatchWidget&gt; {
+  int _seconds = 0;
+  bool _isRunning = false;
+  late final Stopwatch _stopwatch;
+
+  // _ticker 用 Stream 模拟每秒触发
+  Stream&lt;int&gt;? _tickerStream;
+  // 用于取消订阅
+  Object? _subscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _stopwatch = Stopwatch();
+  }
+
+  void _startTimer() {
+    if (_isRunning) return;
+    setState(() =&gt; _isRunning = true);
+    _stopwatch.start();
+    // 使用 Stream.periodic 每秒更新一次
+    _tickerStream = Stream.periodic(
+      const Duration(seconds: 1),
+      (count) =&gt; count,
+    );
+    _subscription = _tickerStream!.listen((_) {
+      if (mounted) {
+        setState(() {
+          _seconds = _stopwatch.elapsed.inSeconds;
+        });
+      }
+    });
+  }
+
+  void _stopTimer() {
+    _stopwatch.stop();
+    (_subscription as dynamic)?.cancel();
+    setState(() =&gt; _isRunning = false);
+  }
+
+  void _resetTimer() {
+    _stopTimer();
+    _stopwatch.reset();
+    setState(() =&gt; _seconds = 0);
+  }
+
+  @override
+  void dispose() {
+    _stopTimer();
+    super.dispose();
+  }
+
+  String _formatTime(int totalSeconds) {
+    final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
+    final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // widget 属性可以访问 StatefulWidget 传入的参数
+            Text(widget.label, style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 16),
+            Text(
+              _formatTime(_seconds),
+              style: const TextStyle(
+                fontSize: 48,
+                fontWeight: FontWeight.w300,
+                fontFamily: 'monospace',
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: _isRunning ? _stopTimer : _startTimer,
+                  icon: Icon(_isRunning ? Icons.pause : Icons.play_arrow),
+                  label: Text(_isRunning ? '暂停' : '开始'),
+                ),
+                const SizedBox(width: 12),
+                OutlinedButton.icon(
+                  onPressed: _resetTimer,
+                  icon: const Icon(Icons.replay),
+                  label: const Text('重置'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="23-如何选择-statelesswidget-还是-statefulwidget">2.3 如何选择 StatelessWidget 还是 StatefulWidget？</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>选择</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>纯展示组件，不随用户交互改变</td>
+<td><code>StatelessWidget</code></td>
+<td>无需管理状态</td>
+</tr>
+<tr>
+<td>组件内部有需要随时间/交互变化的数据</td>
+<td><code>StatefulWidget</code></td>
+<td>需要 <code>setState</code> 触发重建</td>
+</tr>
+<tr>
+<td>组件依赖动画控制器</td>
+<td><code>StatefulWidget</code></td>
+<td>AnimationController 需要 <code>TickerProvider</code></td>
+</tr>
+<tr>
+<td>数据完全由外部管理（如状态管理库）</td>
+<td><code>StatelessWidget</code></td>
+<td>组件自身不持有状态</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意事项</strong>：不要因为&quot;可能以后需要状态&quot;就预先使用 StatefulWidget。遵循<strong>最小权限原则</strong>——能用 StatelessWidget 就用 StatelessWidget，需要时再重构为 StatefulWidget。IDE 通常提供快速重构工具。</p>
+</blockquote>
+<hr />
+<h2 id="3-widget-的生命周期">3. Widget 的生命周期</h2>
+<p>Widget 的生命周期主要体现在 <code>State</code> 对象上（因为 StatelessWidget 只有一个 <code>build</code> 方法，没有复杂的生命周期）。</p>
+<h3 id="31-完整的生命周期方法">3.1 完整的生命周期方法</h3>
+<pre><code>createState() → initState() → didChangeDependencies() → build()
+                                                           ↓
+                              [Widget 更新] → didUpdateWidget() → build()
+                                                           ↓
+                          [依赖变化] → didChangeDependencies() → build()
+                                                           ↓
+                              [停用] → deactivate() → [复用 或 dispose()]
+</code></pre>
+<p>各方法详解：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>调用时机</th>
+<th>常见用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>createState()</code></td>
+<td>StatefulWidget 首次插入树时</td>
+<td>创建 State 对象</td>
+</tr>
+<tr>
+<td><code>initState()</code></td>
+<td>State 对象创建后、build 之前调用一次</td>
+<td>初始化变量、订阅 Stream、创建 Controller</td>
+</tr>
+<tr>
+<td><code>didChangeDependencies()</code></td>
+<td>initState 之后、以及依赖的 InheritedWidget 变化时</td>
+<td>获取依赖（如 Theme.of、MediaQuery.of）</td>
+</tr>
+<tr>
+<td><code>build()</code></td>
+<td>每次需要重新构建 UI 时</td>
+<td>返回 Widget 树描述</td>
+</tr>
+<tr>
+<td><code>didUpdateWidget()</code></td>
+<td>父组件重建导致本 Widget 配置更新时</td>
+<td>对比新旧 widget 参数，做出相应调整</td>
+</tr>
+<tr>
+<td><code>deactivate()</code></td>
+<td>State 从树中移除时（可能临时）</td>
+<td>很少使用，用于清理与树相关的引用</td>
+</tr>
+<tr>
+<td><code>dispose()</code></td>
+<td>State 永久从树中移除时</td>
+<td>释放资源：取消订阅、关闭 Controller、释放动画</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-代码示例生命周期方法完整演示">3.2 代码示例：生命周期方法完整演示</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const LifecycleDemoApp());
+}
+
+class LifecycleDemoApp extends StatelessWidget {
+  const LifecycleDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        useMaterial3: true,
+      ),
+      home: const LifecycleHomePage(),
+    );
+  }
+}
+
+class LifecycleHomePage extends StatefulWidget {
+  const LifecycleHomePage({super.key});
+
+  @override
+  State&lt;LifecycleHomePage&gt; createState() =&gt; _LifecycleHomePageState();
+}
+
+class _LifecycleHomePageState extends State&lt;LifecycleHomePage&gt; {
+  bool _showChild = true;
+  int _counter = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('生命周期演示')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () =&gt; setState(() =&gt; _showChild = !_showChild),
+                  child: Text(_showChild ? '移除子组件' : '添加子组件'),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  onPressed: () =&gt; setState(() =&gt; _counter++),
+                  child: const Text('更新参数'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            if (_showChild)
+              LifecycleChildWidget(counter: _counter),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class LifecycleChildWidget extends StatefulWidget {
+  final int counter;
+
+  const LifecycleChildWidget({super.key, required this.counter});
+
+  @override
+  State&lt;LifecycleChildWidget&gt; createState() {
+    debugPrint('🔵 createState() —— 创建 State 对象');
+    return _LifecycleChildWidgetState();
+  }
+}
+
+class _LifecycleChildWidgetState extends State&lt;LifecycleChildWidget&gt; {
+  late TextEditingController _controller;
+  final List&lt;String&gt; _lifecycleLog = [];
+
+  void _log(String message) {
+    debugPrint(message);
+    // 在 initState 阶段不能调用 setState
+    if (mounted &amp;&amp; _lifecycleLog.isNotEmpty) {
+      setState(() =&gt; _lifecycleLog.add(message));
+    } else {
+      _lifecycleLog.add(message);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // ✅ 在此初始化控制器、订阅、一次性配置
+    _controller = TextEditingController(text: '初始文本');
+    _log('🟢 initState() —— 初始化资源，只调用一次');
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 在这里可以安全地使用 Theme.of(context)、MediaQuery.of(context) 等
+    final brightness = Theme.of(context).brightness;
+    _log('🟡 didChangeDependencies() —— 当前主题亮度: $brightness');
+  }
+
+  @override
+  void didUpdateWidget(covariant LifecycleChildWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 当父组件传入新参数时，对比新旧值做出响应
+    if (oldWidget.counter != widget.counter) {
+      _log('🟠 didUpdateWidget() —— counter: ${oldWidget.counter} → ${widget.counter}');
+    }
+  }
+
+  @override
+  void deactivate() {
+    debugPrint('🔴 deactivate() —— State 从树中暂时移除');
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    // ✅ 在此释放资源，防止内存泄漏
+    _controller.dispose();
+    debugPrint('⚫ dispose() —— 永久销毁，释放资源');
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _log('🔵 build() —— 构建 UI');
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '当前 counter: ${widget.counter}',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const Divider(),
+            const Text('生命周期日志:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            // 展示生命周期调用记录
+            Container(
+              height: 200,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: ListView.builder(
+                itemCount: _lifecycleLog.length,
+                itemBuilder: (context, index) {
+                  return Text(
+                    _lifecycleLog[index],
+                    style: const TextStyle(fontSize: 13, fontFamily: 'monospace'),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>运行后：</p>
+<ul>
+<li>点击&quot;更新参数&quot;→ 观察 <code>didUpdateWidget</code> 和 <code>build</code> 被调用</li>
+<li>点击&quot;移除子组件&quot;→ 在控制台观察 <code>deactivate</code> 和 <code>dispose</code> 被调用</li>
+<li>点击&quot;添加子组件&quot;→ 观察完整的 <code>createState → initState → didChangeDependencies → build</code> 流程</li>
+</ul>
+<h3 id="33-生命周期注意事项与最佳实践">3.3 生命周期注意事项与最佳实践</h3>
+<blockquote>
+<p><strong>注意事项 1</strong>：<code>initState()</code> 中<strong>不能</strong>使用 <code>context</code> 来访问 <code>InheritedWidget</code>（如 <code>Theme.of(context)</code>），因为此时组件尚未完全挂载到树中。应在 <code>didChangeDependencies()</code> 中执行此类操作。</p>
+</blockquote>
+<blockquote>
+<p><strong>注意事项 2</strong>：<code>build()</code> 方法可能被频繁调用，<strong>绝对不要</strong>在 <code>build</code> 中执行耗时操作、发起网络请求或创建 <code>Future/Stream</code>。这些应该在 <code>initState</code> 中完成。</p>
+</blockquote>
+<blockquote>
+<p><strong>最佳实践</strong>：<code>dispose()</code> 中必须释放所有资源。常见需要释放的资源：</p>
+<ul>
+<li><code>TextEditingController</code> / <code>ScrollController</code> / <code>AnimationController</code> → 调用 <code>.dispose()</code></li>
+<li><code>StreamSubscription</code> → 调用 <code>.cancel()</code></li>
+<li><code>Timer</code> → 调用 <code>.cancel()</code></li>
+<li><code>FocusNode</code> → 调用 <code>.dispose()</code></li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="4-buildcontext-的作用与使用场景">4. BuildContext 的作用与使用场景</h2>
+<h3 id="41-buildcontext-的本质">4.1 BuildContext 的本质</h3>
+<p><code>BuildContext</code> 是一个抽象接口，<strong>实际上就是 Element 对象本身</strong>。每个 Widget 的 <code>build</code> 方法都会接收一个 <code>BuildContext</code> 参数，它代表了该 Widget 在 Element Tree 中的位置。</p>
+<pre><code class="language-dart">// Flutter 源码中的定义（简化）
+abstract class Element implements BuildContext {
+  // Element 实现了 BuildContext 接口
+  // 所以 context 本质上就是 Element
+}
+</code></pre>
+<h3 id="42-buildcontext-的核心作用">4.2 BuildContext 的核心作用</h3>
+<p><strong>作用一：向上查找祖先 Widget 的数据</strong></p>
+<p>Flutter 中的 <code>InheritedWidget</code> 机制（如 <code>Theme</code>、<code>MediaQuery</code>、<code>Navigator</code>）依赖 BuildContext 来实现数据的&quot;向上查找&quot;。</p>
+<pre><code class="language-dart">// 通过 context 获取主题数据
+final theme = Theme.of(context);
+
+// 通过 context 获取屏幕尺寸信息
+final screenSize = MediaQuery.of(context).size;
+
+// 通过 context 获取导航器
+Navigator.of(context).push(...);
+
+// 通过 context 获取 Scaffold 的状态（用于打开 Drawer 等）
+Scaffold.of(context).openDrawer();
+</code></pre>
+<p><strong>作用二：确定 Widget 在树中的位置</strong></p>
+<pre><code class="language-dart">// 获取当前组件在屏幕上的精确位置和尺寸
+final RenderBox box = context.findRenderObject() as RenderBox;
+final Offset position = box.localToGlobal(Offset.zero);
+final Size size = box.size;
+</code></pre>
+<p><strong>作用三：遍历子树</strong></p>
+<pre><code class="language-dart">context.visitChildElements((Element element) {
+  // 遍历当前节点的子 Element
+});
+</code></pre>
+<h3 id="43-代码示例buildcontext-的实际应用">4.3 代码示例：BuildContext 的实际应用</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const BuildContextDemoApp());
+}
+
+class BuildContextDemoApp extends StatelessWidget {
+  const BuildContextDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.teal,
+        useMaterial3: true,
+      ),
+      home: const BuildContextDemoPage(),
+    );
+  }
+}
+
+class BuildContextDemoPage extends StatelessWidget {
+  const BuildContextDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('BuildContext 演示')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 演示1：通过 context 获取主题和屏幕信息
+            _ThemeInfoCard(),
+            const SizedBox(height: 16),
+            // 演示2：通过 context 显示 SnackBar
+            _SnackBarDemoCard(),
+            const SizedBox(height: 16),
+            // 演示3：通过 context 导航到新页面
+            _NavigationDemoCard(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ThemeInfoCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // 通过 context 获取主题信息
+    final theme = Theme.of(context);
+    // 通过 context 获取屏幕信息
+    final mediaQuery = MediaQuery.of(context);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('通过 BuildContext 获取的信息',
+                style: theme.textTheme.titleMedium),
+            const Divider(),
+            Text('主题主色: ${theme.colorScheme.primary}'),
+            Text('主题亮度: ${theme.brightness}'),
+            Text('屏幕宽度: ${mediaQuery.size.width.toStringAsFixed(1)}'),
+            Text('屏幕高度: ${mediaQuery.size.height.toStringAsFixed(1)}'),
+            Text('设备像素比: ${mediaQuery.devicePixelRatio}'),
+            Text('顶部安全区: ${mediaQuery.padding.top}'),
+            Text('文字缩放: ${mediaQuery.textScaler}'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SnackBarDemoCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: const Icon(Icons.message),
+        title: const Text('通过 context 显示 SnackBar'),
+        trailing: ElevatedButton(
+          onPressed: () {
+            // ScaffoldMessenger 通过 context 查找最近的 Scaffold
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('这条消息通过 BuildContext 定位到了 Scaffold'),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            );
+          },
+          child: const Text('显示'),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavigationDemoCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: const Icon(Icons.navigation),
+        title: const Text('通过 context 进行页面导航'),
+        trailing: ElevatedButton(
+          onPressed: () {
+            // Navigator 通过 context 查找最近的 NavigatorState
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (newContext) {
+                  // 注意：这里的 newContext 是新页面的 context
+                  // 它和上面的 context 处于不同的树位置
+                  return Scaffold(
+                    appBar: AppBar(title: const Text('新页面')),
+                    body: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('通过 Navigator.of(context) 导航到这里'),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () =&gt; Navigator.of(newContext).pop(),
+                            child: const Text('返回'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+          child: const Text('跳转'),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="44-buildcontext-的常见陷阱">4.4 BuildContext 的常见陷阱</h3>
+<p><strong>陷阱1：使用了错误的 context</strong></p>
+<pre><code class="language-dart">// ❌ 错误：Scaffold.of(context) 在这里找不到 Scaffold
+// 因为 context 对应的是 Scaffold 本身，而非 Scaffold 的子组件
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Center(
+      child: ElevatedButton(
+        onPressed: () {
+          // 这个 context 是 Scaffold 的 context，往上找不到 Scaffold
+          Scaffold.of(context).openDrawer(); // 报错！
+        },
+        child: const Text('打开 Drawer'),
+      ),
+    ),
+  );
+}
+
+// ✅ 正确做法：使用 Builder 获取 Scaffold 子树的 context
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    drawer: const Drawer(child: Center(child: Text('抽屉内容'))),
+    body: Center(
+      child: Builder(
+        builder: (scaffoldContext) {
+          // scaffoldContext 是 Scaffold 的子节点，可以向上找到 Scaffold
+          return ElevatedButton(
+            onPressed: () {
+              Scaffold.of(scaffoldContext).openDrawer(); // 正常工作
+            },
+            child: const Text('打开 Drawer'),
+          );
+        },
+      ),
+    ),
+  );
+}
+</code></pre>
+<p><strong>陷阱2：在异步回调中使用过期的 context</strong></p>
+<pre><code class="language-dart">// ❌ 危险：异步操作完成后，Widget 可能已被销毁
+onPressed: () async {
+  final data = await fetchData();
+  Navigator.of(context).push(...); // context 可能已无效
+}
+
+// ✅ 安全做法：在使用前检查 mounted
+onPressed: () async {
+  final data = await fetchData();
+  if (!context.mounted) return; // Flutter 3.7+ 支持
+  Navigator.of(context).push(...);
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：始终记住 BuildContext 代表的是 Widget 在树中的<strong>位置</strong>。<code>.of(context)</code> 方法会从该位置<strong>向上查找</strong>。如果你需要的对象在 context 的<strong>下方</strong>或<strong>同级</strong>，你将找不到它。</p>
+</blockquote>
+<hr />
+<h2 id="5-key-的种类与使用时机">5. Key 的种类与使用时机</h2>
+<h3 id="51-为什么需要-key">5.1 为什么需要 Key？</h3>
+<p>Flutter 在更新 Widget Tree 时，会比较新旧 Widget 来决定是否复用 Element。默认的比较策略是：<strong>相同的 <code>runtimeType</code> 且 <code>key</code> 相同（或都为 null）时复用</strong>。</p>
+<p>当列表中的元素发生<strong>位置变化</strong>（如排序、删除、插入）时，仅靠 <code>runtimeType</code> 无法正确匹配新旧 Widget，可能导致状态错乱。此时就需要 Key 来帮助 Flutter 正确识别每个 Widget。</p>
+<h3 id="52-不使用-key-时的问题演示">5.2 不使用 Key 时的问题演示</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const KeyProblemDemoApp());
+}
+
+class KeyProblemDemoApp extends StatelessWidget {
+  const KeyProblemDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.purple, useMaterial3: true),
+      home: const KeyProblemPage(),
+    );
+  }
+}
+
+class KeyProblemPage extends StatefulWidget {
+  const KeyProblemPage({super.key});
+
+  @override
+  State&lt;KeyProblemPage&gt; createState() =&gt; _KeyProblemPageState();
+}
+
+class _KeyProblemPageState extends State&lt;KeyProblemPage&gt; {
+  List&lt;String&gt; items = ['苹果', '香蕉', '橙子', '葡萄'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Key 问题演示（无 Key）')),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  // 移除第一个元素
+                  items.removeAt(0);
+                });
+              },
+              child: const Text('移除第一项'),
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              children: items.map((item) {
+                // ❌ 没有 Key，删除第一项后，状态可能对应到错误的元素
+                return ColorfulListItem(title: item);
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 每个列表项有自己的内部状态（随机颜色）
+class ColorfulListItem extends StatefulWidget {
+  final String title;
+
+  const ColorfulListItem({super.key, required this.title});
+
+  @override
+  State&lt;ColorfulListItem&gt; createState() =&gt; _ColorfulListItemState();
+}
+
+class _ColorfulListItemState extends State&lt;ColorfulListItem&gt; {
+  // 每个实例在 initState 时随机生成一种颜色
+  late final Color _color;
+
+  @override
+  void initState() {
+    super.initState();
+    // 模拟一个与此列表项绑定的内部状态
+    _color = Colors.primaries[widget.title.hashCode % Colors.primaries.length];
+    debugPrint('initState: ${widget.title}, 颜色: $_color');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: _color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: _color),
+      ),
+      child: ListTile(
+        leading: CircleAvatar(backgroundColor: _color),
+        title: Text(widget.title),
+        subtitle: Text('颜色状态: ${_color.value.toRadixString(16)}'),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>运行上面的代码，点击&quot;移除第一项&quot;后，你会发现：列表项的文字（由 <code>widget.title</code> 决定）更新了，但<strong>颜色没有跟着变</strong>——因为 Element 被错误复用了，<code>initState</code> 不会再次调用。</p>
+<h3 id="53-key-的种类">5.3 Key 的种类</h3>
+<p>Flutter 提供了多种 Key 类型，适用于不同场景：</p>
+<h4 id="valuekey--基于值的-key">ValueKey —— 基于值的 Key</h4>
+<p>当列表项有一个<strong>唯一的业务标识</strong>（如 ID、名称）时使用。</p>
+<pre><code class="language-dart">// 使用 ValueKey 解决上面的排序问题
+ListView(
+  children: items.map((item) {
+    return ColorfulListItem(
+      key: ValueKey(item), // 使用水果名称作为 Key
+      title: item,
+    );
+  }).toList(),
+)
+</code></pre>
+<h4 id="objectkey--基于对象引用的-key">ObjectKey —— 基于对象引用的 Key</h4>
+<p>当列表项对应一个<strong>数据对象</strong>，且对象本身可作为唯一标识时使用。</p>
+<pre><code class="language-dart">class User {
+  final int id;
+  final String name;
+  User(this.id, this.name);
+}
+
+// ObjectKey 基于对象的 == 运算符进行比较
+ListView(
+  children: users.map((user) {
+    return UserListTile(
+      key: ObjectKey(user), // 使用整个 User 对象作为 Key
+      user: user,
+    );
+  }).toList(),
+)
+</code></pre>
+<h4 id="uniquekey--始终唯一的-key">UniqueKey —— 始终唯一的 Key</h4>
+<p><code>UniqueKey</code> 每次创建都生成一个新的唯一值。使用它意味着<strong>告诉 Flutter 永远不要复用这个 Element</strong>。</p>
+<pre><code class="language-dart">// UniqueKey 适用于需要强制重建的场景
+AnimatedSwitcher(
+  duration: const Duration(milliseconds: 300),
+  child: Text(
+    '$_counter',
+    // 每次 _counter 变化时，都生成新的 UniqueKey
+    // 这样 AnimatedSwitcher 才能识别为&quot;不同的子组件&quot;并播放切换动画
+    key: ValueKey(_counter), // 这里用 ValueKey 更合适
+    style: const TextStyle(fontSize: 48),
+  ),
+)
+
+// UniqueKey 更适合&quot;确保每次都重新创建&quot;的场景
+Widget build(BuildContext context) {
+  return MyExpensiveWidget(
+    key: UniqueKey(), // 强制每次 build 都销毁旧的、创建新的
+  );
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>UniqueKey</code> 放在 <code>build</code> 方法中会导致每次重建都创建新 Element，慎用！</p>
+</blockquote>
+<h4 id="globalkey--全局唯一且可跨树访问的-key">GlobalKey —— 全局唯一且可跨树访问的 Key</h4>
+<p><code>GlobalKey</code> 是功能最强大也最&quot;重量级&quot;的 Key。它可以：</p>
+<ol>
+<li>在整个应用中唯一标识一个 Widget</li>
+<li>访问对应 Element 的 <code>State</code> 对象</li>
+<li>访问对应的 <code>RenderObject</code>（获取尺寸、位置等）</li>
+<li>实现 Widget 在不同父节点间的&quot;移动&quot;（保留状态）</li>
+</ol>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const GlobalKeyDemoApp());
+}
+
+class GlobalKeyDemoApp extends StatelessWidget {
+  const GlobalKeyDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.deepOrange, useMaterial3: true),
+      home: const GlobalKeyDemoPage(),
+    );
+  }
+}
+
+class GlobalKeyDemoPage extends StatefulWidget {
+  const GlobalKeyDemoPage({super.key});
+
+  @override
+  State&lt;GlobalKeyDemoPage&gt; createState() =&gt; _GlobalKeyDemoPageState();
+}
+
+class _GlobalKeyDemoPageState extends State&lt;GlobalKeyDemoPage&gt; {
+  // 创建 GlobalKey 用于访问子组件的 State
+  final GlobalKey&lt;_CounterWidgetState&gt; _counterKey = GlobalKey();
+
+  // 创建 GlobalKey 用于表单验证
+  final GlobalKey&lt;FormState&gt; _formKey = GlobalKey();
+
+  final TextEditingController _nameController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('GlobalKey 演示')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 场景1：通过 GlobalKey 从父组件访问子组件的 State
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('场景1：访问子组件的 State',
+                        style: Theme.of(context).textTheme.titleMedium),
+                    const SizedBox(height: 12),
+                    CounterWidget(key: _counterKey),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            // 通过 GlobalKey 从外部调用子组件的方法
+                            _counterKey.currentState?.increment();
+                          },
+                          child: const Text('从父组件调用 +1'),
+                        ),
+                        const SizedBox(width: 8),
+                        OutlinedButton(
+                          onPressed: () {
+                            // 通过 GlobalKey 获取子组件的渲染信息
+                            final renderBox = _counterKey.currentContext
+                                ?.findRenderObject() as RenderBox?;
+                            if (renderBox != null) {
+                              final size = renderBox.size;
+                              final position =
+                                  renderBox.localToGlobal(Offset.zero);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '尺寸: $size, 位置: $position',
+                                  ),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            }
+                          },
+                          child: const Text('获取渲染信息'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // 场景2：使用 GlobalKey 进行表单验证
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('场景2：表单验证',
+                          style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                          labelText: '用户名',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '用户名不能为空';
+                          }
+                          if (value.length &lt; 3) {
+                            return '用户名至少3个字符';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton(
+                        onPressed: () {
+                          // 通过 GlobalKey 访问 FormState 进行统一验证
+                          if (_formKey.currentState!.validate()) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('验证通过！'),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
+                        },
+                        child: const Text('提交'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CounterWidget extends StatefulWidget {
+  const CounterWidget({super.key});
+
+  @override
+  State&lt;CounterWidget&gt; createState() =&gt; _CounterWidgetState();
+}
+
+class _CounterWidgetState extends State&lt;CounterWidget&gt; {
+  int _count = 0;
+
+  // 对外暴露的方法，通过 GlobalKey 可以调用
+  void increment() {
+    setState(() =&gt; _count++);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('计数器: ', style: TextStyle(fontSize: 18)),
+          Text(
+            '$_count',
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(width: 12),
+          IconButton(
+            onPressed: () =&gt; setState(() =&gt; _count++),
+            icon: const Icon(Icons.add_circle),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="54-key-使用总结">5.4 Key 使用总结</h3>
+<table>
+<thead>
+<tr>
+<th>Key 类型</th>
+<th>使用场景</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ValueKey</code></td>
+<td>列表项有唯一业务值（ID、名称等）</td>
+<td><code>ValueKey(user.id)</code></td>
+</tr>
+<tr>
+<td><code>ObjectKey</code></td>
+<td>列表项绑定唯一数据对象</td>
+<td><code>ObjectKey(user)</code></td>
+</tr>
+<tr>
+<td><code>UniqueKey</code></td>
+<td>需要强制 Widget 每次都重新创建</td>
+<td>动画切换、强制刷新</td>
+</tr>
+<tr>
+<td><code>GlobalKey</code></td>
+<td>需要跨组件访问 State 或 RenderObject</td>
+<td>表单验证、获取组件尺寸</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li><strong>大部分时候不需要 Key</strong>。只有在列表元素可能改变顺序、新增或删除，并且列表项带有自身状态时，才需要显式指定 Key</li>
+<li>优先使用 <code>ValueKey</code> 或 <code>ObjectKey</code>，它们是轻量级的</li>
+<li><code>GlobalKey</code> 成本较高（需要全局注册表维护），不要在 <code>build</code> 方法中频繁创建，应存储为类成员变量</li>
+<li><strong>绝对不要</strong>在 <code>build</code> 方法内部 <code>new GlobalKey()</code>，否则每次重建都会创建新的 GlobalKey，导致 State 丢失</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="本课小结">本课小结</h2>
+<p>本课系统讲解了 Flutter Widget 体系的五个核心知识点：</p>
+<ol>
+<li>
+<p><strong>三棵树架构</strong>：Widget Tree 描述配置、Element Tree 管理生命周期与复用、RenderObject Tree 执行布局与绘制。Widget 的频繁重建是安全且廉价的，因为 Element 层做了智能的差异复用。</p>
+</li>
+<li>
+<p><strong>StatelessWidget vs StatefulWidget</strong>：本质区别在于是否需要维护可变状态。StatelessWidget 适合纯展示组件，StatefulWidget 的状态存储在 State 对象中，通过 <code>setState</code> 触发 UI 更新。</p>
+</li>
+<li>
+<p><strong>生命周期</strong>：<code>initState</code>（初始化）→ <code>didChangeDependencies</code>（依赖变化）→ <code>build</code>（构建 UI）→ <code>didUpdateWidget</code>（参数更新）→ <code>deactivate</code>（停用）→ <code>dispose</code>（销毁）。资源初始化放 <code>initState</code>，资源释放放 <code>dispose</code>。</p>
+</li>
+<li>
+<p><strong>BuildContext</strong>：本质是 Element 对象的引用，代表 Widget 在树中的位置。所有 <code>.of(context)</code> 方法都是从该位置<strong>向上查找</strong>。注意使用正确的 context，异步回调中要检查 <code>mounted</code>。</p>
+</li>
+<li>
+<p><strong>Key 系统</strong>：帮助 Flutter 在 Widget 更新时正确匹配新旧 Widget。<code>ValueKey</code> 和 <code>ObjectKey</code> 用于列表项标识，<code>UniqueKey</code> 用于强制重建，<code>GlobalKey</code> 用于跨组件访问 State。</p>
+</li>
+</ol>
+<hr />
+<h2 id="课后练习">课后练习</h2>
+<h3 id="练习1观察三棵树基础">练习1：观察三棵树（基础）</h3>
+<p>创建一个页面，包含一个 <code>Container</code> 包裹的 <code>Text</code>。使用 <code>context.visitChildElements</code> 递归遍历并打印完整的 Element Tree 结构（包括每个 Element 的 runtimeType 和对应的 Widget runtimeType）。</p>
+<h3 id="练习2生命周期跟踪器中级">练习2：生命周期跟踪器（中级）</h3>
+<p>创建一个 <code>LifecycleTracker</code> 组件，在所有生命周期方法中记录调用日志（包含时间戳），并在 UI 上以可滚动列表展示。父组件提供按钮来触发以下操作：</p>
+<ul>
+<li>修改传入参数（观察 <code>didUpdateWidget</code>）</li>
+<li>切换主题（观察 <code>didChangeDependencies</code>）</li>
+<li>移除并重新添加组件（观察完整的创建和销毁流程）</li>
+</ul>
+<h3 id="练习3key-实战--可排序列表中级">练习3：Key 实战 —— 可排序列表（中级）</h3>
+<p>创建一个待办事项列表，每个列表项包含：</p>
+<ul>
+<li>一个文字标题</li>
+<li>一个 <code>Checkbox</code>（选中/未选中状态存储在列表项的 State 中）</li>
+<li>一个随机生成的背景色（在 <code>initState</code> 中生成）</li>
+</ul>
+<p>提供&quot;随机排序&quot;和&quot;删除第一项&quot;按钮。分别在<strong>有 Key</strong> 和<strong>无 Key</strong> 两种情况下测试，观察 Checkbox 状态和颜色是否跟随正确的数据项移动。</p>
+<h3 id="练习4globalkey-高级应用进阶">练习4：GlobalKey 高级应用（进阶）</h3>
+<p>实现一个多步骤表单：</p>
+<ul>
+<li>使用 <code>GlobalKey&lt;FormState&gt;</code> 管理每一步的表单验证</li>
+<li>使用 <code>GlobalKey&lt;ScaffoldState&gt;</code>（或 <code>ScaffoldMessenger</code>）显示验证结果</li>
+<li>用一个 <code>GlobalKey</code> 包裹某个子组件，从父组件获取其渲染后的尺寸（<code>RenderBox.size</code>）并展示在界面上</li>
+</ul>
+<h3 id="练习5综合思考题">练习5：综合思考题</h3>
+<p>回答以下问题（建议查阅源码验证）：</p>
+<ol>
+<li>为什么 <code>const</code> 修饰的 Widget 不会触发子树重建？从 Element 的 <code>updateChild</code> 方法角度解释。</li>
+<li><code>StatefulWidget</code> 的 <code>createState()</code> 在什么时候会被重复调用？给出一个具体场景。</li>
+<li>如果把 <code>GlobalKey</code> 放在 <code>build</code> 方法中创建（<code>GlobalKey()</code> 每次 build 都 new 一个新的），会发生什么？为什么？</li>
+</ol>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：<a href="lesson02_text_widgets.md">第02课 文本组件</a> —— 深入学习 Text、RichText、SelectableText 等文本展示组件的各种用法与样式定制技巧。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

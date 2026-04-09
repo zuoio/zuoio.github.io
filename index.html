@@ -1,7 +1,1193 @@
-<html>
-    <head></head>
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Blog</title>
+        <style>
+            /* ===== Theme Tokens ===== */
+            :root[data-theme="light"] {
+                --bg: #ffffff;
+                --bg-secondary: #f7f6f3;
+                --bg-hover: #efefef;
+                --text: #37352f;
+                --text-secondary: #6b6b6b;
+                --text-tertiary: #9b9a97;
+                --text-link: #2383e2;
+                --border: #e3e2de;
+                --border-light: #eeedea;
+                --toggle-bg: #e8e7e4;
+                --toggle-knob: #fff;
+            }
+
+            :root[data-theme="dark"] {
+                --bg: #191919;
+                --bg-secondary: #202020;
+                --bg-hover: #2c2c2c;
+                --text: #e6e6e4;
+                --text-secondary: #9b9b9b;
+                --text-tertiary: #6b6b6b;
+                --text-link: #529cca;
+                --border: #333;
+                --border-light: #2a2a2a;
+                --toggle-bg: #393939;
+                --toggle-knob: #191919;
+            }
+
+            *,
+            *::before,
+            *::after {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family:
+                    ui-sans-serif,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    Helvetica,
+                    "Noto Sans SC",
+                    "PingFang SC",
+                    "Microsoft YaHei",
+                    sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                line-height: 1.6;
+                -webkit-font-smoothing: antialiased;
+                transition:
+                    background 0.2s,
+                    color 0.2s;
+            }
+
+            /* ===== Top bar ===== */
+            .topbar {
+                position: sticky;
+                top: 0;
+                z-index: 50;
+                background: var(--bg);
+                border-bottom: 1px solid var(--border-light);
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                padding: 8px 28px;
+                transition: background 0.2s;
+            }
+
+            .toggle {
+                width: 38px;
+                height: 20px;
+                border-radius: 10px;
+                background: var(--toggle-bg);
+                border: none;
+                cursor: pointer;
+                position: relative;
+                flex-shrink: 0;
+                transition: background 0.2s;
+            }
+
+            .toggle::after {
+                content: "";
+                position: absolute;
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                background: var(--toggle-knob);
+                top: 3px;
+                left: 3px;
+                transition: transform 0.25s;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+            }
+
+            [data-theme="dark"] .toggle::after {
+                transform: translateX(18px);
+            }
+
+            .toggle .ic {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 10px;
+                line-height: 1;
+            }
+
+            .toggle .ic-s {
+                left: 4px;
+            }
+
+            .toggle .ic-m {
+                right: 4px;
+            }
+
+            /* ===== Two-column layout ===== */
+            .page {
+                max-width: 1060px;
+                margin: 0 auto;
+                display: flex;
+                gap: 48px;
+                padding: 40px 32px 100px;
+                align-items: flex-start;
+            }
+
+            /* --- Left column --- */
+            .left {
+                width: 220px;
+                flex-shrink: 0;
+                position: sticky;
+                top: 56px;
+            }
+
+            .profile {
+                text-align: center;
+                padding-bottom: 20px;
+                margin-bottom: 20px;
+                border-bottom: 1px solid var(--border-light);
+            }
+
+            .avatar {
+                width: 68px;
+                height: 68px;
+                border-radius: 50%;
+                object-fit: cover;
+                margin-bottom: 10px;
+                border: 2px solid var(--border-light);
+            }
+
+            .profile .name {
+                font-size: 0.93rem;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .profile .bio {
+                font-size: 0.8rem;
+                color: var(--text-secondary);
+                line-height: 1.5;
+                margin-bottom: 12px;
+            }
+
+            .gh-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 4px 14px;
+                border-radius: 6px;
+                border: 1px solid var(--border);
+                background: var(--bg);
+                color: var(--text-secondary);
+                font-size: 0.78rem;
+                text-decoration: none;
+                transition:
+                    background 0.15s,
+                    color 0.15s;
+            }
+
+            .gh-btn:hover {
+                background: var(--bg-hover);
+                color: var(--text);
+            }
+
+            .gh-btn svg {
+                width: 15px;
+                height: 15px;
+                fill: currentColor;
+            }
+
+            /* outline */
+            .outline-title {
+                font-size: 0.7rem;
+                font-weight: 600;
+                color: var(--text-tertiary);
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                padding: 0 0 6px;
+            }
+
+            .outline-tree {
+                list-style: none;
+            }
+
+            .outline-tree ul {
+                list-style: none;
+                padding-left: 14px;
+            }
+
+            .outline-tree li {
+                margin-bottom: 1px;
+            }
+
+            .outline-tree .ol-row {
+                display: flex;
+                align-items: center;
+                gap: 2px;
+            }
+
+            .outline-tree .ol-arrow {
+                width: 18px;
+                height: 18px;
+                line-height: 18px;
+                text-align: center;
+                font-size: 0.65rem;
+                color: var(--text-tertiary);
+                cursor: pointer;
+                border-radius: 4px;
+                border: none;
+                background: none;
+                flex-shrink: 0;
+                transition:
+                    transform 0.2s,
+                    background 0.12s;
+            }
+
+            .outline-tree .ol-arrow:hover {
+                background: var(--bg-hover);
+            }
+
+            .outline-tree .ol-arrow.collapsed {
+                transform: rotate(-90deg);
+            }
+
+            .outline-tree a {
+                display: block;
+                padding: 4px 6px;
+                border-radius: 5px;
+                font-size: 0.83rem;
+                color: var(--text-secondary);
+                text-decoration: none;
+                transition:
+                    background 0.12s,
+                    color 0.12s;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                flex: 1;
+                min-width: 0;
+            }
+
+            .outline-tree a:hover {
+                background: var(--bg-hover);
+                color: var(--text);
+            }
+
+            .outline-tree a.active {
+                background: var(--bg-secondary);
+                color: var(--text);
+                font-weight: 500;
+            }
+
+            .outline-tree > li > .ol-row > a {
+                font-weight: 600;
+                font-size: 0.85rem;
+            }
+
+            /* --- Right column --- */
+            .right {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .right h1 {
+                font-size: 2rem;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                margin-bottom: 4px;
+            }
+
+            .right .subtitle {
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+                margin-bottom: 32px;
+            }
+
+            /* ===== Tree ===== */
+            .tree {
+                list-style: none;
+            }
+
+            .tree-node {
+                margin-bottom: 2px;
+            }
+
+            .tree-toggle {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                width: 100%;
+                padding: 6px 8px;
+                border: none;
+                border-radius: 6px;
+                background: none;
+                color: var(--text);
+                font: inherit;
+                font-size: 0.93rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.12s;
+                text-align: left;
+            }
+
+            .tree-toggle:hover {
+                background: var(--bg-hover);
+            }
+
+            .tree-toggle .arrow {
+                display: inline-block;
+                width: 18px;
+                height: 18px;
+                line-height: 18px;
+                text-align: center;
+                font-size: 0.7rem;
+                color: var(--text-tertiary);
+                transition: transform 0.2s;
+                flex-shrink: 0;
+                border-radius: 4px;
+            }
+
+            .tree-toggle:hover .arrow {
+                background: var(--bg-secondary);
+            }
+
+            .tree-toggle .arrow.collapsed {
+                transform: rotate(-90deg);
+            }
+
+            .tree-children {
+                list-style: none;
+                margin: 0;
+                padding-left: 18px;
+            }
+
+            .tree-children .tree-toggle {
+                font-weight: 500;
+                font-size: 0.9rem;
+            }
+
+            .tree-children .tree-children .tree-toggle {
+                font-size: 0.88rem;
+            }
+
+            .tree-leaf {
+                display: block;
+                padding: 5px 8px 5px 32px;
+                border-radius: 6px;
+                font-size: 0.88rem;
+                color: var(--text-secondary);
+                text-decoration: none;
+                transition:
+                    background 0.12s,
+                    color 0.12s;
+            }
+
+            .tree-leaf:hover {
+                background: var(--bg-hover);
+                color: var(--text);
+            }
+
+            .tree-leaf::before {
+                content: "";
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--border);
+                margin-right: 8px;
+                vertical-align: middle;
+                position: relative;
+                top: -1px;
+            }
+
+            .tree > .tree-node > .tree-toggle {
+                font-size: 1rem;
+                padding: 8px 8px;
+                margin-top: 20px;
+            }
+
+            .tree > .tree-node:first-child > .tree-toggle {
+                margin-top: 0;
+            }
+
+            /* ===== Mobile ===== */
+            @media (max-width: 780px) {
+                .page {
+                    flex-direction: column;
+                    gap: 28px;
+                    padding: 28px 20px 80px;
+                }
+
+                .left {
+                    width: 100%;
+                    position: static;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .left .outline {
+                    width: 100%;
+                }
+
+                .right h1 {
+                    font-size: 1.6rem;
+                }
+            }
+        </style>
+    </head>
     <body>
-        <h1>Hello Blog</h1>
-        <p>这是我的第一个博客</p>
+        <div class="topbar">
+            <button class="toggle" onclick="toggleTheme()">
+                <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+            </button>
+        </div>
+
+        <div class="page">
+            <!-- Left: Profile + Outline -->
+            <div class="left">
+                <div class="profile">
+                    <img
+                        class="avatar"
+                        src="./static/avatar.jpg"
+                        alt="avatar"
+                    />
+                    <div class="name">ZuoIo</div>
+                    <p class="bio">写代码是手段，理解系统才是目的。</p>
+                    <a
+                        class="gh-btn"
+                        href="https://github.com/zuoio"
+                        target="_blank"
+                    >
+                        <svg viewBox="0 0 16 16">
+                            <path
+                                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+                            />
+                        </svg>
+                        GitHub
+                    </a>
+                </div>
+
+                <div class="outline">
+                    <div class="outline-title">分类</div>
+                    <ul class="outline-tree" id="outlineTree">
+                        <!-- JS auto-generates -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right: Articles -->
+            <div class="right">
+                <h1>Blog</h1>
+                <p class="subtitle">所有文章</p>
+
+                <ul class="tree" id="tree">
+                    <li class="tree-node" id="课程">
+                        <button type="button" class="tree-toggle">
+                            <span class="arrow">▼</span>课程
+                        </button>
+                        <ul class="tree-children">
+                            <li
+                                class="tree-node"
+                                id="MongoDB 与 Spring Boot 实战课程"
+                            >
+                                <button type="button" class="tree-toggle">
+                                    <span class="arrow">▼</span>MongoDB 与
+                                    Spring Boot 实战课程
+                                </button>
+                                <ul class="tree-children">
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson1.html"
+                                            >第01章 初识 MongoDB</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson2.html"
+                                            >第02章 环境搭建</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson3.html"
+                                            >第03章 文档的 CRUD 操作（Shell
+                                            篇）</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson4.html"
+                                            >第04章 Spring Boot 集成 MongoDB</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson5.html"
+                                            >第05章 MongoTemplate 详解</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson6.html"
+                                            >第06章 索引基础</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson7.html"
+                                            >第07章 聚合管道（Aggregation
+                                            Pipeline）</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson8.html"
+                                            >第08章 文档模型设计</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson9.html"
+                                            >第09章 事务与数据一致性</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson10.html"
+                                            >第10章 高级索引与查询优化</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson11.html"
+                                            >第11章 Change Streams 与实时数据</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson12.html"
+                                            >第12章 GridFS 文件存储</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson13.html"
+                                            >第13章 安全与运维基础</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson14.html"
+                                            >第14章
+                                            实战项目：内容管理平台（CMS）</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_database_mongodb\lesson15.html"
+                                            >附录：速查表与学习资源</a
+                                        >
+                                    </li>
+                                </ul>
+                            </li>
+                            <li
+                                class="tree-node"
+                                id="Flutter Material Design 系统学习课程"
+                            >
+                                <button type="button" class="tree-toggle">
+                                    <span class="arrow">▼</span>Flutter Material
+                                    Design 系统学习课程
+                                </button>
+                                <ul class="tree-children">
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_material_ui\lesson1.html"
+                                            >第01课 Material Design 3
+                                            设计体系总览</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_material_ui\lesson2.html"
+                                            >第02课 颜色系统 - ColorScheme
+                                            深入</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_material_ui\lesson3.html"
+                                            >第03课 排版系统 - TextTheme
+                                            与字体</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_material_ui\lesson4.html"
+                                            >第04课 形状系统与 Elevation</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_material_ui\lesson5.html"
+                                            >第05课 WidgetState
+                                            与交互状态管理</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_material_ui\lesson6.html"
+                                            >第06课 组件主题批量定制</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_material_ui\lesson7.html"
+                                            >第07课 Material 动效规范</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_material_ui\lesson8.html"
+                                            >第08课 自适应布局与跨平台
+                                            Material</a
+                                        >
+                                    </li>
+                                </ul>
+                            </li>
+                            <li
+                                class="tree-node"
+                                id="Flutter 常用组件系统学习课程"
+                            >
+                                <button type="button" class="tree-toggle">
+                                    <span class="arrow">▼</span>Flutter
+                                    常用组件系统学习课程
+                                </button>
+                                <ul class="tree-children">
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson1.html"
+                                            >第01课 Widget 体系与基础概念</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson2.html"
+                                            >第02课 文本组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson3.html"
+                                            >第03课 按钮组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson4.html"
+                                            >第04课 图片与图标组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson5.html"
+                                            >第05课 基础容器组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson6.html"
+                                            >第06课 线性布局 - Row 与 Column</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson7.html"
+                                            >第07课 层叠布局 - Stack 与定位</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson8.html"
+                                            >第08课 弹性布局与流式布局</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson9.html"
+                                            >第09课 约束与尺寸控制组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson10.html"
+                                            >第10课 Scaffold 页面脚手架</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson11.html"
+                                            >第11课 Tab 导航与页面切换</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson12.html"
+                                            >第12课 列表与滚动组件（基础篇）</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson13.html"
+                                            >第13课 网格与高级滚动组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson14.html"
+                                            >第14课 输入组件与表单</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson15.html"
+                                            >第15课 选择类组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson16.html"
+                                            >第16课 信息展示组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson17.html"
+                                            >第17课 对话框与弹出层组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson18.html"
+                                            >第18课 手势与交互组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson19.html"
+                                            >第19课 装饰与裁剪变换组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson20.html"
+                                            >第20课 隐式动画组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson21.html"
+                                            >第21课 显式动画组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson22.html"
+                                            >第22课 异步 UI 组件</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson23.html"
+                                            >第23课 自定义绘制 - CustomPaint</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson24.html"
+                                            >第24课 主题与样式系统</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_flutter_widget\lesson25.html"
+                                            >第25课 综合实战 -
+                                            构建完整应用页面</a
+                                        >
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="tree-node" id="Java IO 深入学习课程">
+                                <button type="button" class="tree-toggle">
+                                    <span class="arrow">▼</span>Java IO
+                                    深入学习课程
+                                </button>
+                                <ul class="tree-children">
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_io\lesson1.html"
+                                            >第一章：Java 传统 IO
+                                            体系回顾与深入</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_io\lesson2.html"
+                                            >第二章：Unix IO
+                                            模型——理解一切的理论基础</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_io\lesson3.html"
+                                            >第三章：Java BIO
+                                            详解——从阻塞说起</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_io\lesson4.html"
+                                            >第四章：Java NIO
+                                            详解——非阻塞的革命</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_io\lesson5.html"
+                                            >第五章：Java AIO
+                                            详解——真正的异步</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_io\lesson6.html"
+                                            >第六章：BIO vs NIO vs AIO
+                                            全面对比（面试核心章节）</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_io\lesson7.html"
+                                            >第七章：零拷贝——高性能 IO
+                                            的秘密武器</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_io\lesson8.html"
+                                            >第八章：Netty 入门——为什么不直接用
+                                            NIO？</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_io\lesson9.html"
+                                            >第九章：面试实战专题</a
+                                        >
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="tree-node" id="MyBatis 系统课程">
+                                <button type="button" class="tree-toggle">
+                                    <span class="arrow">▼</span>MyBatis 系统课程
+                                </button>
+                                <ul class="tree-children">
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson1.html"
+                                            >第一章 MyBatis 概述与环境搭建 💡</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson2.html"
+                                            >第二章 全局配置文件
+                                            mybatis-config.xml 📖</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson3.html"
+                                            >第三章 Mapper XML 映射文件 ⭐</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson4.html"
+                                            >第四章 动态 SQL ⭐</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson5.html"
+                                            >第五章 ResultMap 高级映射 ⭐</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson6.html"
+                                            >第六章 注解开发 📖</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson7.html"
+                                            >第七章 缓存机制 ⭐</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson8.html"
+                                            >第八章 插件（拦截器）机制 📖</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson9.html"
+                                            >第九章 TypeHandler 与类型体系 📖</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson10.html"
+                                            >第十章 Spring / Spring Boot 整合
+                                            ⭐</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson11.html"
+                                            >第十一章 MyBatis-Plus 增强框架
+                                            ⭐</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson12.html"
+                                            >第十二章 MyBatis 执行原理与源码导读
+                                            📖</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson13.html"
+                                            >第十三章 实战专题与最佳实践 ⭐</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="tree-leaf"
+                                            href=".\pages\courses\course_java_mybatis\lesson14.html"
+                                            >附录</a
+                                        >
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                // Theme
+                var saved = localStorage.getItem("blog-theme");
+                if (saved) document.documentElement.dataset.theme = saved;
+                else if (matchMedia("(prefers-color-scheme:dark)").matches)
+                    document.documentElement.dataset.theme = "dark";
+
+                window.toggleTheme = function () {
+                    var t =
+                        document.documentElement.dataset.theme === "light"
+                            ? "dark"
+                            : "light";
+                    document.documentElement.dataset.theme = t;
+                    localStorage.setItem("blog-theme", t);
+                };
+
+                // Collapsible tree (event delegation)
+                document
+                    .getElementById("tree")
+                    .addEventListener("click", function (e) {
+                        var btn = e.target.closest(".tree-toggle");
+                        if (!btn) return;
+                        var arrow = btn.querySelector(".arrow");
+                        var children = btn.nextElementSibling;
+                        if (
+                            !children ||
+                            !children.classList.contains("tree-children")
+                        )
+                            return;
+                        var isCollapsed = children.style.display === "none";
+                        children.style.display = isCollapsed ? "" : "none";
+                        if (arrow)
+                            arrow.classList.toggle("collapsed", !isCollapsed);
+                    });
+
+                // Build left outline from tree (categories only, multi-level, collapsible)
+                var outlineRoot = document.getElementById("outlineTree");
+
+                function getToggleText(btn) {
+                    var clone = btn.cloneNode(true);
+                    var arrowEl = clone.querySelector(".arrow");
+                    if (arrowEl) arrowEl.remove();
+                    return clone.textContent.trim();
+                }
+
+                function buildOutline(container, targetUl) {
+                    var nodes = container.querySelectorAll(
+                        ":scope > .tree-node",
+                    );
+                    nodes.forEach(function (node) {
+                        var btn = node.querySelector(":scope > .tree-toggle");
+                        if (!btn) return;
+
+                        var li = document.createElement("li");
+                        var hasSubCats = false;
+                        var subUl = null;
+
+                        var childContainer = node.querySelector(
+                            ":scope > .tree-children",
+                        );
+                        if (childContainer) {
+                            var subNodes = childContainer.querySelectorAll(
+                                ":scope > .tree-node",
+                            );
+                            if (subNodes.length > 0) {
+                                hasSubCats = true;
+                                subUl = document.createElement("ul");
+                                buildOutline(childContainer, subUl);
+                            }
+                        }
+
+                        var row = document.createElement("div");
+                        row.className = "ol-row";
+
+                        var arrow = document.createElement("button");
+                        arrow.className = "ol-arrow";
+
+                        if (hasSubCats) {
+                            arrow.textContent = "▼";
+                            arrow.addEventListener("click", function () {
+                                arrow.classList.toggle("collapsed");
+                                subUl.style.display = arrow.classList.contains(
+                                    "collapsed",
+                                )
+                                    ? "none"
+                                    : "";
+                            });
+                        } else {
+                            arrow.textContent = "•";
+                            arrow.style.cursor = "default";
+                            arrow.style.color = "var(--border)";
+                        }
+                        row.appendChild(arrow);
+
+                        var a = document.createElement("a");
+                        a.href = "#" + node.id;
+                        a.textContent = getToggleText(btn);
+                        a.dataset.target = node.id;
+                        row.appendChild(a);
+                        li.appendChild(row);
+
+                        if (subUl) li.appendChild(subUl);
+                        targetUl.appendChild(li);
+                    });
+                }
+
+                var treeRoot = document.getElementById("tree");
+                buildOutline(treeRoot, outlineRoot);
+
+                // Scroll spy for outline
+                var allOutlineLinks = outlineRoot.querySelectorAll("a");
+                var targets = [];
+                allOutlineLinks.forEach(function (a) {
+                    var el = document.getElementById(a.dataset.target);
+                    if (el) targets.push({ link: a, el: el });
+                });
+
+                function updateActive() {
+                    var cur = null;
+                    targets.forEach(function (t) {
+                        if (scrollY >= t.el.offsetTop - 100) cur = t.link;
+                    });
+                    allOutlineLinks.forEach(function (a) {
+                        a.classList.toggle("active", a === cur);
+                    });
+                }
+
+                addEventListener("scroll", updateActive, { passive: true });
+                updateActive();
+            })();
+        </script>
     </body>
 </html>

@@ -1,0 +1,1892 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第03章-文档的-crud-操作shell-篇">第03章 文档的 CRUD 操作（Shell 篇）</h1>
+<blockquote>
+<p>本章在 <code>mongosh</code> 中操作一个博客数据库 <code>blog</code>，包含 <code>users</code>（用户）和 <code>articles</code>（文章）两个集合。
+所有示例均可直接在 mongosh 中执行。</p>
+</blockquote>
+<pre><code class="language-javascript">// 切换到 blog 数据库（不存在时自动创建）
+use blog
+</code></pre>
+<hr />
+<h2 id="31-插入文档insertone--insertmany">3.1 插入文档：insertOne / insertMany</h2>
+<h3 id="311-insertone--插入单个文档">3.1.1 insertOne —— 插入单个文档</h3>
+<p><strong>语法：</strong></p>
+<pre><code class="language-javascript">db.collection.insertOne(document, options)
+</code></pre>
+<p><strong>示例：插入一个用户文档</strong></p>
+<pre><code class="language-javascript">db.users.insertOne({
+  username: &quot;zhangsan&quot;,
+  email: &quot;zhangsan@example.com&quot;,
+  password: &quot;hashed_password_123&quot;,
+  nickname: &quot;张三&quot;,
+  age: 28,
+  role: &quot;author&quot;,
+  tags: [&quot;Java&quot;, &quot;MongoDB&quot;, &quot;Spring Boot&quot;],
+  profile: {
+    bio: &quot;全栈开发工程师&quot;,
+    avatar: &quot;/avatars/zhangsan.jpg&quot;,
+    location: &quot;北京&quot;
+  },
+  createdAt: new Date(),
+  updatedAt: new Date()
+})
+</code></pre>
+<p><strong>返回结果：</strong></p>
+<pre><code class="language-javascript">{
+  acknowledged: true,
+  insertedId: ObjectId('665a1b2c3d4e5f6a7b8c9d0e')
+}
+</code></pre>
+<ul>
+<li><code>acknowledged: true</code> 表示写入操作被确认。</li>
+<li><code>insertedId</code> 是 MongoDB 自动生成的 <code>_id</code>。</li>
+</ul>
+<h3 id="312-insertmany--批量插入文档">3.1.2 insertMany —— 批量插入文档</h3>
+<p><strong>语法：</strong></p>
+<pre><code class="language-javascript">db.collection.insertMany([document1, document2, ...], options)
+</code></pre>
+<p><strong>示例：批量插入多篇文章</strong></p>
+<pre><code class="language-javascript">db.articles.insertMany([
+  {
+    title: &quot;MongoDB 入门指南&quot;,
+    content: &quot;MongoDB 是一个基于分布式文件存储的 NoSQL 数据库...&quot;,
+    author: &quot;zhangsan&quot;,
+    category: &quot;数据库&quot;,
+    tags: [&quot;MongoDB&quot;, &quot;NoSQL&quot;, &quot;入门&quot;],
+    status: &quot;published&quot;,
+    viewCount: 0,
+    comments: [],
+    createdAt: new Date(&quot;2024-01-15&quot;),
+    updatedAt: new Date(&quot;2024-01-15&quot;)
+  },
+  {
+    title: &quot;Spring Boot 3.x 新特性&quot;,
+    content: &quot;Spring Boot 3.x 带来了许多令人兴奋的新特性...&quot;,
+    author: &quot;zhangsan&quot;,
+    category: &quot;Java&quot;,
+    tags: [&quot;Spring Boot&quot;, &quot;Java&quot;, &quot;后端&quot;],
+    status: &quot;published&quot;,
+    viewCount: 150,
+    comments: [
+      { user: &quot;lisi&quot;, content: &quot;写得不错！&quot;, createdAt: new Date(&quot;2024-01-20&quot;) }
+    ],
+    createdAt: new Date(&quot;2024-01-18&quot;),
+    updatedAt: new Date(&quot;2024-01-20&quot;)
+  },
+  {
+    title: &quot;Docker 容器化部署实践&quot;,
+    content: &quot;容器化技术已经成为现代应用部署的标准方案...&quot;,
+    author: &quot;lisi&quot;,
+    category: &quot;DevOps&quot;,
+    tags: [&quot;Docker&quot;, &quot;容器&quot;, &quot;部署&quot;],
+    status: &quot;draft&quot;,
+    viewCount: 0,
+    comments: [],
+    createdAt: new Date(&quot;2024-02-01&quot;),
+    updatedAt: new Date(&quot;2024-02-01&quot;)
+  },
+  {
+    title: &quot;Java 21 虚拟线程详解&quot;,
+    content: &quot;虚拟线程是 Java 21 中最重要的特性之一...&quot;,
+    author: &quot;wangwu&quot;,
+    category: &quot;Java&quot;,
+    tags: [&quot;Java&quot;, &quot;并发&quot;, &quot;虚拟线程&quot;],
+    status: &quot;published&quot;,
+    viewCount: 320,
+    comments: [
+      { user: &quot;zhangsan&quot;, content: &quot;期待更多这类文章&quot;, createdAt: new Date(&quot;2024-02-10&quot;) },
+      { user: &quot;lisi&quot;, content: &quot;虚拟线程真的好用&quot;, createdAt: new Date(&quot;2024-02-11&quot;) }
+    ],
+    createdAt: new Date(&quot;2024-02-05&quot;),
+    updatedAt: new Date(&quot;2024-02-11&quot;)
+  },
+  {
+    title: &quot;Redis 缓存最佳实践&quot;,
+    content: &quot;在高并发场景下，合理使用 Redis 缓存可以大幅提升系统性能...&quot;,
+    author: &quot;zhangsan&quot;,
+    category: &quot;数据库&quot;,
+    tags: [&quot;Redis&quot;, &quot;缓存&quot;, &quot;性能优化&quot;],
+    status: &quot;published&quot;,
+    viewCount: 210,
+    comments: [],
+    createdAt: new Date(&quot;2024-03-01&quot;),
+    updatedAt: new Date(&quot;2024-03-01&quot;)
+  }
+])
+</code></pre>
+<p><strong>返回结果：</strong></p>
+<pre><code class="language-javascript">{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('665a1c...001'),
+    '1': ObjectId('665a1c...002'),
+    '2': ObjectId('665a1c...003'),
+    '3': ObjectId('665a1c...004'),
+    '4': ObjectId('665a1c...005')
+  }
+}
+</code></pre>
+<h3 id="313-_id-的自动生成机制">3.1.3 _id 的自动生成机制</h3>
+<p>MongoDB 中每个文档都<strong>必须</strong>有一个 <code>_id</code> 字段作为主键。如果插入时不指定 <code>_id</code>，MongoDB 会自动生成一个 <code>ObjectId</code>。</p>
+<p><strong>ObjectId 的结构（12 字节）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>字节</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1-4</td>
+<td>时间戳（秒级，Unix 时间）</td>
+</tr>
+<tr>
+<td>5-9</td>
+<td>随机值（每个进程生成一次）</td>
+</tr>
+<tr>
+<td>10-12</td>
+<td>自增计数器（初始值随机）</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-javascript">// 手动指定 _id
+db.users.insertOne({
+  _id: &quot;user_lisi&quot;,
+  username: &quot;lisi&quot;,
+  email: &quot;lisi@example.com&quot;,
+  nickname: &quot;李四&quot;,
+  age: 25,
+  role: &quot;reader&quot;,
+  tags: [&quot;前端&quot;, &quot;Vue&quot;],
+  profile: {
+    bio: &quot;前端开发工程师&quot;,
+    avatar: &quot;/avatars/lisi.jpg&quot;,
+    location: &quot;上海&quot;
+  },
+  createdAt: new Date(),
+  updatedAt: new Date()
+})
+
+// 从 ObjectId 中提取时间戳
+let id = ObjectId('665a1b2c3d4e5f6a7b8c9d0e')
+id.getTimestamp()  // 返回 ISODate(&quot;2024-05-31T...&quot;)
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong> 如果插入的文档 <code>_id</code> 与已有文档重复，MongoDB 会抛出 <code>DuplicateKeyError</code>。</p>
+</blockquote>
+<h3 id="314-ordered-参数">3.1.4 ordered 参数</h3>
+<p><code>insertMany</code> 的 <code>ordered</code> 参数控制批量插入时的行为：</p>
+<ul>
+<li><strong><code>ordered: true</code>（默认）</strong>：按顺序逐条插入，遇到错误立即停止，已插入的不会回滚。</li>
+<li><strong><code>ordered: false</code></strong>：并行插入所有文档，遇到错误跳过该条，继续插入其他文档。</li>
+</ul>
+<pre><code class="language-javascript">// 假设第2条的 _id 冲突
+db.users.insertMany(
+  [
+    { _id: &quot;u1&quot;, username: &quot;user1&quot; },
+    { _id: &quot;u1&quot;, username: &quot;user1_dup&quot; },  // _id 重复！
+    { _id: &quot;u3&quot;, username: &quot;user3&quot; }
+  ],
+  { ordered: true }
+)
+// 结果：只插入了 u1，u1_dup 报错后 u3 不再执行
+
+db.users.insertMany(
+  [
+    { _id: &quot;u4&quot;, username: &quot;user4&quot; },
+    { _id: &quot;u4&quot;, username: &quot;user4_dup&quot; },  // _id 重复！
+    { _id: &quot;u6&quot;, username: &quot;user6&quot; }
+  ],
+  { ordered: false }
+)
+// 结果：u4 和 u6 都成功插入，u4_dup 报错但不影响 u6
+</code></pre>
+<p><strong>选择建议：</strong></p>
+<ul>
+<li>数据有序依赖时，使用默认的 <code>ordered: true</code>。</li>
+<li>大批量导入、容忍部分失败时，使用 <code>ordered: false</code>（性能更好）。</li>
+</ul>
+<hr />
+<h2 id="32-查询文档find--findone-与查询操作符">3.2 查询文档：find / findOne 与查询操作符</h2>
+<h3 id="321-find-和-findone-基本用法">3.2.1 find() 和 findOne() 基本用法</h3>
+<pre><code class="language-javascript">// find() —— 返回匹配的所有文档（游标）
+db.articles.find()            // 查询所有文章
+db.articles.find({})          // 等价写法
+
+// findOne() —— 返回匹配的第一个文档
+db.articles.findOne()         // 返回第一篇文章
+
+// 带条件查询
+db.articles.find({ author: &quot;zhangsan&quot; })          // 查询张三的所有文章
+db.articles.findOne({ status: &quot;published&quot; })       // 查询第一篇已发布文章
+
+// 美化输出
+db.articles.find({ author: &quot;zhangsan&quot; }).pretty()
+</code></pre>
+<h3 id="322-比较操作符">3.2.2 比较操作符</h3>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>含义</th>
+<th>等价 SQL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$eq</code></td>
+<td>等于</td>
+<td><code>= value</code></td>
+</tr>
+<tr>
+<td><code>$ne</code></td>
+<td>不等于</td>
+<td><code>!= value</code></td>
+</tr>
+<tr>
+<td><code>$gt</code></td>
+<td>大于</td>
+<td><code>&gt; value</code></td>
+</tr>
+<tr>
+<td><code>$gte</code></td>
+<td>大于等于</td>
+<td><code>&gt;= value</code></td>
+</tr>
+<tr>
+<td><code>$lt</code></td>
+<td>小于</td>
+<td><code>&lt; value</code></td>
+</tr>
+<tr>
+<td><code>$lte</code></td>
+<td>小于等于</td>
+<td><code>&lt;= value</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-javascript">// $eq —— 等于（直接写值就是隐式 $eq）
+db.articles.find({ status: { $eq: &quot;published&quot; } })
+db.articles.find({ status: &quot;published&quot; })  // 等价的简写形式
+
+// $ne —— 不等于：查询非草稿状态的文章
+db.articles.find({ status: { $ne: &quot;draft&quot; } })
+
+// $gt —— 大于：查询阅读量大于 100 的文章
+db.articles.find({ viewCount: { $gt: 100 } })
+
+// $gte —— 大于等于：查询阅读量 &gt;= 200 的文章
+db.articles.find({ viewCount: { $gte: 200 } })
+
+// $lt —— 小于：查询阅读量小于 200 的文章
+db.articles.find({ viewCount: { $lt: 200 } })
+
+// $lte —— 小于等于：查询 2024-02-01 之前（含）创建的文章
+db.articles.find({ createdAt: { $lte: new Date(&quot;2024-02-01&quot;) } })
+
+// 组合使用：查询阅读量在 100 到 300 之间的文章
+db.articles.find({ viewCount: { $gt: 100, $lte: 300 } })
+</code></pre>
+<h3 id="323-逻辑操作符">3.2.3 逻辑操作符</h3>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>含义</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$and</code></td>
+<td>逻辑与</td>
+<td>所有条件都满足</td>
+</tr>
+<tr>
+<td><code>$or</code></td>
+<td>逻辑或</td>
+<td>至少一个条件满足</td>
+</tr>
+<tr>
+<td><code>$not</code></td>
+<td>逻辑非</td>
+<td>对条件取反</td>
+</tr>
+<tr>
+<td><code>$nor</code></td>
+<td>逻辑或非</td>
+<td>所有条件都不满足</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-javascript">// $and —— 查询张三发布的已发布文章
+// 隐式 $and（同一层级多个字段时自动 AND）
+db.articles.find({ author: &quot;zhangsan&quot;, status: &quot;published&quot; })
+
+// 显式 $and（同一字段多个条件时必须使用）
+db.articles.find({
+  $and: [
+    { viewCount: { $gte: 100 } },
+    { viewCount: { $lte: 300 } }
+  ]
+})
+
+// $or —— 查询分类为&quot;Java&quot;或&quot;数据库&quot;的文章
+db.articles.find({
+  $or: [
+    { category: &quot;Java&quot; },
+    { category: &quot;数据库&quot; }
+  ]
+})
+
+// $and + $or 组合：查询已发布且（分类为 Java 或阅读量 &gt; 200）的文章
+db.articles.find({
+  status: &quot;published&quot;,
+  $or: [
+    { category: &quot;Java&quot; },
+    { viewCount: { $gt: 200 } }
+  ]
+})
+
+// $not —— 查询阅读量不大于 100 的文章（即 &lt;= 100）
+db.articles.find({
+  viewCount: { $not: { $gt: 100 } }
+})
+
+// $nor —— 查询既不是草稿、分类也不是 DevOps 的文章
+db.articles.find({
+  $nor: [
+    { status: &quot;draft&quot; },
+    { category: &quot;DevOps&quot; }
+  ]
+})
+</code></pre>
+<h3 id="324-元素操作符">3.2.4 元素操作符</h3>
+<pre><code class="language-javascript">// $exists —— 查询包含 profile 字段的用户
+db.users.find({ profile: { $exists: true } })
+
+// 查询没有 avatar 字段的用户
+db.users.find({ &quot;profile.avatar&quot;: { $exists: false } })
+
+// $type —— 查询 age 字段类型为数值的文档
+db.users.find({ age: { $type: &quot;number&quot; } })
+
+// 也可以使用 BSON 类型编号：16 = int32, 18 = int64, 1 = double
+db.users.find({ age: { $type: 16 } })
+
+// $type 可以接收数组，匹配多种类型
+db.users.find({ age: { $type: [&quot;int&quot;, &quot;double&quot;] } })
+</code></pre>
+<h3 id="325-数组操作符">3.2.5 数组操作符</h3>
+<pre><code class="language-javascript">// $in —— 查询分类为 &quot;Java&quot; 或 &quot;数据库&quot; 的文章（等价于 $or 对同一字段的写法）
+db.articles.find({ category: { $in: [&quot;Java&quot;, &quot;数据库&quot;] } })
+
+// $nin —— 查询分类不是 &quot;Java&quot; 也不是 &quot;DevOps&quot; 的文章
+db.articles.find({ category: { $nin: [&quot;Java&quot;, &quot;DevOps&quot;] } })
+
+// $in 用于数组字段：查询 tags 中包含 &quot;MongoDB&quot; 或 &quot;Redis&quot; 的文章
+db.articles.find({ tags: { $in: [&quot;MongoDB&quot;, &quot;Redis&quot;] } })
+
+// $all —— 查询 tags 同时包含 &quot;Java&quot; 和 &quot;并发&quot; 的文章
+db.articles.find({ tags: { $all: [&quot;Java&quot;, &quot;并发&quot;] } })
+
+// $size —— 查询恰好有 2 条评论的文章
+db.articles.find({ comments: { $size: 2 } })
+
+// $elemMatch —— 查询评论中存在 user 为 &quot;zhangsan&quot; 的文章
+db.articles.find({
+  comments: {
+    $elemMatch: {
+      user: &quot;zhangsan&quot;,
+      createdAt: { $gte: new Date(&quot;2024-02-01&quot;) }
+    }
+  }
+})
+</code></pre>
+<blockquote>
+<p><strong><code>$in</code> vs <code>$all</code> 的区别：</strong></p>
+<ul>
+<li><code>$in</code>：数组中至少包含<strong>一个</strong>指定值（OR 语义）。</li>
+<li><code>$all</code>：数组中必须包含<strong>所有</strong>指定值（AND 语义）。</li>
+</ul>
+</blockquote>
+<h3 id="326-投影projection指定返回字段">3.2.6 投影（Projection）：指定返回字段</h3>
+<p>投影用来控制查询结果中包含或排除哪些字段，减少网络传输量。</p>
+<pre><code class="language-javascript">// 只返回 title 和 author 字段（_id 默认返回）
+db.articles.find({}, { title: 1, author: 1 })
+
+// 返回 title 和 author，排除 _id
+db.articles.find({}, { title: 1, author: 1, _id: 0 })
+
+// 排除 content 字段（其他字段全部返回）
+db.articles.find({}, { content: 0 })
+
+// 对嵌套字段投影
+db.users.find({}, { username: 1, &quot;profile.bio&quot;: 1 })
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong> 投影中不能混合使用包含（1）和排除（0），<code>_id</code> 除外。
+即 <code>{ title: 1, content: 0 }</code> 是<strong>非法</strong>的，但 <code>{ title: 1, _id: 0 }</code> 是合法的。</p>
+</blockquote>
+<h3 id="327-正则表达式查询">3.2.7 正则表达式查询</h3>
+<pre><code class="language-javascript">// 查询标题包含 &quot;MongoDB&quot; 的文章
+db.articles.find({ title: /MongoDB/ })
+
+// 等价写法
+db.articles.find({ title: { $regex: &quot;MongoDB&quot; } })
+
+// 不区分大小写
+db.articles.find({ title: { $regex: &quot;mongodb&quot;, $options: &quot;i&quot; } })
+
+// 查询标题以 &quot;Spring&quot; 开头的文章
+db.articles.find({ title: { $regex: &quot;^Spring&quot; } })
+
+// 查询邮箱以 @example.com 结尾的用户
+db.users.find({ email: { $regex: &quot;example\\.com$&quot; } })
+
+// 查询用户名是 3-10 个字母的用户
+db.users.find({ username: { $regex: &quot;^[a-zA-Z]{3,10}$&quot; } })
+</code></pre>
+<h3 id="328-分页与排序skip-limit-sort">3.2.8 分页与排序：skip(), limit(), sort()</h3>
+<pre><code class="language-javascript">// sort() —— 1 升序，-1 降序
+// 按创建时间倒序
+db.articles.find().sort({ createdAt: -1 })
+
+// 按阅读量降序，阅读量相同则按创建时间升序
+db.articles.find().sort({ viewCount: -1, createdAt: 1 })
+
+// limit() —— 限制返回数量
+db.articles.find().limit(3)  // 只返回前 3 篇
+
+// skip() —— 跳过指定数量
+db.articles.find().skip(2)   // 跳过前 2 篇
+
+// 分页查询：每页 2 条，查询第 2 页
+let pageSize = 2
+let pageNum = 2
+db.articles.find({ status: &quot;published&quot; })
+  .sort({ createdAt: -1 })
+  .skip((pageNum - 1) * pageSize)
+  .limit(pageSize)
+
+// 等价于 SQL: SELECT * FROM articles WHERE status='published'
+//              ORDER BY createdAt DESC LIMIT 2 OFFSET 2
+</code></pre>
+<blockquote>
+<p><strong>性能提示：</strong> 当数据量大时，<code>skip()</code> 的性能较差（需要扫描并跳过前 N 条）。
+大数据量分页推荐使用<strong>基于游标的分页</strong>（记录上一页最后一条的排序字段值）：</p>
+<pre><code class="language-javascript">// 基于游标的分页（第一页之后的分页请求）
+db.articles.find({
+  status: &quot;published&quot;,
+  createdAt: { $lt: lastSeenCreatedAt }  // 上一页最后一条的时间
+}).sort({ createdAt: -1 }).limit(pageSize)
+</code></pre>
+</blockquote>
+<h3 id="329-综合查询示例">3.2.9 综合查询示例</h3>
+<p>以下是更多查询场景示例，展示各种操作符的灵活组合：</p>
+<pre><code class="language-javascript">// 示例1：查询张三在2024年1月发布的文章标题
+db.articles.find(
+  {
+    author: &quot;zhangsan&quot;,
+    status: &quot;published&quot;,
+    createdAt: {
+      $gte: new Date(&quot;2024-01-01&quot;),
+      $lt: new Date(&quot;2024-02-01&quot;)
+    }
+  },
+  { title: 1, createdAt: 1, _id: 0 }
+)
+
+// 示例2：查询有评论且阅读量大于 100 的文章
+db.articles.find({
+  comments: { $not: { $size: 0 } },
+  viewCount: { $gt: 100 }
+})
+
+// 示例3：查询标签数量大于等于 3 的文章
+// 注意：$size 不支持范围查询，需要用 $expr 配合 $size 聚合表达式
+db.articles.find({
+  $expr: { $gte: [{ $size: &quot;$tags&quot; }, 3] }
+})
+
+// 示例4：查询嵌套字段——位于北京的用户
+db.users.find({ &quot;profile.location&quot;: &quot;北京&quot; })
+
+// 示例5：查询角色为 author 或 admin 的用户，按年龄升序
+db.users.find({ role: { $in: [&quot;author&quot;, &quot;admin&quot;] } }).sort({ age: 1 })
+
+// 示例6：查询没有评论的草稿文章
+db.articles.find({
+  status: &quot;draft&quot;,
+  comments: { $size: 0 }
+})
+
+// 示例7：统计查询结果数量
+db.articles.find({ status: &quot;published&quot; }).count()
+// 或使用 countDocuments（推荐）
+db.articles.countDocuments({ status: &quot;published&quot; })
+
+// 示例8：查询标签中包含 &quot;Java&quot; 但不包含 &quot;入门&quot; 的文章
+db.articles.find({
+  tags: &quot;Java&quot;,
+  tags: { $ne: &quot;入门&quot; }
+})
+// 上面的写法有问题（同键覆盖），正确写法：
+db.articles.find({
+  $and: [
+    { tags: &quot;Java&quot; },
+    { tags: { $ne: &quot;入门&quot; } }
+  ]
+})
+
+// 示例9：查询 email 字段存在且不为 null 的用户
+db.users.find({
+  email: { $exists: true, $ne: null }
+})
+
+// 示例10：查询标题包含 &quot;实践&quot; 或 &quot;详解&quot; 的已发布文章，只返回标题和作者
+db.articles.find(
+  {
+    status: &quot;published&quot;,
+    title: { $regex: &quot;实践|详解&quot; }
+  },
+  { title: 1, author: 1, _id: 0 }
+)
+
+// 示例11：使用 distinct 查询所有不重复的分类
+db.articles.distinct(&quot;category&quot;)
+// 返回: [&quot;数据库&quot;, &quot;Java&quot;, &quot;DevOps&quot;]
+
+// 示例12：查询结果转为数组
+db.articles.find({ status: &quot;published&quot; }).toArray()
+</code></pre>
+<hr />
+<h2 id="33-更新文档updateone--updatemany-与更新操作符">3.3 更新文档：updateOne / updateMany 与更新操作符</h2>
+<h3 id="331-updateone--updatemany-语法">3.3.1 updateOne / updateMany 语法</h3>
+<pre><code class="language-javascript">// 语法
+db.collection.updateOne(filter, update, options)
+db.collection.updateMany(filter, update, options)
+</code></pre>
+<ul>
+<li><strong>filter</strong>：筛选条件，语法与 <code>find()</code> 相同。</li>
+<li><strong>update</strong>：更新操作，必须使用更新操作符（<code>$set</code>、<code>$inc</code> 等）。</li>
+<li><strong>options</strong>：可选参数，如 <code>upsert</code>。</li>
+</ul>
+<h3 id="332-set--设置字段值">3.3.2 $set —— 设置字段值</h3>
+<p><code>$set</code> 用于设置指定字段的值。如果字段不存在，则创建该字段。</p>
+<pre><code class="language-javascript">// 更新张三的昵称和邮箱
+db.users.updateOne(
+  { username: &quot;zhangsan&quot; },
+  {
+    $set: {
+      nickname: &quot;张三丰&quot;,
+      email: &quot;zhangsan_new@example.com&quot;,
+      updatedAt: new Date()
+    }
+  }
+)
+
+// 更新嵌套字段
+db.users.updateOne(
+  { username: &quot;zhangsan&quot; },
+  { $set: { &quot;profile.location&quot;: &quot;深圳&quot;, &quot;profile.bio&quot;: &quot;资深全栈工程师&quot; } }
+)
+
+// 批量更新：将所有草稿文章的状态改为 &quot;review&quot;
+db.articles.updateMany(
+  { status: &quot;draft&quot; },
+  { $set: { status: &quot;review&quot;, updatedAt: new Date() } }
+)
+</code></pre>
+<p><strong>返回结果：</strong></p>
+<pre><code class="language-javascript">{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,    // 匹配到的文档数
+  modifiedCount: 1,   // 实际修改的文档数
+  upsertedCount: 0
+}
+</code></pre>
+<h3 id="333-unset--删除字段">3.3.3 $unset —— 删除字段</h3>
+<pre><code class="language-javascript">// 删除用户的 age 字段
+db.users.updateOne(
+  { username: &quot;zhangsan&quot; },
+  { $unset: { age: &quot;&quot; } }  // 值可以是任意内容，通常写 &quot;&quot; 或 1
+)
+
+// 批量删除所有用户的临时字段
+db.users.updateMany(
+  {},
+  { $unset: { tempField: &quot;&quot;, legacyField: &quot;&quot; } }
+)
+</code></pre>
+<h3 id="334-inc--递增递减">3.3.4 $inc —— 递增/递减</h3>
+<pre><code class="language-javascript">// 文章阅读量 +1
+db.articles.updateOne(
+  { title: &quot;MongoDB 入门指南&quot; },
+  { $inc: { viewCount: 1 } }
+)
+
+// 文章阅读量 -10（传负数实现递减）
+db.articles.updateOne(
+  { title: &quot;MongoDB 入门指南&quot; },
+  { $inc: { viewCount: -10 } }
+)
+
+// 同时递增多个字段
+db.articles.updateOne(
+  { title: &quot;MongoDB 入门指南&quot; },
+  { $inc: { viewCount: 1, commentCount: 1 } }
+)
+</code></pre>
+<h3 id="335-rename--重命名字段">3.3.5 $rename —— 重命名字段</h3>
+<pre><code class="language-javascript">// 将 nickname 字段重命名为 displayName
+db.users.updateOne(
+  { username: &quot;zhangsan&quot; },
+  { $rename: { &quot;nickname&quot;: &quot;displayName&quot; } }
+)
+
+// 重命名嵌套字段
+db.users.updateOne(
+  { username: &quot;zhangsan&quot; },
+  { $rename: { &quot;profile.bio&quot;: &quot;profile.description&quot; } }
+)
+
+// 批量重命名
+db.users.updateMany(
+  {},
+  { $rename: { &quot;tags&quot;: &quot;skills&quot; } }
+)
+</code></pre>
+<h3 id="336-push--addtoset--向数组添加元素">3.3.6 $push / $addToSet —— 向数组添加元素</h3>
+<pre><code class="language-javascript">// $push —— 向数组末尾添加一个元素（允许重复）
+db.articles.updateOne(
+  { title: &quot;MongoDB 入门指南&quot; },
+  {
+    $push: {
+      comments: {
+        user: &quot;wangwu&quot;,
+        content: &quot;非常实用的入门教程！&quot;,
+        createdAt: new Date()
+      }
+    }
+  }
+)
+
+// $push 添加多个元素：使用 $each
+db.articles.updateOne(
+  { title: &quot;MongoDB 入门指南&quot; },
+  {
+    $push: {
+      tags: { $each: [&quot;教程&quot;, &quot;新手&quot;] }
+    }
+  }
+)
+
+// $addToSet —— 向数组添加元素（去重，已存在则不添加）
+db.users.updateOne(
+  { username: &quot;zhangsan&quot; },
+  { $addToSet: { tags: &quot;MongoDB&quot; } }  // 如果 tags 中已有 &quot;MongoDB&quot;，不会重复添加
+)
+
+// $addToSet + $each —— 批量去重添加
+db.users.updateOne(
+  { username: &quot;zhangsan&quot; },
+  {
+    $addToSet: {
+      tags: { $each: [&quot;Docker&quot;, &quot;Kubernetes&quot;, &quot;MongoDB&quot;] }
+    }
+  }
+)
+</code></pre>
+<h3 id="337-pull--pop--从数组移除元素">3.3.7 $pull / $pop —— 从数组移除元素</h3>
+<pre><code class="language-javascript">// $pull —— 移除数组中匹配条件的所有元素
+// 从标签中移除 &quot;入门&quot;
+db.articles.updateOne(
+  { title: &quot;MongoDB 入门指南&quot; },
+  { $pull: { tags: &quot;入门&quot; } }
+)
+
+// $pull 配合条件：移除某用户的所有评论
+db.articles.updateOne(
+  { title: &quot;Spring Boot 3.x 新特性&quot; },
+  {
+    $pull: {
+      comments: { user: &quot;lisi&quot; }
+    }
+  }
+)
+
+// $pull 更复杂的条件：移除 2024-02-01 之前的评论
+db.articles.updateMany(
+  {},
+  {
+    $pull: {
+      comments: { createdAt: { $lt: new Date(&quot;2024-02-01&quot;) } }
+    }
+  }
+)
+
+// $pop —— 移除数组的第一个或最后一个元素
+// 移除 tags 数组的最后一个元素
+db.articles.updateOne(
+  { title: &quot;MongoDB 入门指南&quot; },
+  { $pop: { tags: 1 } }   // 1 = 最后一个，-1 = 第一个
+)
+
+// 移除 tags 数组的第一个元素
+db.articles.updateOne(
+  { title: &quot;MongoDB 入门指南&quot; },
+  { $pop: { tags: -1 } }
+)
+</code></pre>
+<h3 id="338-each-position-slice-修饰符">3.3.8 $each, $position, $slice 修饰符</h3>
+<p>这些修饰符与 <code>$push</code> 配合使用，提供更精细的数组操作控制。</p>
+<pre><code class="language-javascript">// $each + $position：在数组指定位置插入元素
+// 在 tags 数组的索引 1 位置插入两个新标签
+db.articles.updateOne(
+  { title: &quot;MongoDB 入门指南&quot; },
+  {
+    $push: {
+      tags: {
+        $each: [&quot;实战&quot;, &quot;进阶&quot;],
+        $position: 1  // 从索引 1 开始插入
+      }
+    }
+  }
+)
+// 原来: [&quot;MongoDB&quot;, &quot;NoSQL&quot;, &quot;入门&quot;]
+// 之后: [&quot;MongoDB&quot;, &quot;实战&quot;, &quot;进阶&quot;, &quot;NoSQL&quot;, &quot;入门&quot;]
+
+// $each + $slice：限制数组最大长度
+// 添加评论，但只保留最新的 5 条
+db.articles.updateOne(
+  { title: &quot;MongoDB 入门指南&quot; },
+  {
+    $push: {
+      comments: {
+        $each: [{ user: &quot;newuser&quot;, content: &quot;新评论&quot;, createdAt: new Date() }],
+        $slice: -5  // 负数表示保留最后 N 个，正数表示保留前 N 个
+      }
+    }
+  }
+)
+
+// $each + $sort + $slice：添加后排序再截断
+// 保留阅读量最高的 10 篇推荐文章
+db.users.updateOne(
+  { username: &quot;zhangsan&quot; },
+  {
+    $push: {
+      recommendedArticles: {
+        $each: [{ title: &quot;新文章&quot;, viewCount: 500 }],
+        $sort: { viewCount: -1 },  // 按阅读量降序排列
+        $slice: 10                  // 只保留前 10 个
+      }
+    }
+  }
+)
+</code></pre>
+<h3 id="339-upsert-选项">3.3.9 upsert 选项</h3>
+<p><code>upsert = true</code> 时：如果 filter 没有匹配到文档，则<strong>插入</strong>一个新文档（由 filter 和 update 合并而成）。</p>
+<pre><code class="language-javascript">// 更新用户的登录信息，如果用户不存在则创建
+db.users.updateOne(
+  { username: &quot;newuser&quot; },
+  {
+    $set: {
+      lastLoginAt: new Date(),
+      loginCount: 1
+    },
+    $setOnInsert: {
+      // 仅在插入时设置的字段
+      email: &quot;newuser@example.com&quot;,
+      role: &quot;reader&quot;,
+      createdAt: new Date()
+    }
+  },
+  { upsert: true }
+)
+</code></pre>
+<p><strong>返回结果（插入场景）：</strong></p>
+<pre><code class="language-javascript">{
+  acknowledged: true,
+  insertedId: ObjectId('665b...'),  // 新插入的文档 ID
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 1
+}
+</code></pre>
+<blockquote>
+<p><strong><code>$setOnInsert</code></strong> 是 upsert 的好搭档：它指定的字段<strong>仅在执行插入操作时</strong>才会写入，更新已有文档时不会生效。</p>
+</blockquote>
+<h3 id="3310-replaceone--整文档替换">3.3.10 replaceOne —— 整文档替换</h3>
+<p><code>replaceOne</code> 用一个全新的文档完全替换匹配的文档（<code>_id</code> 保持不变）。</p>
+<pre><code class="language-javascript">// 注意：替换文档中不能包含更新操作符
+db.users.replaceOne(
+  { username: &quot;lisi&quot; },
+  {
+    username: &quot;lisi&quot;,
+    email: &quot;lisi_new@example.com&quot;,
+    nickname: &quot;李四2.0&quot;,
+    age: 26,
+    role: &quot;author&quot;,
+    tags: [&quot;Vue&quot;, &quot;React&quot;, &quot;TypeScript&quot;],
+    profile: {
+      bio: &quot;资深前端工程师&quot;,
+      avatar: &quot;/avatars/lisi_v2.jpg&quot;,
+      location: &quot;杭州&quot;
+    },
+    createdAt: new Date(&quot;2024-01-01&quot;),
+    updatedAt: new Date()
+  }
+)
+</code></pre>
+<blockquote>
+<p><strong><code>updateOne</code> vs <code>replaceOne</code>：</strong></p>
+<ul>
+<li><code>updateOne</code>：使用更新操作符（<code>$set</code> 等），只修改指定字段。</li>
+<li><code>replaceOne</code>：用新文档完全替换，未指定的字段会丢失。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="34-删除文档deleteone--deletemany">3.4 删除文档：deleteOne / deleteMany</h2>
+<h3 id="341-基本删除语法和示例">3.4.1 基本删除语法和示例</h3>
+<pre><code class="language-javascript">// deleteOne —— 删除匹配的第一个文档
+db.articles.deleteOne({ title: &quot;Docker 容器化部署实践&quot; })
+
+// 返回结果
+// { acknowledged: true, deletedCount: 1 }
+
+// deleteMany —— 删除匹配的所有文档
+// 删除所有草稿文章
+db.articles.deleteMany({ status: &quot;draft&quot; })
+
+// 删除阅读量为 0 的文章
+db.articles.deleteMany({ viewCount: 0 })
+
+// 删除某用户的所有文章
+db.articles.deleteMany({ author: &quot;lisi&quot; })
+
+// 配合日期条件：删除一年前的文章
+db.articles.deleteMany({
+  createdAt: { $lt: new Date(&quot;2023-01-01&quot;) }
+})
+</code></pre>
+<h3 id="342-删除所有文档">3.4.2 删除所有文档</h3>
+<pre><code class="language-javascript">// 方式一：传入空条件（保留集合和索引）
+db.articles.deleteMany({})
+
+// 方式二：使用 drop()（删除整个集合，包括索引）
+db.articles.drop()
+</code></pre>
+<p><strong>两者的区别：</strong></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th><code>deleteMany({})</code></th>
+<th><code>drop()</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>删除文档</td>
+<td>是</td>
+<td>是</td>
+</tr>
+<tr>
+<td>删除索引</td>
+<td>否（保留）</td>
+<td>是</td>
+</tr>
+<tr>
+<td>删除集合</td>
+<td>否（保留空集合）</td>
+<td>是</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>逐条删除，较慢</td>
+<td>直接删除文件，极快</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>清空数据但保留结构</td>
+<td>彻底删除重建</td>
+</tr>
+</tbody>
+</table>
+<h3 id="343-drop-删除整个集合">3.4.3 drop() 删除整个集合</h3>
+<pre><code class="language-javascript">// 删除 articles 集合
+db.articles.drop()
+// 返回 true 表示成功
+
+// 删除整个数据库
+db.dropDatabase()
+// { ok: 1, dropped: 'blog' }
+</code></pre>
+<blockquote>
+<p><strong>注意：</strong> <code>drop()</code> 和 <code>dropDatabase()</code> 是不可逆操作，生产环境务必谨慎使用！</p>
+</blockquote>
+<hr />
+<h2 id="35-批量操作bulkwrite">3.5 批量操作：bulkWrite</h2>
+<h3 id="351-bulkwrite-语法">3.5.1 bulkWrite 语法</h3>
+<p><code>bulkWrite</code> 可以在一次请求中执行多种不同类型的写操作（插入、更新、删除），减少网络往返次数，提升性能。</p>
+<pre><code class="language-javascript">db.collection.bulkWrite(
+  [operation1, operation2, ...],
+  { ordered: true/false }
+)
+</code></pre>
+<p>支持的操作类型：</p>
+<table>
+<thead>
+<tr>
+<th>操作类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>insertOne</code></td>
+<td>插入文档</td>
+</tr>
+<tr>
+<td><code>updateOne</code></td>
+<td>更新单个文档</td>
+</tr>
+<tr>
+<td><code>updateMany</code></td>
+<td>更新多个文档</td>
+</tr>
+<tr>
+<td><code>replaceOne</code></td>
+<td>替换单个文档</td>
+</tr>
+<tr>
+<td><code>deleteOne</code></td>
+<td>删除单个文档</td>
+</tr>
+<tr>
+<td><code>deleteMany</code></td>
+<td>删除多个文档</td>
+</tr>
+</tbody>
+</table>
+<h3 id="352-混合操作示例">3.5.2 混合操作示例</h3>
+<pre><code class="language-javascript">db.articles.bulkWrite([
+  // 操作1：插入一篇新文章
+  {
+    insertOne: {
+      document: {
+        title: &quot;Kubernetes 入门教程&quot;,
+        content: &quot;Kubernetes 是容器编排领域的事实标准...&quot;,
+        author: &quot;zhangsan&quot;,
+        category: &quot;DevOps&quot;,
+        tags: [&quot;Kubernetes&quot;, &quot;容器&quot;, &quot;云原生&quot;],
+        status: &quot;published&quot;,
+        viewCount: 0,
+        comments: [],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    }
+  },
+
+  // 操作2：更新某篇文章的阅读量
+  {
+    updateOne: {
+      filter: { title: &quot;MongoDB 入门指南&quot; },
+      update: { $inc: { viewCount: 50 } }
+    }
+  },
+
+  // 操作3：批量更新所有已发布文章，添加一个 featured 字段
+  {
+    updateMany: {
+      filter: { status: &quot;published&quot; },
+      update: { $set: { featured: false } }
+    }
+  },
+
+  // 操作4：替换一篇文章
+  {
+    replaceOne: {
+      filter: { title: &quot;Redis 缓存最佳实践&quot; },
+      replacement: {
+        title: &quot;Redis 缓存最佳实践（第二版）&quot;,
+        content: &quot;全新改版，增加了更多实战案例...&quot;,
+        author: &quot;zhangsan&quot;,
+        category: &quot;数据库&quot;,
+        tags: [&quot;Redis&quot;, &quot;缓存&quot;, &quot;性能优化&quot;, &quot;实战&quot;],
+        status: &quot;published&quot;,
+        viewCount: 210,
+        comments: [],
+        createdAt: new Date(&quot;2024-03-01&quot;),
+        updatedAt: new Date()
+      }
+    }
+  },
+
+  // 操作5：删除阅读量为 0 的草稿
+  {
+    deleteMany: {
+      filter: { status: &quot;draft&quot;, viewCount: 0 }
+    }
+  }
+])
+</code></pre>
+<p><strong>返回结果：</strong></p>
+<pre><code class="language-javascript">{
+  acknowledged: true,
+  insertedCount: 1,
+  insertedIds: { '0': ObjectId('665c...') },
+  matchedCount: 6,
+  modifiedCount: 6,
+  deletedCount: 1,
+  upsertedCount: 0,
+  upsertedIds: {}
+}
+</code></pre>
+<h3 id="353-ordered-vs-unordered-模式">3.5.3 ordered vs unordered 模式</h3>
+<pre><code class="language-javascript">// ordered: true（默认）—— 按顺序执行，遇错即停
+db.articles.bulkWrite(
+  [
+    { insertOne: { document: { _id: &quot;a1&quot;, title: &quot;文章A&quot; } } },
+    { insertOne: { document: { _id: &quot;a1&quot;, title: &quot;文章A重复&quot; } } },  // 会报错
+    { insertOne: { document: { _id: &quot;a3&quot;, title: &quot;文章C&quot; } } }       // 不会执行
+  ],
+  { ordered: true }
+)
+
+// ordered: false —— 并行执行，遇错跳过继续
+db.articles.bulkWrite(
+  [
+    { insertOne: { document: { _id: &quot;b1&quot;, title: &quot;文章B1&quot; } } },
+    { insertOne: { document: { _id: &quot;b1&quot;, title: &quot;文章B1重复&quot; } } },  // 报错但跳过
+    { insertOne: { document: { _id: &quot;b3&quot;, title: &quot;文章B3&quot; } } }       // 仍然执行
+  ],
+  { ordered: false }
+)
+</code></pre>
+<p><strong>选择建议：</strong></p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐模式</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作之间有依赖关系</td>
+<td><code>ordered: true</code></td>
+<td>保证执行顺序</td>
+</tr>
+<tr>
+<td>大批量独立操作</td>
+<td><code>ordered: false</code></td>
+<td>性能更高，不会因单条失败而全部停止</td>
+</tr>
+<tr>
+<td>数据迁移/同步</td>
+<td><code>ordered: false</code></td>
+<td>容忍部分失败，提高吞吐量</td>
+</tr>
+<tr>
+<td>业务逻辑要求原子性</td>
+<td>考虑事务</td>
+<td>bulkWrite 不是事务，无法保证原子性</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<p>本章以 <code>mongosh</code> 为工具，系统学习了 MongoDB 文档的 CRUD 操作：</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>创建</strong></td>
+<td><code>insertOne()</code> / <code>insertMany()</code></td>
+<td>单条/批量插入</td>
+</tr>
+<tr>
+<td><strong>读取</strong></td>
+<td><code>find()</code> / <code>findOne()</code></td>
+<td>配合查询操作符、投影、分页排序</td>
+</tr>
+<tr>
+<td><strong>更新</strong></td>
+<td><code>updateOne()</code> / <code>updateMany()</code></td>
+<td>配合更新操作符 <code>$set</code>、<code>$inc</code>、<code>$push</code> 等</td>
+</tr>
+<tr>
+<td><strong>替换</strong></td>
+<td><code>replaceOne()</code></td>
+<td>整文档替换</td>
+</tr>
+<tr>
+<td><strong>删除</strong></td>
+<td><code>deleteOne()</code> / <code>deleteMany()</code></td>
+<td>按条件删除</td>
+</tr>
+<tr>
+<td><strong>批量</strong></td>
+<td><code>bulkWrite()</code></td>
+<td>混合多种操作，一次网络往返</td>
+</tr>
+</tbody>
+</table>
+<p>下一章我们将学习如何在 Spring Boot 项目中集成 MongoDB，用 Java 代码实现同样的操作。</p>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

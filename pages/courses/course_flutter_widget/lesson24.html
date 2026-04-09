@@ -1,0 +1,3278 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第24课-主题与样式系统">第24课 主题与样式系统</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter 常用组件系统学习<br />
+<strong>适用人群</strong>：有 Dart 语言基础，了解 Flutter 基本概念的开发者<br />
+<strong>课程目标</strong>：系统掌握 Flutter 主题与样式体系，能够构建一套完整的、支持亮/暗模式的全局主题方案，并学会使用 ThemeExtension 扩展自定义主题数据</p>
+</blockquote>
+<p>主题系统是 Flutter 应用的&quot;基础设施&quot;。一个成熟的 App 不会在每个组件里硬编码颜色和字号，而是通过主题系统统一管理视觉风格。这样做有三个核心价值：<strong>一致性</strong>（全局统一的视觉语言）、<strong>可维护性</strong>（改一处主题，全局联动）、<strong>灵活性</strong>（轻松支持亮/暗色模式切换、品牌色定制等）。</p>
+<p>本课将从 <code>ThemeData</code> 的全局配置出发，逐步深入 <code>ColorScheme</code>、<code>TextTheme</code>、组件主题、主题切换、主题继承，最终讲解高级的 <code>ThemeExtension</code> 自定义扩展，并以一个完整的实战项目串联所有知识点。</p>
+<hr />
+<h2 id="1-materialapp-与-themedata-全局主题配置">1. MaterialApp 与 ThemeData 全局主题配置</h2>
+<h3 id="11-themedata-在架构中的位置">1.1 ThemeData 在架构中的位置</h3>
+<p>Flutter 的主题系统核心是 <code>ThemeData</code>，它通过 <code>MaterialApp</code> 注入到 Widget 树中，所有 Material 组件都会自动读取最近的 <code>ThemeData</code> 来决定自己的外观。</p>
+<pre><code>MaterialApp
+  ├── theme: ThemeData(...)          ← 亮色主题
+  ├── darkTheme: ThemeData(...)      ← 暗色主题
+  ├── themeMode: ThemeMode.system    ← 跟随系统 / 亮色 / 暗色
+  └── home: MyHomePage()
+         └── Scaffold (自动读取主题中的 scaffoldBackgroundColor)
+               └── AppBar (自动读取主题中的 AppBarTheme)
+                     └── Text (自动读取主题中的 TextTheme)
+</code></pre>
+<h3 id="12-基础主题配置">1.2 基础主题配置</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '主题演示',
+      // 亮色主题
+      theme: ThemeData(
+        useMaterial3: true, // 启用 Material 3 设计规范
+        colorSchemeSeed: Colors.blue, // 从种子色自动生成 ColorScheme
+        brightness: Brightness.light,
+      ),
+      // 暗色主题
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+        brightness: Brightness.dark,
+      ),
+      // 主题模式：跟随系统设置
+      themeMode: ThemeMode.system,
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 获取当前主题
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('主题演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '当前主题亮度: ${theme.brightness}',
+              style: theme.textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('主题按钮'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="13-themedata-的核心参数一览">1.3 ThemeData 的核心参数一览</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>useMaterial3</code></td>
+<td><code>bool</code></td>
+<td>是否使用 Material 3 设计规范（推荐 <code>true</code>）</td>
+</tr>
+<tr>
+<td><code>colorScheme</code></td>
+<td><code>ColorScheme</code></td>
+<td>颜色方案（Material 3 的核心）</td>
+</tr>
+<tr>
+<td><code>colorSchemeSeed</code></td>
+<td><code>Color</code></td>
+<td>种子色，自动生成完整 <code>ColorScheme</code></td>
+</tr>
+<tr>
+<td><code>brightness</code></td>
+<td><code>Brightness</code></td>
+<td>亮度（<code>light</code> / <code>dark</code>）</td>
+</tr>
+<tr>
+<td><code>textTheme</code></td>
+<td><code>TextTheme</code></td>
+<td>全局文本样式</td>
+</tr>
+<tr>
+<td><code>appBarTheme</code></td>
+<td><code>AppBarTheme</code></td>
+<td>AppBar 主题</td>
+</tr>
+<tr>
+<td><code>elevatedButtonTheme</code></td>
+<td><code>ElevatedButtonThemeData</code></td>
+<td>ElevatedButton 主题</td>
+</tr>
+<tr>
+<td><code>cardTheme</code></td>
+<td><code>CardTheme</code></td>
+<td>Card 主题</td>
+</tr>
+<tr>
+<td><code>inputDecorationTheme</code></td>
+<td><code>InputDecorationTheme</code></td>
+<td>输入框装饰主题</td>
+</tr>
+<tr>
+<td><code>iconTheme</code></td>
+<td><code>IconThemeData</code></td>
+<td>图标主题</td>
+</tr>
+<tr>
+<td><code>scaffoldBackgroundColor</code></td>
+<td><code>Color</code></td>
+<td>Scaffold 背景色</td>
+</tr>
+<tr>
+<td><code>extensions</code></td>
+<td><code>Iterable&lt;ThemeExtension&gt;</code></td>
+<td>自定义主题扩展</td>
+</tr>
+</tbody>
+</table>
+<h3 id="14-usematerial3-的影响">1.4 useMaterial3 的影响</h3>
+<p>Material 3（又称 Material You）是 Google 最新的设计规范，Flutter 3.16+ 默认启用。与 Material 2 相比，主要变化包括：</p>
+<ul>
+<li>组件视觉样式更新（圆角更大、色调映射不同）</li>
+<li>颜色系统从 <code>primarySwatch</code> 迁移到 <code>ColorScheme</code></li>
+<li>新增 <code>NavigationBar</code>、<code>SegmentedButton</code>、<code>SearchAnchor</code> 等组件</li>
+<li>Typography 更新为新版字体规模</li>
+</ul>
+<pre><code class="language-dart">// Material 3（推荐）
+ThemeData(
+  useMaterial3: true,
+  colorSchemeSeed: Colors.deepPurple,
+)
+
+// Material 2（旧版，逐渐淘汰）
+ThemeData(
+  useMaterial3: false,
+  primarySwatch: Colors.deepPurple,
+)
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：新项目一律使用 <code>useMaterial3: true</code>。已有项目如果仍在使用 Material 2，建议制定迁移计划逐步切换。</p>
+</blockquote>
+<hr />
+<h2 id="2-colorschemematerial-3-颜色体系">2. ColorScheme：Material 3 颜色体系</h2>
+<h3 id="21-理解-colorscheme-的颜色角色">2.1 理解 ColorScheme 的颜色角色</h3>
+<p><code>ColorScheme</code> 是 Material 3 颜色系统的核心。它不是简单地定义&quot;主色&quot;和&quot;强调色&quot;，而是定义了一组<strong>颜色角色</strong>（Color Roles），每种角色都有明确的用途和语义。</p>
+<table>
+<thead>
+<tr>
+<th>颜色角色</th>
+<th>用途说明</th>
+<th>搭配关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>primary</code></td>
+<td>主品牌色，用于关键 UI 元素</td>
+<td><code>onPrimary</code>（文字/图标在 primary 上的颜色）</td>
+</tr>
+<tr>
+<td><code>primaryContainer</code></td>
+<td>主色容器背景</td>
+<td><code>onPrimaryContainer</code>（容器内的文字/图标）</td>
+</tr>
+<tr>
+<td><code>secondary</code></td>
+<td>次要品牌色，辅助 UI 元素</td>
+<td><code>onSecondary</code></td>
+</tr>
+<tr>
+<td><code>secondaryContainer</code></td>
+<td>次色容器背景</td>
+<td><code>onSecondaryContainer</code></td>
+</tr>
+<tr>
+<td><code>tertiary</code></td>
+<td>第三品牌色，平衡和对比</td>
+<td><code>onTertiary</code></td>
+</tr>
+<tr>
+<td><code>tertiaryContainer</code></td>
+<td>第三色容器背景</td>
+<td><code>onTertiaryContainer</code></td>
+</tr>
+<tr>
+<td><code>surface</code></td>
+<td>表面色（Card、Dialog 背景）</td>
+<td><code>onSurface</code>（表面上的文字）</td>
+</tr>
+<tr>
+<td><code>surfaceContainerHighest</code></td>
+<td>最高层级容器</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>错误提示色</td>
+<td><code>onError</code></td>
+</tr>
+<tr>
+<td><code>errorContainer</code></td>
+<td>错误容器背景</td>
+<td><code>onErrorContainer</code></td>
+</tr>
+<tr>
+<td><code>outline</code></td>
+<td>边框/分割线颜色</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>outlineVariant</code></td>
+<td>次要边框颜色</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>shadow</code></td>
+<td>阴影颜色</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>inverseSurface</code></td>
+<td>反转表面色（用于 SnackBar 等）</td>
+<td><code>onInverseSurface</code></td>
+</tr>
+<tr>
+<td><code>inversePrimary</code></td>
+<td>反转主色</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>核心配对原则</strong>：<code>xxx</code> 和 <code>onXxx</code> 总是成对使用——<code>xxx</code> 做背景色时，<code>onXxx</code> 做前景色（文字/图标），以确保对比度和可读性。</p>
+<h3 id="22-colorschemefromseed-从种子色生成">2.2 ColorScheme.fromSeed 从种子色生成</h3>
+<p>这是 Material 3 推荐的创建 <code>ColorScheme</code> 的方式。只需提供一个种子颜色（Seed Color），算法会自动生成一套和谐的、符合无障碍对比度要求的完整配色方案。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const ColorSchemeDemo());
+
+class ColorSchemeDemo extends StatelessWidget {
+  const ColorSchemeDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        // 从种子色生成亮色方案
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.teal,
+          brightness: Brightness.light,
+        ),
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        // 从相同的种子色生成暗色方案
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.teal,
+          brightness: Brightness.dark,
+        ),
+      ),
+      home: const ColorSchemeShowcase(),
+    );
+  }
+}
+
+class ColorSchemeShowcase extends StatelessWidget {
+  const ColorSchemeShowcase({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('ColorScheme 展示')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _colorCard('primary', cs.primary, cs.onPrimary),
+            _colorCard('primaryContainer', cs.primaryContainer, cs.onPrimaryContainer),
+            _colorCard('secondary', cs.secondary, cs.onSecondary),
+            _colorCard('secondaryContainer', cs.secondaryContainer, cs.onSecondaryContainer),
+            _colorCard('tertiary', cs.tertiary, cs.onTertiary),
+            _colorCard('tertiaryContainer', cs.tertiaryContainer, cs.onTertiaryContainer),
+            _colorCard('surface', cs.surface, cs.onSurface),
+            _colorCard('error', cs.error, cs.onError),
+            _colorCard('errorContainer', cs.errorContainer, cs.onErrorContainer),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _colorCard(String label, Color background, Color foreground) {
+    return Container(
+      width: 160,
+      height: 80,
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        style: TextStyle(color: foreground, fontSize: 12, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="23-colorschemefromimageprovider-从图片提取配色">2.3 ColorScheme.fromImageProvider 从图片提取配色</h3>
+<p>Material 3 还支持从图片中提取主色调来生成 <code>ColorScheme</code>，这在需要根据内容动态调整主题色时非常有用（例如音乐播放器根据封面变色）。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class DynamicThemeFromImage extends StatefulWidget {
+  const DynamicThemeFromImage({super.key});
+
+  @override
+  State&lt;DynamicThemeFromImage&gt; createState() =&gt; _DynamicThemeFromImageState();
+}
+
+class _DynamicThemeFromImageState extends State&lt;DynamicThemeFromImage&gt; {
+  ColorScheme? _colorScheme;
+  final String _imageUrl = 'https://picsum.photos/200';
+
+  @override
+  void initState() {
+    super.initState();
+    _extractColors();
+  }
+
+  Future&lt;void&gt; _extractColors() async {
+    // 从网络图片提取配色方案
+    final colorScheme = await ColorScheme.fromImageProvider(
+      provider: NetworkImage(_imageUrl),
+      brightness: Brightness.light,
+    );
+    setState(() =&gt; _colorScheme = colorScheme);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final effectiveScheme = _colorScheme ??
+        ColorScheme.fromSeed(seedColor: Colors.blue);
+
+    return Theme(
+      data: ThemeData(
+        useMaterial3: true,
+        colorScheme: effectiveScheme,
+      ),
+      child: Scaffold(
+        appBar: AppBar(title: const Text('图片动态配色')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.network(_imageUrl, width: 200, height: 200, fit: BoxFit.cover),
+              ),
+              const SizedBox(height: 24),
+              if (_colorScheme != null) ...[
+                FilledButton(
+                  onPressed: () {},
+                  child: const Text('从图片提取的主色'),
+                ),
+                const SizedBox(height: 8),
+                FilledButton.tonal(
+                  onPressed: () {},
+                  child: const Text('色调按钮'),
+                ),
+              ] else
+                const CircularProgressIndicator(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="24-手动自定义-colorscheme">2.4 手动自定义 ColorScheme</h3>
+<p>如果设计师提供了精确的品牌色值，你可以手动构建 <code>ColorScheme</code>，也可以在 <code>fromSeed</code> 的基础上覆盖部分颜色：</p>
+<pre><code class="language-dart">// 方式一：在种子色基础上覆盖部分颜色
+final lightScheme = ColorScheme.fromSeed(
+  seedColor: const Color(0xFF6750A4),
+  brightness: Brightness.light,
+).copyWith(
+  // 覆盖特定的颜色角色
+  secondary: const Color(0xFF625B71),
+  error: const Color(0xFFBA1A1A),
+);
+
+// 方式二：完全手动定义（适合有严格品牌规范的项目）
+const brandScheme = ColorScheme(
+  brightness: Brightness.light,
+  primary: Color(0xFF1A73E8),
+  onPrimary: Color(0xFFFFFFFF),
+  primaryContainer: Color(0xFFD3E3FD),
+  onPrimaryContainer: Color(0xFF001D36),
+  secondary: Color(0xFF5F6368),
+  onSecondary: Color(0xFFFFFFFF),
+  secondaryContainer: Color(0xFFE8EAED),
+  onSecondaryContainer: Color(0xFF1D1B20),
+  tertiary: Color(0xFF188038),
+  onTertiary: Color(0xFFFFFFFF),
+  tertiaryContainer: Color(0xFFCEEAD6),
+  onTertiaryContainer: Color(0xFF0D3B1A),
+  error: Color(0xFFD93025),
+  onError: Color(0xFFFFFFFF),
+  errorContainer: Color(0xFFFCE8E6),
+  onErrorContainer: Color(0xFF410E0B),
+  surface: Color(0xFFFEF7FF),
+  onSurface: Color(0xFF1D1B20),
+  outline: Color(0xFF79747E),
+  outlineVariant: Color(0xFFCAC4D0),
+  shadow: Color(0xFF000000),
+);
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li>使用 <code>colorSchemeSeed</code> 时，<code>ThemeData</code> 会自动调用 <code>ColorScheme.fromSeed</code>，此时不要同时设置 <code>colorScheme</code> 参数，否则会冲突。</li>
+<li><code>fromSeed</code> 生成的颜色经过无障碍对比度验证，手动定义时请自行确保前景/背景色的对比度比达到 4.5:1（AA 级）以上。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="3-texttheme统一文本样式管理">3. TextTheme：统一文本样式管理</h2>
+<h3 id="31-material-3-的-15-种文本样式">3.1 Material 3 的 15 种文本样式</h3>
+<p>Material 3 定义了 5 个类别（Display、Headline、Title、Body、Label）× 3 种尺寸（Large、Medium、Small），共 15 种文本样式：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>Large</th>
+<th>Medium</th>
+<th>Small</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Display</strong></td>
+<td><code>displayLarge</code></td>
+<td><code>displayMedium</code></td>
+<td><code>displaySmall</code></td>
+<td>超大标题，用于英雄区域</td>
+</tr>
+<tr>
+<td><strong>Headline</strong></td>
+<td><code>headlineLarge</code></td>
+<td><code>headlineMedium</code></td>
+<td><code>headlineSmall</code></td>
+<td>标题，用于页面/区域标题</td>
+</tr>
+<tr>
+<td><strong>Title</strong></td>
+<td><code>titleLarge</code></td>
+<td><code>titleMedium</code></td>
+<td><code>titleSmall</code></td>
+<td>子标题，用于 AppBar、对话框标题</td>
+</tr>
+<tr>
+<td><strong>Body</strong></td>
+<td><code>bodyLarge</code></td>
+<td><code>bodyMedium</code></td>
+<td><code>bodySmall</code></td>
+<td>正文，最常用的文本样式</td>
+</tr>
+<tr>
+<td><strong>Label</strong></td>
+<td><code>labelLarge</code></td>
+<td><code>labelMedium</code></td>
+<td><code>labelSmall</code></td>
+<td>标签，用于按钮文字、表单标签</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-使用-texttheme">3.2 使用 TextTheme</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const TextThemeDemo());
+
+class TextThemeDemo extends StatelessWidget {
+  const TextThemeDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.indigo,
+        // 自定义 TextTheme
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(
+            fontSize: 57,
+            fontWeight: FontWeight.w400,
+            letterSpacing: -0.25,
+          ),
+          headlineMedium: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w600,
+          ),
+          bodyLarge: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            height: 1.5, // 行高
+          ),
+          labelLarge: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.1,
+          ),
+        ),
+      ),
+      home: const TextThemeShowcase(),
+    );
+  }
+}
+
+class TextThemeShowcase extends StatelessWidget {
+  const TextThemeShowcase({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('TextTheme 展示')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Display Large', style: textTheme.displayLarge),
+            const Divider(),
+            Text('Display Medium', style: textTheme.displayMedium),
+            const Divider(),
+            Text('Display Small', style: textTheme.displaySmall),
+            const Divider(),
+            Text('Headline Large', style: textTheme.headlineLarge),
+            const Divider(),
+            Text('Headline Medium', style: textTheme.headlineMedium),
+            const Divider(),
+            Text('Headline Small', style: textTheme.headlineSmall),
+            const Divider(),
+            Text('Title Large', style: textTheme.titleLarge),
+            const Divider(),
+            Text('Title Medium', style: textTheme.titleMedium),
+            const Divider(),
+            Text('Title Small', style: textTheme.titleSmall),
+            const Divider(),
+            Text('Body Large', style: textTheme.bodyLarge),
+            const Divider(),
+            Text('Body Medium（默认正文）', style: textTheme.bodyMedium),
+            const Divider(),
+            Text('Body Small', style: textTheme.bodySmall),
+            const Divider(),
+            Text('Label Large', style: textTheme.labelLarge),
+            const Divider(),
+            Text('Label Medium', style: textTheme.labelMedium),
+            const Divider(),
+            Text('Label Small', style: textTheme.labelSmall),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="33-集成-google-fonts">3.3 集成 Google Fonts</h3>
+<p><code>google_fonts</code> 包可以让你轻松使用 Google Fonts 中的千余种字体，并与 <code>TextTheme</code> 无缝集成：</p>
+<pre><code class="language-yaml"># pubspec.yaml
+dependencies:
+  google_fonts: ^6.1.0
+</code></pre>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class GoogleFontsThemeDemo extends StatelessWidget {
+  const GoogleFontsThemeDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.green,
+        // 方式一：整体替换 TextTheme 的字体族
+        textTheme: GoogleFonts.notoSansScTextTheme(
+          Theme.of(context).textTheme,
+        ),
+      ),
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Google Fonts 集成')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 方式二：在单个 TextStyle 上使用 Google Fonts
+              Text(
+                '自定义字体标题',
+                style: GoogleFonts.notoSerifSc(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                '正文内容使用思源黑体',
+                style: GoogleFonts.notoSansSc(fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li>中文项目推荐 <code>Noto Sans SC</code>（思源黑体）或 <code>Noto Serif SC</code>（思源宋体）作为基础字体。</li>
+<li>在 <code>ThemeData.textTheme</code> 中统一设置字体，避免在各组件中分散指定。</li>
+<li>生产环境建议将字体文件打包到 assets 中（<code>GoogleFonts.config.allowRuntimeFetching = false</code>），避免运行时下载。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="4-组件主题定制">4. 组件主题定制</h2>
+<h3 id="41-组件主题的层级关系">4.1 组件主题的层级关系</h3>
+<p>Material 组件在决定自身样式时，按以下优先级从高到低查找：</p>
+<pre><code>组件自身的样式参数（如 ElevatedButton 的 style 参数）
+     ↓ 未指定时
+局部 Theme widget 中的组件主题
+     ↓ 未指定时
+MaterialApp.theme 中的全局组件主题
+     ↓ 未指定时
+ThemeData 内置的默认值
+</code></pre>
+<h3 id="42-elevatedbuttontheme">4.2 ElevatedButtonTheme</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const ButtonThemeDemo());
+
+class ButtonThemeDemo extends StatelessWidget {
+  const ButtonThemeDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+        // 全局定制 ElevatedButton 样式
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.blue,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            elevation: 2,
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
+      home: Scaffold(
+        appBar: AppBar(title: const Text('按钮主题')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 自动使用全局主题样式
+              ElevatedButton(
+                onPressed: () {},
+                child: const Text('全局样式按钮'),
+              ),
+              const SizedBox(height: 16),
+              // 局部覆盖
+              ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                ),
+                child: const Text('局部覆盖颜色'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="43-cardtheme">4.3 CardTheme</h3>
+<pre><code class="language-dart">ThemeData(
+  useMaterial3: true,
+  cardTheme: CardTheme(
+    elevation: 2,
+    shadowColor: Colors.black26,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+    clipBehavior: Clip.antiAlias,
+    // Material 3 中 Card 默认使用 surfaceContainerLow 颜色
+    // 可通过 color 覆盖
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  ),
+)
+</code></pre>
+<h3 id="44-appbartheme">4.4 AppBarTheme</h3>
+<pre><code class="language-dart">ThemeData(
+  useMaterial3: true,
+  appBarTheme: AppBarTheme(
+    centerTitle: true,
+    elevation: 0,
+    scrolledUnderElevation: 2, // 滚动时的阴影
+    backgroundColor: Colors.transparent,
+    foregroundColor: Colors.black87,
+    titleTextStyle: const TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+      color: Colors.black87,
+    ),
+    iconTheme: const IconThemeData(
+      color: Colors.black87,
+      size: 24,
+    ),
+  ),
+)
+</code></pre>
+<h3 id="45-inputdecorationtheme">4.5 InputDecorationTheme</h3>
+<pre><code class="language-dart">ThemeData(
+  useMaterial3: true,
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: Colors.grey.shade100,
+    // 边框样式
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.blue, width: 2),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.red, width: 1),
+    ),
+    // 内边距
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    // 提示文字样式
+    hintStyle: TextStyle(color: Colors.grey.shade500),
+    // 标签样式
+    floatingLabelStyle: const TextStyle(color: Colors.blue),
+  ),
+)
+</code></pre>
+<h3 id="46-更多组件主题">4.6 更多组件主题</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+// 综合组件主题配置示例
+ThemeData buildTheme(ColorScheme colorScheme) {
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: colorScheme,
+
+    // ListTile 主题
+    listTileTheme: ListTileThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      tileColor: Colors.transparent,
+      selectedTileColor: colorScheme.primaryContainer,
+      iconColor: colorScheme.primary,
+    ),
+
+    // Icon 主题
+    iconTheme: IconThemeData(
+      color: colorScheme.onSurface,
+      size: 24,
+    ),
+
+    // IconButton 主题
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(
+        foregroundColor: colorScheme.onSurface,
+        highlightColor: colorScheme.primary.withOpacity(0.1),
+      ),
+    ),
+
+    // Chip 主题
+    chipTheme: ChipThemeData(
+      backgroundColor: colorScheme.surfaceContainerLow,
+      selectedColor: colorScheme.primaryContainer,
+      labelStyle: TextStyle(color: colorScheme.onSurface),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+
+    // Dialog 主题
+    dialogTheme: DialogTheme(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(28),
+      ),
+      titleTextStyle: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: colorScheme.onSurface,
+      ),
+    ),
+
+    // BottomSheet 主题
+    bottomSheetTheme: BottomSheetThemeData(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      showDragHandle: true,
+      dragHandleColor: colorScheme.onSurfaceVariant.withOpacity(0.4),
+    ),
+
+    // Divider 主题
+    dividerTheme: DividerThemeData(
+      color: colorScheme.outlineVariant,
+      thickness: 1,
+      space: 1,
+    ),
+
+    // FloatingActionButton 主题
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: colorScheme.primaryContainer,
+      foregroundColor: colorScheme.onPrimaryContainer,
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+    ),
+
+    // NavigationBar 主题（底部导航）
+    navigationBarTheme: NavigationBarThemeData(
+      indicatorColor: colorScheme.primaryContainer,
+      labelTextStyle: WidgetStatePropertyAll(
+        TextStyle(fontSize: 12, color: colorScheme.onSurface),
+      ),
+    ),
+  );
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li>将主题配置抽取到独立文件（如 <code>lib/theme/app_theme.dart</code>），不要把大量主题代码堆在 <code>main.dart</code> 中。</li>
+<li>使用 <code>ColorScheme</code> 中的语义颜色而非硬编码颜色值，这样切换亮/暗模式时组件颜色会自动适配。</li>
+<li>先从全局组件主题入手，只在必要时才在单个组件上使用 <code>style</code> 参数做局部覆盖。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="5-亮色暗色主题切换">5. 亮色/暗色主题切换</h2>
+<h3 id="51-thememode-三种模式">5.1 ThemeMode 三种模式</h3>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ThemeMode.system</code></td>
+<td>跟随系统设置自动切换亮/暗模式</td>
+</tr>
+<tr>
+<td><code>ThemeMode.light</code></td>
+<td>始终使用亮色主题（<code>theme</code> 参数）</td>
+</tr>
+<tr>
+<td><code>ThemeMode.dark</code></td>
+<td>始终使用暗色主题（<code>darkTheme</code> 参数）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-动态切换主题的完整实现">5.2 动态切换主题的完整实现</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const ThemeSwitchApp());
+
+class ThemeSwitchApp extends StatefulWidget {
+  const ThemeSwitchApp({super.key});
+
+  @override
+  State&lt;ThemeSwitchApp&gt; createState() =&gt; _ThemeSwitchAppState();
+}
+
+class _ThemeSwitchAppState extends State&lt;ThemeSwitchApp&gt; {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  void _setThemeMode(ThemeMode mode) {
+    setState(() =&gt; _themeMode = mode);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.light,
+        ),
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
+      ),
+      themeMode: _themeMode,
+      home: ThemeSwitchPage(
+        currentMode: _themeMode,
+        onThemeModeChanged: _setThemeMode,
+      ),
+    );
+  }
+}
+
+class ThemeSwitchPage extends StatelessWidget {
+  const ThemeSwitchPage({
+    super.key,
+    required this.currentMode,
+    required this.onThemeModeChanged,
+  });
+
+  final ThemeMode currentMode;
+  final ValueChanged&lt;ThemeMode&gt; onThemeModeChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('主题切换'),
+        actions: [
+          // 简单的亮/暗切换按钮
+          IconButton(
+            icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
+            onPressed: () {
+              onThemeModeChanged(
+                isDark ? ThemeMode.light : ThemeMode.dark,
+              );
+            },
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // 三选一的主题模式选择
+          Card(
+            child: Column(
+              children: [
+                RadioListTile&lt;ThemeMode&gt;(
+                  title: const Text('跟随系统'),
+                  subtitle: const Text('自动切换亮色/暗色模式'),
+                  secondary: const Icon(Icons.brightness_auto),
+                  value: ThemeMode.system,
+                  groupValue: currentMode,
+                  onChanged: (mode) =&gt; onThemeModeChanged(mode!),
+                ),
+                RadioListTile&lt;ThemeMode&gt;(
+                  title: const Text('亮色模式'),
+                  secondary: const Icon(Icons.light_mode),
+                  value: ThemeMode.light,
+                  groupValue: currentMode,
+                  onChanged: (mode) =&gt; onThemeModeChanged(mode!),
+                ),
+                RadioListTile&lt;ThemeMode&gt;(
+                  title: const Text('暗色模式'),
+                  secondary: const Icon(Icons.dark_mode),
+                  value: ThemeMode.dark,
+                  groupValue: currentMode,
+                  onChanged: (mode) =&gt; onThemeModeChanged(mode!),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          // 预览组件在当前主题下的效果
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('组件预览', style: theme.textTheme.titleLarge),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      ElevatedButton(onPressed: () {}, child: const Text('Elevated')),
+                      const SizedBox(width: 8),
+                      FilledButton(onPressed: () {}, child: const Text('Filled')),
+                      const SizedBox(width: 8),
+                      OutlinedButton(onPressed: () {}, child: const Text('Outlined')),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const TextField(
+                    decoration: InputDecoration(
+                      labelText: '输入框',
+                      hintText: '请输入内容',
+                      prefixIcon: Icon(Icons.search),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      Chip(label: const Text('Chip 1')),
+                      ActionChip(label: const Text('Action'), onPressed: () {}),
+                      FilterChip(label: const Text('Filter'), selected: true, onSelected: (_) {}),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="53-使用-valuenotifier-管理主题状态推荐模式">5.3 使用 ValueNotifier 管理主题状态（推荐模式）</h3>
+<p>在实际项目中，我们通常需要在应用的不同位置访问和修改主题状态。使用 <code>ValueNotifier</code> + <code>ValueListenableBuilder</code> 是一种轻量级解决方案：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+// 全局主题状态管理器
+class ThemeNotifier extends ValueNotifier&lt;ThemeMode&gt; {
+  ThemeNotifier() : super(ThemeMode.system);
+
+  void setThemeMode(ThemeMode mode) =&gt; value = mode;
+
+  void toggleBrightness(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    value = brightness == Brightness.dark ? ThemeMode.light : ThemeMode.dark;
+  }
+}
+
+// 在顶层创建实例
+final themeNotifier = ThemeNotifier();
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder&lt;ThemeMode&gt;(
+      valueListenable: themeNotifier,
+      builder: (context, themeMode, _) {
+        return MaterialApp(
+          theme: ThemeData(
+            useMaterial3: true,
+            colorSchemeSeed: Colors.blue,
+            brightness: Brightness.light,
+          ),
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            colorSchemeSeed: Colors.blue,
+            brightness: Brightness.dark,
+          ),
+          themeMode: themeMode,
+          home: const HomePage(),
+        );
+      },
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('首页'),
+        actions: [
+          // 在任意位置都可以切换主题
+          IconButton(
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+            onPressed: () =&gt; themeNotifier.toggleBrightness(context),
+          ),
+        ],
+      ),
+      body: const Center(child: Text('使用 ValueNotifier 管理主题')),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li>如果项目中已经使用了状态管理方案（如 Riverpod、Bloc、Provider），直接用其管理 <code>ThemeMode</code> 即可，无需额外引入 <code>ValueNotifier</code>。</li>
+<li>切换主题后，<code>MaterialApp</code> 会重建整个子树，所有 Material 组件会自动读取新主题——你不需要逐个组件更新。</li>
+<li>用户的主题偏好应该持久化存储（如 <code>SharedPreferences</code>），在应用启动时恢复。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="6-themeofcontext-与主题继承">6. Theme.of(context) 与主题继承</h2>
+<h3 id="61-从-context-获取当前主题">6.1 从 context 获取当前主题</h3>
+<p><code>Theme.of(context)</code> 会沿着 Widget 树向上查找最近的 <code>Theme</code> 祖先，返回对应的 <code>ThemeData</code>。这是在组件中读取主题信息的标准方式。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class ThemeAccessDemo extends StatelessWidget {
+  const ThemeAccessDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 获取完整 ThemeData
+    final theme = Theme.of(context);
+
+    // 便捷获取 ColorScheme
+    final colorScheme = Theme.of(context).colorScheme;
+    // 等效写法
+    final colorScheme2 = ColorScheme.of(context);
+
+    // 便捷获取 TextTheme
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      body: Center(
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            // 使用语义化的主题颜色
+            color: colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: colorScheme.outline),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '主题标题',
+                style: textTheme.headlineMedium?.copyWith(
+                  color: colorScheme.onPrimaryContainer,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '使用主题颜色和文本样式',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onPrimaryContainer,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="62-使用-theme-widget-局部覆盖主题">6.2 使用 Theme widget 局部覆盖主题</h3>
+<p><code>Theme</code> 是一个 Widget，可以在树中的任意位置插入，为其子树提供不同的主题配置。它不会替换整个 <code>ThemeData</code>，而是在父主题基础上进行<strong>合并覆盖</strong>。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class LocalThemeOverrideDemo extends StatelessWidget {
+  const LocalThemeOverrideDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('局部主题覆盖')),
+      body: Column(
+        children: [
+          // 使用全局主题
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('这段文字使用全局主题'),
+          ),
+          ElevatedButton(
+            onPressed: () {},
+            child: const Text('全局主题按钮'),
+          ),
+          const Divider(height: 32),
+
+          // 局部覆盖主题：只修改 ColorScheme 为橙色系
+          Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.orange,
+                brightness: Theme.of(context).brightness,
+              ),
+            ),
+            child: Column(
+              children: [
+                Builder(
+                  builder: (innerContext) {
+                    // 这里的 context 能读取到橙色主题
+                    final scheme = Theme.of(innerContext).colorScheme;
+                    return Container(
+                      padding: const EdgeInsets.all(16),
+                      color: scheme.primaryContainer,
+                      child: Text(
+                        '这段文字使用局部橙色主题',
+                        style: TextStyle(color: scheme.onPrimaryContainer),
+                      ),
+                    );
+                  },
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('橙色主题按钮'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="63-themedatacopywith-的妙用">6.3 ThemeData.copyWith 的妙用</h3>
+<p><code>copyWith</code> 允许你在现有主题基础上只修改部分属性，其余属性保持不变。这是局部覆盖和主题变体的关键方法。</p>
+<pre><code class="language-dart">// 创建一个&quot;高对比度&quot;变体
+final highContrastTheme = Theme.of(context).copyWith(
+  textTheme: Theme.of(context).textTheme.apply(
+    fontSizeFactor: 1.2, // 所有字号放大 20%
+    bodyColor: Colors.black, // 正文颜色加深
+    displayColor: Colors.black, // 标题颜色加深
+  ),
+);
+
+// 创建一个局部的&quot;错误区域&quot;主题
+final errorZoneTheme = Theme.of(context).copyWith(
+  colorScheme: Theme.of(context).colorScheme.copyWith(
+    primary: Theme.of(context).colorScheme.error,
+    primaryContainer: Theme.of(context).colorScheme.errorContainer,
+  ),
+);
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>Theme.of(context)</code> 依赖 <code>BuildContext</code>，必须在 Widget 的 <code>build</code> 方法或之后调用，不能在 <code>initState</code> 中使用。</li>
+<li>局部 <code>Theme</code> widget 中使用 <code>Theme.of(context)</code> 时注意 context 的位置——如果 context 位于 <code>Theme</code> widget 之上，获取到的仍然是父主题。需要用 <code>Builder</code> 获取新的 context。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="7-自定义主题扩展-themeextensiont">7. 自定义主题扩展 ThemeExtension&lt;T&gt;</h2>
+<h3 id="71-为什么需要-themeextension">7.1 为什么需要 ThemeExtension</h3>
+<p><code>ThemeData</code> 内置了大量 Material 组件的主题配置，但在实际项目中，我们经常会有一些<strong>自定义的样式需求</strong>无法被现有属性覆盖。例如：</p>
+<ul>
+<li>自定义品牌渐变色</li>
+<li>特定业务组件的颜色（如&quot;交易成功绿&quot;、&quot;交易失败红&quot;）</li>
+<li>自定义间距体系</li>
+<li>自定义阴影配置</li>
+</ul>
+<p><code>ThemeExtension&lt;T&gt;</code> 就是为解决这一问题而设计的。它允许你定义任意结构的主题数据类，并将其挂载到 <code>ThemeData</code> 上，享受与原生主题一样的读取方式和亮/暗模式插值支持。</p>
+<h3 id="72-定义自定义主题数据类">7.2 定义自定义主题数据类</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+/// 自定义品牌颜色扩展
+class BrandColors extends ThemeExtension&lt;BrandColors&gt; {
+  const BrandColors({
+    required this.success,
+    required this.onSuccess,
+    required this.warning,
+    required this.onWarning,
+    required this.info,
+    required this.onInfo,
+    required this.gradientStart,
+    required this.gradientEnd,
+  });
+
+  /// 成功状态颜色
+  final Color success;
+  final Color onSuccess;
+
+  /// 警告状态颜色
+  final Color warning;
+  final Color onWarning;
+
+  /// 信息状态颜色
+  final Color info;
+  final Color onInfo;
+
+  /// 品牌渐变色
+  final Color gradientStart;
+  final Color gradientEnd;
+
+  /// copyWith：返回新实例，未提供的字段保持不变
+  @override
+  BrandColors copyWith({
+    Color? success,
+    Color? onSuccess,
+    Color? warning,
+    Color? onWarning,
+    Color? info,
+    Color? onInfo,
+    Color? gradientStart,
+    Color? gradientEnd,
+  }) {
+    return BrandColors(
+      success: success ?? this.success,
+      onSuccess: onSuccess ?? this.onSuccess,
+      warning: warning ?? this.warning,
+      onWarning: onWarning ?? this.onWarning,
+      info: info ?? this.info,
+      onInfo: onInfo ?? this.onInfo,
+      gradientStart: gradientStart ?? this.gradientStart,
+      gradientEnd: gradientEnd ?? this.gradientEnd,
+    );
+  }
+
+  /// lerp：在两个主题之间进行线性插值（用于亮/暗模式切换动画）
+  @override
+  BrandColors lerp(covariant BrandColors? other, double t) {
+    if (other == null) return this;
+    return BrandColors(
+      success: Color.lerp(success, other.success, t)!,
+      onSuccess: Color.lerp(onSuccess, other.onSuccess, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
+      onWarning: Color.lerp(onWarning, other.onWarning, t)!,
+      info: Color.lerp(info, other.info, t)!,
+      onInfo: Color.lerp(onInfo, other.onInfo, t)!,
+      gradientStart: Color.lerp(gradientStart, other.gradientStart, t)!,
+      gradientEnd: Color.lerp(gradientEnd, other.gradientEnd, t)!,
+    );
+  }
+}
+</code></pre>
+<h3 id="73-定义亮暗两套扩展值">7.3 定义亮/暗两套扩展值</h3>
+<pre><code class="language-dart">/// 亮色模式的品牌颜色
+const lightBrandColors = BrandColors(
+  success: Color(0xFF2E7D32),
+  onSuccess: Color(0xFFFFFFFF),
+  warning: Color(0xFFF57F17),
+  onWarning: Color(0xFFFFFFFF),
+  info: Color(0xFF0288D1),
+  onInfo: Color(0xFFFFFFFF),
+  gradientStart: Color(0xFF6200EE),
+  gradientEnd: Color(0xFF03DAC6),
+);
+
+/// 暗色模式的品牌颜色
+const darkBrandColors = BrandColors(
+  success: Color(0xFF81C784),
+  onSuccess: Color(0xFF003300),
+  warning: Color(0xFFFFD54F),
+  onWarning: Color(0xFF332B00),
+  info: Color(0xFF4FC3F7),
+  onInfo: Color(0xFF00131A),
+  gradientStart: Color(0xFFBB86FC),
+  gradientEnd: Color(0xFF03DAC6),
+);
+</code></pre>
+<h3 id="74-注册到-themedata">7.4 注册到 ThemeData</h3>
+<pre><code class="language-dart">MaterialApp(
+  theme: ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.deepPurple,
+      brightness: Brightness.light,
+    ),
+    // 在 extensions 中注册自定义主题扩展
+    extensions: const &lt;ThemeExtension&gt;[
+      lightBrandColors,
+    ],
+  ),
+  darkTheme: ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.deepPurple,
+      brightness: Brightness.dark,
+    ),
+    extensions: const &lt;ThemeExtension&gt;[
+      darkBrandColors,
+    ],
+  ),
+  themeMode: ThemeMode.system,
+  home: const HomePage(),
+)
+</code></pre>
+<h3 id="75-在组件中使用">7.5 在组件中使用</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class BrandColorsDemo extends StatelessWidget {
+  const BrandColorsDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 通过 extension&lt;T&gt;() 方法获取自定义主题
+    final brandColors = Theme.of(context).extension&lt;BrandColors&gt;()!;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('ThemeExtension 演示')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 使用品牌渐变色
+            Container(
+              height: 120,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [brandColors.gradientStart, brandColors.gradientEnd],
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                '品牌渐变色',
+                style: textTheme.headlineMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 成功状态卡片
+            _StatusCard(
+              icon: Icons.check_circle,
+              title: '操作成功',
+              subtitle: '您的订单已提交',
+              backgroundColor: brandColors.success,
+              foregroundColor: brandColors.onSuccess,
+            ),
+            const SizedBox(height: 12),
+
+            // 警告状态卡片
+            _StatusCard(
+              icon: Icons.warning,
+              title: '库存不足',
+              subtitle: '仅剩 3 件商品',
+              backgroundColor: brandColors.warning,
+              foregroundColor: brandColors.onWarning,
+            ),
+            const SizedBox(height: 12),
+
+            // 信息状态卡片
+            _StatusCard(
+              icon: Icons.info,
+              title: '温馨提示',
+              subtitle: '新用户可享受首单优惠',
+              backgroundColor: brandColors.info,
+              foregroundColor: brandColors.onInfo,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusCard extends StatelessWidget {
+  const _StatusCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.backgroundColor,
+    required this.foregroundColor,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color backgroundColor;
+  final Color foregroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: foregroundColor, size: 32),
+          const SizedBox(width: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  color: foregroundColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: TextStyle(color: foregroundColor.withOpacity(0.9)),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="76-多个-themeextension-并存">7.6 多个 ThemeExtension 并存</h3>
+<p>一个应用中可以注册多个 <code>ThemeExtension</code>，它们通过泛型类型来区分：</p>
+<pre><code class="language-dart">/// 自定义间距体系
+class AppSpacing extends ThemeExtension&lt;AppSpacing&gt; {
+  const AppSpacing({
+    required this.xs,
+    required this.sm,
+    required this.md,
+    required this.lg,
+    required this.xl,
+  });
+
+  final double xs;
+  final double sm;
+  final double md;
+  final double lg;
+  final double xl;
+
+  @override
+  AppSpacing copyWith({double? xs, double? sm, double? md, double? lg, double? xl}) {
+    return AppSpacing(
+      xs: xs ?? this.xs,
+      sm: sm ?? this.sm,
+      md: md ?? this.md,
+      lg: lg ?? this.lg,
+      xl: xl ?? this.xl,
+    );
+  }
+
+  @override
+  AppSpacing lerp(covariant AppSpacing? other, double t) {
+    if (other == null) return this;
+    return AppSpacing(
+      xs: lerpDouble(xs, other.xs, t)!,
+      sm: lerpDouble(sm, other.sm, t)!,
+      md: lerpDouble(md, other.md, t)!,
+      lg: lerpDouble(lg, other.lg, t)!,
+      xl: lerpDouble(xl, other.xl, t)!,
+    );
+  }
+}
+
+/// 自定义阴影配置
+class AppShadows extends ThemeExtension&lt;AppShadows&gt; {
+  const AppShadows({
+    required this.cardShadow,
+    required this.dialogShadow,
+    required this.bottomBarShadow,
+  });
+
+  final BoxShadow cardShadow;
+  final BoxShadow dialogShadow;
+  final BoxShadow bottomBarShadow;
+
+  @override
+  AppShadows copyWith({
+    BoxShadow? cardShadow,
+    BoxShadow? dialogShadow,
+    BoxShadow? bottomBarShadow,
+  }) {
+    return AppShadows(
+      cardShadow: cardShadow ?? this.cardShadow,
+      dialogShadow: dialogShadow ?? this.dialogShadow,
+      bottomBarShadow: bottomBarShadow ?? this.bottomBarShadow,
+    );
+  }
+
+  @override
+  AppShadows lerp(covariant AppShadows? other, double t) {
+    if (other == null) return this;
+    return AppShadows(
+      cardShadow: BoxShadow.lerp(cardShadow, other.cardShadow, t)!,
+      dialogShadow: BoxShadow.lerp(dialogShadow, other.dialogShadow, t)!,
+      bottomBarShadow: BoxShadow.lerp(bottomBarShadow, other.bottomBarShadow, t)!,
+    );
+  }
+}
+</code></pre>
+<pre><code class="language-dart">// 注册多个扩展
+ThemeData(
+  useMaterial3: true,
+  extensions: const &lt;ThemeExtension&gt;[
+    lightBrandColors,
+    AppSpacing(xs: 4, sm: 8, md: 16, lg: 24, xl: 32),
+    AppShadows(
+      cardShadow: BoxShadow(
+        color: Color(0x1A000000),
+        blurRadius: 8,
+        offset: Offset(0, 2),
+      ),
+      dialogShadow: BoxShadow(
+        color: Color(0x33000000),
+        blurRadius: 24,
+        offset: Offset(0, 8),
+      ),
+      bottomBarShadow: BoxShadow(
+        color: Color(0x0D000000),
+        blurRadius: 4,
+        offset: Offset(0, -1),
+      ),
+    ),
+  ],
+)
+
+// 使用
+final spacing = Theme.of(context).extension&lt;AppSpacing&gt;()!;
+final shadows = Theme.of(context).extension&lt;AppShadows&gt;()!;
+
+Container(
+  margin: EdgeInsets.all(spacing.md),
+  decoration: BoxDecoration(
+    boxShadow: [shadows.cardShadow],
+  ),
+)
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li>每个 <code>ThemeExtension</code> 子类负责一个独立的职责域（颜色、间距、阴影等），遵循单一职责原则。</li>
+<li>一定要正确实现 <code>lerp</code> 方法——它是亮/暗主题切换动画平滑过渡的关键。对于 <code>Color</code> 类型用 <code>Color.lerp</code>，<code>double</code> 类型用 <code>lerpDouble</code>，<code>BoxShadow</code> 类型用 <code>BoxShadow.lerp</code>。</li>
+<li>为 <code>extension&lt;T&gt;()</code> 的返回值做空安全处理：开发阶段可以用 <code>!</code> 强制解包（配合断言检测），正式代码建议提供默认值兜底。</li>
+<li>推荐为常用扩展添加 <code>BuildContext</code> 上的便捷扩展方法：</li>
+</ol>
+</blockquote>
+<pre><code class="language-dart">extension BrandColorsExtension on BuildContext {
+  BrandColors get brandColors =&gt; Theme.of(this).extension&lt;BrandColors&gt;()!;
+}
+
+extension AppSpacingExtension on BuildContext {
+  AppSpacing get spacing =&gt; Theme.of(this).extension&lt;AppSpacing&gt;()!;
+}
+
+// 使用更简洁
+final colors = context.brandColors;
+final spacing = context.spacing;
+</code></pre>
+<hr />
+<h2 id="8-实战构建一套支持亮暗模式的完整主题">8. 实战：构建一套支持亮/暗模式的完整主题</h2>
+<p>下面我们将前面所有知识串联起来，构建一个完整的、生产级的主题方案。</p>
+<h3 id="81-项目结构">8.1 项目结构</h3>
+<pre><code>lib/
+├── main.dart
+└── theme/
+    ├── app_theme.dart          // 主题入口，提供亮/暗 ThemeData
+    ├── app_color_scheme.dart   // ColorScheme 定义
+    ├── app_text_theme.dart     // TextTheme 定义
+    ├── component_themes.dart   // 组件主题定义
+    └── extensions/
+        ├── brand_colors.dart   // 自定义品牌颜色
+        └── app_spacing.dart    // 自定义间距体系
+</code></pre>
+<h3 id="82-完整代码">8.2 完整代码</h3>
+<p>以下代码将所有内容整合在一个文件中，方便学习和运行：</p>
+<pre><code class="language-dart">import 'dart:ui';
+
+import 'package:flutter/material.dart';
+
+// ============================================================
+// 1. 自定义 ThemeExtension：品牌颜色
+// ============================================================
+
+class BrandColors extends ThemeExtension&lt;BrandColors&gt; {
+  const BrandColors({
+    required this.success,
+    required this.onSuccess,
+    required this.successContainer,
+    required this.onSuccessContainer,
+    required this.warning,
+    required this.onWarning,
+    required this.warningContainer,
+    required this.onWarningContainer,
+    required this.info,
+    required this.onInfo,
+    required this.gradientColors,
+    required this.shimmerBase,
+    required this.shimmerHighlight,
+  });
+
+  final Color success;
+  final Color onSuccess;
+  final Color successContainer;
+  final Color onSuccessContainer;
+  final Color warning;
+  final Color onWarning;
+  final Color warningContainer;
+  final Color onWarningContainer;
+  final Color info;
+  final Color onInfo;
+  final List&lt;Color&gt; gradientColors;
+  final Color shimmerBase;
+  final Color shimmerHighlight;
+
+  @override
+  BrandColors copyWith({
+    Color? success,
+    Color? onSuccess,
+    Color? successContainer,
+    Color? onSuccessContainer,
+    Color? warning,
+    Color? onWarning,
+    Color? warningContainer,
+    Color? onWarningContainer,
+    Color? info,
+    Color? onInfo,
+    List&lt;Color&gt;? gradientColors,
+    Color? shimmerBase,
+    Color? shimmerHighlight,
+  }) {
+    return BrandColors(
+      success: success ?? this.success,
+      onSuccess: onSuccess ?? this.onSuccess,
+      successContainer: successContainer ?? this.successContainer,
+      onSuccessContainer: onSuccessContainer ?? this.onSuccessContainer,
+      warning: warning ?? this.warning,
+      onWarning: onWarning ?? this.onWarning,
+      warningContainer: warningContainer ?? this.warningContainer,
+      onWarningContainer: onWarningContainer ?? this.onWarningContainer,
+      info: info ?? this.info,
+      onInfo: onInfo ?? this.onInfo,
+      gradientColors: gradientColors ?? this.gradientColors,
+      shimmerBase: shimmerBase ?? this.shimmerBase,
+      shimmerHighlight: shimmerHighlight ?? this.shimmerHighlight,
+    );
+  }
+
+  @override
+  BrandColors lerp(covariant BrandColors? other, double t) {
+    if (other == null) return this;
+    return BrandColors(
+      success: Color.lerp(success, other.success, t)!,
+      onSuccess: Color.lerp(onSuccess, other.onSuccess, t)!,
+      successContainer: Color.lerp(successContainer, other.successContainer, t)!,
+      onSuccessContainer: Color.lerp(onSuccessContainer, other.onSuccessContainer, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
+      onWarning: Color.lerp(onWarning, other.onWarning, t)!,
+      warningContainer: Color.lerp(warningContainer, other.warningContainer, t)!,
+      onWarningContainer: Color.lerp(onWarningContainer, other.onWarningContainer, t)!,
+      info: Color.lerp(info, other.info, t)!,
+      onInfo: Color.lerp(onInfo, other.onInfo, t)!,
+      gradientColors: _lerpColorList(gradientColors, other.gradientColors, t),
+      shimmerBase: Color.lerp(shimmerBase, other.shimmerBase, t)!,
+      shimmerHighlight: Color.lerp(shimmerHighlight, other.shimmerHighlight, t)!,
+    );
+  }
+
+  static List&lt;Color&gt; _lerpColorList(List&lt;Color&gt; a, List&lt;Color&gt; b, double t) {
+    final length = a.length &lt; b.length ? a.length : b.length;
+    return List.generate(length, (i) =&gt; Color.lerp(a[i], b[i], t)!);
+  }
+}
+
+// ============================================================
+// 2. 自定义 ThemeExtension：间距体系
+// ============================================================
+
+class AppSpacing extends ThemeExtension&lt;AppSpacing&gt; {
+  const AppSpacing({
+    this.xs = 4.0,
+    this.sm = 8.0,
+    this.md = 16.0,
+    this.lg = 24.0,
+    this.xl = 32.0,
+    this.xxl = 48.0,
+  });
+
+  final double xs;
+  final double sm;
+  final double md;
+  final double lg;
+  final double xl;
+  final double xxl;
+
+  @override
+  AppSpacing copyWith({
+    double? xs, double? sm, double? md,
+    double? lg, double? xl, double? xxl,
+  }) {
+    return AppSpacing(
+      xs: xs ?? this.xs, sm: sm ?? this.sm, md: md ?? this.md,
+      lg: lg ?? this.lg, xl: xl ?? this.xl, xxl: xxl ?? this.xxl,
+    );
+  }
+
+  @override
+  AppSpacing lerp(covariant AppSpacing? other, double t) {
+    if (other == null) return this;
+    return AppSpacing(
+      xs: lerpDouble(xs, other.xs, t)!,
+      sm: lerpDouble(sm, other.sm, t)!,
+      md: lerpDouble(md, other.md, t)!,
+      lg: lerpDouble(lg, other.lg, t)!,
+      xl: lerpDouble(xl, other.xl, t)!,
+      xxl: lerpDouble(xxl, other.xxl, t)!,
+    );
+  }
+}
+
+// ============================================================
+// 3. BuildContext 扩展方法（便捷获取自定义主题）
+// ============================================================
+
+extension ThemeExtensions on BuildContext {
+  BrandColors get brandColors =&gt; Theme.of(this).extension&lt;BrandColors&gt;()!;
+  AppSpacing get spacing =&gt; Theme.of(this).extension&lt;AppSpacing&gt;()!;
+}
+
+// ============================================================
+// 4. 品牌颜色的亮色/暗色实例
+// ============================================================
+
+const _lightBrandColors = BrandColors(
+  success: Color(0xFF2E7D32),
+  onSuccess: Color(0xFFFFFFFF),
+  successContainer: Color(0xFFC8E6C9),
+  onSuccessContainer: Color(0xFF1B5E20),
+  warning: Color(0xFFF57F17),
+  onWarning: Color(0xFFFFFFFF),
+  warningContainer: Color(0xFFFFF9C4),
+  onWarningContainer: Color(0xFF7F6003),
+  info: Color(0xFF0288D1),
+  onInfo: Color(0xFFFFFFFF),
+  gradientColors: [Color(0xFF6200EE), Color(0xFF03DAC6)],
+  shimmerBase: Color(0xFFE0E0E0),
+  shimmerHighlight: Color(0xFFF5F5F5),
+);
+
+const _darkBrandColors = BrandColors(
+  success: Color(0xFF81C784),
+  onSuccess: Color(0xFF003300),
+  successContainer: Color(0xFF1B5E20),
+  onSuccessContainer: Color(0xFFC8E6C9),
+  warning: Color(0xFFFFD54F),
+  onWarning: Color(0xFF332B00),
+  warningContainer: Color(0xFF7F6003),
+  onWarningContainer: Color(0xFFFFF9C4),
+  info: Color(0xFF4FC3F7),
+  onInfo: Color(0xFF00131A),
+  gradientColors: [Color(0xFFBB86FC), Color(0xFF03DAC6)],
+  shimmerBase: Color(0xFF424242),
+  shimmerHighlight: Color(0xFF616161),
+);
+
+// ============================================================
+// 5. ColorScheme 定义
+// ============================================================
+
+const _seedColor = Color(0xFF6750A4);
+
+final _lightColorScheme = ColorScheme.fromSeed(
+  seedColor: _seedColor,
+  brightness: Brightness.light,
+);
+
+final _darkColorScheme = ColorScheme.fromSeed(
+  seedColor: _seedColor,
+  brightness: Brightness.dark,
+);
+
+// ============================================================
+// 6. TextTheme 定义
+// ============================================================
+
+const _appTextTheme = TextTheme(
+  displayLarge: TextStyle(fontSize: 57, fontWeight: FontWeight.w400, letterSpacing: -0.25),
+  displayMedium: TextStyle(fontSize: 45, fontWeight: FontWeight.w400),
+  displaySmall: TextStyle(fontSize: 36, fontWeight: FontWeight.w400),
+  headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w600),
+  headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+  headlineSmall: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+  titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+  titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, letterSpacing: 0.15),
+  titleSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 0.1),
+  bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5, height: 1.5),
+  bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, letterSpacing: 0.25),
+  bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, letterSpacing: 0.4),
+  labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 0.1),
+  labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, letterSpacing: 0.5),
+  labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, letterSpacing: 0.5),
+);
+
+// ============================================================
+// 7. 组件主题工厂函数
+// ============================================================
+
+ElevatedButtonThemeData _elevatedButtonTheme(ColorScheme cs) {
+  return ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      foregroundColor: cs.onPrimary,
+      backgroundColor: cs.primary,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 1,
+      textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+    ),
+  );
+}
+
+OutlinedButtonThemeData _outlinedButtonTheme(ColorScheme cs) {
+  return OutlinedButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      foregroundColor: cs.primary,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      side: BorderSide(color: cs.outline),
+      textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+    ),
+  );
+}
+
+FilledButtonThemeData _filledButtonTheme(ColorScheme cs) {
+  return FilledButtonThemeData(
+    style: FilledButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+    ),
+  );
+}
+
+CardTheme _cardTheme(ColorScheme cs) {
+  return CardTheme(
+    elevation: 0,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+      side: BorderSide(color: cs.outlineVariant.withOpacity(0.5)),
+    ),
+    clipBehavior: Clip.antiAlias,
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  );
+}
+
+AppBarTheme _appBarTheme(ColorScheme cs) {
+  return AppBarTheme(
+    centerTitle: true,
+    elevation: 0,
+    scrolledUnderElevation: 1,
+    backgroundColor: cs.surface,
+    foregroundColor: cs.onSurface,
+    titleTextStyle: TextStyle(
+      fontSize: 20, fontWeight: FontWeight.w600, color: cs.onSurface,
+    ),
+    iconTheme: IconThemeData(color: cs.onSurface, size: 24),
+  );
+}
+
+InputDecorationTheme _inputDecorationTheme(ColorScheme cs) {
+  return InputDecorationTheme(
+    filled: true,
+    fillColor: cs.surfaceContainerHighest.withOpacity(0.5),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: cs.primary, width: 2),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: cs.error, width: 1),
+    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    hintStyle: TextStyle(color: cs.onSurface.withOpacity(0.5)),
+    prefixIconColor: cs.onSurfaceVariant,
+  );
+}
+
+ListTileThemeData _listTileTheme(ColorScheme cs) {
+  return ListTileThemeData(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    iconColor: cs.primary,
+    selectedTileColor: cs.primaryContainer,
+  );
+}
+
+NavigationBarThemeData _navigationBarTheme(ColorScheme cs) {
+  return NavigationBarThemeData(
+    elevation: 0,
+    indicatorColor: cs.primaryContainer,
+    backgroundColor: cs.surface,
+    labelTextStyle: WidgetStatePropertyAll(
+      TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: cs.onSurface),
+    ),
+  );
+}
+
+FloatingActionButtonThemeData _fabTheme(ColorScheme cs) {
+  return FloatingActionButtonThemeData(
+    backgroundColor: cs.primaryContainer,
+    foregroundColor: cs.onPrimaryContainer,
+    elevation: 2,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+  );
+}
+
+DialogTheme _dialogTheme(ColorScheme cs) {
+  return DialogTheme(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+    titleTextStyle: TextStyle(
+      fontSize: 24, fontWeight: FontWeight.w600, color: cs.onSurface,
+    ),
+  );
+}
+
+BottomSheetThemeData _bottomSheetTheme(ColorScheme cs) {
+  return BottomSheetThemeData(
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+    ),
+    showDragHandle: true,
+    dragHandleColor: cs.onSurfaceVariant.withOpacity(0.4),
+  );
+}
+
+ChipThemeData _chipTheme(ColorScheme cs) {
+  return ChipThemeData(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    side: BorderSide(color: cs.outlineVariant),
+  );
+}
+
+DividerThemeData _dividerTheme(ColorScheme cs) {
+  return DividerThemeData(
+    color: cs.outlineVariant,
+    thickness: 1,
+    space: 1,
+  );
+}
+
+// ============================================================
+// 8. 汇总：创建 ThemeData 的工厂函数
+// ============================================================
+
+ThemeData buildAppTheme({required Brightness brightness}) {
+  final colorScheme = brightness == Brightness.light
+      ? _lightColorScheme
+      : _darkColorScheme;
+  final brandColors = brightness == Brightness.light
+      ? _lightBrandColors
+      : _darkBrandColors;
+
+  return ThemeData(
+    useMaterial3: true,
+    brightness: brightness,
+    colorScheme: colorScheme,
+    textTheme: _appTextTheme,
+
+    // 组件主题
+    appBarTheme: _appBarTheme(colorScheme),
+    elevatedButtonTheme: _elevatedButtonTheme(colorScheme),
+    outlinedButtonTheme: _outlinedButtonTheme(colorScheme),
+    filledButtonTheme: _filledButtonTheme(colorScheme),
+    cardTheme: _cardTheme(colorScheme),
+    inputDecorationTheme: _inputDecorationTheme(colorScheme),
+    listTileTheme: _listTileTheme(colorScheme),
+    navigationBarTheme: _navigationBarTheme(colorScheme),
+    floatingActionButtonTheme: _fabTheme(colorScheme),
+    dialogTheme: _dialogTheme(colorScheme),
+    bottomSheetTheme: _bottomSheetTheme(colorScheme),
+    chipTheme: _chipTheme(colorScheme),
+    dividerTheme: _dividerTheme(colorScheme),
+
+    // 自定义扩展
+    extensions: &lt;ThemeExtension&gt;[
+      brandColors,
+      const AppSpacing(),
+    ],
+  );
+}
+
+// ============================================================
+// 9. 应用入口
+// ============================================================
+
+void main() =&gt; runApp(const CompleteThemeApp());
+
+class CompleteThemeApp extends StatefulWidget {
+  const CompleteThemeApp({super.key});
+
+  @override
+  State&lt;CompleteThemeApp&gt; createState() =&gt; _CompleteThemeAppState();
+}
+
+class _CompleteThemeAppState extends State&lt;CompleteThemeApp&gt; {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '完整主题实战',
+      debugShowCheckedModeBanner: false,
+      theme: buildAppTheme(brightness: Brightness.light),
+      darkTheme: buildAppTheme(brightness: Brightness.dark),
+      themeMode: _themeMode,
+      home: ThemeShowcasePage(
+        themeMode: _themeMode,
+        onThemeModeChanged: (mode) =&gt; setState(() =&gt; _themeMode = mode),
+      ),
+    );
+  }
+}
+
+// ============================================================
+// 10. 展示页面
+// ============================================================
+
+class ThemeShowcasePage extends StatelessWidget {
+  const ThemeShowcasePage({
+    super.key,
+    required this.themeMode,
+    required this.onThemeModeChanged,
+  });
+
+  final ThemeMode themeMode;
+  final ValueChanged&lt;ThemeMode&gt; onThemeModeChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final brandColors = context.brandColors;
+    final spacing = context.spacing;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('主题系统实战'),
+        actions: [
+          // 主题切换按钮：三种模式循环
+          IconButton(
+            icon: Icon(switch (themeMode) {
+              ThemeMode.system =&gt; Icons.brightness_auto,
+              ThemeMode.light =&gt; Icons.light_mode,
+              ThemeMode.dark =&gt; Icons.dark_mode,
+            }),
+            tooltip: switch (themeMode) {
+              ThemeMode.system =&gt; '跟随系统',
+              ThemeMode.light =&gt; '亮色模式',
+              ThemeMode.dark =&gt; '暗色模式',
+            },
+            onPressed: () {
+              final nextMode = switch (themeMode) {
+                ThemeMode.system =&gt; ThemeMode.light,
+                ThemeMode.light =&gt; ThemeMode.dark,
+                ThemeMode.dark =&gt; ThemeMode.system,
+              };
+              onThemeModeChanged(nextMode);
+            },
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(spacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 品牌渐变色区域
+            Container(
+              height: 140,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: brandColors.gradientColors),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                '品牌渐变色横幅',
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SizedBox(height: spacing.lg),
+
+            // ColorScheme 展示
+            Text('ColorScheme 颜色', style: theme.textTheme.titleLarge),
+            SizedBox(height: spacing.sm),
+            Wrap(
+              spacing: spacing.sm,
+              runSpacing: spacing.sm,
+              children: [
+                _miniColorChip('Primary', cs.primary, cs.onPrimary),
+                _miniColorChip('Secondary', cs.secondary, cs.onSecondary),
+                _miniColorChip('Tertiary', cs.tertiary, cs.onTertiary),
+                _miniColorChip('Error', cs.error, cs.onError),
+                _miniColorChip('Surface', cs.surface, cs.onSurface),
+              ],
+            ),
+            SizedBox(height: spacing.lg),
+
+            // 状态色展示（ThemeExtension）
+            Text('自定义品牌色（ThemeExtension）', style: theme.textTheme.titleLarge),
+            SizedBox(height: spacing.sm),
+            Row(
+              children: [
+                Expanded(
+                  child: _statusChip(
+                    Icons.check_circle, '成功',
+                    brandColors.successContainer, brandColors.onSuccessContainer,
+                  ),
+                ),
+                SizedBox(width: spacing.sm),
+                Expanded(
+                  child: _statusChip(
+                    Icons.warning, '警告',
+                    brandColors.warningContainer, brandColors.onWarningContainer,
+                  ),
+                ),
+                SizedBox(width: spacing.sm),
+                Expanded(
+                  child: _statusChip(
+                    Icons.info, '信息',
+                    brandColors.info, brandColors.onInfo,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: spacing.lg),
+
+            // 按钮展示
+            Text('按钮组件', style: theme.textTheme.titleLarge),
+            SizedBox(height: spacing.sm),
+            Wrap(
+              spacing: spacing.sm,
+              runSpacing: spacing.sm,
+              children: [
+                ElevatedButton(onPressed: () {}, child: const Text('Elevated')),
+                FilledButton(onPressed: () {}, child: const Text('Filled')),
+                FilledButton.tonal(onPressed: () {}, child: const Text('Tonal')),
+                OutlinedButton(onPressed: () {}, child: const Text('Outlined')),
+                TextButton(onPressed: () {}, child: const Text('Text')),
+              ],
+            ),
+            SizedBox(height: spacing.lg),
+
+            // Card 展示
+            Text('卡片组件', style: theme.textTheme.titleLarge),
+            SizedBox(height: spacing.sm),
+            Card(
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: cs.primaryContainer,
+                      child: Icon(Icons.person, color: cs.onPrimaryContainer),
+                    ),
+                    title: const Text('张三'),
+                    subtitle: const Text('高级 Flutter 开发工程师'),
+                    trailing: const Icon(Icons.chevron_right),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: cs.secondaryContainer,
+                      child: Icon(Icons.person, color: cs.onSecondaryContainer),
+                    ),
+                    title: const Text('李四'),
+                    subtitle: const Text('UI/UX 设计师'),
+                    trailing: const Icon(Icons.chevron_right),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: spacing.lg),
+
+            // 输入框展示
+            Text('输入框组件', style: theme.textTheme.titleLarge),
+            SizedBox(height: spacing.sm),
+            const TextField(
+              decoration: InputDecoration(
+                labelText: '搜索',
+                hintText: '输入关键词搜索...',
+                prefixIcon: Icon(Icons.search),
+                suffixIcon: Icon(Icons.mic),
+              ),
+            ),
+            SizedBox(height: spacing.sm),
+            const TextField(
+              decoration: InputDecoration(
+                labelText: '邮箱地址',
+                hintText: 'example@email.com',
+                prefixIcon: Icon(Icons.email),
+              ),
+            ),
+            SizedBox(height: spacing.lg),
+
+            // Chip 展示
+            Text('Chip 组件', style: theme.textTheme.titleLarge),
+            SizedBox(height: spacing.sm),
+            Wrap(
+              spacing: spacing.sm,
+              children: [
+                const Chip(label: Text('Flutter')),
+                ActionChip(label: const Text('Dart'), onPressed: () {}),
+                FilterChip(label: const Text('Material 3'), selected: true, onSelected: (_) {}),
+                FilterChip(label: const Text('主题'), selected: false, onSelected: (_) {}),
+              ],
+            ),
+            SizedBox(height: spacing.lg),
+
+            // 文字样式展示
+            Text('TextTheme 文字样式', style: theme.textTheme.titleLarge),
+            SizedBox(height: spacing.sm),
+            Card(
+              child: Padding(
+                padding: EdgeInsets.all(spacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Headline Large', style: theme.textTheme.headlineLarge),
+                    Text('Title Large', style: theme.textTheme.titleLarge),
+                    Text('Body Large — 正文内容示例', style: theme.textTheme.bodyLarge),
+                    Text('Body Medium — 默认正文', style: theme.textTheme.bodyMedium),
+                    Text('Label Large', style: theme.textTheme.labelLarge),
+                    Text('Label Small', style: theme.textTheme.labelSmall),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: spacing.xxl),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('这是一条主题化的 SnackBar 消息'),
+              action: SnackBarAction(label: '撤销', onPressed: () {}),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _miniColorChip(String label, Color bg, Color fg) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(label, style: TextStyle(color: fg, fontSize: 12, fontWeight: FontWeight.w600)),
+    );
+  }
+
+  Widget _statusChip(IconData icon, String label, Color bg, Color fg) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: fg, size: 28),
+          const SizedBox(height: 4),
+          Text(label, style: TextStyle(color: fg, fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>实战要点总结</strong>：</p>
+<ol>
+<li><code>buildAppTheme</code> 工厂函数接受 <code>Brightness</code> 参数，一套代码生成亮/暗两套主题。</li>
+<li>所有组件主题工厂函数都以 <code>ColorScheme</code> 作为参数，确保颜色来源统一。</li>
+<li><code>ThemeExtension</code> 用于管理 Material 组件体系之外的品牌色和间距。</li>
+<li><code>BuildContext</code> 扩展方法让自定义主题的读取和 <code>Theme.of(context)</code> 一样方便。</li>
+<li>主题切换按钮在 system → light → dark 三种模式间循环。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="9-本课小结">9. 本课小结</h2>
+<h3 id="核心概念回顾">核心概念回顾</h3>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ThemeData</strong></td>
+<td>Flutter 主题系统的核心数据类，通过 <code>MaterialApp</code> 注入到 Widget 树</td>
+</tr>
+<tr>
+<td><strong>ColorScheme</strong></td>
+<td>Material 3 颜色体系，推荐用 <code>fromSeed</code> 从种子色生成</td>
+</tr>
+<tr>
+<td><strong>TextTheme</strong></td>
+<td>15 种标准文本样式（5 类别 × 3 尺寸），统一管理全局文字风格</td>
+</tr>
+<tr>
+<td><strong>组件主题</strong></td>
+<td>每种 Material 组件都有对应的 Theme 类，用于全局定制默认样式</td>
+</tr>
+<tr>
+<td><strong>ThemeMode</strong></td>
+<td>控制使用亮色 / 暗色 / 跟随系统的主题</td>
+</tr>
+<tr>
+<td><strong>Theme.of(context)</strong></td>
+<td>从 Widget 树中读取最近的 ThemeData</td>
+</tr>
+<tr>
+<td><strong>Theme widget</strong></td>
+<td>在子树中局部覆盖主题</td>
+</tr>
+<tr>
+<td><strong>ThemeExtension&lt;T&gt;</strong></td>
+<td>扩展自定义主题数据，需实现 <code>copyWith</code> 和 <code>lerp</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="架构决策清单">架构决策清单</h3>
+<ul>
+<li><strong>新项目</strong> → <code>useMaterial3: true</code> + <code>ColorScheme.fromSeed</code></li>
+<li><strong>颜色管理</strong> → 所有颜色来自 <code>ColorScheme</code> 或 <code>ThemeExtension</code>，不硬编码</li>
+<li><strong>文本管理</strong> → 所有文本样式来自 <code>TextTheme</code>，通过 <code>Theme.of(context).textTheme</code> 获取</li>
+<li><strong>组件样式</strong> → 优先通过组件主题全局配置，局部覆盖用 <code>style</code> 参数</li>
+<li><strong>亮/暗模式</strong> → <code>MaterialApp</code> 同时提供 <code>theme</code> 和 <code>darkTheme</code></li>
+<li><strong>自定义数据</strong> → 使用 <code>ThemeExtension</code>，不要用全局常量或静态变量</li>
+</ul>
+<hr />
+<h2 id="10-练习题">10. 练习题</h2>
+<h3 id="练习-1基础主题配置">练习 1：基础主题配置</h3>
+<p>创建一个使用绿色（<code>Colors.green</code>）作为种子色的 Material 3 主题，要求：</p>
+<ul>
+<li>同时配置亮色和暗色主题</li>
+<li>自定义 <code>AppBarTheme</code> 使标题居中显示</li>
+<li>自定义 <code>CardTheme</code> 使卡片圆角为 20</li>
+</ul>
+<h3 id="练习-2组件主题定制">练习 2：组件主题定制</h3>
+<p>在练习 1 的基础上，添加以下组件主题：</p>
+<ul>
+<li>所有 <code>ElevatedButton</code> 使用药丸形状（<code>StadiumBorder</code>）</li>
+<li>所有 <code>TextField</code> 使用圆角填充样式</li>
+<li>所有 <code>Chip</code> 去掉边框</li>
+</ul>
+<h3 id="练习-3themeextension-实战">练习 3：ThemeExtension 实战</h3>
+<p>定义一个 <code>StatusColors</code> 的 <code>ThemeExtension</code>，包含以下属性：</p>
+<ul>
+<li><code>success</code> / <code>onSuccess</code>：成功状态色</li>
+<li><code>pending</code> / <code>onPending</code>：等待状态色</li>
+<li><code>cancelled</code> / <code>onCancelled</code>：取消状态色</li>
+</ul>
+<p>要求：</p>
+<ol>
+<li>分别定义亮色和暗色两套值</li>
+<li>正确实现 <code>copyWith</code> 和 <code>lerp</code></li>
+<li>注册到 <code>ThemeData.extensions</code></li>
+<li>创建一个页面，用三个 <code>Container</code> 展示三种状态的颜色</li>
+</ol>
+<h3 id="练习-4综合挑战">练习 4：综合挑战</h3>
+<p>基于本课实战代码，进行以下扩展：</p>
+<ol>
+<li>增加一个颜色选择功能，让用户从 5 种预设种子色中选择，动态改变整个应用的配色方案</li>
+<li>将用户选择的主题模式和种子色保存到 <code>SharedPreferences</code>，下次启动时恢复</li>
+<li>添加一个 <code>ThemeExtension&lt;AppRadius&gt;</code>，统一管理圆角值（<code>sm: 8</code>、<code>md: 12</code>、<code>lg: 16</code>、<code>xl: 28</code>），并在所有组件主题中使用</li>
+</ol>
+<blockquote>
+<p><strong>提示</strong>：练习 4 需要用到状态管理和持久化存储的知识，可以使用 <code>shared_preferences</code> 包，在应用启动时通过 <code>WidgetsFlutterBinding.ensureInitialized()</code> + <code>SharedPreferences.getInstance()</code> 读取保存的偏好设置。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

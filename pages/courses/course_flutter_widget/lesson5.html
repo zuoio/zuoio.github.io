@@ -1,0 +1,2509 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第05课-基础容器组件">第05课 基础容器组件</h1>
+<blockquote>
+<p>本课是 Flutter 常用组件系统学习课程的第五课。我们将深入学习 Flutter 中最常用的基础容器组件，它们是构建 UI 布局的基石。掌握这些组件的用法和区别，将帮助你在实际开发中做出更合理的选择。</p>
+</blockquote>
+<hr />
+<h2 id="1-container--最常用的万能容器">1. Container —— 最常用的&quot;万能&quot;容器</h2>
+<h3 id="11-container-的本质">1.1 Container 的本质</h3>
+<p><code>Container</code> 是 Flutter 中最常用的容器组件，但它并不是一个单一功能的 Widget。<strong>Container 本质上是一个&quot;便捷组合组件&quot;（convenience widget）</strong>，它在内部根据你设置的属性，自动组合了多个单一功能组件。</p>
+<p>当你使用 Container 时，Flutter 实际上会根据你设置的属性，在内部构建一棵类似下面的 Widget 树：</p>
+<pre><code>Container
+  → Align（如果设置了 alignment）
+    → Padding（如果设置了 padding）
+      → DecoratedBox（如果设置了 decoration）
+        → ConstrainedBox（如果设置了 constraints 或 width/height）
+          → Transform（如果设置了 transform）
+            → child
+</code></pre>
+<p>理解这一点非常重要：<strong>如果你只需要其中一个功能，直接使用对应的单一组件（如 <code>Padding</code>、<code>Align</code>、<code>DecoratedBox</code> 等）会更高效</strong>，因为可以减少 Widget 树的嵌套层级。</p>
+<h3 id="12-基本用法widthheight-与-color">1.2 基本用法：width、height 与 color</h3>
+<p>最简单的 Container 用法是设置固定宽高和背景色。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Container 基本用法')),
+        body: Center(
+          child: Container(
+            width: 200,    // 宽度 200 逻辑像素
+            height: 150,   // 高度 150 逻辑像素
+            color: Colors.blue, // 背景色
+            child: const Center(
+              child: Text(
+                'Hello Container',
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>color</code> 属性和 <code>decoration</code> 属性不能同时使用。如果你需要在 decoration 中设置颜色，应使用 <code>BoxDecoration(color: Colors.blue)</code> 而不是同时设置 <code>Container.color</code> 和 <code>Container.decoration</code>。</p>
+</blockquote>
+<h3 id="13-alignment--子组件对齐">1.3 alignment —— 子组件对齐</h3>
+<p><code>alignment</code> 属性控制子组件在 Container 内部的对齐方式，类型为 <code>AlignmentGeometry</code>，最常用的是 <code>Alignment</code> 类。</p>
+<p><code>Alignment</code> 使用坐标系统：<code>(-1, -1)</code> 为左上角，<code>(0, 0)</code> 为正中心，<code>(1, 1)</code> 为右下角。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Container alignment')),
+        body: Column(
+          children: [
+            // 居中对齐（默认无 alignment 时，子组件会占满 Container）
+            Container(
+              width: 200,
+              height: 100,
+              color: Colors.blue.shade100,
+              alignment: Alignment.center,
+              child: const Text('居中'),
+            ),
+            const SizedBox(height: 10),
+            // 右下角对齐
+            Container(
+              width: 200,
+              height: 100,
+              color: Colors.green.shade100,
+              alignment: Alignment.bottomRight,
+              child: const Text('右下角'),
+            ),
+            const SizedBox(height: 10),
+            // 自定义位置：水平偏左 30%，垂直偏上 50%
+            Container(
+              width: 200,
+              height: 100,
+              color: Colors.orange.shade100,
+              alignment: const Alignment(-0.3, -0.5),
+              child: const Text('自定义位置'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>常用的预定义对齐常量：</p>
+<table>
+<thead>
+<tr>
+<th>常量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Alignment.topLeft</code></td>
+<td>左上角 <code>(-1, -1)</code></td>
+</tr>
+<tr>
+<td><code>Alignment.topCenter</code></td>
+<td>顶部居中 <code>(0, -1)</code></td>
+</tr>
+<tr>
+<td><code>Alignment.topRight</code></td>
+<td>右上角 <code>(1, -1)</code></td>
+</tr>
+<tr>
+<td><code>Alignment.centerLeft</code></td>
+<td>左侧居中 <code>(-1, 0)</code></td>
+</tr>
+<tr>
+<td><code>Alignment.center</code></td>
+<td>正中心 <code>(0, 0)</code></td>
+</tr>
+<tr>
+<td><code>Alignment.centerRight</code></td>
+<td>右侧居中 <code>(1, 0)</code></td>
+</tr>
+<tr>
+<td><code>Alignment.bottomLeft</code></td>
+<td>左下角 <code>(-1, 1)</code></td>
+</tr>
+<tr>
+<td><code>Alignment.bottomCenter</code></td>
+<td>底部居中 <code>(0, 1)</code></td>
+</tr>
+<tr>
+<td><code>Alignment.bottomRight</code></td>
+<td>右下角 <code>(1, 1)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="14-padding-与-margin--内外间距">1.4 padding 与 margin —— 内外间距</h3>
+<ul>
+<li><strong>padding</strong>：Container 内部与子组件之间的间距（内边距）</li>
+<li><strong>margin</strong>：Container 外部与其他组件之间的间距（外边距）</li>
+</ul>
+<p>两者都接收 <code>EdgeInsetsGeometry</code> 类型，最常用的是 <code>EdgeInsets</code>。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('padding 与 margin')),
+        body: Center(
+          child: Container(
+            // 外边距：上下左右各 20
+            margin: const EdgeInsets.all(20),
+            // 内边距：水平方向 16，垂直方向 8
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade100,
+              border: Border.all(color: Colors.blue), // 添加边框便于观察
+            ),
+            child: const Text(
+              '观察 padding 和 margin 的效果',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：如果只需要设置内边距，直接使用 <code>Padding</code> 组件比用 <code>Container</code> 更轻量；如果只需要外边距，很多时候通过布局组件的 spacing 或手动添加 <code>SizedBox</code> 来控制间距更清晰。Container 的 <code>margin</code> 本质上就是在外部套了一层 <code>Padding</code>。</p>
+</blockquote>
+<h3 id="15-decoration--boxdecoration-装饰">1.5 decoration —— BoxDecoration 装饰</h3>
+<p><code>decoration</code> 是 Container 最强大的属性之一，通常传入 <code>BoxDecoration</code> 对象，可以实现边框、圆角、渐变、阴影、背景图等丰富的视觉效果。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Container decoration')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 圆角 + 边框 + 背景色
+              Container(
+                width: 200,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12), // 圆角半径 12
+                  border: Border.all(
+                    color: Colors.blue,
+                    width: 2,
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: const Text('圆角边框'),
+              ),
+              const SizedBox(height: 20),
+              // 渐变背景 + 阴影
+              Container(
+                width: 200,
+                height: 80,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Colors.purple, Colors.blue],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.withValues(alpha: 0.4),
+                      blurRadius: 12,    // 模糊半径
+                      offset: const Offset(0, 6), // 阴影偏移
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: const Text(
+                  '渐变 + 阴影',
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // 圆形容器
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  shape: BoxShape.circle, // 圆形
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.orange.withValues(alpha: 0.5),
+                      blurRadius: 10,
+                      spreadRadius: 2, // 扩散半径
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: const Icon(Icons.star, color: Colors.white, size: 40),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>BoxDecoration</code> 的 <code>shape</code> 属性设为 <code>BoxShape.circle</code> 时，不能同时设置 <code>borderRadius</code>，否则会抛出异常。圆形的 Container 的 <code>width</code> 和 <code>height</code> 应相同。</p>
+</blockquote>
+<h3 id="16-constraints--约束控制">1.6 constraints —— 约束控制</h3>
+<p><code>constraints</code> 属性接收一个 <code>BoxConstraints</code> 对象，用于限制 Container 的最小/最大宽高。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Container constraints')),
+        body: Center(
+          child: Container(
+            // 最小宽度 100，最大宽度 300
+            // 最小高度 50，最大高度 200
+            constraints: const BoxConstraints(
+              minWidth: 100,
+              maxWidth: 300,
+              minHeight: 50,
+              maxHeight: 200,
+            ),
+            color: Colors.teal.shade100,
+            alignment: Alignment.center,
+            // 子组件很小，但 Container 至少有 100x50 的大小
+            child: const Text('约束控制'),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>BoxConstraints 常用构造方法</strong>：</p>
+<ul>
+<li><code>BoxConstraints.tight(Size size)</code>：宽高固定为指定值</li>
+<li><code>BoxConstraints.loose(Size size)</code>：宽高最大为指定值，最小为 0</li>
+<li><code>BoxConstraints.expand()</code>：尽可能占满父容器</li>
+<li><code>BoxConstraints.tightFor(width: 100)</code>：仅固定宽或高</li>
+</ul>
+<blockquote>
+<p><strong>注意</strong>：当同时设置 <code>width</code>/<code>height</code> 和 <code>constraints</code> 时，<code>width</code>/<code>height</code> 实际上会被合并到 constraints 中。例如 <code>width: 100</code> 等价于在 constraints 中设置 <code>minWidth: 100, maxWidth: 100</code>。</p>
+</blockquote>
+<h3 id="17-transform--变换">1.7 transform —— 变换</h3>
+<p><code>transform</code> 属性接收一个 <code>Matrix4</code> 对象，可以对 Container 进行旋转、缩放、平移等变换。变换是在绘制阶段执行的，<strong>不会影响布局</strong>。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'dart:math' as math;
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Container transform')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 旋转 15 度
+              Container(
+                width: 150,
+                height: 80,
+                transform: Matrix4.rotationZ(15 * math.pi / 180),
+                transformAlignment: Alignment.center, // 变换原点设为中心
+                decoration: BoxDecoration(
+                  color: Colors.red.shade200,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.center,
+                child: const Text('旋转 15°'),
+              ),
+              const SizedBox(height: 40),
+              // 缩放 1.2 倍
+              Container(
+                width: 150,
+                height: 80,
+                transform: Matrix4.diagonal3Values(1.2, 1.2, 1),
+                transformAlignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.green.shade200,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.center,
+                child: const Text('缩放 1.2x'),
+              ),
+              const SizedBox(height: 40),
+              // 平移
+              Container(
+                width: 150,
+                height: 80,
+                transform: Matrix4.translationValues(30, 0, 0), // 向右平移 30
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade200,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.center,
+                child: const Text('右移 30px'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：如果只需要旋转、缩放、平移变换，建议直接使用 <code>Transform</code> 组件（如 <code>Transform.rotate</code>、<code>Transform.scale</code>），语义更清晰。Container 的 transform 适合在已有 Container 的前提下顺便添加简单变换。</p>
+</blockquote>
+<h3 id="18-container-完整综合示例">1.8 Container 完整综合示例</h3>
+<p>下面的示例展示了一个综合运用 Container 各属性的&quot;用户信息卡片&quot;：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        appBar: AppBar(title: const Text('Container 综合示例')),
+        body: Center(
+          child: Container(
+            width: 320,
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
+            constraints: const BoxConstraints(minHeight: 120),
+            alignment: Alignment.centerLeft,
+            decoration: BoxDecoration(
+              // 渐变背景
+              gradient: LinearGradient(
+                colors: [Colors.indigo.shade400, Colors.blue.shade300],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              // 圆角
+              borderRadius: BorderRadius.circular(16),
+              // 阴影
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.indigo.withValues(alpha: 0.3),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '张三',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Flutter 开发工程师',
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  '热爱 Flutter，持续学习中……',
+                  style: TextStyle(color: Colors.white60, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="19-container-注意事项与最佳实践">1.9 Container 注意事项与最佳实践</h3>
+<ol>
+<li><strong>不要滥用 Container</strong>：很多初学者习惯用 Container 来设置任何样式，但如果你只需要一个功能（比如只需要 padding），应该直接使用对应的单一组件。这样可以减少 Widget 树的复杂度。</li>
+<li><strong>color 和 decoration 互斥</strong>：不能同时设置 <code>color</code> 和 <code>decoration</code>，需要在 <code>BoxDecoration</code> 中设置 <code>color</code>。</li>
+<li><strong>没有 child 时的行为</strong>：当 Container 没有 child 且没有 <code>width</code>/<code>height</code>/<code>constraints</code> 时，它会尽可能地填满父容器；当有 child 时，它会尽可能地缩小以包裹 child。</li>
+<li><strong>调试技巧</strong>：给 Container 加一个 <code>decoration: BoxDecoration(border: Border.all())</code> 可以快速可视化它的边界，便于调试布局问题。</li>
+</ol>
+<hr />
+<h2 id="2-sizedbox--固定尺寸盒子">2. SizedBox —— 固定尺寸盒子</h2>
+<h3 id="21-基本概念">2.1 基本概念</h3>
+<p><code>SizedBox</code> 是一个非常简单但极其常用的组件，它的唯一功能就是给子组件一个固定的宽高约束。相比 Container，SizedBox 没有装饰、变换等额外功能，因此更轻量。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('SizedBox 基本用法')),
+        body: Center(
+          child: SizedBox(
+            width: 200,
+            height: 100,
+            child: Container(
+              color: Colors.blue.shade200,
+              alignment: Alignment.center,
+              child: const Text('200 x 100 的盒子'),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="22-作为间距使用">2.2 作为间距使用</h3>
+<p>SizedBox 最高频的使用场景之一是<strong>在组件之间创建固定间距</strong>，这比使用 Container 或 Padding 更简洁、语义更清晰。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('SizedBox 作为间距')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(width: 100, height: 50, color: Colors.red),
+              const SizedBox(height: 20), // 垂直间距 20
+              Container(width: 100, height: 50, color: Colors.green),
+              const SizedBox(height: 20), // 垂直间距 20
+              Container(width: 100, height: 50, color: Colors.blue),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：在 <code>Column</code> 中使用 <code>SizedBox(height: n)</code> 做垂直间距，在 <code>Row</code> 中使用 <code>SizedBox(width: n)</code> 做水平间距。这是 Flutter 社区广泛认可的间距用法。</p>
+</blockquote>
+<h3 id="23-sizedboxexpand--填满父容器">2.3 SizedBox.expand —— 填满父容器</h3>
+<p><code>SizedBox.expand</code> 等价于 <code>SizedBox(width: double.infinity, height: double.infinity)</code>，会让子组件尽可能地填满父容器。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('SizedBox.expand')),
+        body: Padding(
+          padding: const EdgeInsets.all(32),
+          child: SizedBox.expand(
+            // 填满 Padding 内的所有可用空间
+            child: Container(
+              color: Colors.teal.shade200,
+              alignment: Alignment.center,
+              child: const Text(
+                '我填满了父容器',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="24-sizedboxshrink--零尺寸盒子">2.4 SizedBox.shrink —— 零尺寸盒子</h3>
+<p><code>SizedBox.shrink</code> 等价于 <code>SizedBox(width: 0, height: 0)</code>，常用于条件渲染中，当不想显示任何内容时作为占位符。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const bool showBanner = false;
+
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('SizedBox.shrink')),
+        body: Column(
+          children: [
+            // 根据条件决定是否显示 Banner
+            showBanner
+                ? Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    color: Colors.amber,
+                    child: const Text('这是一个 Banner'),
+                  )
+                : const SizedBox.shrink(), // 不显示时用零尺寸盒子占位
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('页面内容区域'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="25-sizedboxfromsize">2.5 SizedBox.fromSize</h3>
+<p><code>SizedBox.fromSize</code> 接收一个 <code>Size</code> 对象来设置尺寸，在需要从其他地方获取 Size 值时比较方便。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const cardSize = Size(220, 120);
+
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('SizedBox.fromSize')),
+        body: Center(
+          child: SizedBox.fromSize(
+            size: cardSize,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.deepPurple.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              alignment: Alignment.center,
+              child: Text('尺寸: ${cardSize.width} x ${cardSize.height}'),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="3-decoratedbox-与-boxdecoration--装饰盒子">3. DecoratedBox 与 BoxDecoration —— 装饰盒子</h2>
+<h3 id="31-decoratedbox-基本概念">3.1 DecoratedBox 基本概念</h3>
+<p><code>DecoratedBox</code> 是一个只负责绘制装饰（背景、边框等）的组件。Container 内部的装饰功能实际上就是通过 <code>DecoratedBox</code> 来实现的。</p>
+<p>当你只需要给子组件添加装饰效果而不需要 Container 的其他功能（padding、margin、alignment 等）时，直接使用 DecoratedBox 会更高效。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('DecoratedBox 基本用法')),
+        body: Center(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue, width: 2),
+            ),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              child: Text('DecoratedBox', style: TextStyle(fontSize: 16)),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="32-边框--border">3.2 边框 —— Border</h3>
+<p><code>Border</code> 类用于定义 BoxDecoration 的边框。可以为四条边设置不同的样式。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Border 边框')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 统一边框
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.red, width: 3),
+                ),
+                child: const SizedBox(
+                  width: 150, height: 60,
+                  child: Center(child: Text('统一边框')),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // 不同方向不同样式的边框
+              DecoratedBox(
+                decoration: const BoxDecoration(
+                  border: Border(
+                    top: BorderSide(color: Colors.red, width: 3),
+                    bottom: BorderSide(color: Colors.blue, width: 3),
+                    left: BorderSide(color: Colors.green, width: 3),
+                    right: BorderSide(color: Colors.orange, width: 3),
+                  ),
+                ),
+                child: const SizedBox(
+                  width: 150, height: 60,
+                  child: Center(child: Text('四色边框')),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // 只有底部边框（常用于分割线效果）
+              DecoratedBox(
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: Colors.grey, width: 1),
+                  ),
+                ),
+                child: const SizedBox(
+                  width: 200, height: 50,
+                  child: Center(child: Text('底部边框')),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：当 <code>BoxDecoration</code> 同时设置了 <code>borderRadius</code> 和 <code>border</code> 时，<code>Border</code> 的四条边必须样式一致（颜色和宽度相同），否则 Flutter 无法正确渲染圆角边框。</p>
+</blockquote>
+<h3 id="33-圆角--borderradius">3.3 圆角 —— BorderRadius</h3>
+<p><code>BorderRadius</code> 用于定义矩形的圆角半径，支持统一圆角和分别设置每个角的圆角。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('BorderRadius 圆角')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 统一圆角
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade200,
+                  borderRadius: BorderRadius.circular(20), // 所有角 20
+                ),
+                child: const SizedBox(
+                  width: 180, height: 60,
+                  child: Center(child: Text('统一圆角 20')),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // 只设置顶部圆角（常用于卡片顶部图片）
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.green.shade200,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: const SizedBox(
+                  width: 180, height: 60,
+                  child: Center(child: Text('顶部圆角')),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // 椭圆形圆角
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade200,
+                  borderRadius: const BorderRadius.all(
+                    Radius.elliptical(40, 20), // 水平半径 40，垂直半径 20
+                  ),
+                ),
+                child: const SizedBox(
+                  width: 200, height: 60,
+                  child: Center(child: Text('椭圆圆角')),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="34-渐变--gradient">3.4 渐变 —— Gradient</h3>
+<p>BoxDecoration 支持三种渐变类型：<code>LinearGradient</code>（线性渐变）、<code>RadialGradient</code>（径向渐变）和 <code>SweepGradient</code>（扫描渐变）。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Gradient 渐变')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 线性渐变
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: const LinearGradient(
+                    colors: [Colors.red, Colors.orange, Colors.yellow],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    // stops 控制每个颜色的位置（0.0 ~ 1.0）
+                    stops: [0.0, 0.5, 1.0],
+                  ),
+                ),
+                child: const SizedBox(
+                  width: 250, height: 70,
+                  child: Center(
+                    child: Text(
+                      'LinearGradient',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // 径向渐变
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: const RadialGradient(
+                    colors: [Colors.white, Colors.blue],
+                    center: Alignment.center, // 渐变中心点
+                    radius: 0.8, // 渐变半径（相对于容器短边的比例）
+                  ),
+                ),
+                child: const SizedBox(
+                  width: 250, height: 120,
+                  child: Center(
+                    child: Text(
+                      'RadialGradient',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // 扫描渐变（类似雷达扫描效果）
+              Container(
+                width: 150,
+                height: 150,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: SweepGradient(
+                    colors: [
+                      Colors.red,
+                      Colors.orange,
+                      Colors.yellow,
+                      Colors.green,
+                      Colors.blue,
+                      Colors.purple,
+                      Colors.red, // 首尾颜色相同，保证过渡自然
+                    ],
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: const Text(
+                  'SweepGradient',
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="35-阴影--boxshadow">3.5 阴影 —— BoxShadow</h3>
+<p><code>BoxShadow</code> 用于为容器添加阴影效果，<code>boxShadow</code> 属性接收一个列表，可以叠加多层阴影。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.grey.shade100,
+        appBar: AppBar(title: const Text('BoxShadow 阴影')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 基本阴影
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 10,       // 模糊半径
+                      offset: const Offset(0, 4), // 偏移方向
+                    ),
+                  ],
+                ),
+                child: const SizedBox(
+                  width: 200, height: 80,
+                  child: Center(child: Text('基本阴影')),
+                ),
+              ),
+              const SizedBox(height: 30),
+              // 多层阴影（更柔和的视觉效果）
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 16,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: const SizedBox(
+                  width: 200, height: 80,
+                  child: Center(child: Text('多层柔和阴影')),
+                ),
+              ),
+              const SizedBox(height: 30),
+              // 带颜色的发光阴影
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.deepPurple,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.deepPurple.withValues(alpha: 0.5),
+                      blurRadius: 20,
+                      spreadRadius: 2,  // 扩散：正值阴影扩大，负值阴影缩小
+                    ),
+                  ],
+                ),
+                child: const SizedBox(
+                  width: 200, height: 80,
+                  child: Center(
+                    child: Text(
+                      '发光阴影',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="36-背景图--decorationimage">3.6 背景图 —— DecorationImage</h3>
+<p><code>DecorationImage</code> 用于在容器背景中显示图片，支持设置填充方式、对齐、颜色混合等。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('DecorationImage 背景图')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 网络图片作为背景
+              Container(
+                width: 300,
+                height: 180,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  image: const DecorationImage(
+                    image: NetworkImage(
+                      'https://picsum.photos/600/360',
+                    ),
+                    fit: BoxFit.cover, // 裁剪以覆盖整个容器
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // 带颜色叠加的背景图（常用于文字背景）
+              Container(
+                width: 300,
+                height: 180,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  image: DecorationImage(
+                    image: const NetworkImage(
+                      'https://picsum.photos/600/360',
+                    ),
+                    fit: BoxFit.cover,
+                    colorFilter: ColorFilter.mode(
+                      Colors.black.withValues(alpha: 0.4), // 半透明黑色叠加
+                      BlendMode.darken,
+                    ),
+                  ),
+                ),
+                alignment: Alignment.bottomLeft,
+                padding: const EdgeInsets.all(16),
+                child: const Text(
+                  '带暗色遮罩的背景图',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="4-padding--间距控制">4. Padding —— 间距控制</h2>
+<h3 id="41-基本概念">4.1 基本概念</h3>
+<p><code>Padding</code> 是一个纯粹只做一件事的组件：为子组件添加内边距。它是 Container 中 padding 功能的底层实现。</p>
+<p><strong>何时使用 Padding 而非 Container？</strong> 当你只需要添加内边距而不需要背景色、边框、阴影等其他装饰时，Padding 是更好的选择。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Padding 基本用法')),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 没有 Padding 的文本
+            Container(
+              color: Colors.red.shade50,
+              child: const Text('没有 Padding 的文本', style: TextStyle(fontSize: 16)),
+            ),
+            const SizedBox(height: 10),
+            // 有 Padding 的文本
+            Container(
+              color: Colors.green.shade50,
+              child: const Padding(
+                padding: EdgeInsets.all(16),
+                child: Text('有 Padding 的文本', style: TextStyle(fontSize: 16)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="42-edgeinsets-的各种构造方式">4.2 EdgeInsets 的各种构造方式</h3>
+<p><code>EdgeInsets</code> 提供了多种构造方式来满足不同场景的需求：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  Widget _buildPaddingDemo(String label, EdgeInsets padding) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      color: Colors.grey.shade200,
+      child: Padding(
+        padding: padding,
+        child: Container(
+          color: Colors.blue.shade100,
+          padding: const EdgeInsets.all(8),
+          child: Text(label, style: const TextStyle(fontSize: 14)),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('EdgeInsets 构造方式')),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 1. all：四个方向相同的间距
+              _buildPaddingDemo(
+                'EdgeInsets.all(16)',
+                const EdgeInsets.all(16),
+              ),
+
+              // 2. symmetric：水平和垂直方向分别设置
+              _buildPaddingDemo(
+                'EdgeInsets.symmetric(h:32, v:8)',
+                const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+              ),
+
+              // 3. only：只设置某些方向
+              _buildPaddingDemo(
+                'EdgeInsets.only(left:40, top:20)',
+                const EdgeInsets.only(left: 40, top: 20),
+              ),
+
+              // 4. fromLTRB：分别设置左、上、右、下
+              _buildPaddingDemo(
+                'EdgeInsets.fromLTRB(10, 20, 30, 40)',
+                const EdgeInsets.fromLTRB(10, 20, 30, 40),
+              ),
+
+              // 5. zero：无间距（与 EdgeInsets.all(0) 等价）
+              _buildPaddingDemo(
+                'EdgeInsets.zero',
+                EdgeInsets.zero,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>各构造方式使用场景对比</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>构造方式</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EdgeInsets.all(n)</code></td>
+<td>四个方向相同间距，最常用</td>
+</tr>
+<tr>
+<td><code>EdgeInsets.symmetric(horizontal: h, vertical: v)</code></td>
+<td>水平/垂直方向对称间距，常用于列表项</td>
+</tr>
+<tr>
+<td><code>EdgeInsets.only(left: l, top: t, ...)</code></td>
+<td>只设置个别方向的间距</td>
+</tr>
+<tr>
+<td><code>EdgeInsets.fromLTRB(l, t, r, b)</code></td>
+<td>四个方向各不相同</td>
+</tr>
+<tr>
+<td><code>EdgeInsets.zero</code></td>
+<td>显式表示无间距</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>：对于需要支持 RTL（从右到左）语言的应用，应使用 <code>EdgeInsetsDirectional</code> 代替 <code>EdgeInsets</code>。<code>EdgeInsetsDirectional</code> 使用 <code>start</code>/<code>end</code> 代替 <code>left</code>/<code>right</code>，Flutter 会根据当前文本方向自动调整。</p>
+</blockquote>
+<hr />
+<h2 id="5-center--居中组件">5. Center —— 居中组件</h2>
+<h3 id="51-基本概念">5.1 基本概念</h3>
+<p><code>Center</code> 组件将子组件放置在自身的正中心。它实际上是 <code>Align(alignment: Alignment.center)</code> 的简写形式。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Center 基本用法')),
+        body: Center(
+          // 子组件会被放在屏幕正中心
+          child: Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+              color: Colors.blue.shade200,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            alignment: Alignment.center,
+            child: const Text('居中', style: TextStyle(fontSize: 20)),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="52-widthfactor-与-heightfactor">5.2 widthFactor 与 heightFactor</h3>
+<p>默认情况下，<code>Center</code> 会尽可能占满父容器的所有可用空间。通过 <code>widthFactor</code> 和 <code>heightFactor</code> 可以让 Center 的尺寸基于子组件的尺寸乘以一个比例因子。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Center widthFactor &amp; heightFactor')),
+        body: Column(
+          children: [
+            const SizedBox(height: 20),
+            // 没有 factor：Center 占满父容器宽度
+            Container(
+              color: Colors.grey.shade300,
+              child: Center(
+                child: Container(
+                  width: 100,
+                  height: 50,
+                  color: Colors.blue,
+                  alignment: Alignment.center,
+                  child: const Text('无 factor',
+                      style: TextStyle(color: Colors.white, fontSize: 12)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // 有 factor：Center 的宽度 = 子组件宽度 × widthFactor
+            Container(
+              color: Colors.grey.shade300,
+              child: Center(
+                widthFactor: 2.0,   // Center 宽度 = 100 × 2 = 200
+                heightFactor: 1.5,  // Center 高度 = 50 × 1.5 = 75
+                child: Container(
+                  width: 100,
+                  height: 50,
+                  color: Colors.green,
+                  alignment: Alignment.center,
+                  child: const Text('有 factor',
+                      style: TextStyle(color: Colors.white, fontSize: 12)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>上面第二个例子中，灰色区域（Center 的实际大小）变小了，因为 Center 不再占满父容器，而是根据子组件尺寸乘以因子来决定自身大小。</p>
+<blockquote>
+<p><strong>提示</strong>：<code>widthFactor</code> 和 <code>heightFactor</code> 在 <code>Align</code> 组件中也同样存在，功能一致。这个特性在需要精确控制 Align/Center 自身尺寸时非常有用。</p>
+</blockquote>
+<hr />
+<h2 id="6-coloredbox--纯色背景">6. ColoredBox —— 纯色背景</h2>
+<h3 id="61-基本概念">6.1 基本概念</h3>
+<p><code>ColoredBox</code> 是一个极其简单的组件，它唯一的功能就是给子组件绘制一个纯色背景。在组件树中，它是最轻量的背景色方案。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('ColoredBox 基本用法')),
+        body: const Center(
+          child: ColoredBox(
+            color: Colors.amber,
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Text(
+                '纯色背景',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="62-coloredbox-与-containercolor-的区别">6.2 ColoredBox 与 Container(color:) 的区别</h3>
+<p>当你写 <code>Container(color: Colors.blue, child: ...)</code> 时，Container 内部实际创建了一个 <code>ColoredBox</code>。但 Container 本身还会引入额外的 Widget 层级（如 <code>LimitedBox</code>、<code>ConstrainedBox</code> 等），即使你只设置了 color。</p>
+<p><strong>性能对比</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>Widget 树复杂度</th>
+<th>推荐场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ColoredBox(color: ...)</code></td>
+<td>最简单，只有 1 层</td>
+<td>只需要纯色背景</td>
+</tr>
+<tr>
+<td><code>Container(color: ...)</code></td>
+<td>较复杂，包含多层</td>
+<td>需要组合多种功能</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('ColoredBox vs Container')),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 方式一：ColoredBox（推荐，更轻量）
+            const ColoredBox(
+              color: Colors.lightBlue,
+              child: SizedBox(
+                width: 200,
+                height: 60,
+                child: Center(
+                  child: Text(
+                    'ColoredBox（更轻量）',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // 方式二：Container（功能更多，但更重）
+            Container(
+              width: 200,
+              height: 60,
+              color: Colors.indigo,
+              alignment: Alignment.center,
+              child: const Text(
+                'Container（更重）',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：如果你只需要添加一个纯色背景，优先使用 <code>ColoredBox</code>。当你需要同时控制尺寸、间距、对齐等多个属性时，再考虑使用 <code>Container</code>。在大型列表等性能敏感场景中，这种优化尤其有意义。</p>
+</blockquote>
+<hr />
+<h2 id="7-physicalmodel-与-physicalshape--物理形状">7. PhysicalModel 与 PhysicalShape —— 物理形状</h2>
+<h3 id="71-physicalmodel">7.1 PhysicalModel</h3>
+<p><code>PhysicalModel</code> 提供了一种模拟物理材质效果的方式，可以渲染带有 elevation（海拔高度）和阴影的矩形或圆形裁剪区域。与 <code>BoxDecoration</code> 的 <code>boxShadow</code> 不同，PhysicalModel 的阴影更贴近真实的物理投影效果。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        appBar: AppBar(title: const Text('PhysicalModel')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 矩形带圆角的 PhysicalModel
+              PhysicalModel(
+                color: Colors.white,           // 背景色
+                elevation: 8,                  // 海拔高度，越高阴影越大
+                shadowColor: Colors.black,     // 阴影颜色
+                borderRadius: BorderRadius.circular(16), // 圆角
+                child: const SizedBox(
+                  width: 250,
+                  height: 100,
+                  child: Center(
+                    child: Text('elevation: 8', style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+              // 不同 elevation 对比
+              PhysicalModel(
+                color: Colors.white,
+                elevation: 2,
+                shadowColor: Colors.black,
+                borderRadius: BorderRadius.circular(16),
+                child: const SizedBox(
+                  width: 250,
+                  height: 100,
+                  child: Center(
+                    child: Text('elevation: 2', style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+              // 圆形
+              PhysicalModel(
+                color: Colors.blue.shade100,
+                elevation: 6,
+                shadowColor: Colors.blue,
+                shape: BoxShape.circle, // 圆形
+                child: const SizedBox(
+                  width: 120,
+                  height: 120,
+                  child: Center(
+                    child: Icon(Icons.favorite, size: 40, color: Colors.blue),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="72-physicalshape">7.2 PhysicalShape</h3>
+<p><code>PhysicalShape</code> 功能与 <code>PhysicalModel</code> 类似，但它接受一个 <code>CustomClipper&lt;Path&gt;</code> 来定义任意的裁剪形状，提供更大的灵活性。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        appBar: AppBar(title: const Text('PhysicalShape')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 使用 ShapeBorderClipper 创建圆角矩形
+              PhysicalShape(
+                color: Colors.white,
+                elevation: 8,
+                shadowColor: Colors.black54,
+                clipper: ShapeBorderClipper(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const SizedBox(
+                  width: 250,
+                  height: 100,
+                  child: Center(
+                    child: Text(
+                      '圆角矩形 PhysicalShape',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+              // 使用 ShapeBorderClipper 创建胶囊形
+              PhysicalShape(
+                color: Colors.deepPurple,
+                elevation: 6,
+                shadowColor: Colors.deepPurple,
+                clipper: const ShapeBorderClipper(
+                  shape: StadiumBorder(), // 胶囊形状
+                ),
+                child: const SizedBox(
+                  width: 220,
+                  height: 60,
+                  child: Center(
+                    child: Text(
+                      '胶囊形状',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+              // 自定义菱形裁剪
+              PhysicalShape(
+                color: Colors.teal,
+                elevation: 6,
+                shadowColor: Colors.teal.shade700,
+                clipper: _DiamondClipper(),
+                child: const SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: Center(
+                    child: Text(
+                      '菱形',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 自定义菱形裁剪器
+class _DiamondClipper extends CustomClipper&lt;Path&gt; {
+  @override
+  Path getClip(Size size) {
+    final path = Path()
+      ..moveTo(size.width / 2, 0)           // 顶部中点
+      ..lineTo(size.width, size.height / 2)  // 右侧中点
+      ..lineTo(size.width / 2, size.height)  // 底部中点
+      ..lineTo(0, size.height / 2)           // 左侧中点
+      ..close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper&lt;Path&gt; oldClipper) =&gt; false;
+}
+</code></pre>
+<h3 id="73-physicalmodel-vs-boxdecoration-阴影对比">7.3 PhysicalModel vs BoxDecoration 阴影对比</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>PhysicalModel / PhysicalShape</th>
+<th>BoxDecoration + BoxShadow</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>阴影真实感</td>
+<td>更贴近物理投影</td>
+<td>简单的偏移模糊阴影</td>
+</tr>
+<tr>
+<td>裁剪</td>
+<td>自动裁剪子组件到形状内</td>
+<td>不裁剪，需配合 ClipRRect 等</td>
+</tr>
+<tr>
+<td>自定义形状</td>
+<td>PhysicalShape 支持任意 Path</td>
+<td>仅矩形/圆形</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>使用 Skia 引擎原生阴影渲染</td>
+<td>手动绘制阴影</td>
+</tr>
+<tr>
+<td>灵活性</td>
+<td>阴影参数较少</td>
+<td>boxShadow 支持多层、颜色、扩散等</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：当你需要 Material Design 风格的层级阴影效果（特别是带裁剪的）时，优先使用 <code>PhysicalModel</code>。当你需要更细致地控制阴影外观（多层阴影、发光效果等）时，使用 <code>BoxDecoration</code> 的 <code>boxShadow</code>。在大多数日常开发中，使用 <code>Card</code> 或 <code>Material</code> 组件即可获得恰当的阴影效果。</p>
+</blockquote>
+<hr />
+<h2 id="8-容器组件选择指南">8. 容器组件选择指南</h2>
+<p>在实际开发中，面对这么多容器组件，应该如何选择？下面是一份快速决策指南：</p>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>推荐组件</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>只需要固定间距</td>
+<td><code>SizedBox</code></td>
+<td>最轻量</td>
+</tr>
+<tr>
+<td>只需要内边距</td>
+<td><code>Padding</code></td>
+<td>单一职责，语义清晰</td>
+</tr>
+<tr>
+<td>只需要居中</td>
+<td><code>Center</code></td>
+<td>语义清晰</td>
+</tr>
+<tr>
+<td>只需要纯色背景</td>
+<td><code>ColoredBox</code></td>
+<td>最轻量的背景色方案</td>
+</tr>
+<tr>
+<td>只需要装饰（边框/圆角/渐变）</td>
+<td><code>DecoratedBox</code></td>
+<td>单一职责</td>
+</tr>
+<tr>
+<td>需要物理阴影 + 裁剪</td>
+<td><code>PhysicalModel</code></td>
+<td>物理级阴影渲染</td>
+</tr>
+<tr>
+<td>需要组合多种功能</td>
+<td><code>Container</code></td>
+<td>便捷组合组件</td>
+</tr>
+<tr>
+<td>只需要固定尺寸</td>
+<td><code>SizedBox</code></td>
+<td>比 Container 轻量</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>核心原则</strong>：能用单一功能组件解决的，就不要用 Container。Container 适合需要同时使用多种功能的场景，避免手动嵌套过多单一组件导致代码可读性下降。</p>
+</blockquote>
+<hr />
+<h2 id="本课小结">本课小结</h2>
+<ol>
+<li>
+<p><strong>Container</strong> 是一个便捷组合组件，内部组合了 <code>Align</code>、<code>Padding</code>、<code>DecoratedBox</code>、<code>ConstrainedBox</code>、<code>Transform</code> 等多个单一功能组件。它功能强大但不是万能的，应该根据实际需要选择合适的组件。</p>
+</li>
+<li>
+<p><strong>SizedBox</strong> 是最轻量的尺寸控制组件，也是 Flutter 社区推荐的间距创建方式。<code>SizedBox.expand</code> 用于填满父容器，<code>SizedBox.shrink</code> 用于零尺寸占位。</p>
+</li>
+<li>
+<p><strong>DecoratedBox</strong> 配合 <strong>BoxDecoration</strong> 可以实现丰富的视觉效果：边框（Border）、圆角（BorderRadius）、渐变（LinearGradient / RadialGradient / SweepGradient）、阴影（BoxShadow）、背景图（DecorationImage）。</p>
+</li>
+<li>
+<p><strong>Padding</strong> 搭配 <strong>EdgeInsets</strong> 的多种构造方式（all、symmetric、only、fromLTRB）可以灵活控制间距。支持 RTL 语言时应使用 <code>EdgeInsetsDirectional</code>。</p>
+</li>
+<li>
+<p><strong>Center</strong> 是 <code>Align(alignment: Alignment.center)</code> 的简写，通过 <code>widthFactor</code> 和 <code>heightFactor</code> 可以控制自身尺寸。</p>
+</li>
+<li>
+<p><strong>ColoredBox</strong> 是最轻量的纯色背景方案，<code>Container(color:)</code> 内部就是用它实现的。</p>
+</li>
+<li>
+<p><strong>PhysicalModel / PhysicalShape</strong> 提供物理级阴影渲染和自动裁剪，适合 Material Design 的层级效果。</p>
+</li>
+<li>
+<p><strong>组件选择的核心原则</strong>：优先使用单一功能组件，只有在需要组合多种功能时才使用 Container。</p>
+</li>
+</ol>
+<hr />
+<h2 id="练习题">练习题</h2>
+<h3 id="练习一个人名片卡">练习一：个人名片卡</h3>
+<p>使用 Container 创建一个个人名片卡片，要求：</p>
+<ul>
+<li>固定宽度 320，高度自适应</li>
+<li>圆角 16，带柔和的双层阴影</li>
+<li>内边距 20，外边距 16</li>
+<li>渐变背景（从左到右）</li>
+<li>包含姓名（大号白色粗体）、职位（小号半透明白色）和一段简介</li>
+</ul>
+<h3 id="练习二按钮样式">练习二：按钮样式</h3>
+<p>不使用 Container，仅使用 <code>DecoratedBox</code>、<code>Padding</code>、<code>Center</code> 等单一功能组件的组合，实现一个看起来像按钮的外观：</p>
+<ul>
+<li>渐变背景（蓝色到紫色）</li>
+<li>圆角 24（胶囊形状）</li>
+<li>水平内边距 32，垂直内边距 12</li>
+<li>文字居中，白色粗体</li>
+<li>带阴影效果</li>
+</ul>
+<h3 id="练习三阴影对比展示">练习三：阴影对比展示</h3>
+<p>创建一个页面，分别用以下三种方式实现&quot;带阴影的卡片&quot;，观察视觉差异：</p>
+<ol>
+<li><code>Container</code> + <code>BoxDecoration</code> + <code>boxShadow</code></li>
+<li><code>PhysicalModel</code> + <code>elevation</code></li>
+<li><code>Card</code>（Flutter 内置卡片组件）</li>
+</ol>
+<h3 id="练习四间距最佳实践">练习四：间距最佳实践</h3>
+<p>将下面的代码重构为最佳实践写法（用最合适的组件替换 Container 的各种用法）：</p>
+<pre><code class="language-dart">Column(
+  children: [
+    Container(height: 20),  // 间距
+    Container(
+      color: Colors.blue,   // 纯色背景
+      child: Text('Hello'),
+    ),
+    Container(               // 内边距
+      padding: EdgeInsets.all(16),
+      child: Text('World'),
+    ),
+  ],
+)
+</code></pre>
+<h3 id="练习五渐变头像框">练习五：渐变头像框</h3>
+<p>使用 <code>DecoratedBox</code> 和 <code>SweepGradient</code> 创建一个彩虹渐变边框的圆形头像框。提示：可以使用两个嵌套的圆形容器，外层是渐变背景，内层稍小放置头像。</p>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1574 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第01章-初识-mongodb">第01章 初识 MongoDB</h1>
+<blockquote>
+<p>本章将带你从零认识 MongoDB —— 一个面向文档的 NoSQL 数据库。我们会将它与你熟悉的关系型数据库（如 MySQL）进行对比，帮助你快速建立认知映射，并了解 MongoDB 的核心概念、数据格式和适用场景。</p>
+</blockquote>
+<hr />
+<h2 id="11-什么是-mongodb--与关系型数据库的对比">1.1 什么是 MongoDB —— 与关系型数据库的对比</h2>
+<h3 id="111-mongodb-简介">1.1.1 MongoDB 简介</h3>
+<p>MongoDB 是一个<strong>开源的、面向文档的 NoSQL 数据库</strong>，由 MongoDB Inc. 开发和维护。它使用类似 JSON 的 <strong>BSON（Binary JSON）</strong> 格式来存储数据，天然支持灵活的文档模型，无需预先定义表结构（Schema-free）。</p>
+<p>MongoDB 的名字来源于英文单词 &quot;humongous&quot;（巨大的），寓意它能够处理海量数据。自 2009 年首次发布以来，MongoDB 已经成为全球最受欢迎的 NoSQL 数据库之一。</p>
+<p><strong>核心特点：</strong></p>
+<ul>
+<li><strong>文档模型</strong>：数据以 JSON/BSON 文档形式存储，结构灵活</li>
+<li><strong>无固定 Schema</strong>：同一集合中的文档可以拥有不同的字段</li>
+<li><strong>水平扩展</strong>：原生支持分片（Sharding），轻松应对数据增长</li>
+<li><strong>高性能</strong>：内置索引、内存映射、聚合管道等高性能特性</li>
+<li><strong>丰富的查询语言</strong>：支持丰富的查询操作符和聚合框架</li>
+<li><strong>高可用</strong>：内置副本集（Replica Set）机制，自动故障转移</li>
+</ul>
+<h3 id="112-mongodb-vs-mysql-核心对比">1.1.2 MongoDB vs MySQL 核心对比</h3>
+<p>作为 Java 开发者，你很可能对 MySQL 非常熟悉。下表从多个维度对比 MongoDB 和 MySQL，帮助你快速理解两者的差异：</p>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>MySQL</th>
+<th>MongoDB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>数据库类型</strong></td>
+<td>关系型数据库（RDBMS）</td>
+<td>文档型 NoSQL 数据库</td>
+</tr>
+<tr>
+<td><strong>数据模型</strong></td>
+<td>行和列（表格）</td>
+<td>JSON/BSON 文档</td>
+</tr>
+<tr>
+<td><strong>Schema</strong></td>
+<td>固定 Schema，需要预定义表结构</td>
+<td>灵活 Schema，文档结构可随时变化</td>
+</tr>
+<tr>
+<td><strong>存储单位</strong></td>
+<td>数据库 → 表 → 行 → 列</td>
+<td>数据库 → 集合 → 文档 → 字段</td>
+</tr>
+<tr>
+<td><strong>主键</strong></td>
+<td>自增 ID 或自定义主键</td>
+<td>自动生成 <code>_id</code>（ObjectId）</td>
+</tr>
+<tr>
+<td><strong>关联关系</strong></td>
+<td>外键 + JOIN 操作</td>
+<td>嵌入文档或引用（手动关联）</td>
+</tr>
+<tr>
+<td><strong>查询语言</strong></td>
+<td>SQL</td>
+<td>MongoDB Query Language（MQL）</td>
+</tr>
+<tr>
+<td><strong>事务支持</strong></td>
+<td>完整的 ACID 事务</td>
+<td>单文档原子性 + 多文档事务（4.0+）</td>
+</tr>
+<tr>
+<td><strong>扩展方式</strong></td>
+<td>主要垂直扩展（升级硬件）</td>
+<td>水平扩展（分片）+ 垂直扩展</td>
+</tr>
+<tr>
+<td><strong>索引</strong></td>
+<td>B-Tree 索引</td>
+<td>B-Tree 索引 + 多种特殊索引</td>
+</tr>
+<tr>
+<td><strong>存储引擎</strong></td>
+<td>InnoDB / MyISAM 等</td>
+<td>WiredTiger（默认）</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>强事务、复杂关联查询</td>
+<td>灵活 Schema、海量数据、快速迭代</td>
+</tr>
+</tbody>
+</table>
+<h3 id="113-文档数据库的灵活性">1.1.3 文档数据库的灵活性</h3>
+<p>在 MySQL 中，一张表的所有行必须遵循相同的列定义。而在 MongoDB 中，同一个集合中的文档可以有完全不同的结构：</p>
+<p><strong>MySQL 中的用户表</strong> —— 所有行结构必须一致：</p>
+<pre><code class="language-sql">CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(200) NOT NULL,
+    age INT
+);
+
+-- 每行都必须有 id, name, email, age 这四列
+INSERT INTO users (name, email, age) VALUES ('张三', 'zhangsan@example.com', 25);
+INSERT INTO users (name, email, age) VALUES ('李四', 'lisi@example.com', 30);
+</code></pre>
+<p><strong>MongoDB 中的用户集合</strong> —— 文档结构可以灵活变化：</p>
+<pre><code class="language-json">// 文档1：普通用户，只有基本信息
+{
+    &quot;_id&quot;: ObjectId(&quot;64a1b2c3d4e5f6a7b8c9d0e1&quot;),
+    &quot;name&quot;: &quot;张三&quot;,
+    &quot;email&quot;: &quot;zhangsan@example.com&quot;,
+    &quot;age&quot;: 25
+}
+
+// 文档2：用户有额外的地址信息（嵌入文档）
+{
+    &quot;_id&quot;: ObjectId(&quot;64a1b2c3d4e5f6a7b8c9d0e2&quot;),
+    &quot;name&quot;: &quot;李四&quot;,
+    &quot;email&quot;: &quot;lisi@example.com&quot;,
+    &quot;age&quot;: 30,
+    &quot;address&quot;: {
+        &quot;city&quot;: &quot;北京&quot;,
+        &quot;district&quot;: &quot;朝阳区&quot;,
+        &quot;street&quot;: &quot;建国路88号&quot;
+    }
+}
+
+// 文档3：用户有兴趣标签数组，但没有 age 字段
+{
+    &quot;_id&quot;: ObjectId(&quot;64a1b2c3d4e5f6a7b8c9d0e3&quot;),
+    &quot;name&quot;: &quot;王五&quot;,
+    &quot;email&quot;: &quot;wangwu@example.com&quot;,
+    &quot;tags&quot;: [&quot;Java&quot;, &quot;MongoDB&quot;, &quot;Spring Boot&quot;],
+    &quot;registeredAt&quot;: ISODate(&quot;2024-01-15T08:30:00Z&quot;)
+}
+</code></pre>
+<blockquote>
+<p><strong>关键启示</strong>：MongoDB 的灵活 Schema 使得你可以根据业务需求随时向文档中添加新字段，而不需要执行 <code>ALTER TABLE</code> 操作。这在敏捷开发和快速迭代的场景中非常有价值。</p>
+</blockquote>
+<h3 id="114-查询语言对比">1.1.4 查询语言对比</h3>
+<p><strong>MySQL（SQL）</strong>：</p>
+<pre><code class="language-sql">-- 查找年龄大于 25 的用户
+SELECT * FROM users WHERE age &gt; 25;
+
+-- 查找北京的用户，按年龄排序
+SELECT * FROM users WHERE city = '北京' ORDER BY age DESC;
+
+-- 统计每个城市的用户数量
+SELECT city, COUNT(*) as user_count FROM users GROUP BY city;
+</code></pre>
+<p><strong>MongoDB（MQL）</strong>：</p>
+<pre><code class="language-javascript">// 查找年龄大于 25 的用户
+db.users.find({ age: { $gt: 25 } })
+
+// 查找北京的用户，按年龄排序
+db.users.find({ &quot;address.city&quot;: &quot;北京&quot; }).sort({ age: -1 })
+
+// 统计每个城市的用户数量
+db.users.aggregate([
+    { $group: { _id: &quot;$address.city&quot;, user_count: { $sum: 1 } } }
+])
+</code></pre>
+<hr />
+<h2 id="12-核心概念映射database--collection--document-vs-数据库--表--行">1.2 核心概念映射：Database / Collection / Document vs 数据库 / 表 / 行</h2>
+<h3 id="121-概念映射表">1.2.1 概念映射表</h3>
+<p>如果你已经熟悉关系型数据库，以下映射表可以帮助你快速理解 MongoDB 的术语：</p>
+<table>
+<thead>
+<tr>
+<th>MySQL 概念</th>
+<th>MongoDB 概念</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Database（数据库）</td>
+<td>Database（数据库）</td>
+<td>概念一致，都是数据的最高层容器</td>
+</tr>
+<tr>
+<td>Table（表）</td>
+<td>Collection（集合）</td>
+<td>集合是文档的容器，类似表但无固定结构</td>
+</tr>
+<tr>
+<td>Row（行）</td>
+<td>Document（文档）</td>
+<td>文档是数据的基本单位，以 BSON 格式存储</td>
+</tr>
+<tr>
+<td>Column（列）</td>
+<td>Field（字段）</td>
+<td>文档中的键值对，键即字段名</td>
+</tr>
+<tr>
+<td>Primary Key（主键）</td>
+<td><code>_id</code> 字段</td>
+<td>每个文档自动拥有唯一的 <code>_id</code></td>
+</tr>
+<tr>
+<td>Index（索引）</td>
+<td>Index（索引）</td>
+<td>概念一致，用于加速查询</td>
+</tr>
+<tr>
+<td>JOIN（连接）</td>
+<td><code>$lookup</code> / 嵌入文档</td>
+<td>MongoDB 通过嵌入文档减少 JOIN 需求</td>
+</tr>
+<tr>
+<td>Transaction（事务）</td>
+<td>Transaction（事务）</td>
+<td>MongoDB 4.0+ 支持多文档事务</td>
+</tr>
+</tbody>
+</table>
+<h3 id="122-database数据库">1.2.2 Database（数据库）</h3>
+<p>MongoDB 中的数据库与 MySQL 中的数据库概念一致，是数据组织的最高层容器。一个 MongoDB 实例可以包含多个数据库，每个数据库拥有独立的集合和权限。</p>
+<pre><code class="language-javascript">// 查看所有数据库
+show dbs
+
+// 输出示例：
+// admin    0.000GB    （系统数据库，用于管理权限）
+// config   0.000GB    （分片配置数据库）
+// local    0.000GB    （本地数据库，副本集信息）
+// myapp    0.125GB    （用户创建的数据库）
+
+// 切换到（或创建）数据库
+use myapp
+
+// 查看当前数据库
+db
+// 输出：myapp
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：MongoDB 中的数据库是<strong>懒创建</strong>的。执行 <code>use myapp</code> 时，如果 <code>myapp</code> 不存在，MongoDB 不会立刻创建它，而是等到你第一次向其中写入数据时才真正创建。</p>
+</blockquote>
+<h3 id="123-collection集合">1.2.3 Collection（集合）</h3>
+<p>集合（Collection）是 MongoDB 中文档的容器，类似于关系型数据库中的表（Table）。但与表不同的是，集合<strong>不强制要求固定的 Schema</strong>。</p>
+<pre><code class="language-javascript">// 查看当前数据库中的所有集合
+show collections
+
+// 创建集合（通常不需要显式创建，插入文档时会自动创建）
+db.createCollection(&quot;users&quot;)
+
+// 直接插入文档，集合会自动创建
+db.orders.insertOne({
+    orderId: &quot;ORD-20240101-001&quot;,
+    customer: &quot;张三&quot;,
+    items: [
+        { product: &quot;MongoDB实战&quot;, price: 79.00, quantity: 1 },
+        { product: &quot;Spring Boot入门&quot;, price: 59.00, quantity: 2 }
+    ],
+    totalAmount: 197.00,
+    status: &quot;已支付&quot;,
+    createdAt: new Date()
+})
+</code></pre>
+<h3 id="124-document文档">1.2.4 Document（文档）</h3>
+<p>文档（Document）是 MongoDB 中数据的基本单位，以 BSON 格式存储。你可以将文档理解为一个 JSON 对象。</p>
+<p>一个完整的用户文档示例：</p>
+<pre><code class="language-json">{
+    &quot;_id&quot;: ObjectId(&quot;65f2a1b3c4d5e6f7a8b9c0d1&quot;),
+    &quot;username&quot;: &quot;zhangsan&quot;,
+    &quot;profile&quot;: {
+        &quot;realName&quot;: &quot;张三&quot;,
+        &quot;gender&quot;: &quot;男&quot;,
+        &quot;birthday&quot;: ISODate(&quot;1995-06-15T00:00:00Z&quot;),
+        &quot;avatar&quot;: &quot;https://example.com/avatars/zhangsan.jpg&quot;
+    },
+    &quot;contact&quot;: {
+        &quot;email&quot;: &quot;zhangsan@example.com&quot;,
+        &quot;phone&quot;: &quot;13800138000&quot;,
+        &quot;addresses&quot;: [
+            {
+                &quot;label&quot;: &quot;家&quot;,
+                &quot;city&quot;: &quot;北京&quot;,
+                &quot;detail&quot;: &quot;朝阳区建国路88号&quot;
+            },
+            {
+                &quot;label&quot;: &quot;公司&quot;,
+                &quot;city&quot;: &quot;北京&quot;,
+                &quot;detail&quot;: &quot;海淀区中关村大街1号&quot;
+            }
+        ]
+    },
+    &quot;roles&quot;: [&quot;user&quot;, &quot;vip&quot;],
+    &quot;loginCount&quot;: 128,
+    &quot;lastLoginAt&quot;: ISODate(&quot;2024-03-15T09:30:00Z&quot;),
+    &quot;createdAt&quot;: ISODate(&quot;2023-01-10T14:20:00Z&quot;),
+    &quot;isActive&quot;: true
+}
+</code></pre>
+<blockquote>
+<p><strong>观察要点</strong>：</p>
+<ul>
+<li>文档可以包含<strong>嵌入文档</strong>（如 <code>profile</code>、<code>contact</code>）</li>
+<li>文档可以包含<strong>数组</strong>（如 <code>roles</code>、<code>addresses</code>）</li>
+<li>数组中的元素可以是简单值（如 <code>roles</code>）或嵌入文档（如 <code>addresses</code>）</li>
+<li>这种嵌套结构使得 MongoDB 能够在单个文档中表达丰富的数据关系</li>
+</ul>
+</blockquote>
+<h3 id="125-_id-字段与-objectid">1.2.5 <code>_id</code> 字段与 ObjectId</h3>
+<p>每个 MongoDB 文档都<strong>必须</strong>有一个 <code>_id</code> 字段作为主键，用于唯一标识文档。如果插入文档时没有指定 <code>_id</code>，MongoDB 会自动生成一个 <code>ObjectId</code>。</p>
+<p><strong>ObjectId 的结构：</strong></p>
+<p>ObjectId 是一个 12 字节（24 位十六进制字符）的值，由以下部分组成：</p>
+<pre><code>|  4字节时间戳  |  5字节随机值  |  3字节递增计数器  |
+|  65f2a1b3    |  c4d5e6f7a8  |  b9c0d1          |
+</code></pre>
+<ul>
+<li><strong>4 字节时间戳</strong>：文档创建时的 Unix 时间戳（秒级）</li>
+<li><strong>5 字节随机值</strong>：每个进程启动时生成的随机值（包含机器标识和进程ID的信息）</li>
+<li><strong>3 字节递增计数器</strong>：同一秒内同一进程中自增，初始值随机</li>
+</ul>
+<pre><code class="language-javascript">// 自动生成 _id
+db.users.insertOne({ name: &quot;张三&quot;, age: 25 })
+// 结果：{ &quot;_id&quot;: ObjectId(&quot;65f2a1b3c4d5e6f7a8b9c0d1&quot;), &quot;name&quot;: &quot;张三&quot;, &quot;age&quot;: 25 }
+
+// 手动指定 _id（可以是任意类型）
+db.users.insertOne({ _id: &quot;user_001&quot;, name: &quot;李四&quot;, age: 30 })
+// 结果：{ &quot;_id&quot;: &quot;user_001&quot;, &quot;name&quot;: &quot;李四&quot;, &quot;age&quot;: 30 }
+
+db.users.insertOne({ _id: 10001, name: &quot;王五&quot;, age: 28 })
+// 结果：{ &quot;_id&quot;: 10001, &quot;name&quot;: &quot;王五&quot;, &quot;age&quot;: 28 }
+
+// 从 ObjectId 中提取时间戳
+var id = ObjectId(&quot;65f2a1b3c4d5e6f7a8b9c0d1&quot;)
+id.getTimestamp()
+// 输出：ISODate(&quot;2024-03-14T07:23:47Z&quot;)
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：在大多数场景下，推荐使用自动生成的 ObjectId。它天然具备唯一性、有序性（按时间递增），并且不需要依赖数据库的自增机制。</p>
+</blockquote>
+<hr />
+<h2 id="13-bson-数据格式与常用数据类型">1.3 BSON 数据格式与常用数据类型</h2>
+<h3 id="131-什么是-bson">1.3.1 什么是 BSON</h3>
+<p>BSON（Binary JSON）是 MongoDB 用来存储文档和进行网络传输的<strong>二进制编码格式</strong>。你可以把它理解为 JSON 的二进制扩展版本。</p>
+<p><strong>BSON vs JSON 的区别：</strong></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>JSON</th>
+<th>BSON</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>格式</strong></td>
+<td>文本格式（人类可读）</td>
+<td>二进制格式（机器优化）</td>
+</tr>
+<tr>
+<td><strong>数据类型</strong></td>
+<td>6 种（String, Number, Boolean, null, Array, Object）</td>
+<td>20+ 种（增加了 Date, ObjectId, Int32, Int64, Decimal128 等）</td>
+</tr>
+<tr>
+<td><strong>存储效率</strong></td>
+<td>较低（文本占空间大）</td>
+<td>较高（二进制编码更紧凑，尤其对数字类型）</td>
+</tr>
+<tr>
+<td><strong>遍历速度</strong></td>
+<td>需要解析文本</td>
+<td>每个元素有长度前缀，可快速跳过</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>数据交互和配置文件</td>
+<td>数据库存储和网络传输</td>
+</tr>
+</tbody>
+</table>
+<p><strong>BSON 的优势：</strong></p>
+<ol>
+<li><strong>丰富的数据类型</strong>：支持日期、正则表达式、二进制数据等 JSON 不支持的类型</li>
+<li><strong>高效遍历</strong>：BSON 中每个元素都包含长度信息，可以快速跳过不需要的字段</li>
+<li><strong>高效编码/解码</strong>：二进制格式的编解码速度优于文本格式的 JSON 解析</li>
+</ol>
+<blockquote>
+<p><strong>简单理解</strong>：当你向 MongoDB 写入一个 JSON 格式的文档时，MongoDB 驱动会自动将其转换为 BSON 格式存储；当你读取数据时，BSON 会被自动转换回 JSON 呈现给你。这个过程对开发者是透明的。</p>
+</blockquote>
+<h3 id="132-常用数据类型详解">1.3.2 常用数据类型详解</h3>
+<p>MongoDB 支持丰富的数据类型，以下是常用类型的详细说明和示例：</p>
+<h4 id="1-string字符串">1. String（字符串）</h4>
+<p>最常用的数据类型，MongoDB 中的字符串必须是 UTF-8 编码。</p>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;张三&quot;,
+    &quot;description&quot;: &quot;这是一段中文描述&quot;,
+    &quot;url&quot;: &quot;https://www.mongodb.com&quot;
+}
+</code></pre>
+<h4 id="2-int3232位整数">2. Int32（32位整数）</h4>
+<p>存储 32 位有符号整数，范围：-2,147,483,648 ~ 2,147,483,647。</p>
+<pre><code class="language-javascript">// 在 mongosh 中，使用 NumberInt() 明确指定 Int32
+db.products.insertOne({
+    name: &quot;MongoDB实战&quot;,
+    stock: NumberInt(100),
+    rating: NumberInt(5)
+})
+</code></pre>
+<h4 id="3-int6464位整数-long">3. Int64（64位整数）/ Long</h4>
+<p>存储 64 位有符号整数，适合存储大整数。</p>
+<pre><code class="language-javascript">// 使用 NumberLong() 指定 Int64
+db.stats.insertOne({
+    metric: &quot;page_views&quot;,
+    totalCount: NumberLong(&quot;9007199254740993&quot;),
+    timestamp: new Date()
+})
+</code></pre>
+<h4 id="4-double双精度浮点数">4. Double（双精度浮点数）</h4>
+<p>64 位 IEEE 754 浮点数，<strong>mongosh 中数字的默认类型</strong>。</p>
+<pre><code class="language-javascript">// mongosh 中的数字默认就是 Double
+db.products.insertOne({
+    name: &quot;Spring Boot入门&quot;,
+    price: 59.90,
+    weight: 0.35
+})
+</code></pre>
+<h4 id="5-decimal128高精度小数">5. Decimal128（高精度小数）</h4>
+<p>128 位十进制浮点数，适合金融等对精度要求极高的场景。</p>
+<pre><code class="language-javascript">db.accounts.insertOne({
+    accountId: &quot;ACC-001&quot;,
+    balance: NumberDecimal(&quot;12345.6789&quot;),
+    interestRate: NumberDecimal(&quot;0.0325&quot;)
+})
+</code></pre>
+<blockquote>
+<p><strong>重要提示</strong>：在处理金额、汇率等对精度有严格要求的场景时，务必使用 <code>Decimal128</code> 而非 <code>Double</code>，否则可能出现浮点数精度丢失问题。</p>
+</blockquote>
+<h4 id="6-boolean布尔值">6. Boolean（布尔值）</h4>
+<p>只有 <code>true</code> 和 <code>false</code> 两个值。</p>
+<pre><code class="language-json">{
+    &quot;username&quot;: &quot;zhangsan&quot;,
+    &quot;isActive&quot;: true,
+    &quot;isAdmin&quot;: false,
+    &quot;emailVerified&quot;: true
+}
+</code></pre>
+<h4 id="7-date日期">7. Date（日期）</h4>
+<p>存储 UTC 格式的日期时间，精确到毫秒。内部以 64 位整数存储自 Unix 纪元（1970-01-01）以来的毫秒数。</p>
+<pre><code class="language-javascript">db.events.insertOne({
+    title: &quot;技术分享会&quot;,
+    startTime: new Date(&quot;2024-06-15T14:00:00Z&quot;),
+    endTime: new Date(&quot;2024-06-15T16:00:00Z&quot;),
+    createdAt: new Date()  // 当前时间
+})
+
+// ISODate 是 mongosh 中 Date 的等价写法
+db.events.insertOne({
+    title: &quot;团队建设&quot;,
+    startTime: ISODate(&quot;2024-07-01T09:00:00+08:00&quot;)
+})
+</code></pre>
+<h4 id="8-objectid">8. ObjectId</h4>
+<p>12 字节的唯一标识符，通常用作 <code>_id</code> 字段的值（详见 1.2.5 节）。</p>
+<pre><code class="language-javascript">db.logs.insertOne({
+    _id: new ObjectId(),
+    userId: ObjectId(&quot;65f2a1b3c4d5e6f7a8b9c0d1&quot;),
+    action: &quot;login&quot;,
+    timestamp: new Date()
+})
+</code></pre>
+<h4 id="9-array数组">9. Array（数组）</h4>
+<p>可以包含任意类型的元素，包括不同类型的混合。</p>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;张三&quot;,
+    &quot;tags&quot;: [&quot;Java&quot;, &quot;MongoDB&quot;, &quot;Spring Boot&quot;],
+    &quot;scores&quot;: [95, 87, 92, 78],
+    &quot;history&quot;: [
+        { &quot;action&quot;: &quot;login&quot;, &quot;time&quot;: &quot;2024-03-15T09:00:00Z&quot; },
+        { &quot;action&quot;: &quot;purchase&quot;, &quot;time&quot;: &quot;2024-03-15T10:30:00Z&quot; }
+    ]
+}
+</code></pre>
+<h4 id="10-object--嵌入文档embedded-document">10. Object / 嵌入文档（Embedded Document）</h4>
+<p>文档中可以嵌套另一个文档，这是 MongoDB 最强大的特性之一。</p>
+<pre><code class="language-json">{
+    &quot;orderId&quot;: &quot;ORD-2024-001&quot;,
+    &quot;customer&quot;: {
+        &quot;name&quot;: &quot;张三&quot;,
+        &quot;phone&quot;: &quot;13800138000&quot;,
+        &quot;address&quot;: {
+            &quot;province&quot;: &quot;北京市&quot;,
+            &quot;city&quot;: &quot;北京&quot;,
+            &quot;district&quot;: &quot;朝阳区&quot;,
+            &quot;detail&quot;: &quot;建国路88号&quot;
+        }
+    },
+    &quot;payment&quot;: {
+        &quot;method&quot;: &quot;微信支付&quot;,
+        &quot;amount&quot;: 299.00,
+        &quot;paidAt&quot;: &quot;2024-03-15T10:30:00Z&quot;
+    }
+}
+</code></pre>
+<h4 id="11-null空值">11. Null（空值）</h4>
+<p>表示空值或字段不存在。</p>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;李四&quot;,
+    &quot;email&quot;: &quot;lisi@example.com&quot;,
+    &quot;phone&quot;: null,
+    &quot;deletedAt&quot;: null
+}
+</code></pre>
+<h4 id="12-binary-data二进制数据">12. Binary Data（二进制数据）</h4>
+<p>用于存储二进制内容，如小文件、加密数据、UUID 等。</p>
+<pre><code class="language-javascript">// 存储 UUID
+db.sessions.insertOne({
+    _id: UUID(&quot;a1b2c3d4-e5f6-7890-abcd-ef1234567890&quot;),
+    userId: &quot;zhangsan&quot;,
+    token: BinData(0, &quot;c8edabc3f9834f76...&quot;),
+    expireAt: new Date(&quot;2024-03-16T09:00:00Z&quot;)
+})
+</code></pre>
+<h4 id="13-timestamp时间戳">13. Timestamp（时间戳）</h4>
+<p>MongoDB 内部使用的特殊时间戳类型，主要用于副本集的 oplog（操作日志）。<strong>一般开发中请使用 Date 类型，而非 Timestamp。</strong></p>
+<pre><code class="language-javascript">// Timestamp 由两部分组成：秒级时间戳 + 序号
+db.internal.insertOne({
+    ts: Timestamp(1710403200, 1)
+})
+</code></pre>
+<h3 id="133-数据类型速查表">1.3.3 数据类型速查表</h3>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>BSON Type ID</th>
+<th>说明</th>
+<th>Java 对应类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Double</td>
+<td>1</td>
+<td>浮点数</td>
+<td><code>double</code> / <code>Double</code></td>
+</tr>
+<tr>
+<td>String</td>
+<td>2</td>
+<td>字符串</td>
+<td><code>String</code></td>
+</tr>
+<tr>
+<td>Object</td>
+<td>3</td>
+<td>嵌入文档</td>
+<td><code>Document</code> / 自定义对象</td>
+</tr>
+<tr>
+<td>Array</td>
+<td>4</td>
+<td>数组</td>
+<td><code>List&lt;?&gt;</code></td>
+</tr>
+<tr>
+<td>Binary Data</td>
+<td>5</td>
+<td>二进制数据</td>
+<td><code>byte[]</code></td>
+</tr>
+<tr>
+<td>ObjectId</td>
+<td>7</td>
+<td>对象ID</td>
+<td><code>ObjectId</code></td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>8</td>
+<td>布尔值</td>
+<td><code>boolean</code> / <code>Boolean</code></td>
+</tr>
+<tr>
+<td>Date</td>
+<td>9</td>
+<td>日期</td>
+<td><code>java.util.Date</code> / <code>LocalDateTime</code></td>
+</tr>
+<tr>
+<td>Null</td>
+<td>10</td>
+<td>空值</td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td>Int32</td>
+<td>16</td>
+<td>32位整数</td>
+<td><code>int</code> / <code>Integer</code></td>
+</tr>
+<tr>
+<td>Timestamp</td>
+<td>17</td>
+<td>时间戳（内部使用）</td>
+<td><code>BsonTimestamp</code></td>
+</tr>
+<tr>
+<td>Int64</td>
+<td>18</td>
+<td>64位整数</td>
+<td><code>long</code> / <code>Long</code></td>
+</tr>
+<tr>
+<td>Decimal128</td>
+<td>19</td>
+<td>高精度小数</td>
+<td><code>BigDecimal</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="14-适用场景分析什么时候该选-mongodb">1.4 适用场景分析：什么时候该选 MongoDB</h2>
+<h3 id="141-适合使用-mongodb-的场景">1.4.1 适合使用 MongoDB 的场景</h3>
+<h4 id="1-内容管理系统cms">1. 内容管理系统（CMS）</h4>
+<p>文章、博客、新闻等内容天然适合文档模型 —— 每篇文章可能有不同的字段（有的有视频，有的有图片gallery，有的只有文本）。</p>
+<pre><code class="language-json">{
+    &quot;title&quot;: &quot;MongoDB入门教程&quot;,
+    &quot;author&quot;: &quot;张三&quot;,
+    &quot;content&quot;: &quot;这是一篇关于MongoDB的入门教程...&quot;,
+    &quot;category&quot;: &quot;数据库&quot;,
+    &quot;tags&quot;: [&quot;MongoDB&quot;, &quot;NoSQL&quot;, &quot;数据库&quot;],
+    &quot;coverImage&quot;: &quot;https://example.com/images/mongodb.jpg&quot;,
+    &quot;viewCount&quot;: 1520,
+    &quot;comments&quot;: [
+        { &quot;user&quot;: &quot;李四&quot;, &quot;content&quot;: &quot;写得很好！&quot;, &quot;createdAt&quot;: &quot;2024-03-15&quot; }
+    ],
+    &quot;publishedAt&quot;: &quot;2024-03-14&quot;,
+    &quot;status&quot;: &quot;published&quot;
+}
+</code></pre>
+<h4 id="2-用户画像与个性化">2. 用户画像与个性化</h4>
+<p>不同用户的画像数据结构差异很大，MongoDB 灵活的 Schema 完美适配。</p>
+<pre><code class="language-json">{
+    &quot;userId&quot;: &quot;U10001&quot;,
+    &quot;demographics&quot;: { &quot;age&quot;: 28, &quot;gender&quot;: &quot;M&quot;, &quot;city&quot;: &quot;上海&quot; },
+    &quot;preferences&quot;: {
+        &quot;categories&quot;: [&quot;科技&quot;, &quot;编程&quot;],
+        &quot;priceRange&quot;: { &quot;min&quot;: 50, &quot;max&quot;: 200 }
+    },
+    &quot;behavior&quot;: {
+        &quot;lastActive&quot;: &quot;2024-03-15T20:00:00Z&quot;,
+        &quot;avgSessionDuration&quot;: 1800,
+        &quot;purchaseHistory&quot;: [&quot;P001&quot;, &quot;P002&quot;, &quot;P003&quot;]
+    },
+    &quot;deviceInfo&quot;: {
+        &quot;os&quot;: &quot;Android&quot;,
+        &quot;browser&quot;: &quot;Chrome&quot;,
+        &quot;screenSize&quot;: &quot;1080x2400&quot;
+    }
+}
+</code></pre>
+<h4 id="3-物联网iot数据">3. 物联网（IoT）数据</h4>
+<p>传感器数据量大、写入频繁、结构可能随设备型号不同而变化。</p>
+<pre><code class="language-json">{
+    &quot;deviceId&quot;: &quot;SENSOR-T-001&quot;,
+    &quot;type&quot;: &quot;temperature&quot;,
+    &quot;location&quot;: { &quot;type&quot;: &quot;Point&quot;, &quot;coordinates&quot;: [121.4737, 31.2304] },
+    &quot;readings&quot;: [
+        { &quot;value&quot;: 23.5, &quot;unit&quot;: &quot;°C&quot;, &quot;timestamp&quot;: &quot;2024-03-15T10:00:00Z&quot; },
+        { &quot;value&quot;: 23.8, &quot;unit&quot;: &quot;°C&quot;, &quot;timestamp&quot;: &quot;2024-03-15T10:05:00Z&quot; },
+        { &quot;value&quot;: 24.1, &quot;unit&quot;: &quot;°C&quot;, &quot;timestamp&quot;: &quot;2024-03-15T10:10:00Z&quot; }
+    ],
+    &quot;battery&quot;: 85,
+    &quot;firmware&quot;: &quot;v2.1.0&quot;
+}
+</code></pre>
+<h4 id="4-实时分析与日志存储">4. 实时分析与日志存储</h4>
+<p>日志数据写入量大、结构多变，MongoDB 的高吞吐写入和灵活 Schema 非常适合。</p>
+<pre><code class="language-json">{
+    &quot;level&quot;: &quot;ERROR&quot;,
+    &quot;service&quot;: &quot;order-service&quot;,
+    &quot;instance&quot;: &quot;order-service-pod-3&quot;,
+    &quot;message&quot;: &quot;Failed to process payment&quot;,
+    &quot;stackTrace&quot;: &quot;java.lang.RuntimeException: Payment gateway timeout...&quot;,
+    &quot;context&quot;: {
+        &quot;orderId&quot;: &quot;ORD-2024-001&quot;,
+        &quot;userId&quot;: &quot;U10001&quot;,
+        &quot;amount&quot;: 299.00,
+        &quot;retryCount&quot;: 3
+    },
+    &quot;timestamp&quot;: &quot;2024-03-15T10:30:45.123Z&quot;,
+    &quot;traceId&quot;: &quot;abc123def456&quot;
+}
+</code></pre>
+<h4 id="5-商品目录--产品信息管理">5. 商品目录 / 产品信息管理</h4>
+<p>不同品类的商品属性差异极大（手机有内存、屏幕尺寸；服装有颜色、尺码），MongoDB 的灵活文档模型能优雅地处理这种<strong>多态数据</strong>。</p>
+<pre><code class="language-json">// 手机商品
+{
+    &quot;name&quot;: &quot;iPhone 15 Pro&quot;,
+    &quot;category&quot;: &quot;手机&quot;,
+    &quot;price&quot;: 8999,
+    &quot;specs&quot;: {
+        &quot;screen&quot;: &quot;6.1英寸&quot;,
+        &quot;storage&quot;: &quot;256GB&quot;,
+        &quot;chip&quot;: &quot;A17 Pro&quot;,
+        &quot;camera&quot;: &quot;4800万像素&quot;
+    }
+}
+
+// 服装商品 —— 属性完全不同
+{
+    &quot;name&quot;: &quot;春季休闲夹克&quot;,
+    &quot;category&quot;: &quot;服装&quot;,
+    &quot;price&quot;: 399,
+    &quot;specs&quot;: {
+        &quot;material&quot;: &quot;100%棉&quot;,
+        &quot;color&quot;: [&quot;黑色&quot;, &quot;深蓝&quot;, &quot;卡其&quot;],
+        &quot;size&quot;: [&quot;S&quot;, &quot;M&quot;, &quot;L&quot;, &quot;XL&quot;, &quot;XXL&quot;],
+        &quot;season&quot;: &quot;春秋&quot;
+    }
+}
+</code></pre>
+<h4 id="6-游戏数据">6. 游戏数据</h4>
+<p>玩家数据、游戏状态、排行榜等场景，读写频繁且结构灵活。</p>
+<h3 id="142-不适合使用-mongodb-的场景">1.4.2 不适合使用 MongoDB 的场景</h3>
+<h4 id="1-需要强事务保证的金融核心系统">1. 需要强事务保证的金融核心系统</h4>
+<p>虽然 MongoDB 4.0+ 支持多文档事务，但在银行核心交易、对账等需要严格 ACID 事务保证的场景中，关系型数据库仍是首选。</p>
+<pre><code>示例场景：银行转账
+- 账户 A 扣款 1000 元
+- 账户 B 入账 1000 元
+- 记录转账流水
+
+→ 这三个操作必须要么全部成功，要么全部回滚，不容许任何不一致。
+→ 关系型数据库在这类场景经过了数十年的验证，更加可靠。
+</code></pre>
+<h4 id="2-高度关联的复杂数据模型">2. 高度关联的复杂数据模型</h4>
+<p>如果数据之间存在大量多对多关系，需要频繁执行复杂的 JOIN 查询（如 ERP 系统、传统关系密集的业务系统），关系型数据库的 JOIN 能力更加成熟高效。</p>
+<pre><code>示例场景：企业 ERP 系统
+- 订单关联客户、产品、仓库、物流、发票...
+- 一次查询可能需要 JOIN 5-6 张表
+- 数据关系固定且复杂
+
+→ MongoDB 中虽然可以通过 $lookup 实现类似 JOIN 的操作，
+   但性能和便利性不如关系型数据库。
+</code></pre>
+<h4 id="3-需要严格-schema-约束的场景">3. 需要严格 Schema 约束的场景</h4>
+<p>某些业务对数据格式有严格要求（如医疗记录、法律文书），需要数据库层面强制约束每条数据的完整性。</p>
+<h3 id="143-技术选型决策参考表">1.4.3 技术选型决策参考表</h3>
+<table>
+<thead>
+<tr>
+<th>考量因素</th>
+<th>选 MongoDB</th>
+<th>选关系型数据库（MySQL/PostgreSQL）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>数据结构</strong></td>
+<td>不固定、经常变化</td>
+<td>固定、很少变化</td>
+</tr>
+<tr>
+<td><strong>数据关联</strong></td>
+<td>关联少，可通过嵌入文档解决</td>
+<td>关联复杂，需要频繁 JOIN</td>
+</tr>
+<tr>
+<td><strong>数据量</strong></td>
+<td>海量数据（TB/PB级别）</td>
+<td>中小规模数据</td>
+</tr>
+<tr>
+<td><strong>写入吞吐</strong></td>
+<td>高吞吐写入</td>
+<td>中等写入量</td>
+</tr>
+<tr>
+<td><strong>事务需求</strong></td>
+<td>单文档原子性已够用</td>
+<td>需要跨表强事务</td>
+</tr>
+<tr>
+<td><strong>扩展需求</strong></td>
+<td>需要水平扩展</td>
+<td>垂直扩展可满足</td>
+</tr>
+<tr>
+<td><strong>开发速度</strong></td>
+<td>快速迭代，Schema 频繁变化</td>
+<td>需求稳定，Schema 变化少</td>
+</tr>
+<tr>
+<td><strong>查询模式</strong></td>
+<td>以文档为中心的查询</td>
+<td>复杂的多表关联查询</td>
+</tr>
+<tr>
+<td><strong>团队经验</strong></td>
+<td>团队熟悉文档数据库</td>
+<td>团队熟悉 SQL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="144-现实中的混合使用">1.4.4 现实中的混合使用</h3>
+<p>在实际项目中，MongoDB 和关系型数据库往往<strong>并不是非此即彼</strong>的关系，而是可以组合使用：</p>
+<pre><code>典型的混合架构：
+┌──────────────────────────────────────────────────┐
+│                   应用层                          │
+├──────────────────────────────────────────────────┤
+│                                                  │
+│   MySQL / PostgreSQL          MongoDB            │
+│   ┌──────────────┐       ┌──────────────┐       │
+│   │ 用户账户     │       │ 商品目录     │       │
+│   │ 订单交易     │       │ 用户画像     │       │
+│   │ 财务对账     │       │ 日志数据     │       │
+│   │ 权限管理     │       │ 内容管理     │       │
+│   └──────────────┘       └──────────────┘       │
+│                                                  │
+│   → 强事务、复杂关联       → 灵活Schema、高吞吐  │
+└──────────────────────────────────────────────────┘
+</code></pre>
+<blockquote>
+<p><strong>总结</strong>：选择数据库不应该只看&quot;流行度&quot;或&quot;新旧&quot;，而应该根据<strong>具体业务场景的需求</strong>做出判断。理解每种数据库的优势和局限，才能做出最合适的技术选型。</p>
+</blockquote>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<p>本章我们学习了以下核心内容：</p>
+<ol>
+<li><strong>MongoDB 是什么</strong> —— 一个面向文档的 NoSQL 数据库，使用 BSON 格式存储数据，具有灵活 Schema、水平扩展、高性能等特点。</li>
+<li><strong>核心概念映射</strong> —— Database ↔ 数据库、Collection ↔ 表、Document ↔ 行、Field ↔ 列、<code>_id</code> ↔ 主键。</li>
+<li><strong>BSON 与数据类型</strong> —— BSON 是 JSON 的二进制扩展，支持 String、Int32、Int64、Double、Decimal128、Boolean、Date、ObjectId、Array、Object、Null、Binary Data、Timestamp 等丰富的数据类型。</li>
+<li><strong>适用场景</strong> —— MongoDB 适合内容管理、用户画像、IoT、日志存储等灵活 Schema 的场景；不适合强事务和高度关联的场景。实际项目中可以与关系型数据库混合使用。</li>
+</ol>
+<p>在下一章中，我们将搭建 MongoDB 开发环境，包括安装 MongoDB、使用 mongosh 进行基本操作，以及初始化一个 Spring Boot 项目。</p>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

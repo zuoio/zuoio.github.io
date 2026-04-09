@@ -1,0 +1,1315 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第一章-mybatis-概述与环境搭建-">第一章 MyBatis 概述与环境搭建 💡</h1>
+<blockquote>
+<p>本章为快速回顾章节，帮助你建立对 MyBatis 的整体认知。如果你已经有实际项目经验，可以快速浏览后直接进入第三章。</p>
+</blockquote>
+<hr />
+<h2 id="11-mybatis-是什么--orm-框架定位与设计哲学">1.1 MyBatis 是什么 —— ORM 框架定位与设计哲学</h2>
+<p>MyBatis 是一款优秀的<strong>半自动 ORM（Object-Relational Mapping）框架</strong>，它将 Java 对象与 SQL 语句之间建立映射关系，让开发者在保留对 SQL 完全控制权的同时，免去 JDBC 中大量重复的样板代码。</p>
+<h3 id="核心定位">核心定位</h3>
+<ul>
+<li><strong>不是全自动 ORM</strong>：MyBatis 不会自动生成 SQL，你需要自己编写每一条 SQL 语句</li>
+<li><strong>SQL 与 Java 代码解耦</strong>：SQL 写在 XML 或注解中，与业务逻辑分离</li>
+<li><strong>灵活的结果映射</strong>：支持简单类型到复杂嵌套对象的各种映射场景</li>
+</ul>
+<h3 id="设计哲学">设计哲学</h3>
+<p>MyBatis 的设计哲学可以概括为一句话：<strong>SQL 是开发者最好的朋友，框架不应该试图隐藏它，而应该让它更容易管理。</strong></p>
+<p>对比原生 JDBC 代码，可以直观感受 MyBatis 解决了什么问题：</p>
+<pre><code class="language-java">// 原生 JDBC —— 充斥大量样板代码
+public User findById(Long id) {
+    Connection conn = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    try {
+        conn = dataSource.getConnection();
+        ps = conn.prepareStatement(&quot;SELECT id, username, email FROM user WHERE id = ?&quot;);
+        ps.setLong(1, id);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            User user = new User();
+            user.setId(rs.getLong(&quot;id&quot;));
+            user.setUsername(rs.getString(&quot;username&quot;));
+            user.setEmail(rs.getString(&quot;email&quot;));
+            return user;
+        }
+        return null;
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    } finally {
+        // 还需要手动关闭 rs、ps、conn...
+    }
+}
+</code></pre>
+<pre><code class="language-java">// MyBatis —— 只需关注 SQL 本身
+public interface UserMapper {
+    @Select(&quot;SELECT id, username, email FROM user WHERE id = #{id}&quot;)
+    User findById(Long id);
+}
+</code></pre>
+<blockquote>
+<p><strong>MyBatis 帮你做了什么？</strong> 连接管理、参数设置、结果集到对象的映射、异常转换 —— 这些 JDBC 中最繁琐的部分全部由框架接管。</p>
+</blockquote>
+<hr />
+<h2 id="12-mybatis-vs-hibernate-vs-jpa--选型对比">1.2 MyBatis vs Hibernate vs JPA —— 选型对比</h2>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>MyBatis</th>
+<th>Hibernate</th>
+<th>Spring Data JPA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ORM 程度</strong></td>
+<td>半自动（手写 SQL）</td>
+<td>全自动（自动生成 SQL）</td>
+<td>全自动（基于 Hibernate）</td>
+</tr>
+<tr>
+<td><strong>学习曲线</strong></td>
+<td>低（会 SQL 就能上手）</td>
+<td>高（HQL、Session 状态、级联策略）</td>
+<td>中（约定优于配置，但底层是 Hibernate）</td>
+</tr>
+<tr>
+<td><strong>SQL 控制力</strong></td>
+<td>完全控制</td>
+<td>有限（可用 Native Query）</td>
+<td>有限（可用 @Query）</td>
+</tr>
+<tr>
+<td><strong>复杂查询</strong></td>
+<td>擅长（动态 SQL 强大）</td>
+<td>较弱（复杂查询需退化为原生 SQL）</td>
+<td>较弱（同 Hibernate）</td>
+</tr>
+<tr>
+<td><strong>数据库移植性</strong></td>
+<td>低（SQL 方言耦合）</td>
+<td>高（HQL 屏蔽方言差异）</td>
+<td>高（JPQL 屏蔽方言差异）</td>
+</tr>
+<tr>
+<td><strong>缓存</strong></td>
+<td>一级 + 二级缓存</td>
+<td>一级 + 二级 + 查询缓存</td>
+<td>继承 Hibernate 缓存体系</td>
+</tr>
+<tr>
+<td><strong>代码量</strong></td>
+<td>中等（需写 SQL + 映射）</td>
+<td>少（单表 CRUD 零 SQL）</td>
+<td>最少（接口方法命名即查询）</td>
+</tr>
+<tr>
+<td><strong>国内使用率</strong></td>
+<td>极高（互联网公司主流）</td>
+<td>较低</td>
+<td>中等（外企、传统企业较多）</td>
+</tr>
+<tr>
+<td><strong>典型场景</strong></td>
+<td>复杂业务查询、报表、DBA 强管控</td>
+<td>领域模型驱动、快速原型</td>
+<td>Spring 生态全家桶项目</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>选型建议</strong>：国内互联网项目绝大多数使用 MyBatis（或 MyBatis-Plus），原因很现实 —— 业务 SQL 复杂度高、DBA 需要审核 SQL、团队对 SQL 掌控力要求强。如果你的项目是简单 CRUD 且追求开发效率，JPA 也是不错的选择。</p>
+</blockquote>
+<hr />
+<h2 id="13-核心架构总览--sqlsessionfactorysqlsessionmapper-三层关系">1.3 核心架构总览 —— SqlSessionFactory、SqlSession、Mapper 三层关系</h2>
+<p>MyBatis 的核心 API 由三个关键角色构成，它们的关系是一个<strong>从全局到会话到操作</strong>的层级结构：</p>
+<h3 id="sqlsessionfactory工厂--全局唯一">SqlSessionFactory（工厂 —— 全局唯一）</h3>
+<ul>
+<li><strong>职责</strong>：持有全局配置信息（<code>Configuration</code> 对象），负责创建 <code>SqlSession</code> 实例</li>
+<li><strong>生命周期</strong>：应用级单例，随应用启动而创建，随应用关闭而销毁</li>
+<li><strong>类比</strong>：相当于数据库连接池的管理者</li>
+</ul>
+<pre><code class="language-java">// 通过配置文件构建 SqlSessionFactory（整个应用只需执行一次）
+String resource = &quot;mybatis-config.xml&quot;;
+InputStream inputStream = Resources.getResourceAsStream(resource);
+SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+</code></pre>
+<h3 id="sqlsession会话--每次请求创建">SqlSession（会话 —— 每次请求创建）</h3>
+<ul>
+<li><strong>职责</strong>：执行 SQL 命令、获取 Mapper 实例、管理事务</li>
+<li><strong>生命周期</strong>：方法级或请求级，用完必须关闭（类似 JDBC 的 Connection）</li>
+<li><strong>线程安全性</strong>：<strong>不是线程安全的</strong>，不能作为类的成员变量共享</li>
+</ul>
+<pre><code class="language-java">// 每次数据库操作创建一个 SqlSession
+try (SqlSession session = sqlSessionFactory.openSession()) {
+    UserMapper mapper = session.getMapper(UserMapper.class);
+    User user = mapper.findById(1L);
+    // ...
+} // try-with-resources 自动关闭
+</code></pre>
+<h3 id="mapper映射器--绑定到-sqlsession">Mapper（映射器 —— 绑定到 SqlSession）</h3>
+<ul>
+<li><strong>职责</strong>：定义数据库操作的接口，每个方法对应一条 SQL 语句</li>
+<li><strong>生命周期</strong>：从属于 <code>SqlSession</code>，随 <code>SqlSession</code> 关闭而失效</li>
+<li><strong>本质</strong>：Mapper 接口没有实现类，MyBatis 通过 <strong>JDK 动态代理</strong> 在运行时生成实现</li>
+</ul>
+<pre><code class="language-java">public interface UserMapper {
+    User findById(Long id);
+    List&lt;User&gt; findAll();
+    int insert(User user);
+    int update(User user);
+    int deleteById(Long id);
+}
+</code></pre>
+<h3 id="三者关系总结">三者关系总结</h3>
+<pre><code>SqlSessionFactory（全局单例）
+    │
+    │  openSession()
+    ▼
+SqlSession（一次会话，非线程安全）
+    │
+    │  getMapper(UserMapper.class)
+    ▼
+UserMapper（代理对象，绑定到当前 SqlSession）
+    │
+    │  findById(1L) → 查找对应 SQL → 执行并映射结果
+    ▼
+数据库
+</code></pre>
+<blockquote>
+<p><strong>记住这个职责链</strong>：<code>SqlSessionFactory</code> 管配置和创建会话，<code>SqlSession</code> 管事务和获取 Mapper，<code>Mapper</code> 管具体的数据库操作。三者各司其职，层层委托。</p>
+</blockquote>
+<hr />
+<h2 id="14-环境搭建">1.4 环境搭建</h2>
+<h3 id="141-maven-依赖配置">1.4.1 Maven 依赖配置</h3>
+<p>一个纯 MyBatis 项目只需要两个核心依赖：MyBatis 本身 + 数据库驱动。</p>
+<pre><code class="language-xml">&lt;dependencies&gt;
+    &lt;!-- MyBatis 核心 --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.mybatis&lt;/groupId&gt;
+        &lt;artifactId&gt;mybatis&lt;/artifactId&gt;
+        &lt;version&gt;3.5.16&lt;/version&gt;
+    &lt;/dependency&gt;
+
+    &lt;!-- MySQL 驱动（根据你的数据库选择对应驱动） --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+        &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+        &lt;version&gt;8.3.0&lt;/version&gt;
+    &lt;/dependency&gt;
+
+    &lt;!-- 用于运行测试 --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;junit&lt;/groupId&gt;
+        &lt;artifactId&gt;junit&lt;/artifactId&gt;
+        &lt;version&gt;4.13.2&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<blockquote>
+<p><strong>提示</strong>：如果不想安装 MySQL，可以使用 H2 内存数据库进行学习，将驱动替换为 <code>com.h2database:h2</code>，连接 URL 改为 <code>jdbc:h2:mem:test</code> 即可。</p>
+</blockquote>
+<h3 id="142-最小可运行示例纯-mybatis不依赖-spring">1.4.2 最小可运行示例（纯 MyBatis，不依赖 Spring）</h3>
+<p>下面是一个完整的、可以直接运行的纯 MyBatis 示例，包含所有必需文件。</p>
+<h4 id="项目结构">项目结构</h4>
+<pre><code>src/
+├── main/
+│   ├── java/com/example/
+│   │   ├── entity/
+│   │   │   └── User.java
+│   │   └── mapper/
+│   │       └── UserMapper.java
+│   └── resources/
+│       ├── mybatis-config.xml
+│       └── mapper/
+│           └── UserMapper.xml
+└── test/
+    └── java/com/example/
+        └── MyBatisTest.java
+</code></pre>
+<h4 id="1-建表-sql">1. 建表 SQL</h4>
+<pre><code class="language-sql">CREATE TABLE user (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100),
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO user (username, email) VALUES ('张三', 'zhangsan@example.com');
+INSERT INTO user (username, email) VALUES ('李四', 'lisi@example.com');
+</code></pre>
+<h4 id="2-实体类-userjava">2. 实体类 User.java</h4>
+<pre><code class="language-java">package com.example.entity;
+
+public class User {
+    private Long id;
+    private String username;
+    private String email;
+    private java.time.LocalDateTime createTime;
+
+    // Getter &amp; Setter
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public java.time.LocalDateTime getCreateTime() { return createTime; }
+    public void setCreateTime(java.time.LocalDateTime createTime) { this.createTime = createTime; }
+
+    @Override
+    public String toString() {
+        return &quot;User{id=&quot; + id + &quot;, username='&quot; + username + &quot;', email='&quot; + email + &quot;', createTime=&quot; + createTime + &quot;}&quot;;
+    }
+}
+</code></pre>
+<h4 id="3-mapper-接口-usermapperjava">3. Mapper 接口 UserMapper.java</h4>
+<pre><code class="language-java">package com.example.mapper;
+
+import com.example.entity.User;
+import java.util.List;
+
+public interface UserMapper {
+
+    User findById(Long id);
+
+    List&lt;User&gt; findAll();
+
+    int insert(User user);
+
+    int update(User user);
+
+    int deleteById(Long id);
+}
+</code></pre>
+<h4 id="4-mapper-xml-映射文件-usermapperxml">4. Mapper XML 映射文件 UserMapper.xml</h4>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+    PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+    &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+
+&lt;mapper namespace=&quot;com.example.mapper.UserMapper&quot;&gt;
+
+    &lt;select id=&quot;findById&quot; parameterType=&quot;long&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+        SELECT id, username, email, create_time AS createTime
+        FROM user
+        WHERE id = #{id}
+    &lt;/select&gt;
+
+    &lt;select id=&quot;findAll&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+        SELECT id, username, email, create_time AS createTime
+        FROM user
+    &lt;/select&gt;
+
+    &lt;insert id=&quot;insert&quot; parameterType=&quot;com.example.entity.User&quot; useGeneratedKeys=&quot;true&quot; keyProperty=&quot;id&quot;&gt;
+        INSERT INTO user (username, email)
+        VALUES (#{username}, #{email})
+    &lt;/insert&gt;
+
+    &lt;update id=&quot;update&quot; parameterType=&quot;com.example.entity.User&quot;&gt;
+        UPDATE user
+        SET username = #{username}, email = #{email}
+        WHERE id = #{id}
+    &lt;/update&gt;
+
+    &lt;delete id=&quot;deleteById&quot; parameterType=&quot;long&quot;&gt;
+        DELETE FROM user WHERE id = #{id}
+    &lt;/delete&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<h4 id="5-mybatis-全局配置文件-mybatis-configxml">5. MyBatis 全局配置文件 mybatis-config.xml</h4>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE configuration
+    PUBLIC &quot;-//mybatis.org//DTD Config 3.0//EN&quot;
+    &quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;&gt;
+
+&lt;configuration&gt;
+
+    &lt;settings&gt;
+        &lt;!-- 开启驼峰命名自动映射，如 create_time -&gt; createTime --&gt;
+        &lt;setting name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+        &lt;!-- 控制台打印 SQL 日志（开发阶段使用） --&gt;
+        &lt;setting name=&quot;logImpl&quot; value=&quot;STDOUT_LOGGING&quot;/&gt;
+    &lt;/settings&gt;
+
+    &lt;environments default=&quot;development&quot;&gt;
+        &lt;environment id=&quot;development&quot;&gt;
+            &lt;transactionManager type=&quot;JDBC&quot;/&gt;
+            &lt;dataSource type=&quot;POOLED&quot;&gt;
+                &lt;property name=&quot;driver&quot; value=&quot;com.mysql.cj.jdbc.Driver&quot;/&gt;
+                &lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/mybatis_demo?useSSL=false&amp;amp;serverTimezone=Asia/Shanghai&amp;amp;characterEncoding=utf-8&quot;/&gt;
+                &lt;property name=&quot;username&quot; value=&quot;root&quot;/&gt;
+                &lt;property name=&quot;password&quot; value=&quot;123456&quot;/&gt;
+            &lt;/dataSource&gt;
+        &lt;/environment&gt;
+    &lt;/environments&gt;
+
+    &lt;mappers&gt;
+        &lt;mapper resource=&quot;mapper/UserMapper.xml&quot;/&gt;
+    &lt;/mappers&gt;
+
+&lt;/configuration&gt;
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>mybatis-config.xml</code> 中子标签的顺序是固定的，必须按照 <code>properties → settings → typeAliases → typeHandlers → objectFactory → objectWrapperFactory → reflectorFactory → plugins → environments → databaseIdProvider → mappers</code> 的顺序排列，否则会报 XML 校验错误。</p>
+</blockquote>
+<h4 id="6-测试类-mybatistestjava">6. 测试类 MyBatisTest.java</h4>
+<pre><code class="language-java">package com.example;
+
+import com.example.entity.User;
+import com.example.mapper.UserMapper;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.io.InputStream;
+import java.util.List;
+
+public class MyBatisTest {
+
+    private static SqlSessionFactory sqlSessionFactory;
+
+    @BeforeClass
+    public static void init() throws Exception {
+        String resource = &quot;mybatis-config.xml&quot;;
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+    }
+
+    @Test
+    public void testFindById() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            UserMapper mapper = session.getMapper(UserMapper.class);
+            User user = mapper.findById(1L);
+            System.out.println(user);
+        }
+    }
+
+    @Test
+    public void testFindAll() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            UserMapper mapper = session.getMapper(UserMapper.class);
+            List&lt;User&gt; users = mapper.findAll();
+            users.forEach(System.out::println);
+        }
+    }
+
+    @Test
+    public void testInsert() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            UserMapper mapper = session.getMapper(UserMapper.class);
+            User user = new User();
+            user.setUsername(&quot;王五&quot;);
+            user.setEmail(&quot;wangwu@example.com&quot;);
+            int rows = mapper.insert(user);
+            session.commit(); // 手动提交事务
+            System.out.println(&quot;插入 &quot; + rows + &quot; 行，生成的主键：&quot; + user.getId());
+        }
+    }
+
+    @Test
+    public void testUpdate() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            UserMapper mapper = session.getMapper(UserMapper.class);
+            User user = mapper.findById(1L);
+            user.setEmail(&quot;zhangsan_new@example.com&quot;);
+            int rows = mapper.update(user);
+            session.commit();
+            System.out.println(&quot;更新 &quot; + rows + &quot; 行&quot;);
+        }
+    }
+
+    @Test
+    public void testDelete() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            UserMapper mapper = session.getMapper(UserMapper.class);
+            int rows = mapper.deleteById(3L);
+            session.commit();
+            System.out.println(&quot;删除 &quot; + rows + &quot; 行&quot;);
+        }
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>关键点</strong>：纯 MyBatis 环境下，默认<strong>不会自动提交事务</strong>。执行增删改操作后必须手动调用 <code>session.commit()</code>，否则数据不会持久化。如果需要自动提交，可以通过 <code>sqlSessionFactory.openSession(true)</code> 开启。</p>
+</blockquote>
+<hr />
+<h2 id="15-mybatis-执行流程概览--一条-sql-从-mapper-接口到数据库的完整链路">1.5 MyBatis 执行流程概览 —— 一条 SQL 从 Mapper 接口到数据库的完整链路</h2>
+<p>当你调用 <code>mapper.findById(1L)</code> 时，MyBatis 内部经历了以下完整链路：</p>
+<h3 id="执行步骤">执行步骤</h3>
+<ol>
+<li>
+<p><strong>调用 Mapper 接口方法</strong></p>
+<ul>
+<li>调用 <code>userMapper.findById(1L)</code>，但 <code>UserMapper</code> 是一个接口，没有实现类</li>
+</ul>
+</li>
+<li>
+<p><strong>动态代理拦截</strong></p>
+<ul>
+<li>MyBatis 在启动时为每个 Mapper 接口生成了 <strong>JDK 动态代理对象</strong>（<code>MapperProxy</code>）</li>
+<li>代理对象拦截方法调用，根据<code>接口全限定名 + 方法名</code>定位到对应的 SQL 语句</li>
+<li>即：<code>com.example.mapper.UserMapper.findById</code> → 匹配 XML 中 <code>namespace</code> + <code>id</code></li>
+</ul>
+</li>
+<li>
+<p><strong>构建 MappedStatement</strong></p>
+<ul>
+<li>MyBatis 从全局 <code>Configuration</code> 对象中找到对应的 <code>MappedStatement</code></li>
+<li><code>MappedStatement</code> 包含了 SQL 文本、参数类型、返回类型、缓存配置等所有元信息</li>
+</ul>
+</li>
+<li>
+<p><strong>Executor 执行</strong></p>
+<ul>
+<li><code>SqlSession</code> 将执行委托给 <code>Executor</code>（默认为 <code>SimpleExecutor</code>）</li>
+<li>Executor 先检查<strong>二级缓存</strong>（如果开启），再检查<strong>一级缓存</strong></li>
+<li>缓存未命中则继续向下执行</li>
+</ul>
+</li>
+<li>
+<p><strong>StatementHandler 创建 Statement</strong></p>
+<ul>
+<li><code>StatementHandler</code> 根据 SQL 类型创建 JDBC 的 <code>PreparedStatement</code></li>
+<li>将 SQL 模板中的 <code>#{id}</code> 替换为 <code>?</code> 占位符</li>
+</ul>
+</li>
+<li>
+<p><strong>ParameterHandler 设置参数</strong></p>
+<ul>
+<li><code>ParameterHandler</code> 通过 <code>TypeHandler</code> 将 Java 参数值设置到 <code>PreparedStatement</code> 的对应占位符</li>
+<li>例：<code>ps.setLong(1, 1L)</code></li>
+</ul>
+</li>
+<li>
+<p><strong>执行 SQL</strong></p>
+<ul>
+<li>调用 JDBC <code>PreparedStatement.execute()</code> 向数据库发送 SQL 并获取 <code>ResultSet</code></li>
+</ul>
+</li>
+<li>
+<p><strong>ResultSetHandler 映射结果</strong></p>
+<ul>
+<li><code>ResultSetHandler</code> 遍历 <code>ResultSet</code>，根据 <code>resultType</code> 或 <code>resultMap</code> 的配置</li>
+<li>通过 <code>TypeHandler</code> 将数据库字段值逐个转换为 Java 类型</li>
+<li>构造并填充目标 Java 对象（如 <code>User</code>）</li>
+</ul>
+</li>
+<li>
+<p><strong>返回结果</strong></p>
+<ul>
+<li>映射后的结果对象逐层返回：<code>ResultSetHandler</code> → <code>Executor</code>（写入一级缓存）→ <code>SqlSession</code> → <code>MapperProxy</code> → 调用方</li>
+</ul>
+</li>
+</ol>
+<h3 id="流程简图">流程简图</h3>
+<pre><code>mapper.findById(1L)
+    │
+    ▼
+MapperProxy（动态代理） ─── 根据 namespace + id 定位 SQL
+    │
+    ▼
+SqlSession → Executor ─── 查缓存（一级/二级）
+    │                          │
+    │ 缓存未命中                │ 缓存命中 → 直接返回
+    ▼                          
+StatementHandler ─── 创建 PreparedStatement，设置 SQL
+    │
+    ▼
+ParameterHandler ─── 通过 TypeHandler 设置参数值
+    │
+    ▼
+JDBC 执行 ─── 发送 SQL 到数据库，获取 ResultSet
+    │
+    ▼
+ResultSetHandler ─── 通过 TypeHandler 将结果映射为 Java 对象
+    │
+    ▼
+返回 User 对象（同时写入一级缓存）
+</code></pre>
+<blockquote>
+<p><strong>面试高频点</strong>：MyBatis 的四大核心组件 —— <code>Executor</code>、<code>StatementHandler</code>、<code>ParameterHandler</code>、<code>ResultSetHandler</code>，它们也是插件（拦截器）可以介入的四个扩展点，详见第八章。</p>
+</blockquote>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MyBatis 定位</td>
+<td>半自动 ORM，手写 SQL，框架负责参数绑定和结果映射</td>
+</tr>
+<tr>
+<td>选型结论</td>
+<td>国内互联网项目首选 MyBatis，简单 CRUD 场景可选 JPA</td>
+</tr>
+<tr>
+<td>核心三层</td>
+<td><code>SqlSessionFactory</code>（全局）→ <code>SqlSession</code>（会话）→ <code>Mapper</code>（操作）</td>
+</tr>
+<tr>
+<td>最小依赖</td>
+<td>mybatis + 数据库驱动，两个 jar 即可运行</td>
+</tr>
+<tr>
+<td>执行链路</td>
+<td>Proxy → Executor → StatementHandler → ParameterHandler → JDBC → ResultSetHandler</td>
+</tr>
+</tbody>
+</table>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

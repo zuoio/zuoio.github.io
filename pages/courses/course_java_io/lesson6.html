@@ -1,0 +1,1122 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第六章bio-vs-nio-vs-aio-全面对比面试核心章节">第六章：BIO vs NIO vs AIO 全面对比（面试核心章节）</h1>
+<blockquote>
+<p><strong>学习目标</strong>：用一个比喻、一张表、多个维度，彻底说清三者区别。这一章是面试回答的直接弹药。</p>
+</blockquote>
+<hr />
+<h2 id="61-一个比喻彻底搞懂">6.1 一个比喻彻底搞懂</h2>
+<p>想象你要吃午饭：</p>
+<h3 id="bio阻塞式-io-堂食干等型">BIO（阻塞式 IO）—— 堂食干等型</h3>
+<p>你走进饭店，坐下来点了一份牛肉面。然后你就坐在那里<strong>干等</strong>，什么都不干——不刷手机、不聊天、不看书——就盯着厨房方向等。直到面端上来，你才开始吃。</p>
+<p><strong>特点</strong>：全程等待，人力（线程）浪费严重。</p>
+<h3 id="nio非阻塞-io--io-多路复用-取号等叫型">NIO（非阻塞 IO / IO 多路复用）—— 取号等叫型</h3>
+<p>你走进饭店，取了个号码牌坐下。你可以刷手机、看书，但是你需要<strong>时不时抬头看看叫号屏</strong>（Selector 轮询）。屏幕上显示&quot;32 号请取餐&quot;的时候，你才起身去取。</p>
+<p>而且，<strong>一个叫号屏可以同时管理所有人的订单</strong>——这就是一个 Selector 管理多个 Channel。</p>
+<p><strong>特点</strong>：不用干等，但需要自己定期检查。一个叫号屏（线程）管所有人（连接）。</p>
+<h3 id="aio异步-io-外卖到家型">AIO（异步 IO）—— 外卖到家型</h3>
+<p>你在手机上点了外卖，然后该干嘛干嘛——打游戏、做家务、睡觉都行。骑手到你门口时<strong>按门铃通知你</strong>（操作系统回调），你直接开门拿到吃的。</p>
+<p>全程不需要等待，不需要检查，骑手（操作系统）搞定一切。</p>
+<p><strong>特点</strong>：完全不管，有人送上门。但骑手（操作系统支持）很重要——如果你在的城市没有外卖服务（Linux 没有原生 AIO），那就只能退回到叫号模式。</p>
+<hr />
+<h2 id="62-多维度对比表">6.2 多维度对比表</h2>
+<h3 id="核心对比">核心对比</h3>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>BIO</th>
+<th>NIO</th>
+<th>AIO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全称</td>
+<td>Blocking IO</td>
+<td>New IO / Non-blocking IO</td>
+<td>Asynchronous IO</td>
+</tr>
+<tr>
+<td>IO 模型</td>
+<td>阻塞同步</td>
+<td>非阻塞同步（IO 多路复用）</td>
+<td>异步非阻塞</td>
+</tr>
+<tr>
+<td>JDK 版本</td>
+<td>1.0</td>
+<td>1.4</td>
+<td>1.7</td>
+</tr>
+</tbody>
+</table>
+<h3 id="api-对比">API 对比</h3>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>BIO</th>
+<th>NIO</th>
+<th>AIO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>服务端通道</td>
+<td>ServerSocket</td>
+<td>ServerSocketChannel</td>
+<td>AsynchronousServerSocketChannel</td>
+</tr>
+<tr>
+<td>客户端通道</td>
+<td>Socket</td>
+<td>SocketChannel</td>
+<td>AsynchronousSocketChannel</td>
+</tr>
+<tr>
+<td>数据载体</td>
+<td>InputStream/OutputStream</td>
+<td>ByteBuffer</td>
+<td>ByteBuffer</td>
+</tr>
+<tr>
+<td>多路复用器</td>
+<td>无</td>
+<td>Selector</td>
+<td>无（操作系统负责）</td>
+</tr>
+<tr>
+<td>回调机制</td>
+<td>无</td>
+<td>SelectionKey</td>
+<td>CompletionHandler</td>
+</tr>
+</tbody>
+</table>
+<h3 id="架构对比">架构对比</h3>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>BIO</th>
+<th>NIO</th>
+<th>AIO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>线程模型</td>
+<td>一连接一线程</td>
+<td>一线程管多连接</td>
+<td>回调线程池</td>
+</tr>
+<tr>
+<td>数据方向</td>
+<td>面向流（单向）</td>
+<td>面向缓冲区（双向）</td>
+<td>面向缓冲区（双向）</td>
+</tr>
+<tr>
+<td>是否阻塞</td>
+<td>阻塞</td>
+<td>非阻塞（select 本身阻塞）</td>
+<td>完全非阻塞</td>
+</tr>
+<tr>
+<td>通知方式</td>
+<td>无（同步等待）</td>
+<td>Selector 轮询</td>
+<td>OS 回调通知</td>
+</tr>
+</tbody>
+</table>
+<h3 id="性能对比">性能对比</h3>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>BIO</th>
+<th>NIO</th>
+<th>AIO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>吞吐量</td>
+<td>低</td>
+<td>高</td>
+<td>高</td>
+</tr>
+<tr>
+<td>连接数支持</td>
+<td>几百</td>
+<td>几万~几十万</td>
+<td>几万~几十万</td>
+</tr>
+<tr>
+<td>CPU 利用率</td>
+<td>低（大量线程在等待）</td>
+<td>高</td>
+<td>高</td>
+</tr>
+<tr>
+<td>编程复杂度</td>
+<td>低</td>
+<td>较高</td>
+<td>高（回调地狱）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="底层实现">底层实现</h3>
+<table>
+<thead>
+<tr>
+<th>操作系统</th>
+<th>BIO</th>
+<th>NIO</th>
+<th>AIO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux</td>
+<td>阻塞系统调用</td>
+<td>epoll</td>
+<td>epoll 模拟</td>
+</tr>
+<tr>
+<td>Windows</td>
+<td>阻塞系统调用</td>
+<td>select</td>
+<td>IOCP（真异步）</td>
+</tr>
+<tr>
+<td>macOS</td>
+<td>阻塞系统调用</td>
+<td>kqueue</td>
+<td>kqueue 模拟</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="63-用代码对比三者">6.3 用代码对比三者</h2>
+<p>同一个功能（服务器接收客户端消息并回显），用三种方式实现的核心逻辑对比：</p>
+<h3 id="bio-核心代码">BIO 核心代码</h3>
+<pre><code class="language-java">// 简单直接，但一个连接一个线程
+ServerSocket server = new ServerSocket(8080);
+while (true) {
+    Socket socket = server.accept();           // 阻塞！等待连接
+    new Thread(() -&gt; {
+        InputStream in = socket.getInputStream();
+        int data = in.read();                   // 阻塞！等待数据
+        // 处理...
+    }).start();
+}
+</code></pre>
+<h3 id="nio-核心代码">NIO 核心代码</h3>
+<pre><code class="language-java">// 一个线程管理所有连接
+Selector selector = Selector.open();
+ServerSocketChannel serverChannel = ServerSocketChannel.open();
+serverChannel.configureBlocking(false);
+serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+while (true) {
+    selector.select();                          // 阻塞，但同时等多个事件
+    for (SelectionKey key : selector.selectedKeys()) {
+        if (key.isAcceptable()) { /* 处理新连接 */ }
+        if (key.isReadable())   { /* 读取数据 */ }
+    }
+}
+</code></pre>
+<h3 id="aio-核心代码">AIO 核心代码</h3>
+<pre><code class="language-java">// 完全回调驱动，不需要事件循环
+AsynchronousServerSocketChannel server = AsynchronousServerSocketChannel.open();
+server.bind(new InetSocketAddress(8080));
+server.accept(null, new CompletionHandler&lt;AsynchronousSocketChannel, Void&gt;() {
+    @Override
+    public void completed(AsynchronousSocketChannel client, Void att) {
+        server.accept(null, this);              // 重新注册
+        ByteBuffer buf = ByteBuffer.allocate(1024);
+        client.read(buf, buf, new CompletionHandler&lt;&gt;() {  // 回调里套回调
+            @Override
+            public void completed(Integer len, ByteBuffer b) { /* 处理数据 */ }
+            @Override
+            public void failed(Throwable e, ByteBuffer b) { /* 处理异常 */ }
+        });
+    }
+    @Override
+    public void failed(Throwable exc, Void att) { /* 处理异常 */ }
+});
+</code></pre>
+<hr />
+<h2 id="64-适用场景总结">6.4 适用场景总结</h2>
+<h3 id="bio-适用场景">BIO 适用场景</h3>
+<ul>
+<li>连接数少且固定（几十到几百）</li>
+<li>每个连接的数据交互频繁、处理时间短</li>
+<li>简单的内部管理系统</li>
+<li>开发效率优先于运行效率</li>
+</ul>
+<h3 id="nio-适用场景">NIO 适用场景</h3>
+<ul>
+<li>高并发、大量连接（聊天服务器、推送服务）</li>
+<li>连接多但每个连接的活跃度不高（大部分时间空闲）</li>
+<li>需要长连接保持</li>
+<li>服务器运行在 Linux 上</li>
+</ul>
+<h3 id="aio-适用场景">AIO 适用场景</h3>
+<ul>
+<li>Windows 平台（能发挥 IOCP 的真正异步能力）</li>
+<li>连接数多且每个连接 IO 操作重（文件操作密集）</li>
+<li>实际中很少单独使用，通常被 Netty 等框架替代</li>
+</ul>
+<hr />
+<h2 id="65-面试经典问题逐个击破">6.5 面试经典问题逐个击破</h2>
+<h3 id="q1bio-和-nio-的区别是什么">Q1：BIO 和 NIO 的区别是什么？</h3>
+<blockquote>
+<p>BIO 是阻塞式 IO，每个连接需要一个独立线程处理，<code>accept()</code> 和 <code>read()</code> 都会阻塞线程。当并发连接数很多时，需要创建大量线程，资源消耗严重。</p>
+<p>NIO 是基于 IO 多路复用的非阻塞 IO，核心是 Selector 机制。一个线程通过 Selector 可以同时监听多个 Channel 的事件，大大减少了线程数量。NIO 面向 Buffer 操作数据，Channel 是双向的。底层在 Linux 上使用 epoll 实现。</p>
+</blockquote>
+<h3 id="q2nio-为什么比-bio-性能好">Q2：NIO 为什么比 BIO 性能好？</h3>
+<blockquote>
+<p>主要在于线程模型的区别。BIO 是一连接一线程，1 万个连接就要 1 万个线程，线程创建、切换、内存消耗都是开销。NIO 通过 Selector 实现了 IO 多路复用，一个线程就可以管理上万个连接。而且 NIO 的 Channel 是非阻塞的，不会有线程在空等。</p>
+<p>底层上，NIO 在 Linux 上使用 epoll，它用事件驱动的方式通知就绪的文件描述符，而不需要遍历所有连接，所以在连接数很多的情况下性能远好于 BIO。</p>
+</blockquote>
+<h3 id="q3同步和异步的区别阻塞和非阻塞的区别">Q3：同步和异步的区别？阻塞和非阻塞的区别？</h3>
+<blockquote>
+<p>这是两组不同维度的概念：</p>
+<p><strong>阻塞/非阻塞</strong>描述的是应用程序的<strong>等待方式</strong>——发起 IO 后是干等（阻塞）还是可以先做别的事（非阻塞）。</p>
+<p><strong>同步/异步</strong>描述的是 IO 操作的<strong>完成通知方式</strong>——同步是应用程序自己去检查 IO 是否完成，异步是操作系统完成后主动通知应用程序。</p>
+<p>BIO 是同步阻塞，NIO 是同步非阻塞（虽然 select 本身会阻塞，但 Channel 是非阻塞的），AIO 是异步非阻塞。</p>
+</blockquote>
+<h3 id="q4selectpollepoll-的区别">Q4：select、poll、epoll 的区别？</h3>
+<blockquote>
+<p>三者都是 IO 多路复用的实现：</p>
+<ul>
+<li><strong>select</strong>：最古老，最多监听 1024 个 fd，每次调用要把 fd 集合拷贝到内核，返回后需要遍历所有 fd 找出就绪的，O(n) 复杂度。</li>
+<li><strong>poll</strong>：去掉了 1024 的限制，但本质和 select 一样需要遍历。</li>
+<li><strong>epoll</strong>：Linux 独有，fd 只需注册一次，只返回就绪的 fd，O(1) 复杂度。在大量连接场景下性能远超 select/poll。</li>
+</ul>
+<p>Java NIO 在 Linux 上底层就是 epoll。</p>
+</blockquote>
+<h3 id="q5nio-的-selector-是怎么工作的">Q5：NIO 的 Selector 是怎么工作的？</h3>
+<blockquote>
+<p>Selector 实现了 Reactor 模式。工作流程是：</p>
+<ol>
+<li>创建 Selector 并将多个 Channel 注册上去，每个 Channel 声明关心的事件（ACCEPT/READ/WRITE）</li>
+<li>调用 <code>select()</code> 方法阻塞等待，任何注册的 Channel 有事件就绪就返回</li>
+<li>遍历返回的 SelectionKey 集合，根据事件类型做对应处理</li>
+<li>处理完后回到 step 2，形成事件循环</li>
+</ol>
+<p>底层在 Linux 上通过 epoll 实现，一个线程就可以高效管理上万个连接。</p>
+</blockquote>
+<h3 id="q6什么是-reactor-模型">Q6：什么是 Reactor 模型？</h3>
+<blockquote>
+<p>Reactor 是一种事件驱动的设计模式，核心思想是：用一个或少量线程监听事件，事件发生后分发给对应的处理器。</p>
+<p>三种变体：</p>
+<ul>
+<li><strong>单线程 Reactor</strong>：一个线程做所有事（accept + read + 业务处理），简单但无法利用多核</li>
+<li><strong>多线程 Reactor</strong>：一个线程监听事件，业务处理交给线程池，能利用多核但 accept 仍是瓶颈</li>
+<li><strong>主从多线程 Reactor</strong>：Boss 线程负责 accept，Worker 线程组负责 IO 和业务处理。Netty 默认使用这种模型</li>
+</ul>
+</blockquote>
+<h3 id="q7为什么-netty-使用-nio-而不是-aio">Q7：为什么 Netty 使用 NIO 而不是 AIO？</h3>
+<blockquote>
+<p>两个原因：</p>
+<ol>
+<li><strong>Linux 上 AIO 没有性能优势</strong>：Java AIO 在 Linux 底层还是 epoll 模拟的，跟 NIO 相比没有本质提升。而大多数服务器运行在 Linux 上。</li>
+<li><strong>AIO 编程模型更复杂</strong>：回调嵌套回调容易产生&quot;回调地狱&quot;，代码可读性和可维护性差。NIO 的事件循环模型更直观。</li>
+</ol>
+<p>Netty 曾在 4.0 版本支持 AIO，但后来移除了，因为实测证明在 Linux 上没有性能提升。</p>
+</blockquote>
+<hr />
+<h2 id="66-一张思维导图总结全部">6.6 一张思维导图总结全部</h2>
+<pre><code>Java IO 体系
+│
+├── BIO（JDK 1.0）
+│   ├── 阻塞同步
+│   ├── 面向流
+│   ├── 一连接一线程
+│   ├── 适合：低并发、简单场景
+│   └── 问题：线程资源受限，C10K 无解
+│
+├── NIO（JDK 1.4）
+│   ├── 非阻塞同步（IO 多路复用）
+│   ├── 面向 Buffer
+│   ├── 三大组件：Channel + Buffer + Selector
+│   ├── 一线程管多连接
+│   ├── 底层：Linux epoll
+│   ├── 适合：高并发、长连接
+│   └── 问题：API 复杂、有 bug
+│
+├── AIO（JDK 1.7）
+│   ├── 异步非阻塞
+│   ├── 订阅-通知模式
+│   ├── CompletionHandler 回调
+│   ├── 不需要 Selector
+│   ├── 底层：Windows IOCP / Linux epoll 模拟
+│   ├── 适合：Windows 平台、IO 密集
+│   └── 问题：Linux 无原生支持、回调地狱
+│
+└── Netty（框架）
+    ├── 基于 NIO 封装
+    ├── 修复了 NIO 的 bug
+    ├── 提供编解码、线程模型、连接管理
+    ├── 主从 Reactor 模式
+    └── 事实标准：Dubbo, gRPC, ES 等都在用
+</code></pre>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<p>本章是面试的核心弹药库。你需要能够：</p>
+<ol>
+<li><strong>用比喻说清区别</strong>：堂食干等 / 取号等叫 / 外卖到家</li>
+<li><strong>从多维度对比</strong>：IO 模型、线程模型、API、性能、底层实现</li>
+<li><strong>回答 7 个经典问题</strong>：每个都要能说 30 秒以上</li>
+<li><strong>说出 AIO 不流行的原因</strong>：Linux 无原生支持 + 回调复杂</li>
+</ol>
+<blockquote>
+<p><strong>下一章预告</strong>：三种 IO 模型对比完了，接下来我们学习高性能 IO 的另一个关键技术——零拷贝。它是 Kafka、RocketMQ 等中间件高性能的秘密武器，面试中也经常被问到。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

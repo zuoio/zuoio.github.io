@@ -1,0 +1,2367 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第09课-约束与尺寸控制组件">第09课 约束与尺寸控制组件</h1>
+<blockquote>
+<p>这是布局系列中最重要的理论课。理解 Flutter 的约束机制，是掌握布局、排查布局问题的关键。本课将从底层原理到实用组件，带你彻底搞懂 Flutter 的约束系统。</p>
+</blockquote>
+<hr />
+<h2 id="1-flutter-布局约束机制深入理解">1. Flutter 布局约束机制深入理解</h2>
+<p>在学习具体的约束组件之前，我们必须先搞懂 Flutter 布局的核心机制。很多初学者遇到的布局问题——组件不显示、溢出、尺寸不对——归根结底都是对约束机制理解不到位。</p>
+<h3 id="11-三条核心规则">1.1 三条核心规则</h3>
+<p>Flutter 的布局过程遵循三条铁律：</p>
+<ol>
+<li><strong>Constraints go down（约束向下传递）</strong>：父组件将约束条件传递给子组件，告诉子组件「你的宽度最小是多少、最大是多少，高度最小是多少、最大是多少」。</li>
+<li><strong>Sizes go up（尺寸向上传递）</strong>：子组件根据收到的约束和自身内容，决定自己的实际尺寸，然后把尺寸信息向上报告给父组件。</li>
+<li><strong>Parent sets position（父组件决定位置）</strong>：父组件知道了子组件的尺寸后，决定将子组件放置在哪个位置。</li>
+</ol>
+<p>用一个生活中的比喻来理解：</p>
+<blockquote>
+<p>想象你在装修房间（父组件）里放一张桌子（子组件）。</p>
+<ul>
+<li>房间告诉桌子：「你最大只能 2 米宽、1.5 米长，最小不能小于 0.5 米宽、0.5 米长」——这就是 <strong>约束向下传递</strong>。</li>
+<li>桌子回答：「好的，根据我的设计，我要 1.2 米宽、0.8 米长」——这就是 <strong>尺寸向上传递</strong>。</li>
+<li>房间说：「那我把你放在靠窗的位置」——这就是 <strong>父组件决定位置</strong>。</li>
+</ul>
+</blockquote>
+<p>来看一个具体例子：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          // Center 将屏幕的约束传递给子组件，
+          // 但把最小约束改为 0（loose 约束），
+          // 允许子组件自由选择尺寸
+          child: Container(
+            width: 200, // 子组件「选择」了 200 的宽度
+            height: 100, // 子组件「选择」了 100 的高度
+            color: Colors.blue,
+            child: const Center(
+              child: Text(
+                '约束向下，尺寸向上',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>在这个例子中，约束的传递过程是：</p>
+<ol>
+<li><code>Scaffold</code> → <code>Center</code>：传递整个屏幕大小的约束（比如 0<del>412 宽，0</del>732 高）</li>
+<li><code>Center</code> → <code>Container</code>：把约束变成 loose（最小值变为 0），即 0<del>412 宽，0</del>732 高</li>
+<li><code>Container</code> 选择了 200×100 的尺寸，向上报告</li>
+<li><code>Center</code> 拿到 Container 的尺寸后，将其居中放置</li>
+</ol>
+<h3 id="12-约束传递的可视化示例">1.2 约束传递的可视化示例</h3>
+<p>下面这个示例帮助你直观地看到约束是如何传递的：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('约束传递可视化')),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            // LayoutBuilder 能让我们看到父组件传递下来的约束
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    '父约束:\n'
+                    '  minWidth: ${constraints.minWidth}\n'
+                    '  maxWidth: ${constraints.maxWidth}\n'
+                    '  minHeight: ${constraints.minHeight}\n'
+                    '  maxHeight: ${constraints.maxHeight}',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+                Center(
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    color: Colors.blue.shade100,
+                    child: LayoutBuilder(
+                      builder: (context, innerConstraints) {
+                        // 在 Container 内部查看传递给子组件的约束
+                        return Center(
+                          child: Text(
+                            '内部约束:\n'
+                            'min: ${innerConstraints.minWidth}×${innerConstraints.minHeight}\n'
+                            'max: ${innerConstraints.maxWidth}×${innerConstraints.maxHeight}',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：在排查布局问题时，<code>LayoutBuilder</code> 是你的好帮手。它能让你在任意位置查看父组件传递下来的约束，从而快速定位问题。</p>
+</blockquote>
+<h3 id="13-一个重要推论子组件不能随心所欲">1.3 一个重要推论：子组件不能随心所欲</h3>
+<p>理解了三条规则，你会得出一个重要推论：<strong>子组件的最终尺寸必须满足父组件传递的约束</strong>。</p>
+<p>如果父组件说「你的宽度必须是 300」（tight 约束，minWidth == maxWidth == 300），那么无论子组件设置 <code>width: 100</code> 还是 <code>width: 500</code>，最终的渲染宽度都是 300。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Tight 约束示例')),
+        body: SizedBox(
+          // SizedBox 会创建一个 tight 约束：宽高都被固定
+          width: 300,
+          height: 300,
+          child: Container(
+            // 虽然设置了 width: 100, height: 100
+            // 但父组件的 tight 约束会强制它变成 300×300
+            width: 100,
+            height: 100,
+            color: Colors.red,
+            child: const Center(
+              child: Text(
+                '我其实是 300×300\n而不是 100×100',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>运行上面的代码你会发现：红色的 Container 是 300×300，而非它自己设置的 100×100。这就是约束的力量——<strong>父组件的约束优先级高于子组件的意愿</strong>。</p>
+<hr />
+<h2 id="2-boxconstraints-详解">2. BoxConstraints 详解</h2>
+<p><code>BoxConstraints</code> 是 Flutter 约束系统的核心类，定义了一个矩形区域的宽高范围。每个渲染对象（RenderBox）在布局时都会收到一个 <code>BoxConstraints</code> 对象。</p>
+<h3 id="21-boxconstraints-的四个属性">2.1 BoxConstraints 的四个属性</h3>
+<pre><code class="language-dart">const BoxConstraints({
+  this.minWidth = 0.0,
+  this.maxWidth = double.infinity,
+  this.minHeight = 0.0,
+  this.maxHeight = double.infinity,
+});
+</code></pre>
+<ul>
+<li><code>minWidth</code>：最小宽度</li>
+<li><code>maxWidth</code>：最大宽度</li>
+<li><code>minHeight</code>：最小高度</li>
+<li><code>maxHeight</code>：最大高度</li>
+</ul>
+<p>最终子组件的尺寸必须满足：<code>minWidth &lt;= width &lt;= maxWidth</code> 且 <code>minHeight &lt;= height &lt;= maxHeight</code>。</p>
+<h3 id="22-四种约束类型">2.2 四种约束类型</h3>
+<h4 id="tight紧约束">Tight（紧约束）</h4>
+<p>最小值等于最大值，子组件的尺寸被完全确定，没有任何自由度。</p>
+<pre><code class="language-dart">// tight 约束：宽高都被固定为 200
+BoxConstraints.tight(const Size(200, 200))
+// 等同于
+const BoxConstraints(minWidth: 200, maxWidth: 200, minHeight: 200, maxHeight: 200)
+</code></pre>
+<p><strong>典型场景</strong>：<code>SizedBox</code> 设置了固定宽高时。</p>
+<h4 id="loose松约束">Loose（松约束）</h4>
+<p>最小值为 0，最大值有上限。子组件可以在 0 到最大值之间自由选择尺寸。</p>
+<pre><code class="language-dart">// loose 约束：宽度在 0~200 之间自由选择，高度同理
+BoxConstraints.loose(const Size(200, 200))
+// 等同于
+const BoxConstraints(minWidth: 0, maxWidth: 200, minHeight: 0, maxHeight: 200)
+</code></pre>
+<p><strong>典型场景</strong>：<code>Center</code> 会将父约束转换为 loose 约束传给子组件。</p>
+<h4 id="bounded有界约束">Bounded（有界约束）</h4>
+<p>最大值有限，但最小值和最大值不一定相等。</p>
+<pre><code class="language-dart">// bounded 约束
+const BoxConstraints(minWidth: 50, maxWidth: 300, minHeight: 50, maxHeight: 500)
+</code></pre>
+<p><strong>典型场景</strong>：<code>ConstrainedBox</code> 添加额外约束时。</p>
+<h4 id="unbounded无界约束">Unbounded（无界约束）</h4>
+<p>最大值为 <code>double.infinity</code>，表示组件可以无限大。</p>
+<pre><code class="language-dart">// unbounded 约束（宽度无限）
+const BoxConstraints(minWidth: 0, maxWidth: double.infinity, minHeight: 0, maxHeight: 600)
+</code></pre>
+<p><strong>典型场景</strong>：<code>ListView</code> 在滚动方向上会传递无界约束给子组件。</p>
+<h3 id="23-约束类型速查表">2.3 约束类型速查表</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>minWidth</th>
+<th>maxWidth</th>
+<th>minHeight</th>
+<th>maxHeight</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tight</td>
+<td>w</td>
+<td>w</td>
+<td>h</td>
+<td>h</td>
+<td>尺寸完全确定</td>
+</tr>
+<tr>
+<td>Loose</td>
+<td>0</td>
+<td>maxW</td>
+<td>0</td>
+<td>maxH</td>
+<td>子组件可自由选择</td>
+</tr>
+<tr>
+<td>Bounded</td>
+<td>≥0</td>
+<td>&lt;∞</td>
+<td>≥0</td>
+<td>&lt;∞</td>
+<td>有上下限</td>
+</tr>
+<tr>
+<td>Unbounded</td>
+<td>任意</td>
+<td>∞</td>
+<td>任意</td>
+<td>∞</td>
+<td>至少一个方向无限</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24-boxconstraints-常用方法">2.4 BoxConstraints 常用方法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('BoxConstraints 探索')),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            // 常用的判断方法
+            final info = StringBuffer()
+              ..writeln('isTight: ${constraints.isTight}')
+              ..writeln('hasTightWidth: ${constraints.hasTightWidth}')
+              ..writeln('hasTightHeight: ${constraints.hasTightHeight}')
+              ..writeln('hasBoundedWidth: ${constraints.hasBoundedWidth}')
+              ..writeln('hasBoundedHeight: ${constraints.hasBoundedHeight}')
+              ..writeln('hasInfiniteWidth: ${constraints.hasInfiniteWidth}')
+              ..writeln('hasInfiniteHeight: ${constraints.hasInfiniteHeight}')
+              ..writeln('')
+              ..writeln('biggest: ${constraints.biggest}')
+              ..writeln('smallest: ${constraints.smallest}');
+
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                info.toString(),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'monospace',
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="3-constrainedbox添加额外约束">3. ConstrainedBox：添加额外约束</h2>
+<p><code>ConstrainedBox</code> 用于给子组件施加额外的约束。它不会替换父组件的约束，而是将自己的约束与父组件的约束进行<strong>合并</strong>。</p>
+<h3 id="31-基本用法">3.1 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('ConstrainedBox 基本用法')),
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minWidth: 200,  // 最小宽度 200
+              maxWidth: 300,  // 最大宽度 300
+              minHeight: 100, // 最小高度 100
+              maxHeight: 200, // 最大高度 200
+            ),
+            child: Container(
+              // 即使不设置宽高，也会至少是 200×100
+              color: Colors.teal,
+              child: const Center(
+                child: Text(
+                  '我至少 200×100',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="32-多层-constrainedbox-嵌套的约束合并规则">3.2 多层 ConstrainedBox 嵌套的约束合并规则</h3>
+<p>当多层 <code>ConstrainedBox</code> 嵌套时，约束的合并遵循以下规则：</p>
+<ul>
+<li><strong>取各层 minWidth 中的最大值</strong>作为最终的 minWidth</li>
+<li><strong>取各层 maxWidth 中的最小值</strong>作为最终的 maxWidth</li>
+<li>minHeight 和 maxHeight 同理</li>
+</ul>
+<p>简单来说就是：<strong>约束只会越来越紧，不会越来越松</strong>。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('ConstrainedBox 嵌套')),
+        body: Center(
+          child: ConstrainedBox(
+            // 外层约束：宽 100~300，高 100~300
+            constraints: const BoxConstraints(
+              minWidth: 100,
+              maxWidth: 300,
+              minHeight: 100,
+              maxHeight: 300,
+            ),
+            child: ConstrainedBox(
+              // 内层约束：宽 150~250，高 50~400
+              constraints: const BoxConstraints(
+                minWidth: 150,
+                maxWidth: 250,
+                minHeight: 50,
+                maxHeight: 400,
+              ),
+              // 最终合并结果：
+              //   minWidth = max(100, 150) = 150
+              //   maxWidth = min(300, 250) = 250
+              //   minHeight = max(100, 50) = 100
+              //   maxHeight = min(300, 400) = 300
+              // 即宽 150~250，高 100~300
+              child: Container(
+                color: Colors.orange,
+                child: const Center(
+                  child: Text(
+                    '合并后:\n宽 150~250\n高 100~300',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="33-一个常见误区">3.3 一个常见误区</h3>
+<p>很多人以为内层的 <code>ConstrainedBox</code> 可以放宽外层的约束，但实际上不行：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('约束只紧不松')),
+        body: Center(
+          child: ConstrainedBox(
+            // 外层限制最大宽度为 200
+            constraints: const BoxConstraints(maxWidth: 200),
+            child: ConstrainedBox(
+              // 内层想要最小宽度 300——但这不可能！
+              // 因为外层已经限制最大为 200
+              // Flutter 会自动修正为 min(300, 200) = 200
+              constraints: const BoxConstraints(minWidth: 300),
+              child: Container(
+                height: 100,
+                color: Colors.purple,
+                child: const Center(
+                  child: Text(
+                    '宽度只能是 200',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：理解约束合并规则后，在实际开发中，优先在合适的层级设置约束，避免多层嵌套导致约束冲突难以调试。</p>
+</blockquote>
+<hr />
+<h2 id="4-unconstrainedbox解除父约束">4. UnconstrainedBox：解除父约束</h2>
+<p><code>UnconstrainedBox</code> 的作用是「取消」父组件传递的约束，让子组件可以按照自身的大小来渲染。</p>
+<h3 id="41-基本用法">4.1 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('UnconstrainedBox 示例')),
+        body: Column(
+          children: [
+            // 没有 UnconstrainedBox：Container 被拉伸到全宽
+            Container(
+              height: 60,
+              color: Colors.blue.shade100,
+              child: Container(
+                width: 200,
+                height: 40,
+                color: Colors.blue,
+                child: const Center(
+                  child: Text('没有 Unconstrained', style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            // 有 UnconstrainedBox：Container 保持 200 的宽度
+            Container(
+              height: 60,
+              color: Colors.green.shade100,
+              child: UnconstrainedBox(
+                child: Container(
+                  width: 200,
+                  height: 40,
+                  color: Colors.green,
+                  child: const Center(
+                    child: Text('有 Unconstrained', style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>在第一个例子中，<code>Container</code> 的父组件（外层 <code>Container</code>）传递了 tight 宽度约束（全屏宽），所以内部设置的 <code>width: 200</code> 被忽略。而加了 <code>UnconstrainedBox</code> 后，约束被解除，子组件真正以 200 的宽度渲染。</p>
+<h3 id="42-溢出时的表现">4.2 溢出时的表现</h3>
+<p><code>UnconstrainedBox</code> 虽然解除了约束，但子组件的实际渲染区域如果超出了父组件的范围，就会出现<strong>溢出警告</strong>（黄黑条纹）：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('UnconstrainedBox 溢出')),
+        body: Center(
+          child: Container(
+            width: 200,
+            height: 200,
+            color: Colors.grey.shade200,
+            child: UnconstrainedBox(
+              // 子组件 300×300 超出了父容器 200×200 的范围
+              child: Container(
+                width: 300,
+                height: 300,
+                color: Colors.red.withValues(alpha: 0.5),
+                child: const Center(
+                  child: Text(
+                    '我是 300×300\n但父容器只有 200×200\n会溢出！',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>运行后你会看到经典的溢出黄黑条纹警告。</p>
+<h3 id="43-通过-alignment-和-constrainedaxis-控制行为">4.3 通过 alignment 和 constrainedAxis 控制行为</h3>
+<pre><code class="language-dart">UnconstrainedBox(
+  // 只解除水平方向的约束，垂直方向仍保留父约束
+  constrainedAxis: Axis.vertical,
+  alignment: Alignment.center,
+  child: Container(
+    width: 500, // 水平方向不受约束，可以是 500
+    height: 100, // 垂直方向仍受父约束限制
+    color: Colors.blue,
+  ),
+)
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：<code>UnconstrainedBox</code> 自身仍会遵守父约束来确定自己的大小，它只是不把约束传递给子组件。如果子组件渲染后超出了 <code>UnconstrainedBox</code> 的范围，就会出现溢出。在生产环境中应谨慎使用，避免产生溢出。</p>
+</blockquote>
+<hr />
+<h2 id="5-limitedbox在无约束场景下限制尺寸">5. LimitedBox：在无约束场景下限制尺寸</h2>
+<p><code>LimitedBox</code> 是一个「有条件生效」的约束组件：<strong>只在父组件传递的是无界约束时，才会对子组件施加限制</strong>。如果父组件已经传递了有界约束，<code>LimitedBox</code> 不做任何事。</p>
+<h3 id="51-为什么需要-limitedbox">5.1 为什么需要 LimitedBox？</h3>
+<p>在 <code>ListView</code>、<code>Column</code>（带 <code>SingleChildScrollView</code>）等可滚动容器中，滚动方向上的约束是无界的（<code>maxHeight = double.infinity</code>）。如果子组件没有固定高度，就会产生「unbounded height」的错误。</p>
+<p><code>LimitedBox</code> 就是为了解决这种场景设计的。</p>
+<h3 id="52-基本用法">5.2 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('LimitedBox 在 ListView 中')),
+        body: ListView(
+          children: [
+            // 在 ListView 中，垂直方向是无界约束
+            // LimitedBox 限制子组件最大高度为 100
+            LimitedBox(
+              maxHeight: 100,
+              child: Container(
+                color: Colors.red.shade200,
+                child: const Center(child: Text('LimitedBox maxHeight: 100')),
+              ),
+            ),
+            const SizedBox(height: 10),
+            LimitedBox(
+              maxHeight: 150,
+              child: Container(
+                color: Colors.green.shade200,
+                child: const Center(child: Text('LimitedBox maxHeight: 150')),
+              ),
+            ),
+            const SizedBox(height: 10),
+            LimitedBox(
+              maxHeight: 200,
+              child: Container(
+                color: Colors.blue.shade200,
+                child: const Center(child: Text('LimitedBox maxHeight: 200')),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="53-limitedbox-vs-constrainedbox">5.3 LimitedBox vs ConstrainedBox</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('LimitedBox vs ConstrainedBox')),
+        body: Column(
+          children: [
+            // 在 Column 中（有界约束），LimitedBox 不生效
+            Expanded(
+              child: Container(
+                color: Colors.grey.shade100,
+                child: ListView(
+                  children: [
+                    // 在 ListView 中，LimitedBox 生效
+                    LimitedBox(
+                      maxHeight: 80,
+                      child: Container(
+                        color: Colors.teal.shade200,
+                        child: const Center(
+                          child: Text('ListView 中的 LimitedBox（生效，高度 80）'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Divider(height: 2),
+            // 在固定高度容器中，LimitedBox 不生效
+            SizedBox(
+              height: 200,
+              child: LimitedBox(
+                maxHeight: 80,
+                child: Container(
+                  color: Colors.orange.shade200,
+                  child: const Center(
+                    child: Text('SizedBox 中的 LimitedBox（不生效，高度被 SizedBox 控制）'),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：当你编写可能被放入 <code>ListView</code> 或其他可滚动容器中的组件时，使用 <code>LimitedBox</code> 来提供一个合理的默认尺寸。这比使用 <code>ConstrainedBox</code> 更灵活，因为它不会在有界环境中产生不必要的约束。</p>
+</blockquote>
+<hr />
+<h2 id="6-aspectratio固定宽高比">6. AspectRatio：固定宽高比</h2>
+<p><code>AspectRatio</code> 用于强制子组件保持特定的宽高比（width / height）。</p>
+<h3 id="61-基本用法">6.1 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('AspectRatio 示例')),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // 16:9 的宽高比（常用于视频播放器）
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Container(
+                  color: Colors.blue,
+                  child: const Center(
+                    child: Text(
+                      '16:9',
+                      style: TextStyle(color: Colors.white, fontSize: 24),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // 1:1 的宽高比（正方形）
+              AspectRatio(
+                aspectRatio: 1,
+                child: Container(
+                  color: Colors.green,
+                  child: const Center(
+                    child: Text(
+                      '1:1',
+                      style: TextStyle(color: Colors.white, fontSize: 24),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="62-aspectratio-如何确定尺寸">6.2 AspectRatio 如何确定尺寸</h3>
+<p><code>AspectRatio</code> 确定尺寸的逻辑：</p>
+<ol>
+<li>如果约束允许，先尝试使用<strong>最大宽度</strong>，然后根据 <code>aspectRatio</code> 计算高度</li>
+<li>如果算出的高度超出约束范围，则使用<strong>最大高度</strong>，反向计算宽度</li>
+<li>如果宽度又超出范围，则在约束的最大范围内尽量满足宽高比</li>
+</ol>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('AspectRatio 在不同约束下')),
+        body: Column(
+          children: [
+            // 宽度充足，以宽度为基准计算高度
+            Container(
+              width: double.infinity,
+              height: 300,
+              color: Colors.grey.shade200,
+              child: AspectRatio(
+                aspectRatio: 2, // 宽 : 高 = 2 : 1
+                child: Container(
+                  color: Colors.purple.shade300,
+                  child: const Center(
+                    child: Text('宽度优先', style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // 高度受限，以高度为基准计算宽度
+            SizedBox(
+              width: 400,
+              height: 100,
+              child: AspectRatio(
+                aspectRatio: 2, // 宽 : 高 = 2 : 1，高度 100 → 宽度 200
+                child: Container(
+                  color: Colors.teal.shade300,
+                  child: const Center(
+                    child: Text('高度受限', style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：<code>AspectRatio</code> 在 tight 约束下（宽高都已固定）基本上无法发挥作用，因为尺寸已经被完全确定了。使用 <code>AspectRatio</code> 时，确保至少有一个方向是可变的。</p>
+</blockquote>
+<hr />
+<h2 id="7-fittedbox缩放子组件以适应父容器">7. FittedBox：缩放子组件以适应父容器</h2>
+<p><code>FittedBox</code> 会将子组件缩放（或拉伸）以适应父容器的大小。它在概念上类似于图片的 <code>BoxFit</code>。</p>
+<h3 id="71-基本用法">7.1 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('FittedBox 基本用法')),
+        body: Center(
+          child: Container(
+            width: 200,
+            height: 100,
+            color: Colors.grey.shade200,
+            child: const FittedBox(
+              // 子组件（Text）会被缩放以填满 200×100 的容器
+              child: Text('Hello'),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="72-boxfit-参数详解">7.2 BoxFit 参数详解</h3>
+<p><code>FittedBox</code> 的 <code>fit</code> 参数接受 <code>BoxFit</code> 枚举，控制缩放行为：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const fits = BoxFit.values;
+
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('BoxFit 各模式对比')),
+        body: Padding(
+          padding: const EdgeInsets.all(8),
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: 1.5,
+            ),
+            itemCount: fits.length,
+            itemBuilder: (context, index) {
+              final fit = fits[index];
+              return Column(
+                children: [
+                  Text(fit.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Expanded(
+                    child: Container(
+                      color: Colors.grey.shade200,
+                      child: FittedBox(
+                        fit: fit,
+                        // 一个固有尺寸为 300×100 的子组件
+                        child: Container(
+                          width: 300,
+                          height: 100,
+                          color: Colors.blue.withValues(alpha: 0.5),
+                          child: const Center(
+                            child: Text(
+                              'Flutter',
+                              style: TextStyle(fontSize: 30, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>各模式说明：</p>
+<table>
+<thead>
+<tr>
+<th>BoxFit</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fill</code></td>
+<td>拉伸填满，可能变形</td>
+</tr>
+<tr>
+<td><code>contain</code></td>
+<td>等比缩放到容器内，可能有留白</td>
+</tr>
+<tr>
+<td><code>cover</code></td>
+<td>等比缩放填满，可能裁剪</td>
+</tr>
+<tr>
+<td><code>fitWidth</code></td>
+<td>等比缩放使宽度匹配</td>
+</tr>
+<tr>
+<td><code>fitHeight</code></td>
+<td>等比缩放使高度匹配</td>
+</tr>
+<tr>
+<td><code>none</code></td>
+<td>不缩放，居中放置</td>
+</tr>
+<tr>
+<td><code>scaleDown</code></td>
+<td>仅在子组件过大时缩小（不放大）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="73-fittedbox-的实用场景自适应文字">7.3 FittedBox 的实用场景：自适应文字</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('FittedBox 自适应文字')),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 没有 FittedBox：长文本溢出
+              Container(
+                height: 50,
+                color: Colors.red.shade100,
+                child: const Center(
+                  child: Text(
+                    '这是一段很长很长的文本内容',
+                    style: TextStyle(fontSize: 30),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // 有 FittedBox：文字自动缩小以适应容器
+              Container(
+                height: 50,
+                color: Colors.green.shade100,
+                child: const FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    '这是一段很长很长的文本内容',
+                    style: TextStyle(fontSize: 30),
+                    maxLines: 1,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：使用 <code>FittedBox(fit: BoxFit.scaleDown)</code> 来实现「文字不溢出，空间够就不缩放」的效果，这比手动计算字体大小方便得多。</p>
+</blockquote>
+<hr />
+<h2 id="8-intrinsicheight-与-intrinsicwidth">8. IntrinsicHeight 与 IntrinsicWidth</h2>
+<p><code>IntrinsicHeight</code> 和 <code>IntrinsicWidth</code> 会根据子组件的**固有尺寸（intrinsic dimension）**来设置约束。</p>
+<h3 id="81-什么是固有尺寸">8.1 什么是固有尺寸？</h3>
+<p>每个 Widget 都有两个固有尺寸概念：</p>
+<ul>
+<li><strong>最小固有宽度（minIntrinsicWidth）</strong>：在不截断内容的前提下，组件能接受的最小宽度</li>
+<li><strong>最大固有宽度（maxIntrinsicWidth）</strong>：组件理想展示时需要的宽度</li>
+</ul>
+<p>高度同理。例如，一段文本的最小固有宽度是最长单词的宽度，最大固有宽度是不换行时的整行宽度。</p>
+<h3 id="82-intrinsicheight-的经典用例">8.2 IntrinsicHeight 的经典用例</h3>
+<p>最常见的场景是：在 <code>Row</code> 中让所有子组件等高（高度等于最高的那个子组件）。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('IntrinsicHeight 示例')),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('没有 IntrinsicHeight:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              // 没有 IntrinsicHeight，分割线高度为 0 或需要手动指定
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      color: Colors.blue.shade100,
+                      padding: const EdgeInsets.all(16),
+                      child: const Text('短文本'),
+                    ),
+                  ),
+                  Container(width: 2, height: 50, color: Colors.black),
+                  Expanded(
+                    child: Container(
+                      color: Colors.green.shade100,
+                      padding: const EdgeInsets.all(16),
+                      child: const Text('这是一段比较长的文本，\n有多行内容，\n用于演示高度差异'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+              const Text('有 IntrinsicHeight:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              // 有 IntrinsicHeight，分割线自动撑满行高
+              IntrinsicHeight(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        color: Colors.blue.shade100,
+                        padding: const EdgeInsets.all(16),
+                        child: const Text('短文本'),
+                      ),
+                    ),
+                    // VerticalDivider 需要父组件提供有限的高度约束
+                    const VerticalDivider(width: 2, thickness: 2, color: Colors.black),
+                    Expanded(
+                      child: Container(
+                        color: Colors.green.shade100,
+                        padding: const EdgeInsets.all(16),
+                        child: const Text('这是一段比较长的文本，\n有多行内容，\n用于演示高度差异'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="83-intrinsicwidth-示例">8.3 IntrinsicWidth 示例</h3>
+<p>让多个子组件的宽度都等于最宽的那个：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('IntrinsicWidth 示例')),
+        body: Center(
+          child: IntrinsicWidth(
+            // 所有子组件的宽度都会等于最宽的那个
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('短'),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('中等长度按钮'),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('这是一个很长的按钮文字'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="84-性能考虑">8.4 性能考虑</h3>
+<blockquote>
+<p><strong>⚠️ 重要警告</strong>：<code>IntrinsicHeight</code> 和 <code>IntrinsicWidth</code> 的性能开销较大！</p>
+<p>原因：Flutter 正常的布局过程是<strong>单次遍历（single pass）</strong>——每个节点只被访问一次。但 <code>IntrinsicHeight</code>/<code>IntrinsicWidth</code> 需要先额外遍历一次子树来计算固有尺寸，然后再进行正常布局。这意味着子树被遍历了<strong>两次</strong>。</p>
+<p>如果嵌套使用，性能退化可能是 <strong>O(2^N)</strong>，其中 N 是嵌套深度。</p>
+<p><strong>替代方案</strong>：</p>
+<ul>
+<li>如果只是为了让 Row 中的元素等高，考虑使用 <code>CrossAxisAlignment.stretch</code></li>
+<li>如果需要更精确的控制，考虑使用 <code>CustomMultiChildLayout</code></li>
+<li>在列表项等频繁创建的场景中，避免使用这两个组件</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="9-常见布局错误与解决方案">9. 常见布局错误与解决方案</h2>
+<p>理解了约束机制后，让我们来看几个经典的布局错误及其解决方案。</p>
+<h3 id="91-unbounded-constraints-错误">9.1 Unbounded Constraints 错误</h3>
+<p>这是最常见的布局错误之一。当可滚动容器（如 <code>ListView</code>）中嵌套了另一个可滚动容器时，内部容器在滚动方向上会收到无界约束。</p>
+<p><strong>错误示例</strong>：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Unbounded 错误示例')),
+        body: ListView(
+          children: [
+            // ❌ 错误！Column 在 ListView 中收到无界高度约束
+            // 而 ListView 又需要无界高度——导致冲突
+            // 实际上这里 Column 本身不会报错，
+            // 但如果内部再放一个 ListView 就会出问题
+            Column(
+              children: [
+                Container(height: 100, color: Colors.red),
+                // ❌ 嵌套的 ListView 收到无界高度约束，崩溃！
+                // ListView(
+                //   children: [
+                //     Container(height: 50, color: Colors.blue),
+                //   ],
+                // ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>解决方案</strong>：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Unbounded 解决方案')),
+        body: ListView(
+          children: [
+            Container(height: 100, color: Colors.red.shade200),
+            const SizedBox(height: 10),
+            // ✅ 方案1：给嵌套的 ListView 一个固定高度
+            SizedBox(
+              height: 200,
+              child: ListView(
+                children: [
+                  Container(height: 50, color: Colors.blue.shade200, margin: const EdgeInsets.all(4)),
+                  Container(height: 50, color: Colors.blue.shade300, margin: const EdgeInsets.all(4)),
+                  Container(height: 50, color: Colors.blue.shade400, margin: const EdgeInsets.all(4)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            // ✅ 方案2：使用 shrinkWrap（注意性能问题）
+            ListView(
+              shrinkWrap: true, // 让 ListView 根据内容确定高度
+              physics: const NeverScrollableScrollPhysics(), // 禁止内部滚动
+              children: [
+                Container(height: 50, color: Colors.green.shade200, margin: const EdgeInsets.all(4)),
+                Container(height: 50, color: Colors.green.shade300, margin: const EdgeInsets.all(4)),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="92-renderbox-was-not-laid-out-错误">9.2 RenderBox was not laid out 错误</h3>
+<p>这个错误通常发生在 <code>Column</code> 中直接嵌套 <code>ListView</code>，但没有用 <code>Expanded</code> 或 <code>SizedBox</code> 限制高度：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Column + ListView')),
+        body: Column(
+          children: [
+            Container(
+              height: 60,
+              color: Colors.blue,
+              child: const Center(
+                child: Text('标题栏', style: TextStyle(color: Colors.white)),
+              ),
+            ),
+            // ✅ 正确：用 Expanded 包裹 ListView
+            // ListView 需要一个有界的高度约束
+            Expanded(
+              child: ListView.builder(
+                itemCount: 50,
+                itemBuilder: (context, index) {
+                  return ListTile(title: Text('列表项 $index'));
+                },
+              ),
+            ),
+            // ❌ 错误写法（不要这样做）：
+            // ListView.builder(
+            //   itemCount: 50,
+            //   itemBuilder: (context, index) {
+            //     return ListTile(title: Text('列表项 $index'));
+            //   },
+            // ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="93-expanded-只能在-flex-布局中使用">9.3 Expanded 只能在 Flex 布局中使用</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Expanded 的正确使用')),
+        body: Column(
+          children: [
+            // ✅ 正确：Expanded 在 Column（Flex）中使用
+            Expanded(
+              flex: 2,
+              child: Container(
+                color: Colors.blue.shade200,
+                child: const Center(child: Text('flex: 2')),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                color: Colors.green.shade200,
+                child: const Center(child: Text('flex: 1')),
+              ),
+            ),
+          ],
+        ),
+        // ❌ 错误：Expanded 不能在非 Flex 布局中使用
+        // Container(
+        //   child: Expanded(child: Text('这会报错')),
+        // ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：遇到布局错误时，使用 Flutter Inspector（DevTools 中的 Layout Explorer）可视化查看约束传递过程，快速定位问题所在。</p>
+</blockquote>
+<hr />
+<h2 id="10-综合实战约束组件联合运用">10. 综合实战：约束组件联合运用</h2>
+<p>下面这个示例综合使用了本课学到的约束组件，构建一个自适应的卡片布局：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
+      home: const ConstraintsDemoPage(),
+    );
+  }
+}
+
+class ConstraintsDemoPage extends StatelessWidget {
+  const ConstraintsDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('约束组件综合实战')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // 使用 ConstrainedBox 限制卡片最大宽度
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 使用 AspectRatio 保持图片 16:9 的比例
+                      AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.indigo.shade100,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Center(
+                            child: Icon(Icons.image, size: 64, color: Colors.indigo),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // 使用 FittedBox 让标题自适应
+                      const FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Flutter 约束与尺寸控制完全指南',
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        '掌握 Flutter 的约束机制是成为高级 Flutter 开发者的必经之路。'
+                        '本教程带你从理论到实践，彻底搞懂约束系统。',
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 16),
+                      // 使用 IntrinsicHeight 让统计数据等高
+                      IntrinsicHeight(
+                        child: Row(
+                          children: [
+                            _buildStatItem('阅读量', '12.5K', Colors.blue),
+                            const VerticalDivider(),
+                            _buildStatItem('点赞', '3.2K', Colors.red),
+                            const VerticalDivider(),
+                            _buildStatItem('收藏', '1.8K', Colors.orange),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // 使用 LimitedBox 在 ListView 中提供默认高度
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: LimitedBox(
+                maxHeight: 200,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          '约束传递示意',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+                        Expanded(
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '当前约束:\n'
+                                    '宽: ${constraints.minWidth.toStringAsFixed(0)}'
+                                    ' ~ ${constraints.maxWidth.toStringAsFixed(0)}\n'
+                                    '高: ${constraints.minHeight.toStringAsFixed(0)}'
+                                    ' ~ ${constraints.maxHeight.toStringAsFixed(0)}',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontFamily: 'monospace'),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget _buildStatItem(String label, String value, Color color) {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(label, style: const TextStyle(color: Colors.grey)),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="11-本课小结">11. 本课小结</h2>
+<h3 id="核心知识点回顾">核心知识点回顾</h3>
+<ol>
+<li>
+<p><strong>三条铁律</strong>：Constraints go down → Sizes go up → Parent sets position。这是理解 Flutter 布局的根基。</p>
+</li>
+<li>
+<p><strong>BoxConstraints 四种类型</strong>：</p>
+<ul>
+<li><strong>Tight</strong>：尺寸完全确定（min == max）</li>
+<li><strong>Loose</strong>：有最大值，最小值为 0</li>
+<li><strong>Bounded</strong>：有上下界</li>
+<li><strong>Unbounded</strong>：至少一个方向为无限</li>
+</ul>
+</li>
+<li>
+<p><strong>约束组件总结</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>作用</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ConstrainedBox</code></td>
+<td>添加额外约束</td>
+<td>限制子组件的尺寸范围</td>
+</tr>
+<tr>
+<td><code>UnconstrainedBox</code></td>
+<td>解除父约束</td>
+<td>让子组件按自身尺寸渲染</td>
+</tr>
+<tr>
+<td><code>LimitedBox</code></td>
+<td>在无界约束时限制尺寸</td>
+<td>ListView 中的子组件</td>
+</tr>
+<tr>
+<td><code>AspectRatio</code></td>
+<td>固定宽高比</td>
+<td>视频、图片容器</td>
+</tr>
+<tr>
+<td><code>FittedBox</code></td>
+<td>缩放子组件适应父容器</td>
+<td>自适应文字、图标</td>
+</tr>
+<tr>
+<td><code>IntrinsicHeight</code></td>
+<td>根据固有高度设置约束</td>
+<td>Row 中子组件等高</td>
+</tr>
+<tr>
+<td><code>IntrinsicWidth</code></td>
+<td>根据固有宽度设置约束</td>
+<td>Column 中子组件等宽</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p><strong>约束合并规则</strong>：多层约束嵌套时，minWidth 取最大值，maxWidth 取最小值——约束只会越来越紧。</p>
+</li>
+<li>
+<p><strong>常见错误</strong>：大多数布局错误都源于约束不匹配，特别是无界约束场景（ListView 嵌套、Column 中的 ListView 等）。</p>
+</li>
+</ol>
+<h3 id="关键原则">关键原则</h3>
+<ul>
+<li>布局出问题时，第一步想的不应该是「这个组件怎么用」，而是「约束是怎么传递的」</li>
+<li>使用 <code>LayoutBuilder</code> 和 Flutter DevTools 来调试约束</li>
+<li><code>IntrinsicHeight</code>/<code>IntrinsicWidth</code> 有性能代价，在高频场景中慎用</li>
+<li><code>UnconstrainedBox</code> 可能导致溢出，生产环境中谨慎使用</li>
+</ul>
+<hr />
+<h2 id="12-练习题">12. 练习题</h2>
+<h3 id="练习一约束分析">练习一：约束分析</h3>
+<p>分析以下代码，不运行的情况下，判断最终 Container 的实际渲染尺寸是多少？</p>
+<pre><code class="language-dart">SizedBox(
+  width: 300,
+  height: 300,
+  child: Center(
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(
+        minWidth: 100,
+        maxWidth: 200,
+        minHeight: 100,
+        maxHeight: 200,
+      ),
+      child: Container(
+        width: 50,
+        height: 50,
+        color: Colors.blue,
+      ),
+    ),
+  ),
+)
+</code></pre>
+<details>
+<summary>点击查看答案</summary>
+<p>Container 的实际尺寸是 <strong>100×100</strong>。</p>
+<p>分析过程：</p>
+<ol>
+<li><code>SizedBox</code> 传递 tight 约束：300×300</li>
+<li><code>Center</code> 将其变为 loose 约束：0<del>300 × 0</del>300</li>
+<li><code>ConstrainedBox</code> 施加额外约束，合并后：100<del>200 × 100</del>200</li>
+<li><code>Container</code> 想要 50×50，但 min 是 100，所以被提升到 100×100</li>
+</ol>
+</details>
+<h3 id="练习二修复布局错误">练习二：修复布局错误</h3>
+<p>下面的代码会报错，请找出原因并修复：</p>
+<pre><code class="language-dart">Column(
+  children: [
+    Text('标题'),
+    ListView(
+      children: [
+        ListTile(title: Text('项目 1')),
+        ListTile(title: Text('项目 2')),
+        ListTile(title: Text('项目 3')),
+      ],
+    ),
+  ],
+)
+</code></pre>
+<details>
+<summary>点击查看答案</summary>
+<p><strong>错误原因</strong>：<code>Column</code> 在主轴方向传递无界约束给非 flex 子组件，而 <code>ListView</code> 需要确定的高度约束。两个无界约束冲突导致错误。</p>
+<p><strong>修复方案</strong>：用 <code>Expanded</code> 包裹 <code>ListView</code>：</p>
+<pre><code class="language-dart">Column(
+  children: [
+    Text('标题'),
+    Expanded(
+      child: ListView(
+        children: [
+          ListTile(title: Text('项目 1')),
+          ListTile(title: Text('项目 2')),
+          ListTile(title: Text('项目 3')),
+        ],
+      ),
+    ),
+  ],
+)
+</code></pre>
+</details>
+<h3 id="练习三构建自适应卡片">练习三：构建自适应卡片</h3>
+<p>使用本课学到的组件，构建一个满足以下要求的卡片：</p>
+<ol>
+<li>卡片最大宽度 500，居中显示</li>
+<li>顶部有一个 4:3 比例的图片区域</li>
+<li>标题文字在空间不足时自动缩小</li>
+<li>底部有三个统计数据列，使用分割线分隔，且分割线高度自适应</li>
+</ol>
+<p>提示：综合使用 <code>ConstrainedBox</code>、<code>AspectRatio</code>、<code>FittedBox</code>、<code>IntrinsicHeight</code>。</p>
+<h3 id="练习四理解约束传递">练习四：理解约束传递</h3>
+<p>使用 <code>LayoutBuilder</code>，编写一个 Widget，在屏幕上显示各层约束的传递过程。要求至少有 3 层嵌套，每层都显示当前收到的约束信息。</p>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：第10课 Scaffold 页面脚手架——学习如何使用 Scaffold、AppBar、BottomNavigationBar 等组件搭建完整的 Material Design 页面结构。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

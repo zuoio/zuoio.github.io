@@ -1,0 +1,2781 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第10课-scaffold-页面脚手架">第10课 Scaffold 页面脚手架</h1>
+<blockquote>
+<p>本课是导航系列的第一课。前 9 课我们学习了各种基础组件和布局方式，从本课开始，我们将把这些组件组装到一个完整的页面结构中。Scaffold 就是 Flutter 为我们提供的&quot;页面骨架&quot;——它定义了一个标准 Material Design 页面应有的所有槽位（AppBar、Body、Drawer、FAB、BottomNavigationBar 等），让我们只需往这些槽位中填充内容即可快速构建专业的页面布局。</p>
+</blockquote>
+<hr />
+<h2 id="1-materialapp-与-scaffold-的关系">1. MaterialApp 与 Scaffold 的关系</h2>
+<p>在 Flutter 中，<code>MaterialApp</code> 和 <code>Scaffold</code> 是构建 Material Design 应用的两个核心组件，但它们承担的职责不同：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>职责</th>
+<th>作用范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MaterialApp</strong></td>
+<td>提供应用级别的配置：主题（ThemeData）、路由（routes / onGenerateRoute）、本地化、导航器（Navigator）</td>
+<td>整个应用</td>
+</tr>
+<tr>
+<td><strong>Scaffold</strong></td>
+<td>提供单个页面的结构骨架：AppBar、Body、Drawer、FAB、BottomNavigationBar 等</td>
+<td>单个页面</td>
+</tr>
+</tbody>
+</table>
+<p>简单来说：<strong>MaterialApp 管全局，Scaffold 管页面</strong>。</p>
+<p>一个典型的 Flutter 应用结构如下：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Scaffold 示例',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('首页')),
+      body: const Center(child: Text('页面主体内容')),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li>一个应用通常只有<strong>一个</strong> <code>MaterialApp</code>（位于组件树顶层），但可以有<strong>多个</strong> <code>Scaffold</code>（每个页面/路由一个）。</li>
+<li><code>Scaffold</code> 必须放在 <code>MaterialApp</code> 的子树中，否则无法获取主题、媒体查询等上下文信息。</li>
+<li><code>Scaffold.of(context)</code> 或 <code>ScaffoldMessenger.of(context)</code> 可以从子组件中访问最近的 Scaffold，常用于显示 SnackBar 等。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="2-appbar-应用栏">2. AppBar 应用栏</h2>
+<p><code>AppBar</code> 是 Scaffold 最顶部的工具栏区域，用于展示页面标题、导航按钮和操作按钮。</p>
+<h3 id="21-核心属性一览">2.1 核心属性一览</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td><code>Widget?</code></td>
+<td>标题组件，通常是 <code>Text</code>，也可以是搜索框等自定义组件</td>
+</tr>
+<tr>
+<td><code>leading</code></td>
+<td><code>Widget?</code></td>
+<td>左侧组件，通常是返回按钮或菜单按钮</td>
+</tr>
+<tr>
+<td><code>automaticallyImplyLeading</code></td>
+<td><code>bool</code></td>
+<td>是否自动推断 leading（默认 <code>true</code>，有 Drawer 时显示菜单图标，可返回时显示返回箭头）</td>
+</tr>
+<tr>
+<td><code>actions</code></td>
+<td><code>List&lt;Widget&gt;?</code></td>
+<td>右侧操作按钮列表</td>
+</tr>
+<tr>
+<td><code>flexibleSpace</code></td>
+<td><code>Widget?</code></td>
+<td>AppBar 背后的弹性空间，常用于渐变背景</td>
+</tr>
+<tr>
+<td><code>bottom</code></td>
+<td><code>PreferredSizeWidget?</code></td>
+<td>AppBar 底部，常放置 TabBar</td>
+</tr>
+<tr>
+<td><code>elevation</code></td>
+<td><code>double?</code></td>
+<td>阴影高度（Material 3 默认为 0，使用 scrolledUnderElevation）</td>
+</tr>
+<tr>
+<td><code>backgroundColor</code></td>
+<td><code>Color?</code></td>
+<td>背景颜色</td>
+</tr>
+<tr>
+<td><code>centerTitle</code></td>
+<td><code>bool?</code></td>
+<td>标题是否居中（Android 默认靠左，iOS 默认居中）</td>
+</tr>
+<tr>
+<td><code>toolbarHeight</code></td>
+<td><code>double?</code></td>
+<td>工具栏高度（默认 <code>kToolbarHeight</code> = 56.0）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-基础-appbar-示例">2.2 基础 AppBar 示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        useMaterial3: true,
+      ),
+      home: const AppBarDemo(),
+    );
+  }
+}
+
+class AppBarDemo extends StatelessWidget {
+  const AppBarDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        // 左侧按钮：自定义 leading
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            debugPrint('点击了菜单按钮');
+          },
+        ),
+        // 标题
+        title: const Text('AppBar 示例'),
+        // 标题居中
+        centerTitle: true,
+        // 右侧操作按钮
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              debugPrint('点击了搜索按钮');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.more_vert),
+            onPressed: () {
+              debugPrint('点击了更多按钮');
+            },
+          ),
+        ],
+        // 阴影高度
+        elevation: 2,
+        // 自定义工具栏高度
+        toolbarHeight: 60,
+      ),
+      body: const Center(
+        child: Text('AppBar 基础示例'),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="23-使用-flexiblespace-实现渐变背景">2.3 使用 flexibleSpace 实现渐变背景</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const GradientAppBarDemo(),
+    );
+  }
+}
+
+class GradientAppBarDemo extends StatelessWidget {
+  const GradientAppBarDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          '渐变 AppBar',
+          style: TextStyle(color: Colors.white),
+        ),
+        // flexibleSpace 会填充 AppBar 的整个背景区域（包括 statusBar）
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        // 设置图标颜色为白色
+        iconTheme: const IconThemeData(color: Colors.white),
+        elevation: 0,
+      ),
+      body: const Center(child: Text('渐变背景 AppBar')),
+    );
+  }
+}
+</code></pre>
+<h3 id="24-使用-bottom-放置-tabbar">2.4 使用 bottom 放置 TabBar</h3>
+<p><code>bottom</code> 属性接受 <code>PreferredSizeWidget</code> 类型，最常见的用途是放置 <code>TabBar</code>：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const TabBarAppBarDemo(),
+    );
+  }
+}
+
+class TabBarAppBarDemo extends StatelessWidget {
+  const TabBarAppBarDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // DefaultTabController 为子树中的 TabBar 和 TabBarView 提供控制器
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('带 TabBar 的 AppBar'),
+          // bottom 放置 TabBar
+          bottom: const TabBar(
+            tabs: [
+              Tab(icon: Icon(Icons.home), text: '首页'),
+              Tab(icon: Icon(Icons.star), text: '收藏'),
+              Tab(icon: Icon(Icons.person), text: '我的'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            Center(child: Text('首页内容')),
+            Center(child: Text('收藏内容')),
+            Center(child: Text('我的内容')),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li><code>automaticallyImplyLeading</code> 默认为 <code>true</code>，如果当前页面可以 <code>Navigator.pop()</code>，AppBar 会自动显示返回箭头；如果 Scaffold 有 Drawer，会自动显示菜单图标。通常不需要手动设置 <code>leading</code>，除非你需要完全自定义。</li>
+<li>Material 3 中 AppBar 默认没有阴影（elevation = 0），滚动时会通过 <code>scrolledUnderElevation</code> 显示阴影。如果需要始终显示阴影，请手动设置 <code>elevation</code>。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="3-body-页面主体内容">3. Body 页面主体内容</h2>
+<p><code>body</code> 是 Scaffold 最核心的区域，占据 AppBar 和 BottomNavigationBar 之间的全部空间。你可以在这里放置任何 Widget。</p>
+<h3 id="31-基础用法">3.1 基础用法</h3>
+<pre><code class="language-dart">Scaffold(
+  appBar: AppBar(title: const Text('示例')),
+  // body 可以是任意 Widget
+  body: ListView.builder(
+    itemCount: 50,
+    itemBuilder: (context, index) {
+      return ListTile(
+        leading: CircleAvatar(child: Text('${index + 1}')),
+        title: Text('列表项 $index'),
+      );
+    },
+  ),
+)
+</code></pre>
+<h3 id="32-safearea-处理刘海屏">3.2 SafeArea 处理刘海屏</h3>
+<p>现代手机常有刘海、挖孔、圆角等异形屏设计，内容可能被遮挡。<code>SafeArea</code> 会自动计算安全区域并添加内边距：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.teal,
+        useMaterial3: true,
+      ),
+      home: const SafeAreaDemo(),
+    );
+  }
+}
+
+class SafeAreaDemo extends StatelessWidget {
+  const SafeAreaDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // 注意：这里没有 AppBar，所以内容会从屏幕顶部开始
+      body: SafeArea(
+        // 可以分别控制四个方向是否应用安全区域
+        top: true,
+        bottom: true,
+        left: true,
+        right: true,
+        // minimum 可以设置最小内边距
+        minimum: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '使用 SafeArea',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 16),
+            const Text('这段文字不会被刘海或底部手势条遮挡。'),
+            const SizedBox(height: 16),
+            // 查看实际的安全区域内边距
+            Builder(
+              builder: (context) {
+                final padding = MediaQuery.paddingOf(context);
+                return Text(
+                  '安全区域 padding：\n'
+                  '  top: ${padding.top}\n'
+                  '  bottom: ${padding.bottom}\n'
+                  '  left: ${padding.left}\n'
+                  '  right: ${padding.right}',
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li>当 Scaffold 有 <code>AppBar</code> 时，body 区域已经在 AppBar 下方，通常不需要对顶部使用 SafeArea。</li>
+<li>当使用 <code>bottomNavigationBar</code> 时，body 区域已在其上方，通常不需要对底部使用 SafeArea。</li>
+<li>如果你的页面没有 AppBar（例如全屏图片或自定义头部），务必使用 <code>SafeArea</code> 避免内容被遮挡。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="4-bottomnavigationbar-底部导航栏">4. BottomNavigationBar 底部导航栏</h2>
+<p>底部导航栏是移动端最常见的导航模式，适用于 3~5 个顶层页面的切换。</p>
+<h3 id="41-核心属性">4.1 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>items</code></td>
+<td><code>List&lt;BottomNavigationBarItem&gt;</code></td>
+<td>导航项列表，至少 2 个</td>
+</tr>
+<tr>
+<td><code>currentIndex</code></td>
+<td><code>int</code></td>
+<td>当前选中的索引</td>
+</tr>
+<tr>
+<td><code>onTap</code></td>
+<td><code>ValueChanged&lt;int&gt;?</code></td>
+<td>点击回调，返回被点击项的索引</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td><code>BottomNavigationBarType?</code></td>
+<td>显示类型：<code>fixed</code>（固定）或 <code>shifting</code>（位移）</td>
+</tr>
+<tr>
+<td><code>selectedItemColor</code></td>
+<td><code>Color?</code></td>
+<td>选中项颜色</td>
+</tr>
+<tr>
+<td><code>unselectedItemColor</code></td>
+<td><code>Color?</code></td>
+<td>未选中项颜色</td>
+</tr>
+<tr>
+<td><code>showUnselectedLabels</code></td>
+<td><code>bool?</code></td>
+<td>是否显示未选中项的文字</td>
+</tr>
+<tr>
+<td><code>elevation</code></td>
+<td><code>double?</code></td>
+<td>阴影高度</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-完整的底部导航--页面切换方案">4.2 完整的底部导航 + 页面切换方案</h3>
+<p>这是一个实际项目中常用的底部导航实现模式，使用 <code>IndexedStack</code> 保持页面状态：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '底部导航示例',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const MainScreen(),
+    );
+  }
+}
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  State&lt;MainScreen&gt; createState() =&gt; _MainScreenState();
+}
+
+class _MainScreenState extends State&lt;MainScreen&gt; {
+  // 当前选中的页面索引
+  int _currentIndex = 0;
+
+  // 页面列表——使用 IndexedStack 时所有页面都会被创建，
+  // 但只有当前索引的页面会被显示（其他页面保持状态但不可见）
+  final List&lt;Widget&gt; _pages = const [
+    HomePage(),
+    CategoryPage(),
+    MessagePage(),
+    ProfilePage(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // 使用 IndexedStack 实现页面切换，切换时保持各页面状态
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _pages,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        // 当前选中索引
+        currentIndex: _currentIndex,
+        // 点击回调
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        // fixed 类型：所有项始终显示图标和文字
+        // shifting 类型：选中项会放大并显示文字，未选中项只显示图标
+        type: BottomNavigationBarType.fixed,
+        // 选中/未选中颜色
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        unselectedItemColor: Colors.grey,
+        // 导航项
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: '首页',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.category_outlined),
+            activeIcon: Icon(Icons.category),
+            label: '分类',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.message_outlined),
+            activeIcon: Icon(Icons.message),
+            label: '消息',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outlined),
+            activeIcon: Icon(Icons.person),
+            label: '我的',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---- 以下是各页面的简单实现 ----
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('首页')),
+      body: const Center(
+        child: Text('首页内容', style: TextStyle(fontSize: 24)),
+      ),
+    );
+  }
+}
+
+class CategoryPage extends StatelessWidget {
+  const CategoryPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('分类')),
+      body: const Center(
+        child: Text('分类内容', style: TextStyle(fontSize: 24)),
+      ),
+    );
+  }
+}
+
+class MessagePage extends StatelessWidget {
+  const MessagePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('消息')),
+      body: const Center(
+        child: Text('消息内容', style: TextStyle(fontSize: 24)),
+      ),
+    );
+  }
+}
+
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('我的')),
+      body: const Center(
+        child: Text('个人中心', style: TextStyle(fontSize: 24)),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="43-使用-pageview-替代-indexedstack">4.3 使用 PageView 替代 IndexedStack</h3>
+<p><code>PageView</code> 支持滑动切换页面，适用于需要滑动手势的场景：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.purple,
+        useMaterial3: true,
+      ),
+      home: const PageViewNavDemo(),
+    );
+  }
+}
+
+class PageViewNavDemo extends StatefulWidget {
+  const PageViewNavDemo({super.key});
+
+  @override
+  State&lt;PageViewNavDemo&gt; createState() =&gt; _PageViewNavDemoState();
+}
+
+class _PageViewNavDemoState extends State&lt;PageViewNavDemo&gt; {
+  int _currentIndex = 0;
+  // PageController 用于编程式控制 PageView 的页面切换
+  final PageController _pageController = PageController();
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('PageView + BottomNav')),
+      body: PageView(
+        controller: _pageController,
+        // 当用户滑动切换页面时同步更新底部导航栏
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        children: const [
+          Center(child: Text('页面 1', style: TextStyle(fontSize: 24))),
+          Center(child: Text('页面 2', style: TextStyle(fontSize: 24))),
+          Center(child: Text('页面 3', style: TextStyle(fontSize: 24))),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          // 点击底部导航栏时，使用动画跳转到对应页面
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.looks_one), label: '第一页'),
+          BottomNavigationBarItem(icon: Icon(Icons.looks_two), label: '第二页'),
+          BottomNavigationBarItem(icon: Icon(Icons.looks_3), label: '第三页'),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>IndexedStack vs PageView 对比</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>IndexedStack</th>
+<th>PageView</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>切换方式</td>
+<td>即时切换，无动画</td>
+<td>支持滑动手势和动画</td>
+</tr>
+<tr>
+<td>页面状态</td>
+<td>所有页面始终存在，状态保持</td>
+<td>默认会销毁不可见页面（需配合 <code>AutomaticKeepAliveClientMixin</code> 保持状态）</td>
+</tr>
+<tr>
+<td>内存消耗</td>
+<td>较高（所有页面同时在内存中）</td>
+<td>较低（可按需创建和销毁）</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>页面少、需保持状态</td>
+<td>页面可滑动切换、页面较多</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<hr />
+<h2 id="5-navigationbarmaterial-3与-navigationrail">5. NavigationBar（Material 3）与 NavigationRail</h2>
+<h3 id="51-navigationbar--material-3-新版底部导航">5.1 NavigationBar — Material 3 新版底部导航</h3>
+<p><code>NavigationBar</code> 是 Material 3 推荐的底部导航组件，用于替代旧版 <code>BottomNavigationBar</code>。视觉风格更现代，选中项带有药丸形状的指示器。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.green,
+        useMaterial3: true,
+      ),
+      home: const NavigationBarDemo(),
+    );
+  }
+}
+
+class NavigationBarDemo extends StatefulWidget {
+  const NavigationBarDemo({super.key});
+
+  @override
+  State&lt;NavigationBarDemo&gt; createState() =&gt; _NavigationBarDemoState();
+}
+
+class _NavigationBarDemoState extends State&lt;NavigationBarDemo&gt; {
+  int _selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('NavigationBar 示例')),
+      body: Center(
+        child: Text(
+          '当前页面：$_selectedIndex',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+      ),
+      // Material 3 推荐的底部导航组件
+      bottomNavigationBar: NavigationBar(
+        // 当前选中索引
+        selectedIndex: _selectedIndex,
+        // 选中回调
+        onDestinationSelected: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        // 标签行为：alwaysShow 始终显示 / onlyShowSelected 仅选中时显示
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        // 导航目的地
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.explore_outlined),
+            selectedIcon: Icon(Icons.explore),
+            label: '发现',
+          ),
+          NavigationDestination(
+            icon: Badge(
+              label: Text('3'),
+              child: Icon(Icons.notifications_outlined),
+            ),
+            selectedIcon: Badge(
+              label: Text('3'),
+              child: Icon(Icons.notifications),
+            ),
+            label: '通知',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.bookmark_outline),
+            selectedIcon: Icon(Icons.bookmark),
+            label: '书签',
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="52-navigationrail--侧边导航">5.2 NavigationRail — 侧边导航</h3>
+<p><code>NavigationRail</code> 适用于平板和桌面端，垂直排列导航项于屏幕侧边。在响应式布局中，通常手机端使用底部导航，平板/桌面端使用 <code>NavigationRail</code>。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.orange,
+        useMaterial3: true,
+      ),
+      home: const NavigationRailDemo(),
+    );
+  }
+}
+
+class NavigationRailDemo extends StatefulWidget {
+  const NavigationRailDemo({super.key});
+
+  @override
+  State&lt;NavigationRailDemo&gt; createState() =&gt; _NavigationRailDemoState();
+}
+
+class _NavigationRailDemoState extends State&lt;NavigationRailDemo&gt; {
+  int _selectedIndex = 0;
+  bool _extended = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('NavigationRail 示例')),
+      body: Row(
+        children: [
+          // NavigationRail 放在 Row 的左侧
+          NavigationRail(
+            // 当前选中索引
+            selectedIndex: _selectedIndex,
+            // 选中回调
+            onDestinationSelected: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            // 是否展开（展开时显示文字标签）
+            extended: _extended,
+            // 顶部可放置组件（常放 logo 或菜单按钮）
+            leading: IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                setState(() {
+                  _extended = !_extended;
+                });
+              },
+            ),
+            // 底部可放置组件（常放设置按钮）
+            trailing: Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: IconButton(
+                    icon: const Icon(Icons.settings),
+                    onPressed: () {},
+                  ),
+                ),
+              ),
+            ),
+            // 标签显示方式
+            labelType: _extended
+                ? NavigationRailLabelType.none
+                : NavigationRailLabelType.selected,
+            // 导航目的地
+            destinations: const [
+              NavigationRailDestination(
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home),
+                label: Text('首页'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.favorite_outline),
+                selectedIcon: Icon(Icons.favorite),
+                label: Text('收藏'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.search),
+                selectedIcon: Icon(Icons.search),
+                label: Text('搜索'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.settings_outlined),
+                selectedIcon: Icon(Icons.settings),
+                label: Text('设置'),
+              ),
+            ],
+          ),
+          // 分割线
+          const VerticalDivider(thickness: 1, width: 1),
+          // 主体内容区域
+          Expanded(
+            child: Center(
+              child: Text(
+                '选中了第 $_selectedIndex 项',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践 — 响应式导航选择</strong>：</p>
+<ul>
+<li><strong>手机（&lt; 600dp）</strong>：使用 <code>NavigationBar</code>（底部导航）</li>
+<li><strong>平板（600 ~ 840dp）</strong>：使用 <code>NavigationRail</code>（侧边导航，折叠态）</li>
+<li><strong>桌面（&gt; 840dp）</strong>：使用 <code>NavigationRail</code>（侧边导航，展开态）或 <code>NavigationDrawer</code></li>
+</ul>
+<p>可以通过 <code>MediaQuery</code> 或 <code>LayoutBuilder</code> 动态切换。</p>
+</blockquote>
+<hr />
+<h2 id="6-drawer-与-enddrawer-侧边抽屉导航">6. Drawer 与 EndDrawer 侧边抽屉导航</h2>
+<p><code>Drawer</code> 是从屏幕侧边滑出的面板，通常用于放置应用的导航菜单。<code>Scaffold</code> 提供了 <code>drawer</code>（左侧）和 <code>endDrawer</code>（右侧）两个属性。</p>
+<h3 id="61-核心组件">6.1 核心组件</h3>
+<ul>
+<li><strong>Drawer</strong>：抽屉容器本身</li>
+<li><strong>DrawerHeader</strong>：抽屉顶部区域（通常展示 logo 或应用名称）</li>
+<li><strong>UserAccountsDrawerHeader</strong>：带用户头像、姓名、邮箱的抽屉头部</li>
+<li><strong>ListTile</strong>：菜单项</li>
+</ul>
+<h3 id="62-完整侧边栏导航示例">6.2 完整侧边栏导航示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Drawer 示例',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.deepPurple,
+        useMaterial3: true,
+      ),
+      home: const DrawerDemo(),
+    );
+  }
+}
+
+class DrawerDemo extends StatefulWidget {
+  const DrawerDemo({super.key});
+
+  @override
+  State&lt;DrawerDemo&gt; createState() =&gt; _DrawerDemoState();
+}
+
+class _DrawerDemoState extends State&lt;DrawerDemo&gt; {
+  String _selectedPage = '首页';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // 当设置了 drawer 属性后，AppBar 的 leading 会自动显示菜单图标
+      appBar: AppBar(
+        title: Text(_selectedPage),
+        actions: [
+          // 打开右侧抽屉的按钮
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              // 通过 Scaffold 的 key 或 ScaffoldState 打开 endDrawer
+              Scaffold.of(context).openEndDrawer();
+            },
+          ),
+        ],
+      ),
+
+      // ---- 左侧抽屉 ----
+      drawer: Drawer(
+        child: ListView(
+          // 移除 ListView 默认的顶部 padding
+          padding: EdgeInsets.zero,
+          children: [
+            // 用户信息头部
+            UserAccountsDrawerHeader(
+              // 用户头像
+              currentAccountPicture: const CircleAvatar(
+                backgroundImage: NetworkImage(
+                  'https://picsum.photos/200',
+                ),
+              ),
+              // 其他账号头像
+              otherAccountsPictures: const [
+                CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: Text('B'),
+                ),
+              ],
+              // 用户名
+              accountName: const Text('张三'),
+              // 邮箱
+              accountEmail: const Text('zhangsan@example.com'),
+              // 头部背景装饰
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+              // 点击头部回调
+              onDetailsPressed: () {
+                debugPrint('点击了账户详情');
+              },
+            ),
+
+            // ---- 菜单项 ----
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('首页'),
+              selected: _selectedPage == '首页',
+              onTap: () {
+                setState(() =&gt; _selectedPage = '首页');
+                // 关闭抽屉
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('相册'),
+              selected: _selectedPage == '相册',
+              onTap: () {
+                setState(() =&gt; _selectedPage = '相册');
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.music_note),
+              title: const Text('音乐'),
+              selected: _selectedPage == '音乐',
+              onTap: () {
+                setState(() =&gt; _selectedPage = '音乐');
+                Navigator.pop(context);
+              },
+            ),
+            // 分割线
+            const Divider(),
+            // 子标题
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                '其他',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.help),
+              title: const Text('帮助与反馈'),
+              onTap: () {
+                Navigator.pop(context);
+                debugPrint('打开帮助页面');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text('关于'),
+              onTap: () {
+                Navigator.pop(context);
+                debugPrint('打开关于页面');
+              },
+            ),
+          ],
+        ),
+      ),
+
+      // ---- 右侧抽屉（EndDrawer） ----
+      endDrawer: Drawer(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '设置',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 16),
+                SwitchListTile(
+                  title: const Text('深色模式'),
+                  value: false,
+                  onChanged: (value) {},
+                ),
+                SwitchListTile(
+                  title: const Text('推送通知'),
+                  value: true,
+                  onChanged: (value) {},
+                ),
+                const Spacer(),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.logout),
+                    label: const Text('退出登录'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+
+      // 主体内容
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              _selectedPage,
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+            const SizedBox(height: 16),
+            const Text('从左侧边缘滑动打开导航抽屉'),
+            const Text('从右侧边缘滑动打开设置抽屉'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="63-使用-drawerheader-自定义头部">6.3 使用 DrawerHeader 自定义头部</h3>
+<p>如果不需要用户账号信息，可以使用更简洁的 <code>DrawerHeader</code>：</p>
+<pre><code class="language-dart">DrawerHeader(
+  decoration: BoxDecoration(
+    // 可以使用渐变、图片等作为背景
+    gradient: LinearGradient(
+      colors: [Colors.deepPurple, Colors.purpleAccent],
+    ),
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: const [
+      Icon(Icons.flutter_dash, size: 48, color: Colors.white),
+      SizedBox(height: 8),
+      Text(
+        'My Flutter App',
+        style: TextStyle(color: Colors.white, fontSize: 20),
+      ),
+      Text(
+        'v1.0.0',
+        style: TextStyle(color: Colors.white70, fontSize: 14),
+      ),
+    ],
+  ),
+)
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li>打开抽屉有三种方式：①用户从屏幕边缘滑动；②点击 AppBar 自动生成的菜单图标；③代码调用 <code>Scaffold.of(context).openDrawer()</code> 或 <code>openEndDrawer()</code>。</li>
+<li>关闭抽屉使用 <code>Navigator.pop(context)</code>，因为 Drawer 本质上是一个路由覆盖层。</li>
+<li>抽屉的宽度默认约为屏幕宽度的 80%（最大 304 逻辑像素），可以通过 <code>Drawer(width: 300)</code> 自定义。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="7-floatingactionbutton-浮动操作按钮">7. FloatingActionButton 浮动操作按钮</h2>
+<p><code>FloatingActionButton</code>（FAB）是 Material Design 中最醒目的操作按钮，悬浮在页面内容之上，用于承载页面的<strong>主要操作</strong>。</p>
+<h3 id="71-基础用法与形状定制">7.1 基础用法与形状定制</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const FABDemo(),
+    );
+  }
+}
+
+class FABDemo extends StatelessWidget {
+  const FABDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('FAB 示例')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 1. 标准 FAB（圆形，56x56）
+            FloatingActionButton(
+              onPressed: () {},
+              heroTag: 'standard',
+              child: const Icon(Icons.add),
+            ),
+            const SizedBox(height: 24),
+
+            // 2. 小型 FAB（40x40）
+            FloatingActionButton.small(
+              onPressed: () {},
+              heroTag: 'small',
+              child: const Icon(Icons.edit),
+            ),
+            const SizedBox(height: 24),
+
+            // 3. 大型 FAB（96x96）
+            FloatingActionButton.large(
+              onPressed: () {},
+              heroTag: 'large',
+              child: const Icon(Icons.navigation),
+            ),
+            const SizedBox(height: 24),
+
+            // 4. 扩展 FAB（带文字标签）
+            FloatingActionButton.extended(
+              onPressed: () {},
+              heroTag: 'extended',
+              icon: const Icon(Icons.add),
+              label: const Text('新建任务'),
+            ),
+            const SizedBox(height: 24),
+
+            // 5. 自定义形状的 FAB
+            FloatingActionButton(
+              onPressed: () {},
+              heroTag: 'custom',
+              shape: const BeveledRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(14)),
+              ),
+              child: const Icon(Icons.star),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="72-fab-位置定制">7.2 FAB 位置定制</h3>
+<p>Scaffold 的 <code>floatingActionButtonLocation</code> 属性可以控制 FAB 的位置：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.teal,
+        useMaterial3: true,
+      ),
+      home: const FABLocationDemo(),
+    );
+  }
+}
+
+class FABLocationDemo extends StatefulWidget {
+  const FABLocationDemo({super.key});
+
+  @override
+  State&lt;FABLocationDemo&gt; createState() =&gt; _FABLocationDemoState();
+}
+
+class _FABLocationDemoState extends State&lt;FABLocationDemo&gt; {
+  // 所有可用的 FAB 位置
+  final List&lt;FloatingActionButtonLocation&gt; _locations = [
+    FloatingActionButtonLocation.endFloat,       // 默认：右下角浮动
+    FloatingActionButtonLocation.centerFloat,    // 底部居中浮动
+    FloatingActionButtonLocation.startFloat,     // 左下角浮动
+    FloatingActionButtonLocation.endDocked,      // 右下角嵌入 BottomAppBar
+    FloatingActionButtonLocation.centerDocked,   // 底部居中嵌入 BottomAppBar
+    FloatingActionButtonLocation.startDocked,    // 左下角嵌入 BottomAppBar
+    FloatingActionButtonLocation.endTop,         // 右上角（AppBar 下方）
+    FloatingActionButtonLocation.startTop,       // 左上角（AppBar 下方）
+    FloatingActionButtonLocation.centerTop,      // 顶部居中
+    FloatingActionButtonLocation.miniStartFloat,
+    FloatingActionButtonLocation.miniEndFloat,
+    FloatingActionButtonLocation.miniCenterFloat,
+  ];
+
+  final List&lt;String&gt; _locationNames = [
+    'endFloat（默认）',
+    'centerFloat',
+    'startFloat',
+    'endDocked',
+    'centerDocked',
+    'startDocked',
+    'endTop',
+    'startTop',
+    'centerTop',
+    'miniStartFloat',
+    'miniEndFloat',
+    'miniCenterFloat',
+  ];
+
+  int _currentLocationIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('FAB 位置演示')),
+      body: ListView.builder(
+        itemCount: _locations.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(_locationNames[index]),
+            leading: Radio&lt;int&gt;(
+              value: index,
+              groupValue: _currentLocationIndex,
+              onChanged: (value) {
+                setState(() {
+                  _currentLocationIndex = value!;
+                });
+              },
+            ),
+            onTap: () {
+              setState(() {
+                _currentLocationIndex = index;
+              });
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
+      // 动态切换 FAB 位置
+      floatingActionButtonLocation: _locations[_currentLocationIndex],
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          children: [
+            IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
+            const Spacer(),
+            IconButton(icon: const Icon(Icons.search), onPressed: () {}),
+            IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>每个页面最多使用<strong>一个</strong> FAB，承载该页面<strong>最重要的操作</strong>。</li>
+<li>如果同一个 Scaffold 树中有多个 FAB（例如上面的展示示例），需要为每个 FAB 设置不同的 <code>heroTag</code>，否则会报错。</li>
+<li>Material 3 中 FAB 默认是圆角矩形（不再是正圆），颜色取自 <code>primaryContainer</code>。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="8-bottomappbar-底部应用栏">8. BottomAppBar 底部应用栏</h2>
+<p><code>BottomAppBar</code> 与 <code>BottomNavigationBar</code> 不同——它是一个通用的底部工具栏，通常与 <code>FloatingActionButton</code> 配合使用，并可以通过 <code>shape</code> 属性在 FAB 位置创建缺口效果。</p>
+<h3 id="81-bottomappbar--fab-缺口配合">8.1 BottomAppBar + FAB 缺口配合</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const BottomAppBarDemo(),
+    );
+  }
+}
+
+class BottomAppBarDemo extends StatefulWidget {
+  const BottomAppBarDemo({super.key});
+
+  @override
+  State&lt;BottomAppBarDemo&gt; createState() =&gt; _BottomAppBarDemoState();
+}
+
+class _BottomAppBarDemoState extends State&lt;BottomAppBarDemo&gt; {
+  bool _showNotch = true;
+  bool _isExtended = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('BottomAppBar 示例'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          SwitchListTile(
+            title: const Text('显示缺口（Notch）'),
+            subtitle: const Text('CircularNotchedRectangle'),
+            value: _showNotch,
+            onChanged: (value) {
+              setState(() {
+                _showNotch = value;
+              });
+            },
+          ),
+          SwitchListTile(
+            title: const Text('使用 Extended FAB'),
+            value: _isExtended,
+            onChanged: (value) {
+              setState(() {
+                _isExtended = value;
+              });
+            },
+          ),
+          const SizedBox(height: 16),
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'BottomAppBar 说明',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    '• BottomAppBar 是一个通用底部栏，可放置任意子组件\n'
+                    '• 通过 shape 属性设置 NotchedShape 可为 FAB 创建缺口\n'
+                    '• notchMargin 控制缺口与 FAB 之间的间距\n'
+                    '• FAB 的 floatingActionButtonLocation 设为 centerDocked 或 endDocked 时，'
+                    'FAB 会嵌入 BottomAppBar',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      // FAB：根据开关切换标准/扩展模式
+      floatingActionButton: _isExtended
+          ? FloatingActionButton.extended(
+              onPressed: () {},
+              icon: const Icon(Icons.add),
+              label: const Text('新建'),
+            )
+          : FloatingActionButton(
+              onPressed: () {},
+              child: const Icon(Icons.add),
+            ),
+
+      // FAB 位置：嵌入底部应用栏中间
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+      // BottomAppBar
+      bottomAppBar: BottomAppBar(
+        // shape 设为 CircularNotchedRectangle 后会在 FAB 位置创建圆形缺口
+        shape: _showNotch ? const CircularNotchedRectangle() : null,
+        // 缺口与 FAB 之间的间距
+        notchMargin: 6.0,
+        child: Row(
+          children: [
+            // 左侧按钮组
+            IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {},
+              tooltip: '菜单',
+            ),
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {},
+              tooltip: '搜索',
+            ),
+            // 中间留白（给 FAB 让位）
+            const Spacer(),
+            // 右侧按钮组
+            IconButton(
+              icon: const Icon(Icons.favorite),
+              onPressed: () {},
+              tooltip: '收藏',
+            ),
+            IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: () {},
+              tooltip: '更多',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="82-bottomappbar-充当底部导航">8.2 BottomAppBar 充当底部导航</h3>
+<p>你也可以用 <code>BottomAppBar</code> 来实现自定义的底部导航效果，获得比 <code>BottomNavigationBar</code> 更灵活的布局：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        useMaterial3: true,
+      ),
+      home: const CustomBottomNavDemo(),
+    );
+  }
+}
+
+class CustomBottomNavDemo extends StatefulWidget {
+  const CustomBottomNavDemo({super.key});
+
+  @override
+  State&lt;CustomBottomNavDemo&gt; createState() =&gt; _CustomBottomNavDemoState();
+}
+
+class _CustomBottomNavDemoState extends State&lt;CustomBottomNavDemo&gt; {
+  int _selectedIndex = 0;
+
+  final List&lt;_NavItem&gt; _navItems = [
+    _NavItem(Icons.home_outlined, Icons.home, '首页'),
+    _NavItem(Icons.explore_outlined, Icons.explore, '发现'),
+    // 中间留给 FAB，这里不放导航项
+    _NavItem(Icons.favorite_outline, Icons.favorite, '收藏'),
+    _NavItem(Icons.person_outlined, Icons.person, '我的'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(title: Text(_navItems[_selectedIndex].label)),
+      body: Center(
+        child: Text(
+          '${_navItems[_selectedIndex].label}页面',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          debugPrint('点击了中间按钮');
+        },
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8,
+        child: Row(
+          // 使 4 个导航按钮均匀分布，中间留缺口
+          children: [
+            // 前两个按钮
+            for (int i = 0; i &lt; 2; i++)
+              Expanded(
+                child: _buildNavButton(i, colorScheme),
+              ),
+            // 中间给 FAB 让出空间
+            const Expanded(child: SizedBox()),
+            // 后两个按钮
+            for (int i = 2; i &lt; 4; i++)
+              Expanded(
+                child: _buildNavButton(i, colorScheme),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavButton(int index, ColorScheme colorScheme) {
+    final item = _navItems[index];
+    final isSelected = _selectedIndex == index;
+
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _selectedIndex = index;
+        });
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            isSelected ? item.activeIcon : item.icon,
+            color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            item.label,
+            style: TextStyle(
+              fontSize: 12,
+              color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavItem {
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+
+  _NavItem(this.icon, this.activeIcon, this.label);
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>BottomAppBar</code> 的 <code>shape</code> 属性在 Material 3 中已不太常用（M3 的 FAB 不再强调缺口效果），但在 Material 2 风格的应用中非常经典。</li>
+<li><code>notchMargin</code> 控制缺口边缘与 FAB 之间的间距，默认为 4.0。</li>
+<li>当 FAB 的 <code>floatingActionButtonLocation</code> 为 <code>centerDocked</code> 或 <code>endDocked</code> 时，FAB 才会嵌入 BottomAppBar 并触发缺口效果。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="9-scaffold-完整属性一览">9. Scaffold 完整属性一览</h2>
+<p>下面是 <code>Scaffold</code> 构造函数的所有主要属性汇总，方便查阅：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>appBar</code></td>
+<td><code>PreferredSizeWidget?</code></td>
+<td>顶部应用栏</td>
+</tr>
+<tr>
+<td><code>body</code></td>
+<td><code>Widget?</code></td>
+<td>页面主体内容</td>
+</tr>
+<tr>
+<td><code>floatingActionButton</code></td>
+<td><code>Widget?</code></td>
+<td>浮动操作按钮</td>
+</tr>
+<tr>
+<td><code>floatingActionButtonLocation</code></td>
+<td><code>FloatingActionButtonLocation?</code></td>
+<td>FAB 位置</td>
+</tr>
+<tr>
+<td><code>floatingActionButtonAnimator</code></td>
+<td><code>FloatingActionButtonAnimator?</code></td>
+<td>FAB 切换动画</td>
+</tr>
+<tr>
+<td><code>persistentFooterButtons</code></td>
+<td><code>List&lt;Widget&gt;?</code></td>
+<td>底部持久按钮（显示在 bottomNavigationBar 上方）</td>
+</tr>
+<tr>
+<td><code>drawer</code></td>
+<td><code>Widget?</code></td>
+<td>左侧抽屉</td>
+</tr>
+<tr>
+<td><code>endDrawer</code></td>
+<td><code>Widget?</code></td>
+<td>右侧抽屉</td>
+</tr>
+<tr>
+<td><code>onDrawerChanged</code></td>
+<td><code>DrawerCallback?</code></td>
+<td>左侧抽屉开关回调</td>
+</tr>
+<tr>
+<td><code>onEndDrawerChanged</code></td>
+<td><code>DrawerCallback?</code></td>
+<td>右侧抽屉开关回调</td>
+</tr>
+<tr>
+<td><code>bottomNavigationBar</code></td>
+<td><code>Widget?</code></td>
+<td>底部导航栏</td>
+</tr>
+<tr>
+<td><code>bottomSheet</code></td>
+<td><code>Widget?</code></td>
+<td>持久底部面板</td>
+</tr>
+<tr>
+<td><code>backgroundColor</code></td>
+<td><code>Color?</code></td>
+<td>Scaffold 背景色</td>
+</tr>
+<tr>
+<td><code>resizeToAvoidBottomInset</code></td>
+<td><code>bool?</code></td>
+<td>弹出键盘时是否调整 body 大小（默认 true）</td>
+</tr>
+<tr>
+<td><code>primary</code></td>
+<td><code>bool</code></td>
+<td>是否将 AppBar 显示在状态栏下方（默认 true）</td>
+</tr>
+<tr>
+<td><code>extendBody</code></td>
+<td><code>bool</code></td>
+<td>body 是否延伸到 bottomNavigationBar 下方（默认 false）</td>
+</tr>
+<tr>
+<td><code>extendBodyBehindAppBar</code></td>
+<td><code>bool</code></td>
+<td>body 是否延伸到 AppBar 下方（默认 false，常用于透明 AppBar）</td>
+</tr>
+<tr>
+<td><code>drawerScrimColor</code></td>
+<td><code>Color?</code></td>
+<td>抽屉打开时遮罩颜色</td>
+</tr>
+<tr>
+<td><code>drawerEdgeDragWidth</code></td>
+<td><code>double?</code></td>
+<td>打开抽屉的边缘拖动区域宽度</td>
+</tr>
+<tr>
+<td><code>drawerEnableOpenDragGesture</code></td>
+<td><code>bool</code></td>
+<td>是否允许手势打开 drawer（默认 true）</td>
+</tr>
+<tr>
+<td><code>endDrawerEnableOpenDragGesture</code></td>
+<td><code>bool</code></td>
+<td>是否允许手势打开 endDrawer（默认 true）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="10-综合实战完整的页面骨架">10. 综合实战：完整的页面骨架</h2>
+<p>将本课所学的组件组合起来，构建一个包含 AppBar、Drawer、BottomAppBar、FAB 的完整页面：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Scaffold 综合实战',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const ComprehensiveScaffoldDemo(),
+    );
+  }
+}
+
+class ComprehensiveScaffoldDemo extends StatefulWidget {
+  const ComprehensiveScaffoldDemo({super.key});
+
+  @override
+  State&lt;ComprehensiveScaffoldDemo&gt; createState() =&gt;
+      _ComprehensiveScaffoldDemoState();
+}
+
+class _ComprehensiveScaffoldDemoState
+    extends State&lt;ComprehensiveScaffoldDemo&gt; {
+  int _currentTabIndex = 0;
+  final List&lt;String&gt; _notes = ['学习 Flutter', '完成第 10 课作业', '阅读官方文档'];
+
+  final _tabLabels = ['笔记', '日历', '统计'];
+  final _tabIcons = [Icons.note, Icons.calendar_today, Icons.bar_chart];
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      // ---- AppBar ----
+      appBar: AppBar(
+        title: Text(_tabLabels[_currentTabIndex]),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {},
+          ),
+        ],
+      ),
+
+      // ---- Drawer ----
+      drawer: NavigationDrawer(
+        selectedIndex: _currentTabIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            _currentTabIndex = index;
+          });
+          Navigator.pop(context);
+        },
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
+            child: Text(
+              '我的笔记本',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+          ),
+          ...List.generate(_tabLabels.length, (index) {
+            return NavigationDrawerDestination(
+              icon: Icon(_tabIcons[index]),
+              label: Text(_tabLabels[index]),
+            );
+          }),
+          const Divider(indent: 28, endIndent: 28),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28),
+            child: Text(
+              '标签',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+          ),
+          const NavigationDrawerDestination(
+            icon: Icon(Icons.label_outline),
+            label: Text('工作'),
+          ),
+          const NavigationDrawerDestination(
+            icon: Icon(Icons.label_outline),
+            label: Text('生活'),
+          ),
+        ],
+      ),
+
+      // ---- Body ----
+      body: IndexedStack(
+        index: _currentTabIndex,
+        children: [
+          // 笔记页
+          _notes.isEmpty
+              ? const Center(child: Text('暂无笔记，点击 + 添加'))
+              : ListView.builder(
+                  padding: const EdgeInsets.only(top: 8, bottom: 80),
+                  itemCount: _notes.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 4,
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: colorScheme.primaryContainer,
+                          child: Text(
+                            '${index + 1}',
+                            style: TextStyle(color: colorScheme.onPrimaryContainer),
+                          ),
+                        ),
+                        title: Text(_notes[index]),
+                        subtitle: const Text('刚刚'),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete_outline),
+                          onPressed: () {
+                            setState(() {
+                              _notes.removeAt(index);
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+          // 日历页
+          const Center(child: Text('日历功能开发中...')),
+          // 统计页
+          const Center(child: Text('统计功能开发中...')),
+        ],
+      ),
+
+      // ---- FAB ----
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            _notes.add('新笔记 ${_notes.length + 1}');
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('已添加新笔记'),
+              duration: Duration(seconds: 1),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+      // ---- BottomAppBar ----
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 6,
+        child: Row(
+          children: [
+            for (int i = 0; i &lt; _tabLabels.length; i++) ...[
+              if (i == (_tabLabels.length ~/ 2))
+                const Spacer(),
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _currentTabIndex = i;
+                    });
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        _tabIcons[i],
+                        color: _currentTabIndex == i
+                            ? colorScheme.primary
+                            : colorScheme.onSurfaceVariant,
+                      ),
+                      Text(
+                        _tabLabels[i],
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: _currentTabIndex == i
+                              ? colorScheme.primary
+                              : colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="本课小结">本课小结</h2>
+<p>本课作为导航系列的第一课，我们系统学习了 <code>Scaffold</code> 页面脚手架的各个组成部分：</p>
+<ol>
+<li><strong>MaterialApp 与 Scaffold 的关系</strong>：MaterialApp 负责全局配置（主题、路由），Scaffold 负责单个页面的结构布局。</li>
+<li><strong>AppBar</strong>：页面顶部工具栏，支持标题、前导按钮、操作按钮、底部 TabBar、弹性空间等丰富定制。</li>
+<li><strong>Body 与 SafeArea</strong>：页面主体内容区域，使用 SafeArea 处理异形屏幕的安全区域。</li>
+<li><strong>BottomNavigationBar</strong>：经典底部导航栏，配合 <code>IndexedStack</code>（保持状态）或 <code>PageView</code>（支持滑动）实现页面切换。</li>
+<li><strong>NavigationBar 与 NavigationRail</strong>：Material 3 推荐的底部导航和侧边导航组件，适用于响应式布局。</li>
+<li><strong>Drawer 与 EndDrawer</strong>：侧边抽屉导航，支持用户信息头部和菜单列表。</li>
+<li><strong>FloatingActionButton</strong>：浮动操作按钮，支持多种尺寸、形状和位置定制。</li>
+<li><strong>BottomAppBar</strong>：底部应用栏，可与 FAB 配合实现缺口效果，布局更灵活。</li>
+</ol>
+<blockquote>
+<p><strong>核心要点</strong>：Scaffold 就像一个&quot;页面模板&quot;，它预定义了 Material Design 页面的所有标准槽位。理解 Scaffold 的各个属性，是构建规范 Flutter 页面的基础。</p>
+</blockquote>
+<hr />
+<h2 id="练习题">练习题</h2>
+<h3 id="练习-1基础练习--自定义-appbar">练习 1：基础练习 — 自定义 AppBar</h3>
+<p>创建一个页面，要求：</p>
+<ul>
+<li>AppBar 使用渐变背景（通过 <code>flexibleSpace</code>）</li>
+<li>左侧显示返回按钮（leading）</li>
+<li>标题居中显示</li>
+<li>右侧有搜索按钮和设置按钮</li>
+<li>自定义 <code>toolbarHeight</code> 为 70</li>
+</ul>
+<h3 id="练习-2进阶练习--完整底部导航应用">练习 2：进阶练习 — 完整底部导航应用</h3>
+<p>创建一个包含 4 个页面的底部导航应用，要求：</p>
+<ul>
+<li>使用 <code>NavigationBar</code>（Material 3）作为底部导航</li>
+<li>使用 <code>IndexedStack</code> 实现页面切换并保持各页面状态</li>
+<li>每个页面包含一个计数器（<code>StatefulWidget</code>），验证切换页面后状态是否保留</li>
+<li>第一个页面包含一个 <code>ListView</code>，滚动位置在切换后也应保持</li>
+</ul>
+<h3 id="练习-3综合练习--社交应用主框架">练习 3：综合练习 — 社交应用主框架</h3>
+<p>构建一个仿社交应用的页面框架，要求：</p>
+<ul>
+<li>包含左侧 <code>Drawer</code>（带 <code>UserAccountsDrawerHeader</code> 和多个菜单项）</li>
+<li>使用 <code>BottomAppBar</code> + <code>FloatingActionButton</code>（centerDocked，带缺口效果）</li>
+<li>FAB 点击后弹出 SnackBar 提示&quot;发布新动态&quot;</li>
+<li>BottomAppBar 中有 4 个导航按钮（首页、发现、消息、我的），中间为 FAB 留出空间</li>
+<li>支持通过 Drawer 菜单或底部导航切换内容</li>
+</ul>
+<h3 id="练习-4挑战练习--响应式导航">练习 4：挑战练习 — 响应式导航</h3>
+<p>实现一个响应式页面，要求：</p>
+<ul>
+<li>使用 <code>LayoutBuilder</code> 或 <code>MediaQuery</code> 判断屏幕宽度</li>
+<li>窄屏（&lt; 600）：使用 <code>NavigationBar</code> 底部导航</li>
+<li>中等屏幕（600 ~ 1200）：使用 <code>NavigationRail</code> 侧边导航（折叠态）</li>
+<li>宽屏（&gt; 1200）：使用 <code>NavigationRail</code> 侧边导航（展开态）</li>
+<li>三种模式共享同一套导航项和页面内容</li>
+</ul>
+<hr />
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://api.flutter.dev/flutter/material/Scaffold-class.html">Scaffold 官方文档</a></li>
+<li><a href="https://api.flutter.dev/flutter/material/AppBar-class.html">AppBar 官方文档</a></li>
+<li><a href="https://api.flutter.dev/flutter/material/NavigationBar-class.html">NavigationBar 官方文档</a></li>
+<li><a href="https://api.flutter.dev/flutter/material/NavigationRail-class.html">NavigationRail 官方文档</a></li>
+<li><a href="https://api.flutter.dev/flutter/material/Drawer-class.html">Drawer 官方文档</a></li>
+<li><a href="https://api.flutter.dev/flutter/material/BottomAppBar-class.html">BottomAppBar 官方文档</a></li>
+<li><a href="https://m3.material.io/components/navigation-bar/overview">Material Design 3 Navigation</a></li>
+</ul>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

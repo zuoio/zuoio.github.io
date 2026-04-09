@@ -1,0 +1,1510 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第八章-插件拦截器机制-">第八章 插件（拦截器）机制 📖</h1>
+<blockquote>
+<p>理解原理，掌握常用插件的使用，能自定义简单插件。</p>
+</blockquote>
+<p>MyBatis 提供了一套强大的插件机制，允许在 SQL 执行的关键节点进行拦截和增强。本质上，MyBatis 插件就是<strong>拦截器（Interceptor）</strong>，基于 JDK 动态代理实现，可以在不修改框架源码的情况下对 MyBatis 的核心行为进行扩展。</p>
+<hr />
+<h2 id="81-mybatis-四大组件">8.1 MyBatis 四大组件</h2>
+<p>MyBatis 的 SQL 执行流程由四个核心组件协同完成，<strong>插件只能拦截这四大组件中的方法</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>职责</th>
+<th>可拦截的方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Executor</strong></td>
+<td>SQL 执行的总调度器，负责一级缓存、事务提交/回滚，委派给 StatementHandler 执行具体 SQL</td>
+<td><code>update(MappedStatement, Object)</code> <br> <code>query(MappedStatement, Object, RowBounds, ResultHandler)</code> <br> <code>query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)</code> <br> <code>queryCursor(MappedStatement, Object, RowBounds)</code> <br> <code>flushStatements()</code> <br> <code>commit(boolean)</code> <br> <code>rollback(boolean)</code> <br> <code>close(boolean)</code> <br> <code>getTransaction()</code> <br> <code>createCacheKey(MappedStatement, Object, RowBounds, BoundSql)</code> <br> <code>isCached(MappedStatement, CacheKey)</code></td>
+</tr>
+<tr>
+<td><strong>StatementHandler</strong></td>
+<td>负责创建 JDBC Statement 对象，设置参数，执行 SQL，处理结果集</td>
+<td><code>prepare(Connection, Integer)</code> <br> <code>parameterize(Statement)</code> <br> <code>batch(Statement)</code> <br> <code>update(Statement)</code> <br> <code>query(Statement, ResultHandler)</code> <br> <code>queryCursor(Statement)</code> <br> <code>getBoundSql()</code> <br> <code>getParameterHandler()</code></td>
+</tr>
+<tr>
+<td><strong>ParameterHandler</strong></td>
+<td>负责将用户传入的参数设置到 PreparedStatement 中</td>
+<td><code>getParameterObject()</code> <br> <code>setParameters(PreparedStatement)</code></td>
+</tr>
+<tr>
+<td><strong>ResultSetHandler</strong></td>
+<td>负责将 JDBC ResultSet 映射为 Java 对象</td>
+<td><code>handleResultSets(Statement)</code> <br> <code>handleCursorResultSets(Statement)</code> <br> <code>handleOutputParameters(CallableStatement)</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>实践指导</strong>：最常拦截的组件是 <strong>Executor</strong>（适合做缓存、事务等全局性增强）和 <strong>StatementHandler</strong>（适合做 SQL 改写、分页等操作）。ParameterHandler 和 ResultSetHandler 较少直接拦截。</p>
+</blockquote>
+<p><strong>四大组件在执行链路中的关系</strong>：</p>
+<pre><code>SqlSession
+  └── Executor（调度 + 缓存）
+        └── StatementHandler（SQL 执行）
+              ├── ParameterHandler（参数设置）
+              └── ResultSetHandler（结果映射）
+</code></pre>
+<hr />
+<h2 id="82-插件原理--基于-jdk-动态代理的责任链">8.2 插件原理 —— 基于 JDK 动态代理的责任链</h2>
+<h3 id="821-interceptor-接口">8.2.1 Interceptor 接口</h3>
+<p>所有 MyBatis 插件都必须实现 <code>org.apache.ibatis.plugin.Interceptor</code> 接口：</p>
+<pre><code class="language-java">public interface Interceptor {
+    // 拦截逻辑的核心方法，Invocation 封装了目标对象、方法和参数
+    Object intercept(Invocation invocation) throws Throwable;
+
+    // 决定是否对 target 生成代理对象（默认实现使用 Plugin.wrap）
+    default Object plugin(Object target) {
+        return Plugin.wrap(target, this);
+    }
+
+    // 接收配置文件中传入的属性参数
+    default void setProperties(Properties properties) {
+        // NOP
+    }
+}
+</code></pre>
+<h3 id="822-pluginwrap-方法详解">8.2.2 Plugin.wrap() 方法详解</h3>
+<p><code>Plugin.wrap()</code> 是代理链构建的核心，其工作机制如下：</p>
+<pre><code class="language-java">public class Plugin implements InvocationHandler {
+
+    public static Object wrap(Object target, Interceptor interceptor) {
+        // 1. 解析 @Intercepts 注解，获取该拦截器关心的 类型 → 方法集合
+        Map&lt;Class&lt;?&gt;, Set&lt;Method&gt;&gt; signatureMap = getSignatureMap(interceptor);
+
+        // 2. 获取目标对象的实际类型
+        Class&lt;?&gt; type = target.getClass();
+
+        // 3. 找出 target 实现的接口中，哪些在 signatureMap 里有对应的拦截方法
+        Class&lt;?&gt;[] interfaces = getAllInterfaces(type, signatureMap);
+
+        // 4. 如果有匹配的接口 → 生成 JDK 动态代理；否则 → 原样返回
+        if (interfaces.length &gt; 0) {
+            return Proxy.newProxyInstance(
+                type.getClassLoader(),
+                interfaces,
+                new Plugin(target, interceptor, signatureMap)  // this 作为 InvocationHandler
+            );
+        }
+        return target;
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        Set&lt;Method&gt; methods = signatureMap.get(method.getDeclaringClass());
+        // 只有在签名匹配时才走拦截逻辑
+        if (methods != null &amp;&amp; methods.contains(method)) {
+            return interceptor.intercept(new Invocation(target, method, args));
+        }
+        // 否则直接放行
+        return method.invoke(target, args);
+    }
+}
+</code></pre>
+<p><strong>关键点</strong>：</p>
+<ol>
+<li><code>Plugin.wrap()</code> 并非无条件创建代理，而是先检查拦截器的 <code>@Signature</code> 是否匹配目标对象的接口方法。</li>
+<li>如果不匹配，直接返回原对象，不会产生额外开销。</li>
+<li>如果匹配，会创建一个 JDK 动态代理，将拦截逻辑织入。</li>
+</ol>
+<h3 id="823-代理链的构建过程">8.2.3 代理链的构建过程</h3>
+<p>当配置了多个插件时，MyBatis 会按照配置顺序<strong>依次调用</strong>每个插件的 <code>plugin()</code> 方法，形成嵌套代理（责任链）：</p>
+<pre><code class="language-java">// Configuration 类中的逻辑（伪代码）
+public ParameterHandler newParameterHandler(...) {
+    ParameterHandler handler = new DefaultParameterHandler(...);
+    // interceptorChain 按配置顺序保存所有拦截器
+    handler = (ParameterHandler) interceptorChain.pluginAll(handler);
+    return handler;
+}
+
+// InterceptorChain.pluginAll()
+public Object pluginAll(Object target) {
+    for (Interceptor interceptor : interceptors) {
+        target = interceptor.plugin(target);  // 逐层包装代理
+    }
+    return target;
+}
+</code></pre>
+<p><strong>代理层叠示意</strong>（假设有 PluginA、PluginB、PluginC 三个插件，配置顺序为 A → B → C）：</p>
+<pre><code>调用方
+  → Proxy(PluginC)        ← 最后包装的在最外层，最先执行
+    → Proxy(PluginB)
+      → Proxy(PluginA)
+        → 原始目标对象
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：配置顺序靠<strong>后</strong>的插件包裹在最<strong>外层</strong>，因此最先被执行。如果多个插件拦截同一个方法，执行顺序与配置顺序<strong>相反</strong>。</p>
+</blockquote>
+<hr />
+<h2 id="83-intercepts--signature-注解详解">8.3 @Intercepts / @Signature 注解详解</h2>
+<h3 id="831-注解定义">8.3.1 注解定义</h3>
+<pre><code class="language-java">@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Intercepts {
+    Signature[] value();   // 一个拦截器可以拦截多个方法签名
+}
+
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({})
+public @interface Signature {
+    Class&lt;?&gt; type();       // 要拦截的组件类型（四大接口之一）
+    String method();       // 要拦截的方法名
+    Class&lt;?&gt;[] args();     // 方法的参数类型列表（用于精确匹配重载方法）
+}
+</code></pre>
+<h3 id="832-使用方式">8.3.2 使用方式</h3>
+<p><code>@Intercepts</code> 注解标注在实现了 <code>Interceptor</code> 接口的类上，通过一个或多个 <code>@Signature</code> 指定要拦截的目标方法：</p>
+<pre><code class="language-java">@Intercepts({
+    @Signature(
+        type = Executor.class,                    // 拦截 Executor
+        method = &quot;query&quot;,                         // 拦截 query 方法
+        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}
+    ),
+    @Signature(
+        type = Executor.class,
+        method = &quot;update&quot;,                        // 同时拦截 update 方法
+        args = {MappedStatement.class, Object.class}
+    )
+})
+public class MyPlugin implements Interceptor {
+    @Override
+    public Object intercept(Invocation invocation) throws Throwable {
+        // 拦截逻辑
+        return invocation.proceed();  // 放行，执行原方法
+    }
+}
+</code></pre>
+<h3 id="833-常见拦截签名速查">8.3.3 常见拦截签名速查</h3>
+<table>
+<thead>
+<tr>
+<th>目标</th>
+<th>type</th>
+<th>method</th>
+<th>args</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>拦截查询</td>
+<td><code>Executor.class</code></td>
+<td><code>&quot;query&quot;</code></td>
+<td><code>{MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}</code></td>
+</tr>
+<tr>
+<td>拦截更新（增/删/改）</td>
+<td><code>Executor.class</code></td>
+<td><code>&quot;update&quot;</code></td>
+<td><code>{MappedStatement.class, Object.class}</code></td>
+</tr>
+<tr>
+<td>拦截 SQL 预编译</td>
+<td><code>StatementHandler.class</code></td>
+<td><code>&quot;prepare&quot;</code></td>
+<td><code>{Connection.class, Integer.class}</code></td>
+</tr>
+<tr>
+<td>拦截参数设置</td>
+<td><code>ParameterHandler.class</code></td>
+<td><code>&quot;setParameters&quot;</code></td>
+<td><code>{PreparedStatement.class}</code></td>
+</tr>
+<tr>
+<td>拦截结果集处理</td>
+<td><code>ResultSetHandler.class</code></td>
+<td><code>&quot;handleResultSets&quot;</code></td>
+<td><code>{Statement.class}</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="834-插件注册方式">8.3.4 插件注册方式</h3>
+<p><strong>方式一：mybatis-config.xml 中注册</strong></p>
+<pre><code class="language-xml">&lt;plugins&gt;
+    &lt;plugin interceptor=&quot;com.example.plugin.MyPlugin&quot;&gt;
+        &lt;property name=&quot;someProperty&quot; value=&quot;100&quot;/&gt;
+    &lt;/plugin&gt;
+&lt;/plugins&gt;
+</code></pre>
+<p><strong>方式二：Spring Boot 中注册（推荐）</strong></p>
+<p>将插件类声明为 Spring Bean 即可，MyBatis-Spring-Boot-Starter 会自动注册：</p>
+<pre><code class="language-java">@Component
+public class MyPlugin implements Interceptor {
+    // ...
+}
+</code></pre>
+<p>或通过 <code>@Configuration</code> 类显式注册：</p>
+<pre><code class="language-java">@Configuration
+public class MyBatisConfig {
+    @Bean
+    public MyPlugin myPlugin() {
+        return new MyPlugin();
+    }
+}
+</code></pre>
+<hr />
+<h2 id="84-自定义插件实战">8.4 自定义插件实战</h2>
+<h3 id="841-sql-执行耗时统计插件">8.4.1 SQL 执行耗时统计插件</h3>
+<p>这是最经典的 MyBatis 插件场景之一，用于监控慢 SQL。</p>
+<pre><code class="language-java">import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
+import org.apache.ibatis.session.ResultHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.Statement;
+import java.util.Properties;
+
+@Intercepts({
+    @Signature(type = StatementHandler.class, method = &quot;query&quot;,  args = {Statement.class, ResultHandler.class}),
+    @Signature(type = StatementHandler.class, method = &quot;update&quot;, args = {Statement.class}),
+    @Signature(type = StatementHandler.class, method = &quot;batch&quot;,  args = {Statement.class})
+})
+public class SqlExecutionTimePlugin implements Interceptor {
+
+    private static final Logger log = LoggerFactory.getLogger(SqlExecutionTimePlugin.class);
+
+    /**
+     * 慢 SQL 阈值（毫秒），超过此值会以 WARN 级别输出
+     */
+    private long slowSqlThreshold = 1000L;
+
+    @Override
+    public Object intercept(Invocation invocation) throws Throwable {
+        StatementHandler handler = (StatementHandler) invocation.getTarget();
+
+        // 通过 MetaObject 反射获取内部的 MappedStatement，从而得到 SQL ID
+        MetaObject metaObject = SystemMetaObject.forObject(handler);
+        MappedStatement ms = (MappedStatement) metaObject.getValue(&quot;delegate.mappedStatement&quot;);
+        String sqlId = ms.getId();
+
+        BoundSql boundSql = handler.getBoundSql();
+        String sql = boundSql.getSql().replaceAll(&quot;\\s+&quot;, &quot; &quot;).trim();
+
+        long startTime = System.currentTimeMillis();
+        try {
+            return invocation.proceed();
+        } finally {
+            long elapsed = System.currentTimeMillis() - startTime;
+            if (elapsed &gt;= slowSqlThreshold) {
+                log.warn(&quot;[慢SQL] {}ms | ID: {} | SQL: {}&quot;, elapsed, sqlId, sql);
+            } else {
+                log.debug(&quot;[SQL] {}ms | ID: {} | SQL: {}&quot;, elapsed, sqlId, sql);
+            }
+        }
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        String threshold = properties.getProperty(&quot;slowSqlThreshold&quot;);
+        if (threshold != null) {
+            this.slowSqlThreshold = Long.parseLong(threshold);
+        }
+    }
+}
+</code></pre>
+<p><strong>Spring Boot 注册</strong>：</p>
+<pre><code class="language-java">@Configuration
+public class MyBatisPluginConfig {
+
+    @Bean
+    public SqlExecutionTimePlugin sqlExecutionTimePlugin() {
+        SqlExecutionTimePlugin plugin = new SqlExecutionTimePlugin();
+        Properties props = new Properties();
+        props.setProperty(&quot;slowSqlThreshold&quot;, &quot;500&quot;);  // 设置慢 SQL 阈值为 500ms
+        plugin.setProperties(props);
+        return plugin;
+    }
+}
+</code></pre>
+<p><strong>XML 注册方式</strong>：</p>
+<pre><code class="language-xml">&lt;plugins&gt;
+    &lt;plugin interceptor=&quot;com.example.plugin.SqlExecutionTimePlugin&quot;&gt;
+        &lt;property name=&quot;slowSqlThreshold&quot; value=&quot;500&quot;/&gt;
+    &lt;/plugin&gt;
+&lt;/plugins&gt;
+</code></pre>
+<p><strong>输出效果</strong>：</p>
+<pre><code>[WARN ] [慢SQL] 1523ms | ID: com.example.mapper.UserMapper.selectByCondition | SQL: SELECT * FROM user WHERE status = ? AND create_time &gt; ?
+[DEBUG] [SQL] 12ms | ID: com.example.mapper.UserMapper.selectById | SQL: SELECT * FROM user WHERE id = ?
+</code></pre>
+<hr />
+<h3 id="842-通用字段自动填充插件createtime--updatetime">8.4.2 通用字段自动填充插件（createTime / updateTime）</h3>
+<p>在插入和更新操作时，自动为实体对象填充 <code>createTime</code> 和 <code>updateTime</code> 字段，避免业务代码中重复手动设置。</p>
+<pre><code class="language-java">import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.plugin.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.util.*;
+
+@Intercepts({
+    @Signature(
+        type = Executor.class,
+        method = &quot;update&quot;,
+        args = {MappedStatement.class, Object.class}
+    )
+})
+public class AutoFillTimePlugin implements Interceptor {
+
+    private static final Logger log = LoggerFactory.getLogger(AutoFillTimePlugin.class);
+
+    private static final String CREATE_TIME_FIELD = &quot;createTime&quot;;
+    private static final String UPDATE_TIME_FIELD = &quot;updateTime&quot;;
+
+    @Override
+    public Object intercept(Invocation invocation) throws Throwable {
+        Object[] args = invocation.getArgs();
+        MappedStatement ms = (MappedStatement) args[0];
+        Object parameter = args[1];
+
+        if (parameter == null) {
+            return invocation.proceed();
+        }
+
+        SqlCommandType sqlCommandType = ms.getSqlCommandType();
+
+        if (SqlCommandType.INSERT == sqlCommandType) {
+            fillFieldValue(parameter, CREATE_TIME_FIELD, LocalDateTime.now());
+            fillFieldValue(parameter, UPDATE_TIME_FIELD, LocalDateTime.now());
+        } else if (SqlCommandType.UPDATE == sqlCommandType) {
+            fillFieldValue(parameter, UPDATE_TIME_FIELD, LocalDateTime.now());
+        }
+
+        return invocation.proceed();
+    }
+
+    /**
+     * 通过反射设置字段值。
+     * 仅在字段存在且当前值为 null 时才填充，避免覆盖业务代码显式设置的值。
+     */
+    private void fillFieldValue(Object obj, String fieldName, Object value) {
+        if (obj == null) {
+            return;
+        }
+
+        // 处理 MyBatis 包装的 Map 类型参数（多参数场景）
+        if (obj instanceof Map) {
+            Map&lt;?, ?&gt; map = (Map&lt;?, ?&gt;) obj;
+            for (Object val : map.values()) {
+                if (val != null &amp;&amp; !(val instanceof String) &amp;&amp; !(val instanceof Number)) {
+                    fillFieldValue(val, fieldName, value);
+                }
+            }
+            return;
+        }
+
+        // 处理集合类型（批量插入场景）
+        if (obj instanceof Collection) {
+            for (Object item : (Collection&lt;?&gt;) obj) {
+                fillFieldValue(item, fieldName, value);
+            }
+            return;
+        }
+
+        // 处理普通 POJO
+        try {
+            Field field = getField(obj.getClass(), fieldName);
+            if (field != null) {
+                field.setAccessible(true);
+                Object currentValue = field.get(obj);
+                if (currentValue == null) {
+                    field.set(obj, value);
+                    log.debug(&quot;自动填充字段: {}.{} = {}&quot;, obj.getClass().getSimpleName(), fieldName, value);
+                }
+            }
+        } catch (IllegalAccessException e) {
+            log.warn(&quot;自动填充字段失败: {}.{}&quot;, obj.getClass().getSimpleName(), fieldName, e);
+        }
+    }
+
+    /**
+     * 递归查找字段（包括父类）
+     */
+    private Field getField(Class&lt;?&gt; clazz, String fieldName) {
+        while (clazz != null &amp;&amp; clazz != Object.class) {
+            try {
+                return clazz.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                clazz = clazz.getSuperclass();
+            }
+        }
+        return null;
+    }
+}
+</code></pre>
+<p><strong>实体类示例</strong>：</p>
+<pre><code class="language-java">public class User {
+    private Long id;
+    private String name;
+    private String email;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
+    // getter / setter 省略
+}
+</code></pre>
+<p><strong>Spring Boot 注册</strong>：</p>
+<pre><code class="language-java">@Configuration
+public class MyBatisPluginConfig {
+
+    @Bean
+    public AutoFillTimePlugin autoFillTimePlugin() {
+        return new AutoFillTimePlugin();
+    }
+}
+</code></pre>
+<p><strong>使用效果</strong>：</p>
+<pre><code class="language-java">User user = new User();
+user.setName(&quot;张三&quot;);
+user.setEmail(&quot;zhangsan@example.com&quot;);
+// 无需手动设置 createTime 和 updateTime
+userMapper.insert(user);
+// 插件自动填充: createTime = 2025-01-15T10:30:00, updateTime = 2025-01-15T10:30:00
+
+user.setName(&quot;张三（已更新）&quot;);
+userMapper.updateById(user);
+// 插件自动填充: updateTime = 2025-01-15T11:00:00（createTime 不会被覆盖）
+</code></pre>
+<blockquote>
+<p><strong>提示</strong>：如果项目使用了 MyBatis-Plus，推荐使用其内置的 <code>MetaObjectHandler</code> 实现自动填充（见第十一章 11.6 节），功能更完善且与框架集成更好。</p>
+</blockquote>
+<hr />
+<h2 id="85-常用第三方插件">8.5 常用第三方插件</h2>
+<h3 id="851-pagehelper--分页插件-">8.5.1 PageHelper —— 分页插件 ⭐</h3>
+<p>PageHelper 是 MyBatis 生态中最流行的分页插件，通过拦截 Executor 的 query 方法，在原始 SQL 外层自动添加 <code>LIMIT</code>（或对应数据库的分页语法），实现<strong>物理分页</strong>。</p>
+<h4 id="maven-依赖">Maven 依赖</h4>
+<p><strong>Spring Boot 项目（推荐使用 starter）</strong>：</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.github.pagehelper&lt;/groupId&gt;
+    &lt;artifactId&gt;pagehelper-spring-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;2.1.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<blockquote>
+<p>starter 会自动注册 PageInterceptor，无需手动配置拦截器。</p>
+</blockquote>
+<p><strong>非 Spring Boot 项目</strong>：</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.github.pagehelper&lt;/groupId&gt;
+    &lt;artifactId&gt;pagehelper&lt;/artifactId&gt;
+    &lt;version&gt;6.1.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<h4 id="spring-boot-配置">Spring Boot 配置</h4>
+<p>在 <code>application.yml</code> 中配置：</p>
+<pre><code class="language-yaml">pagehelper:
+  # 指定数据库方言，PageHelper 会根据方言生成对应的分页 SQL
+  helper-dialect: mysql
+  # 合理化分页：pageNum &lt;= 0 时查询第一页，pageNum &gt; 总页数时查询最后一页
+  reasonable: true
+  # 支持通过 Mapper 接口参数传递分页参数
+  support-methods-arguments: true
+  # 分页参数配置
+  params: count=countSql
+</code></pre>
+<p>常用配置项说明：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>helperDialect</code></td>
+<td>数据库方言（mysql / oracle / postgresql / sqlserver 等）</td>
+<td>自动检测</td>
+</tr>
+<tr>
+<td><code>reasonable</code></td>
+<td>分页合理化，防止越界查询</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>supportMethodsArguments</code></td>
+<td>是否支持接口参数传递分页参数</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>pageSizeZero</code></td>
+<td>pageSize = 0 时是否查询全部结果</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>offsetAsPageNum</code></td>
+<td>是否将 RowBounds 的 offset 作为 pageNum 使用</td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="使用示例">使用示例</h4>
+<p><strong>基本用法 —— PageHelper.startPage()</strong></p>
+<pre><code class="language-java">import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserMapper userMapper;
+
+    public PageInfo&lt;User&gt; getUsersByPage(int pageNum, int pageSize) {
+        // 1. 调用 startPage，设置分页参数（必须紧跟在查询方法之前）
+        PageHelper.startPage(pageNum, pageSize);
+
+        // 2. 紧跟的第一个查询会被自动分页
+        List&lt;User&gt; users = userMapper.selectAll();
+
+        // 3. 用 PageInfo 包装结果，获取完整分页信息
+        PageInfo&lt;User&gt; pageInfo = new PageInfo&lt;&gt;(users);
+        return pageInfo;
+    }
+}
+</code></pre>
+<p><strong>PageInfo 包含的分页信息</strong>：</p>
+<pre><code class="language-java">PageInfo&lt;User&gt; pageInfo = new PageInfo&lt;&gt;(users);
+
+pageInfo.getTotal();        // 总记录数
+pageInfo.getPages();        // 总页数
+pageInfo.getPageNum();      // 当前页码
+pageInfo.getPageSize();     // 每页大小
+pageInfo.getSize();         // 当前页实际记录数
+pageInfo.getList();         // 当前页数据列表
+pageInfo.isHasNextPage();   // 是否有下一页
+pageInfo.isHasPreviousPage(); // 是否有上一页
+pageInfo.getPrePage();      // 上一页页码
+pageInfo.getNextPage();     // 下一页页码
+pageInfo.isIsFirstPage();   // 是否为第一页
+pageInfo.isIsLastPage();    // 是否为最后一页
+</code></pre>
+<p><strong>带条件的分页查询</strong>：</p>
+<pre><code class="language-java">public PageInfo&lt;User&gt; searchUsers(String keyword, int pageNum, int pageSize) {
+    PageHelper.startPage(pageNum, pageSize);
+    // 带条件查询同样被分页
+    List&lt;User&gt; users = userMapper.selectByKeyword(keyword);
+    return new PageInfo&lt;&gt;(users);
+}
+</code></pre>
+<p><strong>排序支持</strong>：</p>
+<pre><code class="language-java">PageHelper.startPage(1, 10);
+PageHelper.orderBy(&quot;create_time desc, id asc&quot;);
+List&lt;User&gt; users = userMapper.selectAll();
+</code></pre>
+<p><strong>Controller 层使用示例</strong>：</p>
+<pre><code class="language-java">@RestController
+@RequestMapping(&quot;/api/users&quot;)
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping
+    public Result&lt;PageInfo&lt;User&gt;&gt; listUsers(
+            @RequestParam(defaultValue = &quot;1&quot;) int pageNum,
+            @RequestParam(defaultValue = &quot;10&quot;) int pageSize) {
+        PageInfo&lt;User&gt; page = userService.getUsersByPage(pageNum, pageSize);
+        return Result.success(page);
+    }
+}
+</code></pre>
+<p><strong>返回的 JSON 结构示例</strong>：</p>
+<pre><code class="language-json">{
+  &quot;code&quot;: 200,
+  &quot;data&quot;: {
+    &quot;total&quot;: 156,
+    &quot;pages&quot;: 16,
+    &quot;pageNum&quot;: 2,
+    &quot;pageSize&quot;: 10,
+    &quot;size&quot;: 10,
+    &quot;list&quot;: [
+      { &quot;id&quot;: 11, &quot;name&quot;: &quot;用户11&quot;, &quot;email&quot;: &quot;user11@example.com&quot; },
+      { &quot;id&quot;: 12, &quot;name&quot;: &quot;用户12&quot;, &quot;email&quot;: &quot;user12@example.com&quot; }
+    ],
+    &quot;hasNextPage&quot;: true,
+    &quot;hasPreviousPage&quot;: true,
+    &quot;isFirstPage&quot;: false,
+    &quot;isLastPage&quot;: false
+  }
+}
+</code></pre>
+<h4 id="pagehelper-注意事项">PageHelper 注意事项</h4>
+<ol>
+<li><strong><code>startPage()</code> 必须紧跟查询方法</strong>：中间不能有其他 SQL 查询语句，否则分页会作用到错误的查询上。</li>
+</ol>
+<pre><code class="language-java">// ❌ 错误用法：startPage 和目标查询之间插入了其他查询
+PageHelper.startPage(1, 10);
+User admin = userMapper.selectById(1L);  // 分页会作用到这条查询上！
+List&lt;User&gt; users = userMapper.selectAll(); // 这条不会被分页
+
+// ✅ 正确用法
+User admin = userMapper.selectById(1L);
+PageHelper.startPage(1, 10);
+List&lt;User&gt; users = userMapper.selectAll(); // 分页正确作用到这条查询
+</code></pre>
+<ol start="2">
+<li><strong>线程安全</strong>：<code>PageHelper.startPage()</code> 使用 <code>ThreadLocal</code> 保存分页参数，查询执行后会自动清除。但如果 <code>startPage()</code> 之后发生异常导致查询没有执行，需要手动清除：</li>
+</ol>
+<pre><code class="language-java">try {
+    PageHelper.startPage(pageNum, pageSize);
+    List&lt;User&gt; users = userMapper.selectAll();
+    return new PageInfo&lt;&gt;(users);
+} finally {
+    PageHelper.clearPage();  // 确保 ThreadLocal 被清除
+}
+</code></pre>
+<ol start="3">
+<li><strong>只对第一个查询生效</strong>：<code>startPage()</code> 只对紧跟其后的第一个 MyBatis 查询方法生效，后续查询不会被分页。</li>
+</ol>
+<hr />
+<h3 id="852-mybatis-plus-内置插件">8.5.2 MyBatis-Plus 内置插件</h3>
+<p>MyBatis-Plus 提供了 <code>MybatisPlusInterceptor</code> 作为统一的插件管理入口，内置了多种实用插件：</p>
+<table>
+<thead>
+<tr>
+<th>插件</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PaginationInnerInterceptor</code></td>
+<td>分页插件</td>
+</tr>
+<tr>
+<td><code>OptimisticLockerInnerInterceptor</code></td>
+<td>乐观锁插件</td>
+</tr>
+<tr>
+<td><code>TenantLineInnerInterceptor</code></td>
+<td>多租户插件</td>
+</tr>
+<tr>
+<td><code>DynamicTableNameInnerInterceptor</code></td>
+<td>动态表名插件</td>
+</tr>
+<tr>
+<td><code>BlockAttackInnerInterceptor</code></td>
+<td>防全表更新与删除插件</td>
+</tr>
+<tr>
+<td><code>IllegalSQLInnerInterceptor</code></td>
+<td>SQL 性能规范插件</td>
+</tr>
+<tr>
+<td><code>DataPermissionInterceptor</code></td>
+<td>数据权限插件</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>MyBatis-Plus 插件的详细配置与使用将在<strong>第十一章</strong>中系统讲解。这里仅作概览，了解其插件体系即可。</p>
+</blockquote>
+<p><strong>快速预览 —— 分页插件配置</strong>：</p>
+<pre><code class="language-java">@Configuration
+public class MybatisPlusConfig {
+
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        // 添加分页插件，指定数据库类型
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        return interceptor;
+    }
+}
+</code></pre>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>四大组件</td>
+<td>Executor（调度）、StatementHandler（SQL 执行）、ParameterHandler（参数设置）、ResultSetHandler（结果映射）</td>
+</tr>
+<tr>
+<td>插件原理</td>
+<td>基于 JDK 动态代理 + 责任链模式，通过 <code>Plugin.wrap()</code> 构建代理链</td>
+</tr>
+<tr>
+<td>注解配置</td>
+<td><code>@Intercepts</code> + <code>@Signature</code>（type / method / args 三要素精确匹配）</td>
+</tr>
+<tr>
+<td>代理顺序</td>
+<td>配置顺序靠后的插件在最外层，最先执行</td>
+</tr>
+<tr>
+<td>自定义插件</td>
+<td>实现 <code>Interceptor</code> 接口，重写 <code>intercept()</code> 方法，调用 <code>invocation.proceed()</code> 放行</td>
+</tr>
+<tr>
+<td>PageHelper</td>
+<td><code>startPage()</code> + <code>PageInfo</code>，注意必须紧跟查询、ThreadLocal 清理</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>下一章预告</strong>：第九章将深入 TypeHandler 与类型体系，学习如何处理枚举、JSON 字段等特殊类型的映射。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

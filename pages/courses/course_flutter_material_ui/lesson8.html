@@ -1,0 +1,3281 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第08课-自适应布局与跨平台-material">第08课 自适应布局与跨平台 Material</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter Material Design 系统学习<br />
+<strong>前置条件</strong>：已掌握 LayoutBuilder、MediaQuery、NavigationBar、NavigationRail、Drawer 等组件的基本用法；已完成本系列前 7 课学习<br />
+<strong>课程目标</strong>：掌握 Material Design 响应式布局体系，能够构建在手机、平板、桌面上自动适配导航与布局模式的专业级 Flutter 应用</p>
+</blockquote>
+<hr />
+<p>恭喜你来到 Material Design 课程的最后一课！前 7 课我们系统学习了颜色、排版、形状、状态、组件主题和动效规范——这些都是<strong>单一尺寸下</strong>的设计能力。但在真实世界中，你的应用需要同时运行在 4 英寸手机和 27 英寸桌面显示器上。<strong>能否优雅地处理多尺寸适配，是区分业余项目和专业产品的关键分水岭。</strong></p>
+<p>本课将带你掌握 Material Design 3 的响应式布局体系，从断点定义到导航模式切换，从规范化布局到平台自适应，最终构建一个完整的多断点响应式主页。</p>
+<hr />
+<h2 id="1-material-design-响应式布局指南">1. Material Design 响应式布局指南</h2>
+<h3 id="11-四种窗口尺寸类window-size-classes">1.1 四种窗口尺寸类（Window Size Classes）</h3>
+<p>Material Design 3 将所有设备屏幕宽度划分为四个尺寸类。这不是随意划分——每个尺寸类都对应着截然不同的用户交互模式：</p>
+<table>
+<thead>
+<tr>
+<th>尺寸类</th>
+<th>宽度范围</th>
+<th>典型设备</th>
+<th>交互特征</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Compact</strong></td>
+<td>&lt; 600dp</td>
+<td>手机竖屏</td>
+<td>单手操作，屏幕空间有限，以纵向滚动为主</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td>600–840dp</td>
+<td>手机横屏、小平板</td>
+<td>双手操作，有一定横向空间，可考虑侧边导航</td>
+</tr>
+<tr>
+<td><strong>Expanded</strong></td>
+<td>840–1200dp</td>
+<td>平板、小桌面窗口</td>
+<td>可同时展示多栏内容，鼠标/触控混合</td>
+</tr>
+<tr>
+<td><strong>Large</strong></td>
+<td>&gt; 1200dp</td>
+<td>大桌面显示器</td>
+<td>大量空间，适合三栏布局、永久侧边栏</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>：这里的 dp 在 Flutter 中对应逻辑像素（logical pixels），即 <code>MediaQuery.sizeOf(context).width</code> 返回的值。</p>
+</blockquote>
+<h3 id="12-不同尺寸类下的布局策略">1.2 不同尺寸类下的布局策略</h3>
+<pre><code>┌──────────────────────────────────────────────────────────────────────┐
+│                    Material 3 响应式布局策略                          │
+├────────────┬────────────┬──────────────┬────────────────────────────┤
+│  Compact   │   Medium   │   Expanded   │          Large             │
+│  &lt; 600dp   │ 600-840dp  │  840-1200dp  │         &gt; 1200dp           │
+├────────────┼────────────┼──────────────┼────────────────────────────┤
+│ BottomNav  │  NavRail   │  NavDrawer   │  NavDrawer + 三栏          │
+│ 单列内容    │  双栏可选   │  双栏/三栏   │  三栏布局                   │
+│ 全屏对话框  │  标准对话框  │  侧边面板    │  侧边面板                   │
+│ 底部弹出    │  底部弹出   │  侧边弹出    │  内嵌面板                   │
+└────────────┴────────────┴──────────────┴────────────────────────────┘
+</code></pre>
+<hr />
+<h2 id="2-断点判断实现">2. 断点判断实现</h2>
+<h3 id="21-windowsizeclass-工具类">2.1 WindowSizeClass 工具类</h3>
+<p>首先，我们需要一个可靠的断点判断工具。以下是按照 Material 3 规范实现的 <code>WindowSizeClass</code>：</p>
+<pre><code class="language-dart">import 'package:flutter/widgets.dart';
+
+/// Material 3 窗口尺寸类枚举
+enum WindowSizeClass {
+  /// 紧凑型：&lt; 600dp，手机竖屏
+  compact,
+
+  /// 中等型：600-840dp，手机横屏或小平板
+  medium,
+
+  /// 扩展型：840-1200dp，平板或小桌面
+  expanded,
+
+  /// 大型：&gt; 1200dp，大桌面显示器
+  large,
+}
+
+/// 窗口尺寸类判断工具
+class WindowSizeClassHelper {
+  static const double compactMaxWidth = 600;
+  static const double mediumMaxWidth = 840;
+  static const double expandedMaxWidth = 1200;
+
+  /// 根据给定宽度返回尺寸类
+  static WindowSizeClass fromWidth(double width) {
+    if (width &lt; compactMaxWidth) return WindowSizeClass.compact;
+    if (width &lt; mediumMaxWidth) return WindowSizeClass.medium;
+    if (width &lt; expandedMaxWidth) return WindowSizeClass.expanded;
+    return WindowSizeClass.large;
+  }
+
+  /// 从 BuildContext 获取当前窗口尺寸类
+  static WindowSizeClass of(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    return fromWidth(width);
+  }
+
+  /// 判断当前窗口是否至少为指定尺寸类
+  static bool isAtLeast(BuildContext context, WindowSizeClass sizeClass) {
+    final current = of(context);
+    return current.index &gt;= sizeClass.index;
+  }
+}
+</code></pre>
+<h3 id="22-在-widget-中使用断点">2.2 在 Widget 中使用断点</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class BreakpointDemoPage extends StatelessWidget {
+  const BreakpointDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 推荐使用 MediaQuery.sizeOf 而非 MediaQuery.of，性能更好
+    final windowClass = WindowSizeClassHelper.of(context);
+    final width = MediaQuery.sizeOf(context).width;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('断点演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              _iconForClass(windowClass),
+              size: 64,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '当前窗口宽度：${width.toStringAsFixed(0)}dp',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 8),
+            Chip(
+              avatar: const Icon(Icons.aspect_ratio),
+              label: Text('尺寸类：${windowClass.name}'),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              _descriptionForClass(windowClass),
+              style: Theme.of(context).textTheme.bodyLarge,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  IconData _iconForClass(WindowSizeClass sizeClass) {
+    return switch (sizeClass) {
+      WindowSizeClass.compact =&gt; Icons.phone_android,
+      WindowSizeClass.medium =&gt; Icons.tablet_android,
+      WindowSizeClass.expanded =&gt; Icons.tablet_mac,
+      WindowSizeClass.large =&gt; Icons.desktop_windows,
+    };
+  }
+
+  String _descriptionForClass(WindowSizeClass sizeClass) {
+    return switch (sizeClass) {
+      WindowSizeClass.compact =&gt; '手机竖屏模式\n使用底部导航 + 单列布局',
+      WindowSizeClass.medium =&gt; '中等屏幕模式\n使用侧边导航栏 + 可选双栏布局',
+      WindowSizeClass.expanded =&gt; '扩展屏幕模式\n使用导航抽屉 + 双栏/三栏布局',
+      WindowSizeClass.large =&gt; '大桌面模式\n使用永久导航抽屉 + 三栏布局',
+    };
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：使用 <code>MediaQuery.sizeOf(context)</code> 而非 <code>MediaQuery.of(context).size</code>。前者只在窗口尺寸变化时触发重建，后者会在任何 <code>MediaQueryData</code> 属性变化（如键盘弹出、字体缩放等）时都触发重建，造成不必要的性能开销。</p>
+</blockquote>
+<hr />
+<h2 id="3-导航模式随窗口自适应">3. 导航模式随窗口自适应</h2>
+<p>这是响应式布局中最核心的部分——根据窗口大小自动切换导航模式。</p>
+<h3 id="31-三种导航模式">3.1 三种导航模式</h3>
+<table>
+<thead>
+<tr>
+<th>尺寸类</th>
+<th>导航组件</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Compact</td>
+<td><code>NavigationBar</code></td>
+<td>底部导航栏，最多 5 个目的地</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td><code>NavigationRail</code></td>
+<td>侧边窄轨导航，可配合 leading FAB</td>
+</tr>
+<tr>
+<td>Expanded / Large</td>
+<td><code>NavigationDrawer</code></td>
+<td>永久展示的侧边栏导航，可显示分组和标签</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-完整的自适应导航-shell-实现">3.2 完整的自适应导航 Shell 实现</h3>
+<p>以下是一个完整的、可直接运行的自适应导航框架：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const AdaptiveNavApp());
+}
+
+class AdaptiveNavApp extends StatelessWidget {
+  const AdaptiveNavApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '自适应导航演示',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        useMaterial3: true,
+      ),
+      home: const AdaptiveNavShell(),
+    );
+  }
+}
+
+/// 导航目的地定义
+class NavDestination {
+  final String label;
+  final IconData icon;
+  final IconData selectedIcon;
+  final Widget body;
+
+  const NavDestination({
+    required this.label,
+    required this.icon,
+    required this.selectedIcon,
+    required this.body,
+  });
+}
+
+/// 自适应导航外壳
+class AdaptiveNavShell extends StatefulWidget {
+  const AdaptiveNavShell({super.key});
+
+  @override
+  State&lt;AdaptiveNavShell&gt; createState() =&gt; _AdaptiveNavShellState();
+}
+
+class _AdaptiveNavShellState extends State&lt;AdaptiveNavShell&gt; {
+  int _selectedIndex = 0;
+
+  /// 定义所有导航目的地
+  static final List&lt;NavDestination&gt; _destinations = [
+    NavDestination(
+      label: '首页',
+      icon: Icons.home_outlined,
+      selectedIcon: Icons.home,
+      body: const _PlaceholderPage(title: '首页', icon: Icons.home),
+    ),
+    NavDestination(
+      label: '发现',
+      icon: Icons.explore_outlined,
+      selectedIcon: Icons.explore,
+      body: const _PlaceholderPage(title: '发现', icon: Icons.explore),
+    ),
+    NavDestination(
+      label: '收藏',
+      icon: Icons.bookmark_border,
+      selectedIcon: Icons.bookmark,
+      body: const _PlaceholderPage(title: '收藏', icon: Icons.bookmark),
+    ),
+    NavDestination(
+      label: '设置',
+      icon: Icons.settings_outlined,
+      selectedIcon: Icons.settings,
+      body: const _PlaceholderPage(title: '设置', icon: Icons.settings),
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final windowClass = WindowSizeClassHelper.of(context);
+
+    return switch (windowClass) {
+      WindowSizeClass.compact =&gt; _buildCompactLayout(),
+      WindowSizeClass.medium =&gt; _buildMediumLayout(),
+      WindowSizeClass.expanded || WindowSizeClass.large =&gt;
+        _buildExpandedLayout(),
+    };
+  }
+
+  /// Compact：底部导航栏
+  Widget _buildCompactLayout() {
+    return Scaffold(
+      appBar: AppBar(title: const Text('自适应导航')),
+      body: _destinations[_selectedIndex].body,
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (index) {
+          setState(() =&gt; _selectedIndex = index);
+        },
+        destinations: _destinations
+            .map((d) =&gt; NavigationDestination(
+                  icon: Icon(d.icon),
+                  selectedIcon: Icon(d.selectedIcon),
+                  label: d.label,
+                ))
+            .toList(),
+      ),
+    );
+  }
+
+  /// Medium：NavigationRail + 内容区
+  Widget _buildMediumLayout() {
+    return Scaffold(
+      appBar: AppBar(title: const Text('自适应导航')),
+      body: Row(
+        children: [
+          NavigationRail(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: (index) {
+              setState(() =&gt; _selectedIndex = index);
+            },
+            labelType: NavigationRailLabelType.all,
+            // 在 Rail 顶部放置一个 FAB
+            leading: FloatingActionButton(
+              onPressed: () {},
+              child: const Icon(Icons.add),
+            ),
+            destinations: _destinations
+                .map((d) =&gt; NavigationRailDestination(
+                      icon: Icon(d.icon),
+                      selectedIcon: Icon(d.selectedIcon),
+                      label: Text(d.label),
+                    ))
+                .toList(),
+          ),
+          const VerticalDivider(thickness: 1, width: 1),
+          // 内容区占满剩余空间
+          Expanded(child: _destinations[_selectedIndex].body),
+        ],
+      ),
+    );
+  }
+
+  /// Expanded/Large：永久 NavigationDrawer + 内容区
+  Widget _buildExpandedLayout() {
+    return Scaffold(
+      body: Row(
+        children: [
+          // 永久展示的导航抽屉
+          NavigationDrawer(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: (index) {
+              setState(() =&gt; _selectedIndex = index);
+            },
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(28, 16, 16, 8),
+                child: Text(
+                  '自适应导航',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const Divider(indent: 28, endIndent: 28),
+              ..._destinations.map(
+                (d) =&gt; NavigationDrawerDestination(
+                  icon: Icon(d.icon),
+                  selectedIcon: Icon(d.selectedIcon),
+                  label: Text(d.label),
+                ),
+              ),
+            ],
+          ),
+          const VerticalDivider(thickness: 1, width: 1),
+          // 内容区
+          Expanded(child: _destinations[_selectedIndex].body),
+        ],
+      ),
+    );
+  }
+}
+
+/// 占位页面
+class _PlaceholderPage extends StatelessWidget {
+  final String title;
+  final IconData icon;
+
+  const _PlaceholderPage({required this.title, required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 80, color: Theme.of(context).colorScheme.primary),
+          const SizedBox(height: 16),
+          Text(title, style: Theme.of(context).textTheme.headlineMedium),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="33-使用-layoutbuilder-进行局部断点判断">3.3 使用 LayoutBuilder 进行局部断点判断</h3>
+<p>当你需要在某个组件内部（而非页面级别）根据可用空间自适应时，使用 <code>LayoutBuilder</code> 比 <code>MediaQuery</code> 更合适：</p>
+<pre><code class="language-dart">class AdaptiveCard extends StatelessWidget {
+  const AdaptiveCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // 根据父容器给的最大宽度来决定布局
+        if (constraints.maxWidth &lt; 400) {
+          // 窄空间：纵向排列
+          return const Column(
+            children: [
+              _CardImage(),
+              _CardContent(),
+            ],
+          );
+        } else {
+          // 宽空间：横向排列
+          return const Row(
+            children: [
+              Expanded(child: _CardImage()),
+              Expanded(child: _CardContent()),
+            ],
+          );
+        }
+      },
+    );
+  }
+}
+
+class _CardImage extends StatelessWidget {
+  const _CardImage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 200,
+      color: Theme.of(context).colorScheme.primaryContainer,
+      child: const Center(child: Icon(Icons.image, size: 48)),
+    );
+  }
+}
+
+class _CardContent extends StatelessWidget {
+  const _CardContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('卡片标题', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 8),
+          Text('这是卡片的描述内容，会根据可用空间调整布局方向。',
+              style: Theme.of(context).textTheme.bodyMedium),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：<code>MediaQuery</code> 基于整个窗口尺寸，适合页面级布局决策（如导航模式切换）；<code>LayoutBuilder</code> 基于父容器约束，适合组件级自适应（如卡片内部布局）。两者结合使用，才能实现真正灵活的响应式设计。</p>
+</blockquote>
+<hr />
+<h2 id="4-canonical-layouts规范化布局模式">4. Canonical Layouts（规范化布局模式）</h2>
+<p>Material Design 3 定义了三种<strong>规范化布局</strong>，分别适用于不同的内容展示场景。</p>
+<h3 id="41-列表-详情list-detail">4.1 列表-详情（List-Detail）</h3>
+<p>这是最常见的自适应模式：在手机上，列表和详情分别占一整屏；在平板/桌面上，左侧列表右侧详情同时展示。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ListDetailApp());
+}
+
+class ListDetailApp extends StatelessWidget {
+  const ListDetailApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '列表-详情演示',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.teal,
+        useMaterial3: true,
+      ),
+      home: const ListDetailPage(),
+    );
+  }
+}
+
+/// 数据模型
+class Article {
+  final int id;
+  final String title;
+  final String summary;
+  final String content;
+
+  const Article({
+    required this.id,
+    required this.title,
+    required this.summary,
+    required this.content,
+  });
+}
+
+/// 模拟数据
+final List&lt;Article&gt; _articles = List.generate(
+  20,
+  (i) =&gt; Article(
+    id: i,
+    title: '文章 ${i + 1}：Flutter 响应式布局',
+    summary: '这是第 ${i + 1} 篇文章的摘要，介绍了如何构建自适应界面。',
+    content: '这是第 ${i + 1} 篇文章的完整内容。\n\n'
+        'Material Design 3 响应式布局指南提供了四种窗口尺寸类，'
+        '帮助开发者为不同设备构建最佳体验。\n\n'
+        '本文将详细介绍如何在 Flutter 中实现列表-详情模式，'
+        '使应用在手机和平板上都能获得良好的用户体验。\n\n'
+        '这个模式的核心思想是：在小屏上使用导航跳转，在大屏上使用分栏展示。',
+  ),
+);
+
+class ListDetailPage extends StatefulWidget {
+  const ListDetailPage({super.key});
+
+  @override
+  State&lt;ListDetailPage&gt; createState() =&gt; _ListDetailPageState();
+}
+
+class _ListDetailPageState extends State&lt;ListDetailPage&gt; {
+  Article? _selectedArticle;
+
+  @override
+  Widget build(BuildContext context) {
+    final isExpanded =
+        WindowSizeClassHelper.isAtLeast(context, WindowSizeClass.medium);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('列表-详情布局')),
+      body: isExpanded
+          ? _buildTwoPaneLayout()   // 大屏：双栏并排
+          : _buildSinglePaneLayout(), // 小屏：列表单栏
+    );
+  }
+
+  /// 大屏双栏布局
+  Widget _buildTwoPaneLayout() {
+    return Row(
+      children: [
+        // 左侧列表，固定宽度或按比例
+        SizedBox(
+          width: 360,
+          child: _ArticleListView(
+            articles: _articles,
+            selectedArticle: _selectedArticle,
+            onArticleSelected: (article) {
+              setState(() =&gt; _selectedArticle = article);
+            },
+          ),
+        ),
+        const VerticalDivider(width: 1),
+        // 右侧详情
+        Expanded(
+          child: _selectedArticle != null
+              ? _ArticleDetailView(article: _selectedArticle!)
+              : const Center(
+                  child: Text('请从左侧列表选择一篇文章'),
+                ),
+        ),
+      ],
+    );
+  }
+
+  /// 小屏单栏布局
+  Widget _buildSinglePaneLayout() {
+    return _ArticleListView(
+      articles: _articles,
+      selectedArticle: _selectedArticle,
+      onArticleSelected: (article) {
+        // 小屏上通过导航跳转到详情页
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) =&gt; Scaffold(
+              appBar: AppBar(title: Text(article.title)),
+              body: _ArticleDetailView(article: article),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// 文章列表视图
+class _ArticleListView extends StatelessWidget {
+  final List&lt;Article&gt; articles;
+  final Article? selectedArticle;
+  final ValueChanged&lt;Article&gt; onArticleSelected;
+
+  const _ArticleListView({
+    required this.articles,
+    required this.selectedArticle,
+    required this.onArticleSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: articles.length,
+      itemBuilder: (context, index) {
+        final article = articles[index];
+        final isSelected = article.id == selectedArticle?.id;
+
+        return ListTile(
+          title: Text(article.title),
+          subtitle: Text(
+            article.summary,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          selected: isSelected,
+          selectedTileColor:
+              Theme.of(context).colorScheme.secondaryContainer,
+          leading: CircleAvatar(
+            child: Text('${index + 1}'),
+          ),
+          onTap: () =&gt; onArticleSelected(article),
+        );
+      },
+    );
+  }
+}
+
+/// 文章详情视图
+class _ArticleDetailView extends StatelessWidget {
+  final Article article;
+
+  const _ArticleDetailView({required this.article});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            article.title,
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            article.summary,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+          const Divider(height: 32),
+          Text(
+            article.content,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="42-feed信息流">4.2 Feed（信息流）</h3>
+<p>信息流布局在窄屏上以单列展示，宽屏上自动排列为多列瀑布式网格：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class AdaptiveFeedPage extends StatelessWidget {
+  const AdaptiveFeedPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('自适应信息流')),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // 根据可用宽度计算列数
+          final columnCount = _calculateColumns(constraints.maxWidth);
+
+          return GridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: columnCount,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              // 根据列数调整子项宽高比
+              childAspectRatio: columnCount == 1 ? 2.5 : 1.2,
+            ),
+            itemCount: 20,
+            itemBuilder: (context, index) {
+              return _FeedCard(index: index);
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  int _calculateColumns(double width) {
+    if (width &lt; 600) return 1;       // Compact：单列
+    if (width &lt; 840) return 2;       // Medium：双列
+    if (width &lt; 1200) return 3;      // Expanded：三列
+    return 4;                        // Large：四列
+  }
+}
+
+class _FeedCard extends StatelessWidget {
+  final int index;
+
+  const _FeedCard({required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = [
+      Colors.blue, Colors.green, Colors.orange,
+      Colors.purple, Colors.teal, Colors.red,
+    ];
+
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Container(
+              color: colors[index % colors.length].withValues(alpha: 0.2),
+              child: Center(
+                child: Icon(
+                  Icons.article,
+                  size: 48,
+                  color: colors[index % colors.length],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '信息卡片 ${index + 1}',
+                  style: Theme.of(context).textTheme.titleSmall,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '这是第 ${index + 1} 条信息的摘要内容',
+                  style: Theme.of(context).textTheme.bodySmall,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="43-supporting-panel辅助面板">4.3 Supporting Panel（辅助面板）</h3>
+<p>辅助面板在手机上以底部弹出的形式出现，在桌面端则作为侧边面板常驻：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class SupportingPanelPage extends StatefulWidget {
+  const SupportingPanelPage({super.key});
+
+  @override
+  State&lt;SupportingPanelPage&gt; createState() =&gt; _SupportingPanelPageState();
+}
+
+class _SupportingPanelPageState extends State&lt;SupportingPanelPage&gt; {
+  bool _isPanelOpen = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isWide =
+        WindowSizeClassHelper.isAtLeast(context, WindowSizeClass.expanded);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('辅助面板'),
+        actions: [
+          IconButton(
+            icon: Icon(_isPanelOpen ? Icons.close : Icons.info_outline),
+            onPressed: () {
+              if (isWide) {
+                // 大屏：切换侧边面板显示
+                setState(() =&gt; _isPanelOpen = !_isPanelOpen);
+              } else {
+                // 小屏：弹出底部面板
+                _showBottomPanel(context);
+              }
+            },
+          ),
+        ],
+      ),
+      body: Row(
+        children: [
+          // 主内容区
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.article,
+                    size: 80,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    '主内容区域',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    isWide ? '点击右上角按钮切换侧边面板' : '点击右上角按钮打开底部面板',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // 大屏时显示侧边辅助面板
+          if (isWide &amp;&amp; _isPanelOpen) ...[
+            const VerticalDivider(width: 1),
+            SizedBox(
+              width: 320,
+              child: _PanelContent(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _showBottomPanel(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) =&gt; DraggableScrollableSheet(
+        initialChildSize: 0.5,
+        minChildSize: 0.25,
+        maxChildSize: 0.85,
+        expand: false,
+        builder: (context, scrollController) {
+          return SingleChildScrollView(
+            controller: scrollController,
+            child: _PanelContent(),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _PanelContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('辅助信息面板', style: Theme.of(context).textTheme.titleLarge),
+          const Divider(),
+          const ListTile(
+            leading: Icon(Icons.info),
+            title: Text('基本信息'),
+            subtitle: Text('展示辅助说明内容'),
+          ),
+          const ListTile(
+            leading: Icon(Icons.history),
+            title: Text('修改历史'),
+            subtitle: Text('最近一次修改：2 小时前'),
+          ),
+          const ListTile(
+            leading: Icon(Icons.share),
+            title: Text('分享设置'),
+            subtitle: Text('仅自己可见'),
+          ),
+          const ListTile(
+            leading: Icon(Icons.comment),
+            title: Text('评论'),
+            subtitle: Text('3 条评论'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="5-自适应组件行为">5. 自适应组件行为</h2>
+<p>除了布局和导航，许多 Material 组件自身也需要在不同屏幕尺寸上有不同表现。</p>
+<h3 id="51-dialog-在大屏上的宽度限制">5.1 Dialog 在大屏上的宽度限制</h3>
+<p>默认情况下，<code>showDialog</code> 在大屏上会把对话框拉得非常宽。应当给对话框设置最大宽度：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class AdaptiveDialogDemo extends StatelessWidget {
+  const AdaptiveDialogDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('自适应对话框')),
+      body: Center(
+        child: FilledButton(
+          onPressed: () =&gt; _showAdaptiveDialog(context),
+          child: const Text('显示对话框'),
+        ),
+      ),
+    );
+  }
+
+  void _showAdaptiveDialog(BuildContext context) {
+    final windowClass = WindowSizeClassHelper.of(context);
+
+    if (windowClass == WindowSizeClass.compact) {
+      // 手机上使用全屏对话框，信息更完整
+      showDialog(
+        context: context,
+        builder: (_) =&gt; Dialog.fullscreen(
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('编辑内容'),
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () =&gt; Navigator.pop(context),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () =&gt; Navigator.pop(context),
+                  child: const Text('保存'),
+                ),
+              ],
+            ),
+            body: const Padding(
+              padding: EdgeInsets.all(16),
+              child: TextField(
+                maxLines: null,
+                decoration: InputDecoration(
+                  hintText: '请输入内容...',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    } else {
+      // 大屏使用标准对话框，并限制最大宽度
+      showDialog(
+        context: context,
+        builder: (_) =&gt; AlertDialog(
+          title: const Text('编辑内容'),
+          content: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 560, // Material 规范推荐的对话框最大宽度
+              minHeight: 200,
+            ),
+            child: const TextField(
+              maxLines: 8,
+              decoration: InputDecoration(
+                hintText: '请输入内容...',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () =&gt; Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              onPressed: () =&gt; Navigator.pop(context),
+              child: const Text('保存'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+}
+</code></pre>
+<h3 id="52-bottomsheet-在宽屏上的表现">5.2 BottomSheet 在宽屏上的表现</h3>
+<p>在宽屏设备上，BottomSheet 应当限制宽度，避免覆盖整个屏幕底部：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class AdaptiveBottomSheetDemo extends StatelessWidget {
+  const AdaptiveBottomSheetDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('自适应底部面板')),
+      body: Center(
+        child: FilledButton(
+          onPressed: () =&gt; _showAdaptiveSheet(context),
+          child: const Text('显示面板'),
+        ),
+      ),
+    );
+  }
+
+  void _showAdaptiveSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      // 设置宽屏上的约束，让底部面板不会太宽
+      constraints: BoxConstraints(
+        maxWidth: 640,
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 拖拽手柄
+              Container(
+                width: 32,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant
+                      .withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text('选择操作',
+                  style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: const Text('编辑'),
+                onTap: () =&gt; Navigator.pop(context),
+              ),
+              ListTile(
+                leading: const Icon(Icons.share),
+                title: const Text('分享'),
+                onTap: () =&gt; Navigator.pop(context),
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete),
+                title: const Text('删除'),
+                onTap: () =&gt; Navigator.pop(context),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+</code></pre>
+<h3 id="53-drawer-在大屏上转为永久导航">5.3 Drawer 在大屏上转为永久导航</h3>
+<p>在第 3 节中我们已经展示了这一模式。核心思想是：在 Compact 尺寸使用可滑出的 <code>Drawer</code>，在 Expanded 及以上尺寸使用永久展示的 <code>NavigationDrawer</code>。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class AdaptiveDrawerPage extends StatefulWidget {
+  const AdaptiveDrawerPage({super.key});
+
+  @override
+  State&lt;AdaptiveDrawerPage&gt; createState() =&gt; _AdaptiveDrawerPageState();
+}
+
+class _AdaptiveDrawerPageState extends State&lt;AdaptiveDrawerPage&gt; {
+  int _selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final isExpanded =
+        WindowSizeClassHelper.isAtLeast(context, WindowSizeClass.expanded);
+
+    final drawerContent = NavigationDrawer(
+      selectedIndex: _selectedIndex,
+      onDestinationSelected: (index) {
+        setState(() =&gt; _selectedIndex = index);
+        // 小屏上选择后关闭 Drawer
+        if (!isExpanded &amp;&amp; Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+      },
+      children: const [
+        Padding(
+          padding: EdgeInsets.fromLTRB(28, 16, 16, 8),
+          child: Text('导航菜单', style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+        NavigationDrawerDestination(
+          icon: Icon(Icons.inbox_outlined),
+          selectedIcon: Icon(Icons.inbox),
+          label: Text('收件箱'),
+        ),
+        NavigationDrawerDestination(
+          icon: Icon(Icons.send_outlined),
+          selectedIcon: Icon(Icons.send),
+          label: Text('已发送'),
+        ),
+        NavigationDrawerDestination(
+          icon: Icon(Icons.drafts_outlined),
+          selectedIcon: Icon(Icons.drafts),
+          label: Text('草稿'),
+        ),
+      ],
+    );
+
+    if (isExpanded) {
+      // 大屏：永久侧边栏
+      return Scaffold(
+        body: Row(
+          children: [
+            drawerContent,
+            const VerticalDivider(width: 1),
+            Expanded(
+              child: _buildBody(),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // 小屏：可滑出的 Drawer
+      return Scaffold(
+        appBar: AppBar(title: const Text('邮件')),
+        drawer: drawerContent,
+        body: _buildBody(),
+      );
+    }
+  }
+
+  Widget _buildBody() {
+    final pages = ['收件箱', '已发送', '草稿'];
+    return Center(
+      child: Text(
+        pages[_selectedIndex],
+        style: Theme.of(context).textTheme.headlineLarge,
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：在大屏上使用永久 <code>NavigationDrawer</code> 时，不要再通过 <code>Scaffold.drawer</code> 属性挂载，而是直接放在 <code>Row</code> 中作为固定子组件。否则用户在桌面上仍然需要通过汉堡菜单按钮打开它，违反了大屏交互的直觉。</p>
+</blockquote>
+<hr />
+<h2 id="6-platform-adaptive平台自适应">6. Platform Adaptive（平台自适应）</h2>
+<p>除了屏幕尺寸自适应，Material Design 还需要考虑不同操作系统平台的交互习惯差异。</p>
+<h3 id="61-material-vs-cupertino-差异化处理">6.1 Material vs Cupertino 差异化处理</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Android (Material)</th>
+<th>iOS (Cupertino)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>导航返回</td>
+<td>系统返回键/手势</td>
+<td>左滑返回手势</td>
+</tr>
+<tr>
+<td>开关控件</td>
+<td>方形滑轨</td>
+<td>圆形滑轨</td>
+</tr>
+<tr>
+<td>进度指示</td>
+<td>圆形旋转</td>
+<td>类 iOS 菊花</td>
+</tr>
+<tr>
+<td>页面转场</td>
+<td>向上滑入</td>
+<td>左右滑动</td>
+</tr>
+<tr>
+<td>滚动物理</td>
+<td>ClampingScrollPhysics</td>
+<td>BouncingScrollPhysics</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-adaptive-构造函数">6.2 .adaptive 构造函数</h3>
+<p>Flutter 内置了多个 <code>.adaptive</code> 构造函数，可以根据当前平台自动选择 Material 或 Cupertino 风格：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class AdaptiveWidgetsDemo extends StatefulWidget {
+  const AdaptiveWidgetsDemo({super.key});
+
+  @override
+  State&lt;AdaptiveWidgetsDemo&gt; createState() =&gt; _AdaptiveWidgetsDemoState();
+}
+
+class _AdaptiveWidgetsDemoState extends State&lt;AdaptiveWidgetsDemo&gt; {
+  bool _switchValue = true;
+  double _sliderValue = 0.5;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('平台自适应组件')),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('当前平台：${Theme.of(context).platform.name}',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 32),
+
+            // Switch.adaptive —— 在 iOS 上自动变为 CupertinoSwitch 样式
+            Text('Switch.adaptive',
+                style: Theme.of(context).textTheme.labelLarge),
+            Row(
+              children: [
+                const Text('标准 Material：'),
+                Switch(
+                  value: _switchValue,
+                  onChanged: (v) =&gt; setState(() =&gt; _switchValue = v),
+                ),
+                const SizedBox(width: 24),
+                const Text('Adaptive：'),
+                Switch.adaptive(
+                  value: _switchValue,
+                  onChanged: (v) =&gt; setState(() =&gt; _switchValue = v),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 24),
+
+            // Slider.adaptive —— 在 iOS 上自动变为 CupertinoSlider 样式
+            Text('Slider.adaptive',
+                style: Theme.of(context).textTheme.labelLarge),
+            Slider(
+              value: _sliderValue,
+              onChanged: (v) =&gt; setState(() =&gt; _sliderValue = v),
+            ),
+            Slider.adaptive(
+              value: _sliderValue,
+              onChanged: (v) =&gt; setState(() =&gt; _sliderValue = v),
+            ),
+
+            const SizedBox(height: 24),
+
+            // CircularProgressIndicator.adaptive
+            Text('CircularProgressIndicator.adaptive',
+                style: Theme.of(context).textTheme.labelLarge),
+            const SizedBox(height: 8),
+            const Row(
+              children: [
+                Text('标准：'),
+                CircularProgressIndicator(),
+                SizedBox(width: 32),
+                Text('Adaptive：'),
+                CircularProgressIndicator.adaptive(),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="63-根据-platform-动态选择组件风格">6.3 根据 Platform 动态选择组件风格</h3>
+<p>当内置的 <code>.adaptive</code> 构造函数不够用时，你可以手动判断平台来选择组件：</p>
+<pre><code class="language-dart">import 'dart:io' show Platform;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+class PlatformAdaptiveButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onPressed;
+
+  const PlatformAdaptiveButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // 也可使用 Theme.of(context).platform 来判断
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
+    if (isIOS) {
+      return CupertinoButton.filled(
+        onPressed: onPressed,
+        child: Text(label),
+      );
+    }
+
+    return FilledButton(
+      onPressed: onPressed,
+      child: Text(label),
+    );
+  }
+}
+
+/// 自适应弹窗：iOS 用 CupertinoAlertDialog，Android 用 AlertDialog
+Future&lt;bool?&gt; showAdaptiveConfirmDialog(
+  BuildContext context, {
+  required String title,
+  required String content,
+}) {
+  final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
+  if (isIOS) {
+    return showCupertinoDialog&lt;bool&gt;(
+      context: context,
+      builder: (_) =&gt; CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () =&gt; Navigator.pop(context, false),
+            child: const Text('取消'),
+          ),
+          CupertinoDialogAction(
+            onPressed: () =&gt; Navigator.pop(context, true),
+            child: const Text('确认'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  return showDialog&lt;bool&gt;(
+    context: context,
+    builder: (_) =&gt; AlertDialog(
+      title: Text(title),
+      content: Text(content),
+      actions: [
+        TextButton(
+          onPressed: () =&gt; Navigator.pop(context, false),
+          child: const Text('取消'),
+        ),
+        FilledButton(
+          onPressed: () =&gt; Navigator.pop(context, true),
+          child: const Text('确认'),
+        ),
+      ],
+    ),
+  );
+}
+</code></pre>
+<h3 id="64-themedataplatform-属性">6.4 ThemeData.platform 属性</h3>
+<p><code>ThemeData.platform</code> 控制 Flutter 组件的平台行为。你可以通过它在任意平台上模拟其他平台的交互风格：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class PlatformThemeDemo extends StatefulWidget {
+  const PlatformThemeDemo({super.key});
+
+  @override
+  State&lt;PlatformThemeDemo&gt; createState() =&gt; _PlatformThemeDemoState();
+}
+
+class _PlatformThemeDemoState extends State&lt;PlatformThemeDemo&gt; {
+  TargetPlatform _platform = TargetPlatform.android;
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      // 覆盖子树的平台设定
+      data: Theme.of(context).copyWith(platform: _platform),
+      child: Scaffold(
+        appBar: AppBar(title: const Text('平台切换演示')),
+        body: Column(
+          children: [
+            // 平台选择器
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: SegmentedButton&lt;TargetPlatform&gt;(
+                segments: const [
+                  ButtonSegment(
+                    value: TargetPlatform.android,
+                    label: Text('Android'),
+                    icon: Icon(Icons.android),
+                  ),
+                  ButtonSegment(
+                    value: TargetPlatform.iOS,
+                    label: Text('iOS'),
+                    icon: Icon(Icons.phone_iphone),
+                  ),
+                  ButtonSegment(
+                    value: TargetPlatform.macOS,
+                    label: Text('macOS'),
+                    icon: Icon(Icons.laptop_mac),
+                  ),
+                ],
+                selected: {_platform},
+                onSelectionChanged: (selected) {
+                  setState(() =&gt; _platform = selected.first);
+                },
+              ),
+            ),
+            const Divider(),
+            // 平台相关组件会自动切换风格
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Text('当前平台：${_platform.name}',
+                      style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 16),
+                  // 这些组件会根据 ThemeData.platform 自动调整
+                  ListTile(
+                    title: const Text('Switch.adaptive'),
+                    trailing: Switch.adaptive(
+                      value: true,
+                      onChanged: (_) {},
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text('进度指示器'),
+                    trailing: const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator.adaptive(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Slider.adaptive(value: 0.6, onChanged: (_) {}),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>不要过度使用平台自适应。Material Design 在所有平台上都能提供一致的体验，只在确实需要遵循特定平台惯例时才切换。</li>
+<li>推荐的策略是：<strong>核心 UI 使用 Material，仅在特定控件（如开关、滑块、进度条）上使用 <code>.adaptive</code></strong>。</li>
+<li>使用 <code>Theme.of(context).platform</code> 而非 <code>dart:io</code> 的 <code>Platform</code>，因为前者在 Web 上也能正常工作，且支持通过主题覆盖。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="7-实战构建完整的响应式主页">7. 实战：构建完整的响应式主页</h2>
+<p>现在让我们综合运用本课所有知识，构建一个完整的多断点自适应应用。它将实现：</p>
+<ul>
+<li><strong>手机（Compact）</strong>：底部导航 + 单列列表</li>
+<li><strong>平板（Medium/Expanded）</strong>：侧边 NavigationRail + 列表-详情双栏</li>
+<li><strong>桌面（Large）</strong>：永久侧边栏 NavigationDrawer + 三栏布局</li>
+</ul>
+<h3 id="71-完整代码">7.1 完整代码</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ResponsiveApp());
+}
+
+// ==================== 窗口尺寸工具 ====================
+
+enum WindowSizeClass { compact, medium, expanded, large }
+
+class WindowSize {
+  static const double _compactMax = 600;
+  static const double _mediumMax = 840;
+  static const double _expandedMax = 1200;
+
+  static WindowSizeClass of(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    if (width &lt; _compactMax) return WindowSizeClass.compact;
+    if (width &lt; _mediumMax) return WindowSizeClass.medium;
+    if (width &lt; _expandedMax) return WindowSizeClass.expanded;
+    return WindowSizeClass.large;
+  }
+}
+
+// ==================== 数据模型 ====================
+
+class Email {
+  final int id;
+  final String sender;
+  final String subject;
+  final String preview;
+  final String body;
+  final String time;
+  final String avatar;
+  final bool isStarred;
+
+  const Email({
+    required this.id,
+    required this.sender,
+    required this.subject,
+    required this.preview,
+    required this.body,
+    required this.time,
+    required this.avatar,
+    this.isStarred = false,
+  });
+}
+
+final List&lt;Email&gt; _sampleEmails = List.generate(
+  25,
+  (i) =&gt; Email(
+    id: i,
+    sender: ['张三', '李四', '王五', '赵六', 'Flutter 团队', '设计部门'][i % 6],
+    subject: [
+      '项目周报 - 第${i + 1}周',
+      '会议邀请：产品评审',
+      '设计稿已更新',
+      '代码审查请求 #${100 + i}',
+      'Flutter 3.${i % 5} 发布',
+      '部门团建通知',
+    ][i % 6],
+    preview: '这是邮件的预览内容，点击查看详情...',
+    body: '尊敬的同事：\n\n'
+        '这是第 ${i + 1} 封邮件的详细内容。\n\n'
+        '${[
+      '本周项目进展顺利，已完成所有计划中的功能开发。主要亮点包括：响应式布局的完整实现、'
+          '跨平台自适应组件的集成、以及性能优化。下周计划进行全面测试和 Bug 修复。',
+      '定于本周五下午 2:00 在大会议室进行产品评审会。请各位提前准备好相关材料，'
+          '重点关注用户反馈和改进方案。',
+      '最新的设计稿已上传至 Figma，主要更新了响应式布局的适配方案。'
+          '请前端团队根据新设计稿调整实现。',
+      '代码已提交到 feature/adaptive-layout 分支，请帮忙审查。主要变更包括：'
+          '新增 WindowSizeClass 工具类、重构导航组件、添加列表-详情布局。',
+      'Flutter 新版本带来了多项改进，包括更好的 Material 3 支持、性能提升和 Bug 修复。'
+          '建议项目及时升级。',
+      '为了增强团队凝聚力，部门计划于下月初组织团建活动。目前有两个方案可供选择，'
+          '请在投票链接中选择您偏好的方案。',
+    ][i % 6]}\n\n'
+        '此致\n敬礼',
+    time: '${9 + i % 12}:${(i * 7 % 60).toString().padLeft(2, '0')}',
+    avatar: ['Z', 'L', 'W', 'R', 'F', 'D'][i % 6],
+    isStarred: i % 3 == 0,
+  ),
+);
+
+// ==================== 应用入口 ====================
+
+class ResponsiveApp extends StatelessWidget {
+  const ResponsiveApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '响应式邮件应用',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+        brightness: Brightness.dark,
+      ),
+      home: const ResponsiveHomePage(),
+    );
+  }
+}
+
+// ==================== 响应式主页 ====================
+
+class ResponsiveHomePage extends StatefulWidget {
+  const ResponsiveHomePage({super.key});
+
+  @override
+  State&lt;ResponsiveHomePage&gt; createState() =&gt; _ResponsiveHomePageState();
+}
+
+class _ResponsiveHomePageState extends State&lt;ResponsiveHomePage&gt; {
+  int _navIndex = 0;
+  Email? _selectedEmail;
+
+  // 导航目的地配置
+  static const _navItems = [
+    (label: '收件箱', icon: Icons.inbox_outlined, selectedIcon: Icons.inbox),
+    (label: '已发送', icon: Icons.send_outlined, selectedIcon: Icons.send),
+    (label: '草稿', icon: Icons.drafts_outlined, selectedIcon: Icons.drafts),
+    (label: '垃圾箱', icon: Icons.delete_outlined, selectedIcon: Icons.delete),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final windowClass = WindowSize.of(context);
+
+    return switch (windowClass) {
+      WindowSizeClass.compact =&gt; _CompactLayout(
+          navIndex: _navIndex,
+          onNavChanged: _onNavChanged,
+          selectedEmail: _selectedEmail,
+          onEmailSelected: _onEmailSelected,
+          navItems: _navItems,
+        ),
+      WindowSizeClass.medium =&gt; _MediumLayout(
+          navIndex: _navIndex,
+          onNavChanged: _onNavChanged,
+          selectedEmail: _selectedEmail,
+          onEmailSelected: _onEmailSelected,
+          navItems: _navItems,
+        ),
+      WindowSizeClass.expanded =&gt; _ExpandedLayout(
+          navIndex: _navIndex,
+          onNavChanged: _onNavChanged,
+          selectedEmail: _selectedEmail,
+          onEmailSelected: _onEmailSelected,
+          navItems: _navItems,
+          showThirdPane: false,
+        ),
+      WindowSizeClass.large =&gt; _ExpandedLayout(
+          navIndex: _navIndex,
+          onNavChanged: _onNavChanged,
+          selectedEmail: _selectedEmail,
+          onEmailSelected: _onEmailSelected,
+          navItems: _navItems,
+          showThirdPane: true,
+        ),
+    };
+  }
+
+  void _onNavChanged(int index) {
+    setState(() {
+      _navIndex = index;
+      _selectedEmail = null;
+    });
+  }
+
+  void _onEmailSelected(Email email) {
+    setState(() =&gt; _selectedEmail = email);
+  }
+}
+
+// ==================== Compact 布局：底部导航 + 单列 ====================
+
+class _CompactLayout extends StatelessWidget {
+  final int navIndex;
+  final ValueChanged&lt;int&gt; onNavChanged;
+  final Email? selectedEmail;
+  final ValueChanged&lt;Email&gt; onEmailSelected;
+  final List&lt;({String label, IconData icon, IconData selectedIcon})&gt; navItems;
+
+  const _CompactLayout({
+    required this.navIndex,
+    required this.onNavChanged,
+    required this.selectedEmail,
+    required this.onEmailSelected,
+    required this.navItems,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(navItems[navIndex].label),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: EmailListView(
+        emails: _sampleEmails,
+        selectedEmail: selectedEmail,
+        onEmailSelected: (email) {
+          // 手机上通过路由跳转到详情页
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) =&gt; Scaffold(
+                appBar: AppBar(
+                  title: Text(email.sender),
+                  actions: [
+                    IconButton(
+                      icon: Icon(
+                        email.isStarred ? Icons.star : Icons.star_border,
+                      ),
+                      onPressed: () {},
+                    ),
+                    IconButton(icon: const Icon(Icons.reply), onPressed: () {}),
+                    IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
+                  ],
+                ),
+                body: EmailDetailView(email: email),
+              ),
+            ),
+          );
+        },
+      ),
+      // 底部导航栏
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: navIndex,
+        onDestinationSelected: onNavChanged,
+        destinations: navItems
+            .map((item) =&gt; NavigationDestination(
+                  icon: Icon(item.icon),
+                  selectedIcon: Icon(item.selectedIcon),
+                  label: item.label,
+                ))
+            .toList(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.edit),
+      ),
+    );
+  }
+}
+
+// ==================== Medium 布局：NavigationRail + 双栏 ====================
+
+class _MediumLayout extends StatelessWidget {
+  final int navIndex;
+  final ValueChanged&lt;int&gt; onNavChanged;
+  final Email? selectedEmail;
+  final ValueChanged&lt;Email&gt; onEmailSelected;
+  final List&lt;({String label, IconData icon, IconData selectedIcon})&gt; navItems;
+
+  const _MediumLayout({
+    required this.navIndex,
+    required this.onNavChanged,
+    required this.selectedEmail,
+    required this.onEmailSelected,
+    required this.navItems,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: [
+          // 侧边窄轨导航
+          NavigationRail(
+            selectedIndex: navIndex,
+            onDestinationSelected: onNavChanged,
+            labelType: NavigationRailLabelType.all,
+            leading: FloatingActionButton(
+              heroTag: 'medium_fab',
+              onPressed: () {},
+              child: const Icon(Icons.edit),
+            ),
+            destinations: navItems
+                .map((item) =&gt; NavigationRailDestination(
+                      icon: Icon(item.icon),
+                      selectedIcon: Icon(item.selectedIcon),
+                      label: Text(item.label),
+                    ))
+                .toList(),
+          ),
+          const VerticalDivider(thickness: 1, width: 1),
+          // 邮件列表
+          SizedBox(
+            width: 320,
+            child: Column(
+              children: [
+                // 列表区域标题
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    navItems[navIndex].label,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                Expanded(
+                  child: EmailListView(
+                    emails: _sampleEmails,
+                    selectedEmail: selectedEmail,
+                    onEmailSelected: onEmailSelected,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const VerticalDivider(thickness: 1, width: 1),
+          // 详情区
+          Expanded(
+            child: selectedEmail != null
+                ? Column(
+                    children: [
+                      // 详情区工具栏
+                      _DetailToolbar(email: selectedEmail!),
+                      const Divider(height: 1),
+                      Expanded(child: EmailDetailView(email: selectedEmail!)),
+                    ],
+                  )
+                : const _EmptyDetailView(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ==================== Expanded/Large 布局：NavigationDrawer + 多栏 ====================
+
+class _ExpandedLayout extends StatelessWidget {
+  final int navIndex;
+  final ValueChanged&lt;int&gt; onNavChanged;
+  final Email? selectedEmail;
+  final ValueChanged&lt;Email&gt; onEmailSelected;
+  final List&lt;({String label, IconData icon, IconData selectedIcon})&gt; navItems;
+  final bool showThirdPane;
+
+  const _ExpandedLayout({
+    required this.navIndex,
+    required this.onNavChanged,
+    required this.selectedEmail,
+    required this.onEmailSelected,
+    required this.navItems,
+    required this.showThirdPane,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: [
+          // 永久侧边栏
+          NavigationDrawer(
+            selectedIndex: navIndex,
+            onDestinationSelected: onNavChanged,
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(28, 16, 16, 8),
+                child: Text(
+                  '邮件',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                child: FilledButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.edit),
+                  label: const Text('写邮件'),
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...navItems.map(
+                (item) =&gt; NavigationDrawerDestination(
+                  icon: Icon(item.icon),
+                  selectedIcon: Icon(item.selectedIcon),
+                  label: Text(item.label),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 28),
+                child: Divider(),
+              ),
+              const NavigationDrawerDestination(
+                icon: Icon(Icons.label_outlined),
+                selectedIcon: Icon(Icons.label),
+                label: Text('标签'),
+              ),
+            ],
+          ),
+          const VerticalDivider(thickness: 1, width: 1),
+          // 邮件列表
+          SizedBox(
+            width: 360,
+            child: Column(
+              children: [
+                // 搜索栏
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: SearchBar(
+                    hintText: '搜索邮件',
+                    leading: const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Icon(Icons.search),
+                    ),
+                    onTap: () {},
+                  ),
+                ),
+                Expanded(
+                  child: EmailListView(
+                    emails: _sampleEmails,
+                    selectedEmail: selectedEmail,
+                    onEmailSelected: onEmailSelected,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const VerticalDivider(thickness: 1, width: 1),
+          // 邮件详情
+          Expanded(
+            flex: 2,
+            child: selectedEmail != null
+                ? Column(
+                    children: [
+                      _DetailToolbar(email: selectedEmail!),
+                      const Divider(height: 1),
+                      Expanded(child: EmailDetailView(email: selectedEmail!)),
+                    ],
+                  )
+                : const _EmptyDetailView(),
+          ),
+          // 大屏第三栏：辅助面板
+          if (showThirdPane &amp;&amp; selectedEmail != null) ...[
+            const VerticalDivider(thickness: 1, width: 1),
+            SizedBox(
+              width: 280,
+              child: _InfoPanel(email: selectedEmail!),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ==================== 共享组件 ====================
+
+/// 邮件列表视图
+class EmailListView extends StatelessWidget {
+  final List&lt;Email&gt; emails;
+  final Email? selectedEmail;
+  final ValueChanged&lt;Email&gt; onEmailSelected;
+
+  const EmailListView({
+    super.key,
+    required this.emails,
+    required this.selectedEmail,
+    required this.onEmailSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: emails.length,
+      itemBuilder: (context, index) {
+        final email = emails[index];
+        final isSelected = email.id == selectedEmail?.id;
+        final colorScheme = Theme.of(context).colorScheme;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          child: Material(
+            color: isSelected
+                ? colorScheme.secondaryContainer
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () =&gt; onEmailSelected(email),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 头像
+                    CircleAvatar(
+                      backgroundColor: colorScheme.primaryContainer,
+                      child: Text(
+                        email.avatar,
+                        style: TextStyle(color: colorScheme.onPrimaryContainer),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // 邮件信息
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  email.sender,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Text(
+                                email.time,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            email.subject,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            email.preview,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    // 星标
+                    if (email.isStarred)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: Icon(
+                          Icons.star,
+                          size: 18,
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// 邮件详情视图
+class EmailDetailView extends StatelessWidget {
+  final Email email;
+
+  const EmailDetailView({super.key, required this.email});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 主题
+          Text(
+            email.subject,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          const SizedBox(height: 16),
+          // 发件人信息
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundColor:
+                    Theme.of(context).colorScheme.primaryContainer,
+                radius: 24,
+                child: Text(
+                  email.avatar,
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      email.sender,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      '发送于 ${email.time}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const Divider(height: 32),
+          // 正文
+          Text(
+            email.body,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  height: 1.8,
+                ),
+          ),
+          const SizedBox(height: 32),
+          // 操作按钮
+          Row(
+            children: [
+              OutlinedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.reply),
+                label: const Text('回复'),
+              ),
+              const SizedBox(width: 8),
+              OutlinedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.reply_all),
+                label: const Text('回复全部'),
+              ),
+              const SizedBox(width: 8),
+              OutlinedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.forward),
+                label: const Text('转发'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 详情区工具栏
+class _DetailToolbar extends StatelessWidget {
+  final Email email;
+
+  const _DetailToolbar({required this.email});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.archive_outlined),
+            tooltip: '归档',
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_outlined),
+            tooltip: '删除',
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.mark_email_unread_outlined),
+            tooltip: '标为未读',
+            onPressed: () {},
+          ),
+          const Spacer(),
+          IconButton(
+            icon: Icon(
+              email.isStarred ? Icons.star : Icons.star_border,
+            ),
+            tooltip: '星标',
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.more_vert),
+            tooltip: '更多',
+            onPressed: () {},
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 空详情占位
+class _EmptyDetailView extends StatelessWidget {
+  const _EmptyDetailView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.email_outlined,
+            size: 80,
+            color: Theme.of(context).colorScheme.outline,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '选择一封邮件查看详情',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 大桌面端信息面板（第三栏）
+class _InfoPanel extends StatelessWidget {
+  final Email email;
+
+  const _InfoPanel({required this.email});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Text('邮件详情', style: Theme.of(context).textTheme.titleMedium),
+        const Divider(),
+        _InfoRow(label: '发件人', value: email.sender),
+        _InfoRow(label: '时间', value: email.time),
+        _InfoRow(label: '主题', value: email.subject),
+        _InfoRow(label: '星标', value: email.isStarred ? '是' : '否'),
+        const Divider(),
+        Text('快速操作', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ActionChip(
+              avatar: const Icon(Icons.label_outline, size: 18),
+              label: const Text('添加标签'),
+              onPressed: () {},
+            ),
+            ActionChip(
+              avatar: const Icon(Icons.snooze, size: 18),
+              label: const Text('稍后提醒'),
+              onPressed: () {},
+            ),
+            ActionChip(
+              avatar: const Icon(Icons.move_to_inbox, size: 18),
+              label: const Text('移动到'),
+              onPressed: () {},
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _InfoRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 60,
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+          ),
+          Expanded(
+            child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="72-代码架构解析">7.2 代码架构解析</h3>
+<p>上述代码的核心设计思想：</p>
+<ol>
+<li>
+<p><strong>状态上提</strong>：<code>_selectedEmail</code> 和 <code>_navIndex</code> 状态由顶层 <code>ResponsiveHomePage</code> 管理，各布局组件通过回调通信。这确保了在窗口尺寸变化时（如旋转平板），状态不丢失。</p>
+</li>
+<li>
+<p><strong>布局组件独立</strong>：<code>_CompactLayout</code>、<code>_MediumLayout</code>、<code>_ExpandedLayout</code> 是三个独立的布局组件，各自负责在特定窗口尺寸下的呈现方式。</p>
+</li>
+<li>
+<p><strong>内容组件共享</strong>：<code>EmailListView</code>、<code>EmailDetailView</code> 等内容组件被所有布局共享。改一处，处处生效。</p>
+</li>
+<li>
+<p><strong>渐进式增强</strong>：</p>
+<ul>
+<li>Compact → 单列 + 路由跳转</li>
+<li>Medium → Rail + 双栏</li>
+<li>Expanded → Drawer + 双栏 + 工具栏</li>
+<li>Large → Drawer + 双栏 + 工具栏 + 第三栏信息面板</li>
+</ul>
+</li>
+</ol>
+<pre><code>┌──────────────────────────────────────────────────────────────────────────┐
+│                        架构示意                                          │
+│                                                                          │
+│  ResponsiveHomePage (状态管理: navIndex, selectedEmail)                   │
+│       │                                                                  │
+│       ├── Compact  → NavigationBar + EmailListView → 路由 → Detail       │
+│       ├── Medium   → NavigationRail + EmailListView + Detail             │
+│       ├── Expanded → NavigationDrawer + EmailListView + Detail           │
+│       └── Large    → NavigationDrawer + EmailListView + Detail + Panel   │
+│                                                                          │
+│  共享组件: EmailListView, EmailDetailView, _DetailToolbar                │
+└──────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li>在实际项目中，建议使用路由框架（如 <code>go_router</code>）来管理导航，它原生支持 <code>ShellRoute</code> 等自适应导航模式。</li>
+<li>窗口尺寸变化时（如用户调整桌面窗口大小、旋转平板），<code>build</code> 方法会自动重新执行，布局自动切换。你无需监听任何事件。</li>
+<li>在 Large 断点的三栏布局中，要注意各栏的最小宽度约束，避免内容被挤压到不可读。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="8-本课小结">8. 本课小结</h2>
+<h3 id="核心知识回顾">核心知识回顾</h3>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>窗口尺寸类</td>
+<td>Compact（&lt; 600dp）、Medium（600-840dp）、Expanded（840-1200dp）、Large（&gt; 1200dp）</td>
+</tr>
+<tr>
+<td>断点判断</td>
+<td><code>MediaQuery.sizeOf(context)</code> 用于页面级，<code>LayoutBuilder</code> 用于组件级</td>
+</tr>
+<tr>
+<td>导航自适应</td>
+<td>Compact → NavigationBar，Medium → NavigationRail，Expanded → NavigationDrawer</td>
+</tr>
+<tr>
+<td>规范化布局</td>
+<td>List-Detail（列表详情）、Feed（信息流）、Supporting Panel（辅助面板）</td>
+</tr>
+<tr>
+<td>组件自适应</td>
+<td>Dialog 全屏/限宽切换、BottomSheet 宽度约束、Drawer 永久化</td>
+</tr>
+<tr>
+<td>平台自适应</td>
+<td><code>.adaptive</code> 构造函数、<code>Theme.of(context).platform</code> 判断、按需 Cupertino</td>
+</tr>
+</tbody>
+</table>
+<h3 id="最佳实践总结">最佳实践总结</h3>
+<ol>
+<li><strong>优先使用 <code>MediaQuery.sizeOf</code></strong> 而非 <code>MediaQuery.of</code>，减少不必要的重建</li>
+<li><strong>将断点逻辑封装为工具类</strong>，避免魔法数字散落在各处</li>
+<li><strong>内容组件与布局组件分离</strong>，同一内容在不同布局下复用</li>
+<li><strong>状态提升到布局切换层之上</strong>，确保断点切换时状态不丢失</li>
+<li><strong>使用 <code>LayoutBuilder</code> 处理组件级自适应</strong>，不要所有断点都用 <code>MediaQuery</code></li>
+<li><strong>优雅降级</strong>：先设计大屏体验，再考虑如何在小屏上简化；或反过来，先确保手机可用，再逐步增强</li>
+<li><strong>不要过度自适应</strong>：只在 Material 规范明确建议的地方做断点切换，避免过多的条件分支</li>
+</ol>
+<hr />
+<h2 id="9-课后练习">9. 课后练习</h2>
+<h3 id="练习-1基础断点判断">练习 1：基础断点判断</h3>
+<p>为 <code>WindowSizeClass</code> 工具类添加单元测试，验证各个边界值（599、600、839、840、1199、1200）返回正确的尺寸类。</p>
+<h3 id="练习-2自适应信息流">练习 2：自适应信息流</h3>
+<p>在第 4.2 节的 Feed 布局基础上，为每个卡片添加点击展开功能：</p>
+<ul>
+<li>Compact：点击后进入新页面查看详情</li>
+<li>Medium 及以上：点击后在卡片右侧或下方展开详情</li>
+</ul>
+<h3 id="练习-3完善响应式邮件应用">练习 3：完善响应式邮件应用</h3>
+<p>在第 7 节实战代码的基础上，添加以下功能：</p>
+<ol>
+<li>暗色主题切换（综合第 2 课颜色系统知识）</li>
+<li>邮件搜索和筛选</li>
+<li>新建邮件对话框——Compact 上使用 <code>Dialog.fullscreen</code>，其他尺寸使用常规 <code>AlertDialog</code></li>
+<li>为页面切换添加 Material Motion 动效（综合第 7 课动效知识）</li>
+<li>为所有组件应用统一的组件主题（综合第 6 课主题定制知识）</li>
+</ol>
+<h3 id="练习-4平台自适应">练习 4：平台自适应</h3>
+<p>创建一个设置页面，包含以下自适应控件：</p>
+<ul>
+<li>使用 <code>Switch.adaptive</code> 控制通知开关</li>
+<li>使用 <code>Slider.adaptive</code> 调节字体大小</li>
+<li>确认重置操作时，根据平台显示 Material 或 Cupertino 风格的对话框</li>
+</ul>
+<hr />
+<h2 id="10-material-design-课程总结">10. Material Design 课程总结</h2>
+<p>恭喜你完成了整个 Flutter Material Design 系统学习课程！让我们回顾一下整个旅程：</p>
+<h3 id="8-课知识全景">8 课知识全景</h3>
+<table>
+<thead>
+<tr>
+<th>课程</th>
+<th>核心主题</th>
+<th>你掌握了什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第 01 课</td>
+<td>设计体系总览</td>
+<td>Material 3 核心支柱、M2 vs M3 差异、Design Tokens</td>
+</tr>
+<tr>
+<td>第 02 课</td>
+<td>颜色系统</td>
+<td>ColorScheme 角色体系、种子色、动态取色、色调叠加</td>
+</tr>
+<tr>
+<td>第 03 课</td>
+<td>排版系统</td>
+<td>Type Scale 五大类、Google Fonts、文本无障碍</td>
+</tr>
+<tr>
+<td>第 04 课</td>
+<td>形状与 Elevation</td>
+<td>Shape Token 体系、Elevation 新模型、Surface Tint</td>
+</tr>
+<tr>
+<td>第 05 课</td>
+<td>交互状态</td>
+<td>WidgetState 机制、状态层 opacity、状态驱动样式</td>
+</tr>
+<tr>
+<td>第 06 课</td>
+<td>组件主题</td>
+<td>批量主题定制、ThemeExtension、优先级机制</td>
+</tr>
+<tr>
+<td>第 07 课</td>
+<td>动效规范</td>
+<td>四大转场模式、Easing 曲线、Duration Tokens</td>
+</tr>
+<tr>
+<td>第 08 课</td>
+<td>自适应布局</td>
+<td>窗口尺寸类、自适应导航、规范化布局、跨平台适配</td>
+</tr>
+</tbody>
+</table>
+<h3 id="进阶学习方向">进阶学习方向</h3>
+<p>完成本课程后，以下是推荐的进阶方向：</p>
+<ol>
+<li>
+<p><strong>深入 Material 3 官方规范</strong></p>
+<ul>
+<li>官网 <a href="https://m3.material.io">m3.material.io</a> 不断更新，持续关注最新的组件和模式</li>
+<li>研读各组件的 Anatomy（解剖图）和 Specs（尺寸规格）</li>
+</ul>
+</li>
+<li>
+<p><strong>路由框架与深度链接</strong></p>
+<ul>
+<li>学习 <code>go_router</code> 的 <code>ShellRoute</code>，它原生支持自适应导航</li>
+<li>实现 Web 端的 URL 路由和深度链接</li>
+</ul>
+</li>
+<li>
+<p><strong>状态管理</strong></p>
+<ul>
+<li>将本课的响应式布局与 Riverpod / Bloc 等状态管理方案结合</li>
+<li>实现真正数据驱动的多断点应用</li>
+</ul>
+</li>
+<li>
+<p><strong>无障碍（Accessibility）</strong></p>
+<ul>
+<li>Material Design 的无障碍规范：最小触摸目标 48dp、对比度要求、语义标签</li>
+<li>Flutter 的 <code>Semantics</code> 组件和屏幕阅读器支持</li>
+</ul>
+</li>
+<li>
+<p><strong>Design Token 自动化</strong></p>
+<ul>
+<li>使用 Figma 的 Material 3 Design Kit</li>
+<li>通过 Material Theme Builder 自动生成 Flutter 主题代码</li>
+<li>探索设计系统自动化工具链</li>
+</ul>
+</li>
+<li>
+<p><strong>桌面与 Web 适配</strong></p>
+<ul>
+<li>鼠标悬停、右键菜单、键盘快捷键等桌面特有交互</li>
+<li>响应式 Web 布局和 SEO 优化</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p><strong>寄语</strong>：Material Design 不仅是一套 UI 规范，更是一种设计思维方式——它教会我们如何用系统化、一致的方法来构建用户界面。掌握了这套体系，你不只是一个&quot;会用 Widget&quot;的开发者，而是一个能够交付<strong>专业级视觉体验</strong>的工程师。继续实践，不断打磨，你一定能构建出令人赞叹的应用！</p>
+</blockquote>
+<hr />
+<h2 id="参考资源">参考资源</h2>
+<ul>
+<li><a href="https://m3.material.io">Material Design 3 官方规范</a></li>
+<li><a href="https://m3.material.io/foundations/layout/understanding-layout">Material 3 响应式布局指南</a></li>
+<li><a href="https://docs.flutter.dev/ui/adaptive-responsive">Flutter 响应式设计文档</a></li>
+<li><a href="https://m3.material.io/foundations/layout/canonical-layouts/overview">Material Design 规范化布局</a></li>
+<li><a href="https://pub.dev/packages/go_router">go_router 包 - 自适应路由</a></li>
+<li><a href="https://api.flutter.dev/flutter/widgets/MediaQuery/sizeOf.html">Flutter API - MediaQuery.sizeOf</a></li>
+<li><a href="https://api.flutter.dev/flutter/material/NavigationRail-class.html">Flutter API - NavigationRail</a></li>
+<li><a href="https://api.flutter.dev/flutter/material/NavigationDrawer-class.html">Flutter API - NavigationDrawer</a></li>
+</ul>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2581 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第05课-widgetstate-与交互状态管理">第05课 WidgetState 与交互状态管理</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter Material Design 系统学习<br />
+<strong>前置条件</strong>：已掌握按钮、输入框等交互组件的基本用法和 ButtonStyle<br />
+<strong>课程目标</strong>：深入理解 Material 交互状态体系，熟练使用 WidgetState 与 WidgetStateProperty 实现符合 Material 规范的动态样式</p>
+</blockquote>
+<hr />
+<p>在 Material Design 中，用户与界面的每一次交互都应该得到即时、清晰的视觉反馈——鼠标悬停时颜色微变、按下时阴影加深、禁用时灰度化……这些看似细微的变化，背后有一套完整的<strong>交互状态体系</strong>在驱动。Flutter 提供了 <code>WidgetState</code> 机制来实现这一切，它是 Material 组件样式定制的核心基石。</p>
+<p>本课将从原理出发，带你完整掌握这套机制。</p>
+<hr />
+<h2 id="1-material-交互状态体系7-种状态">1. Material 交互状态体系：7 种状态</h2>
+<p>Material Design 规范定义了 <strong>7 种交互状态</strong>，它们描述了组件在不同交互阶段的视觉表现：</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>枚举值</th>
+<th>含义</th>
+<th>典型触发方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>悬停</td>
+<td><code>WidgetState.hovered</code></td>
+<td>鼠标指针悬停在组件上</td>
+<td>桌面端鼠标移入</td>
+</tr>
+<tr>
+<td>聚焦</td>
+<td><code>WidgetState.focused</code></td>
+<td>组件获得输入焦点</td>
+<td>Tab 键导航、点击输入框</td>
+</tr>
+<tr>
+<td>按下</td>
+<td><code>WidgetState.pressed</code></td>
+<td>用户正在按压组件</td>
+<td>手指/鼠标按住不放</td>
+</tr>
+<tr>
+<td>拖动</td>
+<td><code>WidgetState.dragged</code></td>
+<td>组件正在被拖动</td>
+<td>拖拽手势进行中</td>
+</tr>
+<tr>
+<td>选中</td>
+<td><code>WidgetState.selected</code></td>
+<td>组件处于选中状态</td>
+<td>Checkbox 勾选、ToggleButton 激活</td>
+</tr>
+<tr>
+<td>禁用</td>
+<td><code>WidgetState.disabled</code></td>
+<td>组件不可交互</td>
+<td><code>onPressed: null</code></td>
+</tr>
+<tr>
+<td>错误</td>
+<td><code>WidgetState.error</code></td>
+<td>组件处于错误状态</td>
+<td>表单校验失败</td>
+</tr>
+</tbody>
+</table>
+<h3 id="11-状态的叠加与优先级">1.1 状态的叠加与优先级</h3>
+<p>关键要理解的是：<strong>这些状态不是互斥的，它们可以同时存在</strong>。比如一个按钮可以同时处于 <code>hovered</code> + <code>focused</code> 状态（用户用 Tab 聚焦后鼠标又移了上去），一个输入框可以同时处于 <code>focused</code> + <code>error</code> 状态（获得焦点且校验失败）。</p>
+<p>Material 规范建议的状态优先级（当多个状态同时激活时，视觉效果以高优先级为主）：</p>
+<pre><code>dragged &gt; pressed &gt; hovered &gt; focused &gt; selected &gt; disabled &gt; error &gt; 默认
+</code></pre>
+<h3 id="12-直观感受各种状态">1.2 直观感受各种状态</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: StateOverviewPage()));
+
+class StateOverviewPage extends StatelessWidget {
+  const StateOverviewPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Material 交互状态概览')),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('正常按钮（可体验 hover / focus / pressed）：'),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('可交互按钮'),
+            ),
+            const SizedBox(height: 24),
+            const Text('禁用按钮（disabled 状态）：'),
+            const SizedBox(height: 8),
+            const ElevatedButton(
+              onPressed: null, // onPressed 为 null 即为 disabled
+              child: Text('禁用按钮'),
+            ),
+            const SizedBox(height: 24),
+            const Text('输入框（可体验 focused / error）：'),
+            const SizedBox(height: 8),
+            TextFormField(
+              decoration: const InputDecoration(
+                labelText: '请输入邮箱',
+                border: OutlineInputBorder(),
+              ),
+              // 简单校验：非空且包含 @
+              validator: (value) {
+                if (value == null || !value.contains('@')) {
+                  return '请输入有效的邮箱地址';
+                }
+                return null;
+              },
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+            ),
+            const SizedBox(height: 24),
+            const Text('选中状态（selected）：'),
+            const SizedBox(height: 8),
+            const _SelectableChipDemo(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SelectableChipDemo extends StatefulWidget {
+  const _SelectableChipDemo();
+
+  @override
+  State&lt;_SelectableChipDemo&gt; createState() =&gt; _SelectableChipDemoState();
+}
+
+class _SelectableChipDemoState extends State&lt;_SelectableChipDemo&gt; {
+  bool _selected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilterChip(
+      label: const Text('Flutter'),
+      selected: _selected,
+      onSelected: (value) =&gt; setState(() =&gt; _selected = value),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：<code>disabled</code> 状态不是通过某个 <code>disabled</code> 属性设置的，而是当组件的回调（如 <code>onPressed</code>、<code>onChanged</code>）为 <code>null</code> 时自动进入。这是 Flutter 中的通用约定。</p>
+</blockquote>
+<hr />
+<h2 id="2-widgetstate-机制详解">2. WidgetState 机制详解</h2>
+<h3 id="21-从-materialstate-到-widgetstate-的演变">2.1 从 MaterialState 到 WidgetState 的演变</h3>
+<p>在 Flutter 3.19 之前，这套机制使用的类名为 <code>MaterialState</code> 和 <code>MaterialStateProperty</code>。从 <strong>Flutter 3.19</strong> 开始，它们被重命名为 <code>WidgetState</code> 和 <code>WidgetStateProperty</code>，旧名称仍可用但标记为 <code>@Deprecated</code>。</p>
+<p>重命名的原因是：这套状态机制不仅仅适用于 Material 组件，Cupertino 和自定义组件同样可以复用，因此使用更通用的命名更合理。</p>
+<pre><code class="language-dart">// Flutter 3.19 之前
+MaterialState.hovered
+MaterialStateProperty.resolveWith(...)
+
+// Flutter 3.19+ 推荐写法
+WidgetState.hovered
+WidgetStateProperty.resolveWith(...)
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：新代码一律使用 <code>WidgetState</code> / <code>WidgetStateProperty</code>。如果你维护的项目有旧代码使用 <code>MaterialState</code>，可以逐步迁移。两者在功能上完全等价。</p>
+</blockquote>
+<h3 id="22-widgetstate-枚举">2.2 WidgetState 枚举</h3>
+<p><code>WidgetState</code> 是一个简单的枚举，定义了上面提到的 7 种状态：</p>
+<pre><code class="language-dart">enum WidgetState {
+  hovered,
+  focused,
+  pressed,
+  dragged,
+  selected,
+  disabled,
+  error,
+}
+</code></pre>
+<h3 id="23-setwidgetstate--状态集合">2.3 Set&lt;WidgetState&gt; —— 状态集合</h3>
+<p>Flutter 用 <code>Set&lt;WidgetState&gt;</code> 来表示一个组件<strong>当前激活的所有状态</strong>。这是因为状态可以同时叠加：</p>
+<pre><code class="language-dart">// 组件同时处于 hover 和 focused 状态
+final Set&lt;WidgetState&gt; currentStates = {
+  WidgetState.hovered,
+  WidgetState.focused,
+};
+
+// 判断某个状态是否激活
+bool isHovered = currentStates.contains(WidgetState.hovered); // true
+bool isPressed = currentStates.contains(WidgetState.pressed); // false
+</code></pre>
+<p>Flutter 还提供了一个便捷的 <code>WidgetState.values</code> 来获取所有可能的状态值，以及一些 <code>Set</code> 上的便捷方法：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: StateSetDemoPage()));
+
+class StateSetDemoPage extends StatelessWidget {
+  const StateSetDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 模拟一组当前状态
+    final states = &lt;WidgetState&gt;{
+      WidgetState.hovered,
+      WidgetState.focused,
+    };
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Set&lt;WidgetState&gt; 演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('当前状态集合：$states'),
+            const SizedBox(height: 16),
+            Text('是否 hovered：${states.contains(WidgetState.hovered)}'),
+            Text('是否 pressed：${states.contains(WidgetState.pressed)}'),
+            Text('是否 disabled：${states.contains(WidgetState.disabled)}'),
+            const SizedBox(height: 16),
+            Text('所有 WidgetState 值：${WidgetState.values}'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="3-widgetstatepropertyt-详解">3. WidgetStateProperty&lt;T&gt; 详解</h2>
+<p><code>WidgetStateProperty&lt;T&gt;</code> 是 Material 样式定制的核心接口。它的作用是：<strong>根据组件当前的状态集合，动态返回一个对应类型 T 的值</strong>。</p>
+<h3 id="31-核心原理">3.1 核心原理</h3>
+<p><code>WidgetStateProperty&lt;T&gt;</code> 本质上是一个接口，只有一个核心方法：</p>
+<pre><code class="language-dart">abstract class WidgetStateProperty&lt;T&gt; {
+  /// 根据当前状态集合解析出最终值
+  T resolve(Set&lt;WidgetState&gt; states);
+}
+</code></pre>
+<p>当 Flutter 渲染一个 Material 组件时，框架会收集组件当前的所有状态（如 <code>{hovered, focused}</code>），然后将这个状态集合传给 <code>resolve()</code> 方法，由开发者来决定在该状态组合下返回什么样式值。</p>
+<h3 id="32-widgetstatepropertyresolvewith">3.2 WidgetStateProperty.resolveWith</h3>
+<p>这是最常用的工厂构造函数，接受一个回调，回调参数是当前状态集合：</p>
+<pre><code class="language-dart">WidgetStateProperty.resolveWith&lt;T&gt;((Set&lt;WidgetState&gt; states) {
+  // 根据 states 返回不同的值
+  return someValue;
+})
+</code></pre>
+<p><strong>示例一：按钮背景色随状态变化</strong></p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: ResolveWithDemoPage()));
+
+class ResolveWithDemoPage extends StatelessWidget {
+  const ResolveWithDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('resolveWith 基础示例')),
+      body: Center(
+        child: ElevatedButton(
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.resolveWith&lt;Color&gt;(
+              (Set&lt;WidgetState&gt; states) {
+                if (states.contains(WidgetState.disabled)) {
+                  return Colors.grey.shade300; // 禁用：浅灰
+                }
+                if (states.contains(WidgetState.pressed)) {
+                  return Colors.blue.shade800; // 按下：深蓝
+                }
+                if (states.contains(WidgetState.hovered)) {
+                  return Colors.blue.shade600; // 悬停：中蓝
+                }
+                return Colors.blue; // 默认：蓝色
+              },
+            ),
+            foregroundColor: WidgetStateProperty.resolveWith&lt;Color&gt;(
+              (Set&lt;WidgetState&gt; states) {
+                if (states.contains(WidgetState.disabled)) {
+                  return Colors.grey.shade500;
+                }
+                return Colors.white;
+              },
+            ),
+          ),
+          onPressed: () {},
+          child: const Text('状态响应按钮'),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>示例二：根据状态改变边框样式</strong></p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: BorderStateDemoPage()));
+
+class BorderStateDemoPage extends StatelessWidget {
+  const BorderStateDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('边框状态示例')),
+      body: Center(
+        child: OutlinedButton(
+          style: ButtonStyle(
+            side: WidgetStateProperty.resolveWith&lt;BorderSide&gt;(
+              (Set&lt;WidgetState&gt; states) {
+                if (states.contains(WidgetState.pressed)) {
+                  return const BorderSide(color: Colors.deepPurple, width: 3);
+                }
+                if (states.contains(WidgetState.hovered)) {
+                  return const BorderSide(color: Colors.purple, width: 2);
+                }
+                if (states.contains(WidgetState.focused)) {
+                  return const BorderSide(color: Colors.purpleAccent, width: 2);
+                }
+                return const BorderSide(color: Colors.grey, width: 1);
+              },
+            ),
+          ),
+          onPressed: () {},
+          child: const Text('状态边框按钮'),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>示例三：根据状态改变阴影</strong></p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: ElevationStateDemoPage()));
+
+class ElevationStateDemoPage extends StatelessWidget {
+  const ElevationStateDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('阴影状态示例')),
+      body: Center(
+        child: ElevatedButton(
+          style: ButtonStyle(
+            elevation: WidgetStateProperty.resolveWith&lt;double&gt;(
+              (Set&lt;WidgetState&gt; states) {
+                if (states.contains(WidgetState.disabled)) {
+                  return 0; // 禁用：无阴影
+                }
+                if (states.contains(WidgetState.pressed)) {
+                  return 1; // 按下：阴影减小（按压效果）
+                }
+                if (states.contains(WidgetState.hovered)) {
+                  return 6; // 悬停：阴影增大（浮起效果）
+                }
+                return 2; // 默认阴影
+              },
+            ),
+          ),
+          onPressed: () {},
+          child: const Text('阴影变化按钮'),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>示例四：组合多个状态判断</strong></p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: CombinedStateDemoPage()));
+
+class CombinedStateDemoPage extends StatelessWidget {
+  const CombinedStateDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('组合状态示例')),
+      body: Center(
+        child: ElevatedButton(
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.resolveWith&lt;Color&gt;(
+              (Set&lt;WidgetState&gt; states) {
+                // 同时检查多个状态
+                final isHovered = states.contains(WidgetState.hovered);
+                final isFocused = states.contains(WidgetState.focused);
+                final isPressed = states.contains(WidgetState.pressed);
+                final isDisabled = states.contains(WidgetState.disabled);
+
+                if (isDisabled) return Colors.grey.shade300;
+                if (isPressed) return Colors.teal.shade700;
+                // hover + focus 同时激活时使用特殊颜色
+                if (isHovered &amp;&amp; isFocused) return Colors.teal.shade500;
+                if (isHovered) return Colors.teal.shade400;
+                if (isFocused) return Colors.teal.shade300;
+                return Colors.teal;
+              },
+            ),
+            foregroundColor: const WidgetStatePropertyAll(Colors.white),
+          ),
+          onPressed: () {},
+          child: const Text('组合状态按钮'),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="33-widgetstatepropertyall">3.3 WidgetStateProperty.all</h3>
+<p>当你希望<strong>在所有状态下都使用相同的值</strong>时，使用 <code>WidgetStateProperty.all</code>：</p>
+<pre><code class="language-dart">ButtonStyle(
+  // 不管什么状态，背景都是蓝色
+  backgroundColor: WidgetStateProperty.all(Colors.blue),
+  // 不管什么状态，内边距都一样
+  padding: WidgetStateProperty.all(
+    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+  ),
+)
+</code></pre>
+<h3 id="34-widgetstatepropertyall--简写形式">3.4 WidgetStatePropertyAll —— 简写形式</h3>
+<p><code>WidgetStatePropertyAll&lt;T&gt;</code> 是 <code>WidgetStateProperty.all</code> 的简写类形式，效果完全相同：</p>
+<pre><code class="language-dart">ButtonStyle(
+  // 以下两种写法等价
+  backgroundColor: WidgetStateProperty.all(Colors.blue),
+  backgroundColor: const WidgetStatePropertyAll(Colors.blue),
+  
+  // WidgetStatePropertyAll 的优势：可以用 const 修饰
+  foregroundColor: const WidgetStatePropertyAll(Colors.white),
+  padding: const WidgetStatePropertyAll(
+    EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+  ),
+)
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：当值是编译期常量时，优先使用 <code>const WidgetStatePropertyAll(...)</code> 而非 <code>WidgetStateProperty.all(...)</code>，可以获得 const 优化带来的性能收益。</p>
+</blockquote>
+<h3 id="35-widgetstatepropertylerp--状态属性插值">3.5 WidgetStateProperty.lerp —— 状态属性插值</h3>
+<p><code>WidgetStateProperty.lerp</code> 用于在两个 <code>WidgetStateProperty</code> 之间进行<strong>线性插值</strong>，常用于动画过渡场景（如主题切换动画）。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: LerpDemoPage()));
+
+class LerpDemoPage extends StatefulWidget {
+  const LerpDemoPage({super.key});
+
+  @override
+  State&lt;LerpDemoPage&gt; createState() =&gt; _LerpDemoPageState();
+}
+
+class _LerpDemoPageState extends State&lt;LerpDemoPage&gt; {
+  double _t = 0.0; // 插值参数，0.0 到 1.0
+
+  // 起始状态属性：蓝色系
+  final WidgetStateProperty&lt;Color?&gt; _startColor =
+      WidgetStateProperty.resolveWith((states) {
+    if (states.contains(WidgetState.pressed)) return Colors.blue.shade800;
+    return Colors.blue;
+  });
+
+  // 结束状态属性：红色系
+  final WidgetStateProperty&lt;Color?&gt; _endColor =
+      WidgetStateProperty.resolveWith((states) {
+    if (states.contains(WidgetState.pressed)) return Colors.red.shade800;
+    return Colors.red;
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // 在两个 WidgetStateProperty 之间插值
+    final interpolated = WidgetStateProperty.lerp&lt;Color?&gt;(
+      _startColor,
+      _endColor,
+      _t,
+      Color.lerp, // 颜色的插值函数
+    );
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('WidgetStateProperty.lerp')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: interpolated,
+                foregroundColor: const WidgetStatePropertyAll(Colors.white),
+              ),
+              onPressed: () {},
+              child: Text('插值 t = ${_t.toStringAsFixed(2)}'),
+            ),
+            const SizedBox(height: 32),
+            Text('拖动滑块改变插值参数 t'),
+            Slider(
+              value: _t,
+              onChanged: (v) =&gt; setState(() =&gt; _t = v),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              't = 0.0 → 蓝色系   |   t = 1.0 → 红色系',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="4-状态层state-layer">4. 状态层（State Layer）</h2>
+<h3 id="41-什么是状态层">4.1 什么是状态层</h3>
+<p>状态层是 Material Design 规范中的一个核心视觉概念。简单来说，它是在<strong>组件表面叠加的一层半透明颜色</strong>，用来向用户传达当前的交互状态。</p>
+<p>你可以把它想象为在按钮表面铺了一层&quot;有色玻璃&quot;：</p>
+<ul>
+<li>默认状态下这层玻璃完全透明（看不见）</li>
+<li>鼠标悬停时这层玻璃变为 8% 透明度的主题色</li>
+<li>按下时变为 10% 透明度</li>
+<li>拖动时变为 16% 透明度</li>
+</ul>
+<p>这种设计的好处是：状态反馈<strong>与组件本身的颜色解耦</strong>。不管按钮是什么颜色，叠加同样规则的状态层都能产生自然和谐的视觉效果。</p>
+<h3 id="42-state-layer-opacity-规范值">4.2 State Layer Opacity 规范值</h3>
+<p>Material Design 3 规定了不同状态下的标准透明度值：</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>叠加透明度</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>默认（enabled）</td>
+<td>0%（无叠加）</td>
+<td>组件处于静止可用状态</td>
+</tr>
+<tr>
+<td>Hovered</td>
+<td><strong>8%</strong></td>
+<td>鼠标悬停，轻微反馈</td>
+</tr>
+<tr>
+<td>Focused</td>
+<td><strong>10%</strong></td>
+<td>键盘聚焦，比 hover 略明显</td>
+</tr>
+<tr>
+<td>Pressed</td>
+<td><strong>10%</strong></td>
+<td>按压反馈（通常还伴有水波纹）</td>
+</tr>
+<tr>
+<td>Dragged</td>
+<td><strong>16%</strong></td>
+<td>拖动中，最明显的状态层</td>
+</tr>
+<tr>
+<td>Disabled</td>
+<td>组件整体降低对比度</td>
+<td>通常不使用状态层，而是降低组件的整体不透明度</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-在-flutter-中实现状态层">4.3 在 Flutter 中实现状态层</h3>
+<p>Flutter 中通过 <code>overlayColor</code> 来实现状态层效果：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: StateLayerDemoPage()));
+
+class StateLayerDemoPage extends StatelessWidget {
+  const StateLayerDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('State Layer 演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('符合 Material 规范的状态层按钮：'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              style: ButtonStyle(
+                // 使用 overlayColor 实现状态层
+                overlayColor: WidgetStateProperty.resolveWith&lt;Color?&gt;(
+                  (Set&lt;WidgetState&gt; states) {
+                    if (states.contains(WidgetState.pressed)) {
+                      return primaryColor.withOpacity(0.10); // 按下 10%
+                    }
+                    if (states.contains(WidgetState.hovered)) {
+                      return primaryColor.withOpacity(0.08); // 悬停 8%
+                    }
+                    if (states.contains(WidgetState.focused)) {
+                      return primaryColor.withOpacity(0.10); // 聚焦 10%
+                    }
+                    return null; // 默认无叠加
+                  },
+                ),
+              ),
+              onPressed: () {},
+              child: const Text('Material 状态层按钮'),
+            ),
+            const SizedBox(height: 48),
+            const Text('对比：自定义高对比度状态层'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              style: ButtonStyle(
+                overlayColor: WidgetStateProperty.resolveWith&lt;Color?&gt;(
+                  (Set&lt;WidgetState&gt; states) {
+                    // 故意设置很高的透明度以便观察效果
+                    if (states.contains(WidgetState.pressed)) {
+                      return Colors.black.withOpacity(0.30);
+                    }
+                    if (states.contains(WidgetState.hovered)) {
+                      return Colors.black.withOpacity(0.15);
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              onPressed: () {},
+              child: const Text('高对比度状态层按钮'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：Material 组件（如 <code>ElevatedButton</code>、<code>FilledButton</code>）已经内置了符合规范的状态层效果。只有在需要<strong>自定义</strong>状态层行为时才需要手动设置 <code>overlayColor</code>。不要在不理解默认行为的情况下盲目覆盖。</p>
+</blockquote>
+<h3 id="44-封装一个状态层工具函数">4.4 封装一个状态层工具函数</h3>
+<p>在实际项目中，你可以封装一个遵循 Material 规范的状态层颜色工具：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+/// 根据 Material 规范创建状态层叠加颜色
+WidgetStateProperty&lt;Color?&gt; materialStateLayer(Color color) {
+  return WidgetStateProperty.resolveWith&lt;Color?&gt;((states) {
+    if (states.contains(WidgetState.dragged)) {
+      return color.withOpacity(0.16);
+    }
+    if (states.contains(WidgetState.pressed)) {
+      return color.withOpacity(0.10);
+    }
+    if (states.contains(WidgetState.hovered)) {
+      return color.withOpacity(0.08);
+    }
+    if (states.contains(WidgetState.focused)) {
+      return color.withOpacity(0.10);
+    }
+    return null;
+  });
+}
+
+// 使用方式
+void example() {
+  final style = ButtonStyle(
+    overlayColor: materialStateLayer(Colors.blue),
+  );
+}
+</code></pre>
+<hr />
+<h2 id="5-在-buttonstyle-中运用状态属性">5. 在 ButtonStyle 中运用状态属性</h2>
+<p><code>ButtonStyle</code> 是状态属性使用最密集的地方。它的几乎每个属性都接受 <code>WidgetStateProperty&lt;T&gt;</code> 类型，这意味着每个样式维度都可以根据状态动态变化。</p>
+<h3 id="51-buttonstyle-中支持状态属性的字段">5.1 ButtonStyle 中支持状态属性的字段</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backgroundColor</code></td>
+<td><code>WidgetStateProperty&lt;Color?&gt;</code></td>
+<td>背景色</td>
+</tr>
+<tr>
+<td><code>foregroundColor</code></td>
+<td><code>WidgetStateProperty&lt;Color?&gt;</code></td>
+<td>前景色（文字、图标颜色）</td>
+</tr>
+<tr>
+<td><code>overlayColor</code></td>
+<td><code>WidgetStateProperty&lt;Color?&gt;</code></td>
+<td>状态层叠加色</td>
+</tr>
+<tr>
+<td><code>shadowColor</code></td>
+<td><code>WidgetStateProperty&lt;Color?&gt;</code></td>
+<td>阴影颜色</td>
+</tr>
+<tr>
+<td><code>surfaceTintColor</code></td>
+<td><code>WidgetStateProperty&lt;Color?&gt;</code></td>
+<td>表面色调</td>
+</tr>
+<tr>
+<td><code>elevation</code></td>
+<td><code>WidgetStateProperty&lt;double?&gt;</code></td>
+<td>阴影高度</td>
+</tr>
+<tr>
+<td><code>padding</code></td>
+<td><code>WidgetStateProperty&lt;EdgeInsetsGeometry?&gt;</code></td>
+<td>内边距</td>
+</tr>
+<tr>
+<td><code>minimumSize</code></td>
+<td><code>WidgetStateProperty&lt;Size?&gt;</code></td>
+<td>最小尺寸</td>
+</tr>
+<tr>
+<td><code>maximumSize</code></td>
+<td><code>WidgetStateProperty&lt;Size?&gt;</code></td>
+<td>最大尺寸</td>
+</tr>
+<tr>
+<td><code>side</code></td>
+<td><code>WidgetStateProperty&lt;BorderSide?&gt;</code></td>
+<td>边框</td>
+</tr>
+<tr>
+<td><code>shape</code></td>
+<td><code>WidgetStateProperty&lt;OutlinedBorder?&gt;</code></td>
+<td>形状</td>
+</tr>
+<tr>
+<td><code>textStyle</code></td>
+<td><code>WidgetStateProperty&lt;TextStyle?&gt;</code></td>
+<td>文字样式</td>
+</tr>
+<tr>
+<td><code>iconColor</code></td>
+<td><code>WidgetStateProperty&lt;Color?&gt;</code></td>
+<td>图标颜色</td>
+</tr>
+<tr>
+<td><code>iconSize</code></td>
+<td><code>WidgetStateProperty&lt;double?&gt;</code></td>
+<td>图标大小</td>
+</tr>
+<tr>
+<td><code>mouseCursor</code></td>
+<td><code>WidgetStateProperty&lt;MouseCursor?&gt;</code></td>
+<td>鼠标光标</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-综合示例完全定制的-buttonstyle">5.2 综合示例：完全定制的 ButtonStyle</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: FullButtonStylePage()));
+
+class FullButtonStylePage extends StatelessWidget {
+  const FullButtonStylePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('ButtonStyle 状态属性综合')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 完全自定义的按钮
+            ElevatedButton(
+              style: ButtonStyle(
+                // 背景色：根据状态变化
+                backgroundColor:
+                    WidgetStateProperty.resolveWith&lt;Color&gt;((states) {
+                  if (states.contains(WidgetState.disabled)) {
+                    return const Color(0xFFE0E0E0);
+                  }
+                  if (states.contains(WidgetState.pressed)) {
+                    return const Color(0xFF1565C0);
+                  }
+                  if (states.contains(WidgetState.hovered)) {
+                    return const Color(0xFF1E88E5);
+                  }
+                  return const Color(0xFF2196F3);
+                }),
+                // 前景色
+                foregroundColor:
+                    WidgetStateProperty.resolveWith&lt;Color&gt;((states) {
+                  if (states.contains(WidgetState.disabled)) {
+                    return const Color(0xFF9E9E9E);
+                  }
+                  return Colors.white;
+                }),
+                // 阴影
+                elevation:
+                    WidgetStateProperty.resolveWith&lt;double&gt;((states) {
+                  if (states.contains(WidgetState.disabled)) return 0;
+                  if (states.contains(WidgetState.pressed)) return 1;
+                  if (states.contains(WidgetState.hovered)) return 8;
+                  return 4;
+                }),
+                // 形状：hover 时圆角变大
+                shape:
+                    WidgetStateProperty.resolveWith&lt;OutlinedBorder&gt;((states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    );
+                  }
+                  if (states.contains(WidgetState.hovered)) {
+                    return RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    );
+                  }
+                  return RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  );
+                }),
+                // 内边距
+                padding: WidgetStateProperty.resolveWith&lt;EdgeInsets&gt;((states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    );
+                  }
+                  return const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  );
+                }),
+                // 覆盖层颜色（水波纹等效果的颜色）
+                overlayColor:
+                    WidgetStateProperty.resolveWith&lt;Color?&gt;((states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return Colors.white.withOpacity(0.10);
+                  }
+                  if (states.contains(WidgetState.hovered)) {
+                    return Colors.white.withOpacity(0.08);
+                  }
+                  return null;
+                }),
+              ),
+              onPressed: () {},
+              child: const Text('完全定制按钮'),
+            ),
+            const SizedBox(height: 24),
+            // 禁用版本
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor:
+                    WidgetStateProperty.resolveWith&lt;Color&gt;((states) {
+                  if (states.contains(WidgetState.disabled)) {
+                    return const Color(0xFFE0E0E0);
+                  }
+                  return const Color(0xFF2196F3);
+                }),
+                foregroundColor:
+                    WidgetStateProperty.resolveWith&lt;Color&gt;((states) {
+                  if (states.contains(WidgetState.disabled)) {
+                    return const Color(0xFF9E9E9E);
+                  }
+                  return Colors.white;
+                }),
+                elevation:
+                    WidgetStateProperty.resolveWith&lt;double&gt;((states) {
+                  if (states.contains(WidgetState.disabled)) return 0;
+                  return 4;
+                }),
+              ),
+              onPressed: null, // 禁用
+              child: const Text('禁用状态'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="6-在-inputdecoration-中运用状态属性">6. 在 InputDecoration 中运用状态属性</h2>
+<p>输入框的装饰 <code>InputDecoration</code> 同样支持状态属性。它的某些属性（如 <code>labelStyle</code>、<code>border</code> 等）接受 <code>WidgetStateProperty</code> 类型，允许根据输入框的状态（聚焦、错误、禁用等）动态调整样式。</p>
+<h3 id="61-inputdecoration-中的状态属性字段">6.1 InputDecoration 中的状态属性字段</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>labelStyle</code></td>
+<td><code>WidgetStateProperty&lt;TextStyle?&gt;?</code></td>
+<td>标签文字样式</td>
+</tr>
+<tr>
+<td><code>floatingLabelStyle</code></td>
+<td><code>WidgetStateProperty&lt;TextStyle?&gt;?</code></td>
+<td>浮动标签样式</td>
+</tr>
+<tr>
+<td><code>helperStyle</code></td>
+<td><code>WidgetStateProperty&lt;TextStyle?&gt;?</code></td>
+<td>帮助文字样式</td>
+</tr>
+<tr>
+<td><code>hintStyle</code></td>
+<td><code>WidgetStateProperty&lt;TextStyle?&gt;?</code></td>
+<td>提示文字样式</td>
+</tr>
+<tr>
+<td><code>prefixStyle</code></td>
+<td><code>WidgetStateProperty&lt;TextStyle?&gt;?</code></td>
+<td>前缀文字样式</td>
+</tr>
+<tr>
+<td><code>suffixStyle</code></td>
+<td><code>WidgetStateProperty&lt;TextStyle?&gt;?</code></td>
+<td>后缀文字样式</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意事项</strong>：<code>InputDecoration</code> 中支持 <code>WidgetStateProperty</code> 的属性随 Flutter 版本在不断增加。建议查阅你所使用 Flutter 版本的 API 文档获取最新信息。</p>
+</blockquote>
+<h3 id="62-示例根据状态定制输入框样式">6.2 示例：根据状态定制输入框样式</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: InputStateDemoPage()));
+
+class InputStateDemoPage extends StatefulWidget {
+  const InputStateDemoPage({super.key});
+
+  @override
+  State&lt;InputStateDemoPage&gt; createState() =&gt; _InputStateDemoPageState();
+}
+
+class _InputStateDemoPageState extends State&lt;InputStateDemoPage&gt; {
+  final _formKey = GlobalKey&lt;FormState&gt;();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('InputDecoration 状态属性')),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: '用户名',
+                  // 标签文字样式随状态变化
+                  floatingLabelStyle:
+                      WidgetStateProperty.resolveWith&lt;TextStyle?&gt;(
+                    (Set&lt;WidgetState&gt; states) {
+                      if (states.contains(WidgetState.error)) {
+                        return const TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        );
+                      }
+                      if (states.contains(WidgetState.focused)) {
+                        return TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        );
+                      }
+                      return null; // 使用默认样式
+                    },
+                  ),
+                  border: const OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.length &lt; 3) {
+                    return '用户名至少 3 个字符';
+                  }
+                  return null;
+                },
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+              ),
+              const SizedBox(height: 24),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: '邮箱',
+                  hintText: 'example@email.com',
+                  // 提示文字样式随状态变化
+                  hintStyle: WidgetStateProperty.resolveWith&lt;TextStyle?&gt;(
+                    (Set&lt;WidgetState&gt; states) {
+                      if (states.contains(WidgetState.focused)) {
+                        return TextStyle(
+                          color: Colors.grey.shade400,
+                          fontStyle: FontStyle.italic,
+                        );
+                      }
+                      return TextStyle(color: Colors.grey.shade300);
+                    },
+                  ),
+                  border: const OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || !value.contains('@')) {
+                    return '请输入有效的邮箱地址';
+                  }
+                  return null;
+                },
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton(
+                onPressed: () =&gt; _formKey.currentState?.validate(),
+                child: const Text('验证表单'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="63-在-inputdecorationtheme-中全局定制">6.3 在 InputDecorationTheme 中全局定制</h3>
+<p>如果你希望所有输入框都遵循相同的状态样式规则，可以在 <code>ThemeData</code> 的 <code>inputDecorationTheme</code> 中统一配置：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      theme: ThemeData(
+        inputDecorationTheme: InputDecorationTheme(
+          // 全局设置浮动标签样式
+          floatingLabelStyle:
+              WidgetStateProperty.resolveWith&lt;TextStyle?&gt;((states) {
+            if (states.contains(WidgetState.error)) {
+              return const TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              );
+            }
+            if (states.contains(WidgetState.focused)) {
+              return const TextStyle(
+                color: Colors.indigo,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              );
+            }
+            return const TextStyle(
+              color: Colors.grey,
+              fontSize: 14,
+            );
+          }),
+          border: const OutlineInputBorder(),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.indigo, width: 2),
+          ),
+          errorBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red, width: 2),
+          ),
+        ),
+      ),
+      home: const Scaffold(
+        body: Center(child: Text('全局 InputDecoration 主题')),
+      ),
+    ),
+  );
+}
+</code></pre>
+<hr />
+<h2 id="7-widgetstatescontroller监听和控制组件状态">7. WidgetStatesController：监听和控制组件状态</h2>
+<h3 id="71-什么是-widgetstatescontroller">7.1 什么是 WidgetStatesController</h3>
+<p>前面我们学习的都是<strong>被动响应</strong>状态——组件状态改变后，样式属性自动解析出新值。但有时候你需要<strong>主动监听</strong>状态变化，或者在外部<strong>主动控制</strong>组件的状态。</p>
+<p><code>WidgetStatesController</code> 就是为此设计的。它是一个类似于 <code>TextEditingController</code> 的控制器，可以：</p>
+<ol>
+<li><strong>监听状态变化</strong>：通过 <code>addListener</code> 在状态改变时收到通知</li>
+<li><strong>读取当前状态</strong>：通过 <code>value</code> 属性获取当前的 <code>Set&lt;WidgetState&gt;</code></li>
+<li><strong>修改组件状态</strong>：通过 <code>update</code> 方法主动添加或移除状态</li>
+</ol>
+<h3 id="72-基础用法监听按钮状态">7.2 基础用法：监听按钮状态</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: StatesControllerDemoPage()));
+
+class StatesControllerDemoPage extends StatefulWidget {
+  const StatesControllerDemoPage({super.key});
+
+  @override
+  State&lt;StatesControllerDemoPage&gt; createState() =&gt;
+      _StatesControllerDemoPageState();
+}
+
+class _StatesControllerDemoPageState extends State&lt;StatesControllerDemoPage&gt; {
+  // 创建控制器
+  final WidgetStatesController _controller = WidgetStatesController();
+  String _stateInfo = '尚无状态';
+
+  @override
+  void initState() {
+    super.initState();
+    // 监听状态变化
+    _controller.addListener(_onStateChanged);
+  }
+
+  void _onStateChanged() {
+    setState(() {
+      final states = _controller.value;
+      if (states.isEmpty) {
+        _stateInfo = '默认（无激活状态）';
+      } else {
+        _stateInfo = states.map((s) =&gt; s.name).join(', ');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onStateChanged);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('WidgetStatesController')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '当前状态：$_stateInfo',
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+            const SizedBox(height: 32),
+            const Text('试试 hover、按下这个按钮：'),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              statesController: _controller, // 绑定控制器
+              onPressed: () {},
+              child: const Text('被监听的按钮'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="73-高级用法状态日志记录器">7.3 高级用法：状态日志记录器</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: StateLoggerPage()));
+
+class StateLoggerPage extends StatefulWidget {
+  const StateLoggerPage({super.key});
+
+  @override
+  State&lt;StateLoggerPage&gt; createState() =&gt; _StateLoggerPageState();
+}
+
+class _StateLoggerPageState extends State&lt;StateLoggerPage&gt; {
+  final WidgetStatesController _controller = WidgetStatesController();
+  final List&lt;String&gt; _logs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      final timestamp = DateTime.now().toString().substring(11, 23);
+      final states = _controller.value;
+      final stateStr =
+          states.isEmpty ? '默认' : states.map((s) =&gt; s.name).join(' + ');
+      setState(() {
+        _logs.insert(0, '[$timestamp] $stateStr');
+        // 最多保留 20 条日志
+        if (_logs.length &gt; 20) _logs.removeLast();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('状态变化日志')),
+      body: Column(
+        children: [
+          const SizedBox(height: 24),
+          ElevatedButton(
+            statesController: _controller,
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.pressed)) {
+                  return Colors.green.shade700;
+                }
+                if (states.contains(WidgetState.hovered)) {
+                  return Colors.green.shade400;
+                }
+                return Colors.green;
+              }),
+              foregroundColor: const WidgetStatePropertyAll(Colors.white),
+              padding: const WidgetStatePropertyAll(
+                EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              ),
+            ),
+            onPressed: () {},
+            child: const Text('交互此按钮并观察日志'),
+          ),
+          const SizedBox(height: 24),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              '状态变化日志（最新在上）：',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _logs.length,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    _logs[index],
+                    style: TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 13,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="74-主动控制状态">7.4 主动控制状态</h3>
+<p><code>WidgetStatesController</code> 还允许你通过 <code>update</code> 方法主动添加或移除状态：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: ManualStatePage()));
+
+class ManualStatePage extends StatefulWidget {
+  const ManualStatePage({super.key});
+
+  @override
+  State&lt;ManualStatePage&gt; createState() =&gt; _ManualStatePageState();
+}
+
+class _ManualStatePageState extends State&lt;ManualStatePage&gt; {
+  final WidgetStatesController _controller = WidgetStatesController();
+  String _currentStates = '无';
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      setState(() {
+        final states = _controller.value;
+        _currentStates = states.isEmpty
+            ? '无'
+            : states.map((s) =&gt; s.name).join(', ');
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('主动控制状态')),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('当前状态：$_currentStates',
+                style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 24),
+            // 被控制的按钮
+            ElevatedButton(
+              statesController: _controller,
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.selected)) {
+                    return Colors.orange;
+                  }
+                  if (states.contains(WidgetState.error)) {
+                    return Colors.red;
+                  }
+                  return Colors.blue;
+                }),
+                foregroundColor: const WidgetStatePropertyAll(Colors.white),
+              ),
+              onPressed: () {},
+              child: const Text('受控按钮'),
+            ),
+            const SizedBox(height: 32),
+            const Text('通过下方开关手动切换状态：'),
+            const SizedBox(height: 8),
+            // 手动切换 selected 状态
+            SwitchListTile(
+              title: const Text('selected'),
+              value: _controller.value.contains(WidgetState.selected),
+              onChanged: (value) {
+                // update(state, add): add 为 true 则添加该状态，false 则移除
+                _controller.update(WidgetState.selected, value);
+              },
+            ),
+            // 手动切换 error 状态
+            SwitchListTile(
+              title: const Text('error'),
+              value: _controller.value.contains(WidgetState.error),
+              onChanged: (value) {
+                _controller.update(WidgetState.error, value);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：<code>WidgetStatesController</code> 的使用场景包括：调试状态表现、实现自定义交互逻辑（如根据外部条件添加 <code>error</code> 状态）、构建组件状态调试面板等。日常开发中，大部分组件的状态由框架自动管理，不需要手动控制。</p>
+</blockquote>
+<hr />
+<h2 id="8-实战自定义-material-状态规范按钮">8. 实战：自定义 Material 状态规范按钮</h2>
+<p>现在我们把本课所有知识点融合在一起，构建一个<strong>完全符合 Material 状态规范</strong>的自定义按钮组件，它在不同状态下展示不同的背景色、前景色、阴影、边框和状态层效果。</p>
+<h3 id="81-完整实现">8.1 完整实现</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Material State Button',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+        useMaterial3: true,
+      ),
+      home: const MaterialStateButtonShowcase(),
+    );
+  }
+}
+
+// ============================================================
+// 自定义按钮配置
+// ============================================================
+
+class MaterialStateButtonConfig {
+  final Color baseBackgroundColor;
+  final Color baseForegroundColor;
+  final double baseElevation;
+
+  const MaterialStateButtonConfig({
+    required this.baseBackgroundColor,
+    required this.baseForegroundColor,
+    this.baseElevation = 2,
+  });
+}
+
+// ============================================================
+// 自定义 Material 状态按钮
+// ============================================================
+
+class MaterialStateButton extends StatefulWidget {
+  final String label;
+  final IconData? icon;
+  final VoidCallback? onPressed;
+  final MaterialStateButtonConfig config;
+
+  const MaterialStateButton({
+    super.key,
+    required this.label,
+    this.icon,
+    this.onPressed,
+    required this.config,
+  });
+
+  @override
+  State&lt;MaterialStateButton&gt; createState() =&gt; _MaterialStateButtonState();
+}
+
+class _MaterialStateButtonState extends State&lt;MaterialStateButton&gt; {
+  final WidgetStatesController _controller = WidgetStatesController();
+  String _stateLabel = '默认';
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_updateStateLabel);
+  }
+
+  void _updateStateLabel() {
+    setState(() {
+      final states = _controller.value;
+      if (states.isEmpty) {
+        _stateLabel = '默认';
+      } else {
+        _stateLabel = states.map((s) =&gt; s.name).join(' + ');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_updateStateLabel);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  /// 根据 Material 规范计算状态层叠加后的背景色
+  Color _resolveBackgroundColor(Set&lt;WidgetState&gt; states) {
+    final base = widget.config.baseBackgroundColor;
+    if (states.contains(WidgetState.disabled)) {
+      return base.withOpacity(0.12);
+    }
+    return base;
+  }
+
+  /// 前景色
+  Color _resolveForegroundColor(Set&lt;WidgetState&gt; states) {
+    final base = widget.config.baseForegroundColor;
+    if (states.contains(WidgetState.disabled)) {
+      return base.withOpacity(0.38);
+    }
+    return base;
+  }
+
+  /// 阴影高度
+  double _resolveElevation(Set&lt;WidgetState&gt; states) {
+    if (states.contains(WidgetState.disabled)) return 0;
+    if (states.contains(WidgetState.pressed)) return 1;
+    if (states.contains(WidgetState.hovered)) {
+      return widget.config.baseElevation + 4;
+    }
+    return widget.config.baseElevation;
+  }
+
+  /// 边框
+  BorderSide _resolveBorderSide(Set&lt;WidgetState&gt; states) {
+    if (states.contains(WidgetState.disabled)) {
+      return BorderSide(
+        color: widget.config.baseBackgroundColor.withOpacity(0.12),
+        width: 1,
+      );
+    }
+    if (states.contains(WidgetState.pressed)) {
+      return BorderSide(
+        color: widget.config.baseBackgroundColor,
+        width: 2.5,
+      );
+    }
+    if (states.contains(WidgetState.focused)) {
+      return BorderSide(
+        color: widget.config.baseBackgroundColor.withOpacity(0.8),
+        width: 2,
+      );
+    }
+    if (states.contains(WidgetState.hovered)) {
+      return BorderSide(
+        color: widget.config.baseBackgroundColor.withOpacity(0.6),
+        width: 1.5,
+      );
+    }
+    return BorderSide(
+      color: widget.config.baseBackgroundColor.withOpacity(0.3),
+      width: 1,
+    );
+  }
+
+  /// 状态层叠加色（遵循 Material 规范的 opacity）
+  Color? _resolveOverlayColor(Set&lt;WidgetState&gt; states) {
+    final onColor = widget.config.baseForegroundColor;
+    if (states.contains(WidgetState.dragged)) {
+      return onColor.withOpacity(0.16);
+    }
+    if (states.contains(WidgetState.pressed)) {
+      return onColor.withOpacity(0.10);
+    }
+    if (states.contains(WidgetState.hovered)) {
+      return onColor.withOpacity(0.08);
+    }
+    if (states.contains(WidgetState.focused)) {
+      return onColor.withOpacity(0.10);
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ElevatedButton.icon(
+          statesController: _controller,
+          onPressed: widget.onPressed,
+          icon: widget.icon != null ? Icon(widget.icon) : const SizedBox(),
+          label: Text(widget.label),
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.resolveWith(
+              _resolveBackgroundColor,
+            ),
+            foregroundColor: WidgetStateProperty.resolveWith(
+              _resolveForegroundColor,
+            ),
+            elevation: WidgetStateProperty.resolveWith(_resolveElevation),
+            side: WidgetStateProperty.resolveWith(_resolveBorderSide),
+            overlayColor: WidgetStateProperty.resolveWith(_resolveOverlayColor),
+            shape: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.pressed)) {
+                return RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                );
+              }
+              return RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              );
+            }),
+            padding: const WidgetStatePropertyAll(
+              EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            ),
+            textStyle: const WidgetStatePropertyAll(
+              TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '状态：$_stateLabel',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey.shade600,
+            fontFamily: 'monospace',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ============================================================
+// 展示页面
+// ============================================================
+
+class MaterialStateButtonShowcase extends StatelessWidget {
+  const MaterialStateButtonShowcase({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('自定义 Material 状态按钮'),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '每个按钮在不同状态下都有独立的视觉反馈',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            Text(
+              '尝试 hover、按下、Tab 聚焦这些按钮，观察下方状态标签的变化',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 32),
+
+            // Primary 按钮
+            const Text('Primary 样式',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            MaterialStateButton(
+              label: '确认提交',
+              icon: Icons.check_circle_outline,
+              onPressed: () {},
+              config: MaterialStateButtonConfig(
+                baseBackgroundColor: colorScheme.primary,
+                baseForegroundColor: colorScheme.onPrimary,
+                baseElevation: 2,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Secondary 按钮
+            const Text('Secondary 样式',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            MaterialStateButton(
+              label: '更多选项',
+              icon: Icons.settings_outlined,
+              onPressed: () {},
+              config: MaterialStateButtonConfig(
+                baseBackgroundColor: colorScheme.secondary,
+                baseForegroundColor: colorScheme.onSecondary,
+                baseElevation: 1,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Error 按钮
+            const Text('Error / 危险操作样式',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            MaterialStateButton(
+              label: '删除数据',
+              icon: Icons.delete_outline,
+              onPressed: () {},
+              config: MaterialStateButtonConfig(
+                baseBackgroundColor: colorScheme.error,
+                baseForegroundColor: colorScheme.onError,
+                baseElevation: 2,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Disabled 按钮
+            const Text('Disabled 样式',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            MaterialStateButton(
+              label: '不可用操作',
+              icon: Icons.block,
+              onPressed: null, // 禁用
+              config: MaterialStateButtonConfig(
+                baseBackgroundColor: colorScheme.primary,
+                baseForegroundColor: colorScheme.onPrimary,
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // 完整状态对照表
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Material 状态层 Opacity 规范：',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text('• Hover:   8%  叠加 onColor'),
+                  Text('• Focus:   10% 叠加 onColor'),
+                  Text('• Pressed: 10% 叠加 onColor'),
+                  Text('• Dragged: 16% 叠加 onColor'),
+                  SizedBox(height: 8),
+                  Text(
+                    '上面的按钮都严格遵循了这些规范值。',
+                    style: TextStyle(fontStyle: FontStyle.italic),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="82-设计要点解析">8.2 设计要点解析</h3>
+<ol>
+<li>
+<p><strong>将 resolve 方法提取为独立函数</strong>：每个样式维度的状态解析逻辑独立为一个方法（<code>_resolveBackgroundColor</code>、<code>_resolveElevation</code> 等），代码更清晰、易于维护。</p>
+</li>
+<li>
+<p><strong>状态层 opacity 严格遵循规范</strong>：hover 8%、focus 10%、pressed 10%、dragged 16%，确保视觉反馈符合用户的直觉预期。</p>
+</li>
+<li>
+<p><strong>disabled 状态的处理</strong>：背景色降低到 12% 透明度，前景色降低到 38% 透明度，阴影设为 0——这些都是 Material 规范推荐的 disabled 处理方式。</p>
+</li>
+<li>
+<p><strong>使用 WidgetStatesController 展示实时状态</strong>：按钮下方实时显示当前的状态组合，帮助理解状态的叠加机制。</p>
+</li>
+<li>
+<p><strong>通过 config 对象实现复用</strong>：不同颜色主题的按钮只需传入不同的 config，无需重复编写状态解析逻辑。</p>
+</li>
+</ol>
+<hr />
+<h2 id="9-本课小结">9. 本课小结</h2>
+<h3 id="核心知识点回顾">核心知识点回顾</h3>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>7 种交互状态</strong></td>
+<td>hovered、focused、pressed、dragged、selected、disabled、error</td>
+</tr>
+<tr>
+<td><strong>WidgetState</strong></td>
+<td>Flutter 3.19+ 重命名自 MaterialState 的枚举</td>
+</tr>
+<tr>
+<td><strong>Set&lt;WidgetState&gt;</strong></td>
+<td>用集合表示当前激活的所有状态（可叠加）</td>
+</tr>
+<tr>
+<td><strong>WidgetStateProperty.resolveWith</strong></td>
+<td>根据状态集合动态返回样式值，最灵活</td>
+</tr>
+<tr>
+<td><strong>WidgetStateProperty.all</strong></td>
+<td>所有状态返回相同值</td>
+</tr>
+<tr>
+<td><strong>WidgetStatePropertyAll</strong></td>
+<td><code>.all</code> 的简写类形式，支持 const</td>
+</tr>
+<tr>
+<td><strong>WidgetStateProperty.lerp</strong></td>
+<td>两个状态属性之间插值，用于动画过渡</td>
+</tr>
+<tr>
+<td><strong>State Layer</strong></td>
+<td>Material 规范的透明色叠加层，hover 8%、focus 10%、pressed 10%、dragged 16%</td>
+</tr>
+<tr>
+<td><strong>overlayColor</strong></td>
+<td>实现状态层的 ButtonStyle 属性</td>
+</tr>
+<tr>
+<td><strong>WidgetStatesController</strong></td>
+<td>主动监听/控制组件状态的控制器</td>
+</tr>
+</tbody>
+</table>
+<h3 id="关键最佳实践">关键最佳实践</h3>
+<ol>
+<li><strong>新代码使用 WidgetState</strong>，不要再用已废弃的 MaterialState</li>
+<li><strong>resolveWith 中的判断顺序很重要</strong>：通常按 disabled → pressed → hovered → focused → 默认的优先级排列</li>
+<li><strong>善用 const WidgetStatePropertyAll</strong>：对于不需要随状态变化的属性，使用 const 版本获取性能优势</li>
+<li><strong>遵循 Material State Layer opacity 规范</strong>：不要随意设置叠加透明度，规范值经过视觉设计验证</li>
+<li><strong>不要过度自定义</strong>：Material 组件已内置完善的状态响应，只在确实需要偏离默认行为时才手动覆盖</li>
+<li><strong>WidgetStatesController 不需要滥用</strong>：大部分场景下框架自动管理状态已经足够，控制器主要用于需要外部监听或干预的高级场景</li>
+</ol>
+<hr />
+<h2 id="10-练习题">10. 练习题</h2>
+<h3 id="练习-1基础状态按钮">练习 1：基础状态按钮</h3>
+<p>创建一个 <code>TextButton</code>，要求：</p>
+<ul>
+<li>默认前景色为灰色</li>
+<li>hover 时前景色变为蓝色</li>
+<li>pressed 时前景色变为深蓝色</li>
+<li>disabled 时前景色变为浅灰色</li>
+</ul>
+<h3 id="练习-2状态感知输入框">练习 2：状态感知输入框</h3>
+<p>创建一个 <code>TextFormField</code>，要求：</p>
+<ul>
+<li>普通状态下标签为灰色</li>
+<li>聚焦时标签变为绿色加粗</li>
+<li>错误状态时标签变为红色加粗</li>
+<li>内容校验：必须是数字，否则显示错误</li>
+</ul>
+<h3 id="练习-3多状态切换卡片">练习 3：多状态切换卡片</h3>
+<p>创建一个可选中的卡片组件：</p>
+<ul>
+<li>默认状态：白色背景，1 级阴影</li>
+<li>hover 状态：浅蓝色背景，3 级阴影</li>
+<li>selected 状态：蓝色边框，背景微蓝</li>
+<li>同时 hover + selected：蓝色边框加粗，背景更蓝</li>
+</ul>
+<p>提示：你需要使用 <code>WidgetStatesController</code> 并手动管理 <code>selected</code> 状态。</p>
+<h3 id="练习-4状态调试面板">练习 4：状态调试面板</h3>
+<p>创建一个页面，包含：</p>
+<ul>
+<li>一个使用 <code>WidgetStatesController</code> 的按钮</li>
+<li>7 个 <code>Checkbox</code>，分别对应 7 种 <code>WidgetState</code></li>
+<li>实时显示按钮当前的状态集合</li>
+<li>通过勾选 Checkbox 可以主动添加/移除按钮的状态</li>
+</ul>
+<h3 id="练习-5综合挑战主题色按钮组">练习 5（综合挑战）：主题色按钮组</h3>
+<p>创建一组按钮（Primary、Secondary、Tertiary、Error），每个按钮：</p>
+<ul>
+<li>使用对应的 ColorScheme 颜色</li>
+<li>完全遵循 Material State Layer opacity 规范</li>
+<li>在按钮下方实时显示当前状态</li>
+<li>支持 disabled 切换开关</li>
+<li>将按钮样式的状态解析逻辑抽取为一个可复用的工厂函数</li>
+</ul>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：第06课 组件主题批量定制——我们将学习如何通过 <code>ThemeData</code> 中的各种组件主题（<code>ElevatedButtonTheme</code>、<code>CardTheme</code> 等）实现全局样式统一管理，以及如何使用 <code>ThemeExtension</code> 创建自定义主题扩展。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

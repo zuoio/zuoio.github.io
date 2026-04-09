@@ -1,0 +1,2201 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="附录速查表与学习资源">附录：速查表与学习资源</h1>
+<hr />
+<h2 id="附录amongodb-常用-shell-命令速查表">附录A：MongoDB 常用 Shell 命令速查表</h2>
+<h3 id="1-数据库操作">1. 数据库操作</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show dbs</code></td>
+<td><code>show dbs</code></td>
+<td>列出所有数据库及其占用空间</td>
+</tr>
+<tr>
+<td><code>use</code></td>
+<td><code>use &lt;数据库名&gt;</code></td>
+<td>切换到指定数据库，若不存在则在首次写入时自动创建</td>
+</tr>
+<tr>
+<td><code>db.dropDatabase()</code></td>
+<td><code>db.dropDatabase()</code></td>
+<td>删除当前数据库（需先 <code>use</code> 切换到目标库）</td>
+</tr>
+<tr>
+<td><code>db.stats()</code></td>
+<td><code>db.stats()</code></td>
+<td>查看当前数据库的统计信息（文档数、存储大小等）</td>
+</tr>
+<tr>
+<td><code>db.getName()</code></td>
+<td><code>db.getName()</code></td>
+<td>返回当前数据库名称</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-集合操作">2. 集合操作</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show collections</code></td>
+<td><code>show collections</code></td>
+<td>列出当前数据库中的所有集合</td>
+</tr>
+<tr>
+<td><code>db.createCollection()</code></td>
+<td><code>db.createCollection(&quot;集合名&quot;, {选项})</code></td>
+<td>显式创建集合，可指定 capped、大小等选项</td>
+</tr>
+<tr>
+<td><code>drop()</code></td>
+<td><code>db.集合名.drop()</code></td>
+<td>删除指定集合及其所有文档和索引</td>
+</tr>
+<tr>
+<td><code>renameCollection()</code></td>
+<td><code>db.集合名.renameCollection(&quot;新名称&quot;)</code></td>
+<td>重命名集合</td>
+</tr>
+<tr>
+<td><code>stats()</code></td>
+<td><code>db.集合名.stats()</code></td>
+<td>查看集合的详细统计信息</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-插入操作">3. 插入操作</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>insertOne()</code></td>
+<td><code>db.集合名.insertOne({文档})</code></td>
+<td>插入单个文档，返回插入的 <code>_id</code></td>
+</tr>
+<tr>
+<td><code>insertMany()</code></td>
+<td><code>db.集合名.insertMany([{文档1}, {文档2}])</code></td>
+<td>批量插入多个文档，返回所有插入的 <code>_id</code> 数组</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-查询操作">4. 查询操作</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>find()</code></td>
+<td><code>db.集合名.find({条件}, {投影})</code></td>
+<td>查询匹配条件的所有文档，返回游标</td>
+</tr>
+<tr>
+<td><code>findOne()</code></td>
+<td><code>db.集合名.findOne({条件}, {投影})</code></td>
+<td>查询匹配条件的第一个文档</td>
+</tr>
+<tr>
+<td><code>countDocuments()</code></td>
+<td><code>db.集合名.countDocuments({条件})</code></td>
+<td>精确统计匹配条件的文档数量</td>
+</tr>
+<tr>
+<td><code>estimatedDocumentCount()</code></td>
+<td><code>db.集合名.estimatedDocumentCount()</code></td>
+<td>基于元数据快速估算集合文档总数</td>
+</tr>
+<tr>
+<td><code>distinct()</code></td>
+<td><code>db.集合名.distinct(&quot;字段名&quot;, {条件})</code></td>
+<td>返回指定字段的去重值数组</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-更新操作">5. 更新操作</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>updateOne()</code></td>
+<td><code>db.集合名.updateOne({条件}, {更新操作})</code></td>
+<td>更新匹配条件的第一个文档</td>
+</tr>
+<tr>
+<td><code>updateMany()</code></td>
+<td><code>db.集合名.updateMany({条件}, {更新操作})</code></td>
+<td>更新所有匹配条件的文档</td>
+</tr>
+<tr>
+<td><code>replaceOne()</code></td>
+<td><code>db.集合名.replaceOne({条件}, {新文档})</code></td>
+<td>整体替换匹配的第一个文档（不能包含更新操作符）</td>
+</tr>
+<tr>
+<td><code>findOneAndUpdate()</code></td>
+<td><code>db.集合名.findOneAndUpdate({条件}, {更新}, {选项})</code></td>
+<td>查找并更新文档，可通过 <code>returnDocument</code> 选项返回更新前或更新后的文档</td>
+</tr>
+<tr>
+<td><code>findOneAndReplace()</code></td>
+<td><code>db.集合名.findOneAndReplace({条件}, {新文档}, {选项})</code></td>
+<td>查找并整体替换文档</td>
+</tr>
+</tbody>
+</table>
+<h3 id="6-删除操作">6. 删除操作</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>deleteOne()</code></td>
+<td><code>db.集合名.deleteOne({条件})</code></td>
+<td>删除匹配条件的第一个文档</td>
+</tr>
+<tr>
+<td><code>deleteMany()</code></td>
+<td><code>db.集合名.deleteMany({条件})</code></td>
+<td>删除所有匹配条件的文档</td>
+</tr>
+<tr>
+<td><code>findOneAndDelete()</code></td>
+<td><code>db.集合名.findOneAndDelete({条件}, {选项})</code></td>
+<td>查找并删除文档，返回被删除的文档</td>
+</tr>
+</tbody>
+</table>
+<h3 id="7-查询操作符">7. 查询操作符</h3>
+<p><strong>比较操作符：</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$eq</code></td>
+<td><code>{字段: {$eq: 值}}</code></td>
+<td>等于，等价于 <code>{字段: 值}</code></td>
+</tr>
+<tr>
+<td><code>$ne</code></td>
+<td><code>{字段: {$ne: 值}}</code></td>
+<td>不等于</td>
+</tr>
+<tr>
+<td><code>$gt</code></td>
+<td><code>{字段: {$gt: 值}}</code></td>
+<td>大于</td>
+</tr>
+<tr>
+<td><code>$gte</code></td>
+<td><code>{字段: {$gte: 值}}</code></td>
+<td>大于等于</td>
+</tr>
+<tr>
+<td><code>$lt</code></td>
+<td><code>{字段: {$lt: 值}}</code></td>
+<td>小于</td>
+</tr>
+<tr>
+<td><code>$lte</code></td>
+<td><code>{字段: {$lte: 值}}</code></td>
+<td>小于等于</td>
+</tr>
+<tr>
+<td><code>$in</code></td>
+<td><code>{字段: {$in: [值1, 值2]}}</code></td>
+<td>字段值在给定数组中</td>
+</tr>
+<tr>
+<td><code>$nin</code></td>
+<td><code>{字段: {$nin: [值1, 值2]}}</code></td>
+<td>字段值不在给定数组中</td>
+</tr>
+</tbody>
+</table>
+<p><strong>逻辑操作符：</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$and</code></td>
+<td><code>{$and: [{条件1}, {条件2}]}</code></td>
+<td>逻辑与，所有条件都满足</td>
+</tr>
+<tr>
+<td><code>$or</code></td>
+<td><code>{$or: [{条件1}, {条件2}]}</code></td>
+<td>逻辑或，至少一个条件满足</td>
+</tr>
+<tr>
+<td><code>$not</code></td>
+<td><code>{字段: {$not: {操作符表达式}}}</code></td>
+<td>逻辑非，对单个条件取反</td>
+</tr>
+<tr>
+<td><code>$nor</code></td>
+<td><code>{$nor: [{条件1}, {条件2}]}</code></td>
+<td>所有条件都不满足</td>
+</tr>
+</tbody>
+</table>
+<p><strong>元素操作符：</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$exists</code></td>
+<td><code>{字段: {$exists: true}}</code></td>
+<td>判断字段是否存在</td>
+</tr>
+<tr>
+<td><code>$type</code></td>
+<td><code>{字段: {$type: &quot;string&quot;}}</code></td>
+<td>匹配字段的 BSON 类型</td>
+</tr>
+</tbody>
+</table>
+<p><strong>求值操作符：</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$regex</code></td>
+<td><code>{字段: {$regex: /模式/, $options: &quot;i&quot;}}</code></td>
+<td>正则表达式匹配</td>
+</tr>
+</tbody>
+</table>
+<p><strong>数组操作符：</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$all</code></td>
+<td><code>{字段: {$all: [值1, 值2]}}</code></td>
+<td>数组字段包含所有指定元素</td>
+</tr>
+<tr>
+<td><code>$elemMatch</code></td>
+<td><code>{字段: {$elemMatch: {条件}}}</code></td>
+<td>数组中至少有一个元素同时满足所有条件</td>
+</tr>
+<tr>
+<td><code>$size</code></td>
+<td><code>{字段: {$size: 数量}}</code></td>
+<td>匹配数组长度等于指定值的文档</td>
+</tr>
+</tbody>
+</table>
+<h3 id="8-更新操作符">8. 更新操作符</h3>
+<p><strong>字段操作符：</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$set</code></td>
+<td><code>{$set: {字段: 新值}}</code></td>
+<td>设置字段值，字段不存在则创建</td>
+</tr>
+<tr>
+<td><code>$unset</code></td>
+<td><code>{$unset: {字段: &quot;&quot;}}</code></td>
+<td>删除指定字段</td>
+</tr>
+<tr>
+<td><code>$inc</code></td>
+<td><code>{$inc: {字段: 增量}}</code></td>
+<td>将字段值增加指定数值（可为负数）</td>
+</tr>
+<tr>
+<td><code>$mul</code></td>
+<td><code>{$mul: {字段: 乘数}}</code></td>
+<td>将字段值乘以指定数值</td>
+</tr>
+<tr>
+<td><code>$rename</code></td>
+<td><code>{$rename: {旧名: &quot;新名&quot;}}</code></td>
+<td>重命名字段</td>
+</tr>
+<tr>
+<td><code>$min</code></td>
+<td><code>{$min: {字段: 值}}</code></td>
+<td>仅当指定值小于当前值时更新</td>
+</tr>
+<tr>
+<td><code>$max</code></td>
+<td><code>{$max: {字段: 值}}</code></td>
+<td>仅当指定值大于当前值时更新</td>
+</tr>
+</tbody>
+</table>
+<p><strong>数组操作符：</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$push</code></td>
+<td><code>{$push: {数组字段: 值}}</code></td>
+<td>向数组末尾添加元素</td>
+</tr>
+<tr>
+<td><code>$pull</code></td>
+<td><code>{$pull: {数组字段: 值或条件}}</code></td>
+<td>从数组中移除匹配的元素</td>
+</tr>
+<tr>
+<td><code>$addToSet</code></td>
+<td><code>{$addToSet: {数组字段: 值}}</code></td>
+<td>向数组添加元素（自动去重）</td>
+</tr>
+<tr>
+<td><code>$pop</code></td>
+<td><code>{$pop: {数组字段: 1或-1}}</code></td>
+<td>移除数组首元素（-1）或尾元素（1）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>数组修饰符：</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$each</code></td>
+<td><code>{$push: {数组字段: {$each: [值1, 值2]}}}</code></td>
+<td>与 <code>$push</code> 或 <code>$addToSet</code> 配合批量添加</td>
+</tr>
+<tr>
+<td><code>$position</code></td>
+<td><code>{$push: {数组字段: {$each: [值], $position: 0}}}</code></td>
+<td>指定 <code>$push</code> 插入的位置索引</td>
+</tr>
+<tr>
+<td><code>$slice</code></td>
+<td><code>{$push: {数组字段: {$each: [值], $slice: 5}}}</code></td>
+<td>限制 <code>$push</code> 后数组的最大长度</td>
+</tr>
+</tbody>
+</table>
+<h3 id="9-索引操作">9. 索引操作</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>createIndex()</code></td>
+<td><code>db.集合名.createIndex({字段: 1}, {选项})</code></td>
+<td>创建索引，1 为升序，-1 为降序</td>
+</tr>
+<tr>
+<td><code>dropIndex()</code></td>
+<td><code>db.集合名.dropIndex(&quot;索引名&quot;或{键})</code></td>
+<td>删除指定索引</td>
+</tr>
+<tr>
+<td><code>dropIndexes()</code></td>
+<td><code>db.集合名.dropIndexes()</code></td>
+<td>删除集合上除 <code>_id</code> 外的所有索引</td>
+</tr>
+<tr>
+<td><code>getIndexes()</code></td>
+<td><code>db.集合名.getIndexes()</code></td>
+<td>列出集合上的所有索引</td>
+</tr>
+<tr>
+<td><code>explain()</code></td>
+<td><code>db.集合名.find({条件}).explain(&quot;executionStats&quot;)</code></td>
+<td>分析查询执行计划和性能指标</td>
+</tr>
+</tbody>
+</table>
+<h3 id="10-聚合操作">10. 聚合操作</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>aggregate()</code></td>
+<td><code>db.集合名.aggregate([{阶段1}, {阶段2}, ...])</code></td>
+<td>执行聚合管道，按顺序处理各阶段</td>
+</tr>
+</tbody>
+</table>
+<p>常用聚合管道阶段示例：</p>
+<pre><code class="language-javascript">db.orders.aggregate([
+  { $match: { status: &quot;completed&quot; } },
+  { $group: { _id: &quot;$customerId&quot;, total: { $sum: &quot;$amount&quot; } } },
+  { $sort: { total: -1 } },
+  { $limit: 10 }
+])
+</code></pre>
+<h3 id="11-用户管理">11. 用户管理</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>createUser()</code></td>
+<td><code>db.createUser({user:&quot;用户名&quot;, pwd:&quot;密码&quot;, roles:[{role:&quot;角色&quot;, db:&quot;库名&quot;}]})</code></td>
+<td>创建数据库用户</td>
+</tr>
+<tr>
+<td><code>dropUser()</code></td>
+<td><code>db.dropUser(&quot;用户名&quot;)</code></td>
+<td>删除指定用户</td>
+</tr>
+<tr>
+<td><code>updateUser()</code></td>
+<td><code>db.updateUser(&quot;用户名&quot;, {更新内容})</code></td>
+<td>更新用户信息（密码、角色等）</td>
+</tr>
+<tr>
+<td><code>grantRolesToUser()</code></td>
+<td><code>db.grantRolesToUser(&quot;用户名&quot;, [{role:&quot;角色&quot;, db:&quot;库名&quot;}])</code></td>
+<td>为用户授予额外角色</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-备份恢复">12. 备份恢复</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>语法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mongodump</code></td>
+<td><code>mongodump --uri=&quot;连接串&quot; --out=备份目录</code></td>
+<td>将数据库导出为 BSON 格式备份文件</td>
+</tr>
+<tr>
+<td><code>mongorestore</code></td>
+<td><code>mongorestore --uri=&quot;连接串&quot; 备份目录</code></td>
+<td>从 BSON 备份文件恢复数据库</td>
+</tr>
+<tr>
+<td><code>mongoexport</code></td>
+<td><code>mongoexport --uri=&quot;连接串&quot; -c 集合名 -o 文件.json</code></td>
+<td>将集合导出为 JSON 或 CSV 格式</td>
+</tr>
+<tr>
+<td><code>mongoimport</code></td>
+<td><code>mongoimport --uri=&quot;连接串&quot; -c 集合名 --file 文件.json</code></td>
+<td>从 JSON 或 CSV 文件导入数据到集合</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="附录bspring-data-mongodb-常用注解速查表">附录B：Spring Data MongoDB 常用注解速查表</h2>
+<table>
+<thead>
+<tr>
+<th>注解名</th>
+<th>作用位置</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@Document</code></td>
+<td>类</td>
+<td>将 Java 类映射为 MongoDB 集合中的文档，可指定集合名</td>
+<td><code>@Document(collection = &quot;users&quot;)</code></td>
+</tr>
+<tr>
+<td><code>@Id</code></td>
+<td>字段</td>
+<td>标记字段为文档的 <code>_id</code> 主键，通常用于 <code>String</code> 或 <code>ObjectId</code> 类型</td>
+<td><code>@Id private String id;</code></td>
+</tr>
+<tr>
+<td><code>@Field</code></td>
+<td>字段</td>
+<td>自定义字段在 MongoDB 中存储的名称，解决 Java 命名与 MongoDB 字段名不一致的问题</td>
+<td><code>@Field(&quot;user_name&quot;) private String userName;</code></td>
+</tr>
+<tr>
+<td><code>@Indexed</code></td>
+<td>字段</td>
+<td>在该字段上创建单字段索引，可指定唯一性、方向、过期时间等属性</td>
+<td><code>@Indexed(unique = true) private String email;</code></td>
+</tr>
+<tr>
+<td><code>@CompoundIndex</code></td>
+<td>类</td>
+<td>在类级别定义复合索引，指定多个字段的组合索引</td>
+<td><code>@CompoundIndex(def = &quot;{'lastName':1, 'age':-1}&quot;)</code></td>
+</tr>
+<tr>
+<td><code>@CompoundIndexes</code></td>
+<td>类</td>
+<td>包含多个 <code>@CompoundIndex</code> 注解的容器注解</td>
+<td><code>@CompoundIndexes({@CompoundIndex(def = &quot;{'a':1,'b':1}&quot;), @CompoundIndex(def = &quot;{'c':1}&quot;)})</code></td>
+</tr>
+<tr>
+<td><code>@TextIndexed</code></td>
+<td>字段</td>
+<td>将字段加入文本索引，支持全文搜索</td>
+<td><code>@TextIndexed(weight = 2) private String title;</code></td>
+</tr>
+<tr>
+<td><code>@GeoSpatialIndexed</code></td>
+<td>字段</td>
+<td>在字段上创建地理空间索引（2d 或 2dsphere）</td>
+<td><code>@GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE) private GeoJsonPoint location;</code></td>
+</tr>
+<tr>
+<td><code>@DBRef</code></td>
+<td>字段</td>
+<td>标记字段为文档引用关系，存储为 DBRef 对象，查询时自动解引用加载关联文档</td>
+<td><code>@DBRef private User author;</code></td>
+</tr>
+<tr>
+<td><code>@Transient</code></td>
+<td>字段</td>
+<td>标记字段不持久化到 MongoDB，仅在 Java 对象中使用</td>
+<td><code>@Transient private String tempData;</code></td>
+</tr>
+<tr>
+<td><code>@CreatedDate</code></td>
+<td>字段</td>
+<td>自动填充文档创建时间（需启用审计功能 <code>@EnableMongoAuditing</code>）</td>
+<td><code>@CreatedDate private LocalDateTime createdAt;</code></td>
+</tr>
+<tr>
+<td><code>@LastModifiedDate</code></td>
+<td>字段</td>
+<td>自动填充文档最后修改时间（需启用审计功能）</td>
+<td><code>@LastModifiedDate private LocalDateTime updatedAt;</code></td>
+</tr>
+<tr>
+<td><code>@CreatedBy</code></td>
+<td>字段</td>
+<td>自动填充文档创建者信息（需配置 <code>AuditorAware</code> 实现）</td>
+<td><code>@CreatedBy private String createdBy;</code></td>
+</tr>
+<tr>
+<td><code>@LastModifiedBy</code></td>
+<td>字段</td>
+<td>自动填充文档最后修改者信息（需配置 <code>AuditorAware</code> 实现）</td>
+<td><code>@LastModifiedBy private String updatedBy;</code></td>
+</tr>
+<tr>
+<td><code>@Version</code></td>
+<td>字段</td>
+<td>乐观锁版本号，每次更新自动递增，并发写入时检测冲突抛出 <code>OptimisticLockingFailureException</code></td>
+<td><code>@Version private Long version;</code></td>
+</tr>
+<tr>
+<td><code>@Language</code></td>
+<td>字段</td>
+<td>指定文本索引使用的语言，影响分词和停用词处理</td>
+<td><code>@Language private String language;</code></td>
+</tr>
+<tr>
+<td><code>@TextScore</code></td>
+<td>字段</td>
+<td>接收全文搜索的文本匹配得分值</td>
+<td><code>@TextScore private Float score;</code></td>
+</tr>
+<tr>
+<td><code>@Unwrapped</code></td>
+<td>字段</td>
+<td>将嵌套对象的字段展开到父文档中存储，而非作为子文档</td>
+<td><code>@Unwrapped(onEmpty = OnEmpty.USE_NULL) private Address address;</code></td>
+</tr>
+<tr>
+<td><code>@Sharded</code></td>
+<td>类</td>
+<td>标记实体为分片集合，指定分片键</td>
+<td><code>@Sharded(shardKey = {&quot;region&quot;, &quot;userId&quot;})</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>提示：</strong> 使用审计注解（<code>@CreatedDate</code>、<code>@LastModifiedDate</code> 等）需要在配置类上添加 <code>@EnableMongoAuditing</code>，并且实体类需要实现或配合 <code>AuditorAware&lt;T&gt;</code> 接口来提供当前操作用户信息。</p>
+</blockquote>
+<hr />
+<h2 id="附录c聚合管道操作符速查表">附录C：聚合管道操作符速查表</h2>
+<h3 id="1-管道阶段">1. 管道阶段</h3>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$match</code></td>
+<td>过滤文档，仅让满足条件的文档进入下一阶段，语法同 <code>find()</code> 查询条件</td>
+</tr>
+<tr>
+<td><code>$group</code></td>
+<td>按指定 <code>_id</code> 表达式分组，并对每组应用累加器运算</td>
+</tr>
+<tr>
+<td><code>$project</code></td>
+<td>选择、排除或重新计算字段，重塑文档结构</td>
+</tr>
+<tr>
+<td><code>$sort</code></td>
+<td>对文档按指定字段排序，1 升序，-1 降序</td>
+</tr>
+<tr>
+<td><code>$limit</code></td>
+<td>限制输出文档数量</td>
+</tr>
+<tr>
+<td><code>$skip</code></td>
+<td>跳过指定数量的文档</td>
+</tr>
+<tr>
+<td><code>$unwind</code></td>
+<td>将数组字段展开，每个数组元素生成一个独立文档</td>
+</tr>
+<tr>
+<td><code>$lookup</code></td>
+<td>左外连接另一个集合，实现类似 SQL JOIN 的关联查询</td>
+</tr>
+<tr>
+<td><code>$addFields</code></td>
+<td>向文档添加新字段或覆盖已有字段，不影响其他字段</td>
+</tr>
+<tr>
+<td><code>$set</code></td>
+<td><code>$addFields</code> 的别名，功能完全相同</td>
+</tr>
+<tr>
+<td><code>$replaceRoot</code></td>
+<td>用指定文档或子文档替换当前文档的根</td>
+</tr>
+<tr>
+<td><code>$replaceWith</code></td>
+<td><code>$replaceRoot</code> 的简写形式</td>
+</tr>
+<tr>
+<td><code>$count</code></td>
+<td>统计文档数量，输出包含指定字段名的单文档</td>
+</tr>
+<tr>
+<td><code>$out</code></td>
+<td>将聚合结果写入指定集合（覆盖已有内容）</td>
+</tr>
+<tr>
+<td><code>$merge</code></td>
+<td>将聚合结果合并到指定集合，支持插入/更新/替换等策略</td>
+</tr>
+<tr>
+<td><code>$bucket</code></td>
+<td>按指定边界将文档分到各个桶中</td>
+</tr>
+<tr>
+<td><code>$bucketAuto</code></td>
+<td>自动确定桶边界，将文档均匀分配到指定数量的桶中</td>
+</tr>
+<tr>
+<td><code>$facet</code></td>
+<td>在同一输入文档集上并行执行多个聚合管道，输出合并结果</td>
+</tr>
+<tr>
+<td><code>$sortByCount</code></td>
+<td>按字段值分组并按计数降序排列，等价于 <code>$group</code> + <code>$sort</code></td>
+</tr>
+<tr>
+<td><code>$sample</code></td>
+<td>从输入文档中随机选择指定数量的文档</td>
+</tr>
+<tr>
+<td><code>$redact</code></td>
+<td>根据条件对文档进行字段级访问控制，递归地保留或剪除子文档</td>
+</tr>
+<tr>
+<td><code>$graphLookup</code></td>
+<td>在集合上执行递归搜索，实现图/树形结构的遍历查询</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-累加器--分组运算符">2. 累加器 / 分组运算符</h3>
+<p>这些运算符用于 <code>$group</code> 阶段对分组数据进行聚合计算。</p>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$sum</code></td>
+<td>求和，数值累加</td>
+<td><code>{$sum: &quot;$amount&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$avg</code></td>
+<td>求平均值</td>
+<td><code>{$avg: &quot;$score&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$min</code></td>
+<td>取最小值</td>
+<td><code>{$min: &quot;$price&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$max</code></td>
+<td>取最大值</td>
+<td><code>{$max: &quot;$price&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$first</code></td>
+<td>取分组中的第一个值（依赖排序）</td>
+<td><code>{$first: &quot;$name&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$last</code></td>
+<td>取分组中的最后一个值（依赖排序）</td>
+<td><code>{$last: &quot;$name&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$push</code></td>
+<td>将值收集到数组中</td>
+<td><code>{$push: &quot;$tag&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$addToSet</code></td>
+<td>将值收集到数组中（自动去重）</td>
+<td><code>{$addToSet: &quot;$category&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$stdDevPop</code></td>
+<td>计算总体标准差</td>
+<td><code>{$stdDevPop: &quot;$score&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$stdDevSamp</code></td>
+<td>计算样本标准差</td>
+<td><code>{$stdDevSamp: &quot;$score&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$count</code></td>
+<td>统计分组中的文档数量（MongoDB 5.0+）</td>
+<td><code>{$count: {}}</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-表达式运算符">3. 表达式运算符</h3>
+<h4 id="31-算术运算符">3.1 算术运算符</h4>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$add</code></td>
+<td>加法（也可用于日期加毫秒数）</td>
+<td><code>{$add: [&quot;$price&quot;, &quot;$tax&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>$subtract</code></td>
+<td>减法（也可用于日期差值计算）</td>
+<td><code>{$subtract: [&quot;$total&quot;, &quot;$discount&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>$multiply</code></td>
+<td>乘法</td>
+<td><code>{$multiply: [&quot;$price&quot;, &quot;$quantity&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>$divide</code></td>
+<td>除法</td>
+<td><code>{$divide: [&quot;$total&quot;, &quot;$count&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>$mod</code></td>
+<td>取模（求余数）</td>
+<td><code>{$mod: [&quot;$hours&quot;, 24]}</code></td>
+</tr>
+<tr>
+<td><code>$abs</code></td>
+<td>取绝对值</td>
+<td><code>{$abs: &quot;$diff&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$ceil</code></td>
+<td>向上取整</td>
+<td><code>{$ceil: &quot;$avg&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$floor</code></td>
+<td>向下取整</td>
+<td><code>{$floor: &quot;$avg&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$round</code></td>
+<td>四舍五入到指定小数位</td>
+<td><code>{$round: [&quot;$value&quot;, 2]}</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="32-字符串运算符">3.2 字符串运算符</h4>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$concat</code></td>
+<td>拼接多个字符串</td>
+<td><code>{$concat: [&quot;$firstName&quot;, &quot; &quot;, &quot;$lastName&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>$substr</code></td>
+<td>截取子字符串（字节级，已废弃，建议用 <code>$substrCP</code>）</td>
+<td><code>{$substr: [&quot;$name&quot;, 0, 5]}</code></td>
+</tr>
+<tr>
+<td><code>$toLower</code></td>
+<td>转为小写</td>
+<td><code>{$toLower: &quot;$email&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$toUpper</code></td>
+<td>转为大写</td>
+<td><code>{$toUpper: &quot;$code&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$trim</code></td>
+<td>去除首尾空白字符或指定字符</td>
+<td><code>{$trim: {input: &quot;$name&quot;}}</code></td>
+</tr>
+<tr>
+<td><code>$split</code></td>
+<td>按分隔符拆分字符串为数组</td>
+<td><code>{$split: [&quot;$tags&quot;, &quot;,&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>$strLenCP</code></td>
+<td>返回字符串的 Unicode 码位长度</td>
+<td><code>{$strLenCP: &quot;$name&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$regexMatch</code></td>
+<td>正则表达式匹配，返回布尔值</td>
+<td><code>{$regexMatch: {input: &quot;$email&quot;, regex: /@gmail/}}</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="33-日期运算符">3.3 日期运算符</h4>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$year</code></td>
+<td>提取年份</td>
+<td><code>{$year: &quot;$createdAt&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$month</code></td>
+<td>提取月份（1-12）</td>
+<td><code>{$month: &quot;$createdAt&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$dayOfMonth</code></td>
+<td>提取日期（1-31）</td>
+<td><code>{$dayOfMonth: &quot;$createdAt&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$hour</code></td>
+<td>提取小时（0-23）</td>
+<td><code>{$hour: &quot;$createdAt&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$minute</code></td>
+<td>提取分钟（0-59）</td>
+<td><code>{$minute: &quot;$createdAt&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$second</code></td>
+<td>提取秒数（0-59）</td>
+<td><code>{$second: &quot;$createdAt&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$dateToString</code></td>
+<td>将日期格式化为字符串</td>
+<td><code>{$dateToString: {format: &quot;%Y-%m-%d&quot;, date: &quot;$createdAt&quot;}}</code></td>
+</tr>
+<tr>
+<td><code>$dateFromString</code></td>
+<td>将字符串解析为日期</td>
+<td><code>{$dateFromString: {dateString: &quot;2024-01-15&quot;}}</code></td>
+</tr>
+<tr>
+<td><code>$dateDiff</code></td>
+<td>计算两个日期之间的差值</td>
+<td><code>{$dateDiff: {startDate: &quot;$start&quot;, endDate: &quot;$end&quot;, unit: &quot;day&quot;}}</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="34-比较运算符">3.4 比较运算符</h4>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$cmp</code></td>
+<td>比较两个值，返回 -1、0 或 1</td>
+<td><code>{$cmp: [&quot;$a&quot;, &quot;$b&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>$eq</code></td>
+<td>判断两个值是否相等，返回布尔值</td>
+<td><code>{$eq: [&quot;$status&quot;, &quot;active&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>$ne</code></td>
+<td>判断两个值是否不等，返回布尔值</td>
+<td><code>{$ne: [&quot;$type&quot;, &quot;deleted&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>$gt</code></td>
+<td>大于比较，返回布尔值</td>
+<td><code>{$gt: [&quot;$score&quot;, 60]}</code></td>
+</tr>
+<tr>
+<td><code>$gte</code></td>
+<td>大于等于比较，返回布尔值</td>
+<td><code>{$gte: [&quot;$age&quot;, 18]}</code></td>
+</tr>
+<tr>
+<td><code>$lt</code></td>
+<td>小于比较，返回布尔值</td>
+<td><code>{$lt: [&quot;$stock&quot;, 10]}</code></td>
+</tr>
+<tr>
+<td><code>$lte</code></td>
+<td>小于等于比较，返回布尔值</td>
+<td><code>{$lte: [&quot;$price&quot;, 100]}</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="35-条件运算符">3.5 条件运算符</h4>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$cond</code></td>
+<td>三元条件判断，类似 <code>if-then-else</code></td>
+<td><code>{$cond: {if: {$gte: [&quot;$score&quot;, 60]}, then: &quot;及格&quot;, else: &quot;不及格&quot;}}</code></td>
+</tr>
+<tr>
+<td><code>$ifNull</code></td>
+<td>如果字段为 null 或不存在则返回替代值</td>
+<td><code>{$ifNull: [&quot;$nickname&quot;, &quot;$username&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>$switch</code></td>
+<td>多分支条件判断，类似 <code>switch-case</code></td>
+<td><code>{$switch: {branches: [{case: {$eq: [&quot;$status&quot;, 1]}, then: &quot;启用&quot;}], default: &quot;未知&quot;}}</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="36-数组运算符">3.6 数组运算符</h4>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$size</code></td>
+<td>返回数组长度</td>
+<td><code>{$size: &quot;$tags&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$filter</code></td>
+<td>按条件过滤数组元素</td>
+<td><code>{$filter: {input: &quot;$items&quot;, as: &quot;item&quot;, cond: {$gte: [&quot;$$item.price&quot;, 100]}}}</code></td>
+</tr>
+<tr>
+<td><code>$map</code></td>
+<td>对数组每个元素应用表达式变换</td>
+<td><code>{$map: {input: &quot;$scores&quot;, as: &quot;s&quot;, in: {$multiply: [&quot;$$s&quot;, 1.1]}}}</code></td>
+</tr>
+<tr>
+<td><code>$reduce</code></td>
+<td>将数组归约为单个值</td>
+<td><code>{$reduce: {input: &quot;$items&quot;, initialValue: 0, in: {$add: [&quot;$$value&quot;, &quot;$$this.price&quot;]}}}</code></td>
+</tr>
+<tr>
+<td><code>$arrayElemAt</code></td>
+<td>获取数组中指定索引位置的元素</td>
+<td><code>{$arrayElemAt: [&quot;$tags&quot;, 0]}</code></td>
+</tr>
+<tr>
+<td><code>$concatArrays</code></td>
+<td>拼接多个数组</td>
+<td><code>{$concatArrays: [&quot;$arr1&quot;, &quot;$arr2&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>$in</code></td>
+<td>判断值是否在数组中，返回布尔值</td>
+<td><code>{$in: [&quot;admin&quot;, &quot;$roles&quot;]}</code></td>
+</tr>
+<tr>
+<td><code>$isArray</code></td>
+<td>判断是否为数组类型，返回布尔值</td>
+<td><code>{$isArray: &quot;$tags&quot;}</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="37-类型转换运算符">3.7 类型转换运算符</h4>
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$type</code></td>
+<td>返回值的 BSON 类型字符串</td>
+<td><code>{$type: &quot;$field&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$toInt</code></td>
+<td>转换为 32 位整数</td>
+<td><code>{$toInt: &quot;$strNum&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$toLong</code></td>
+<td>转换为 64 位长整数</td>
+<td><code>{$toLong: &quot;$strNum&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$toDouble</code></td>
+<td>转换为双精度浮点数</td>
+<td><code>{$toDouble: &quot;$strPrice&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$toString</code></td>
+<td>转换为字符串</td>
+<td><code>{$toString: &quot;$numericId&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$toObjectId</code></td>
+<td>转换为 ObjectId 类型</td>
+<td><code>{$toObjectId: &quot;$strId&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$toBool</code></td>
+<td>转换为布尔值</td>
+<td><code>{$toBool: &quot;$flag&quot;}</code></td>
+</tr>
+<tr>
+<td><code>$toDate</code></td>
+<td>转换为日期类型</td>
+<td><code>{$toDate: &quot;$timestamp&quot;}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="附录d推荐学习资源与官方文档导航">附录D：推荐学习资源与官方文档导航</h2>
+<h3 id="1-官方资源">1. 官方资源</h3>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>链接</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MongoDB 官方文档</td>
+<td><a href="https://www.mongodb.com/docs/manual/">https://www.mongodb.com/docs/manual/</a></td>
+<td>最权威的 MongoDB 参考资料，涵盖所有功能的详细文档</td>
+</tr>
+<tr>
+<td>MongoDB University</td>
+<td><a href="https://learn.mongodb.com/">https://learn.mongodb.com/</a></td>
+<td>MongoDB 官方免费在线课程平台，提供从入门到高级的系统学习路径，含官方认证考试</td>
+</tr>
+<tr>
+<td>MongoDB Blog</td>
+<td><a href="https://www.mongodb.com/blog">https://www.mongodb.com/blog</a></td>
+<td>官方技术博客，发布最新功能介绍、最佳实践和案例分享</td>
+</tr>
+<tr>
+<td>MongoDB Developer Center</td>
+<td><a href="https://www.mongodb.com/developer/">https://www.mongodb.com/developer/</a></td>
+<td>面向开发者的资源中心，包含教程、代码示例和社区文章</td>
+</tr>
+<tr>
+<td>MongoDB GitHub</td>
+<td><a href="https://github.com/mongodb">https://github.com/mongodb</a></td>
+<td>MongoDB 官方开源项目仓库，包括各语言驱动和工具源码</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-spring-data-mongodb-官方文档">2. Spring Data MongoDB 官方文档</h3>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>链接</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Spring Data MongoDB 参考文档</td>
+<td><a href="https://docs.spring.io/spring-data/mongodb/reference/">https://docs.spring.io/spring-data/mongodb/reference/</a></td>
+<td>Spring Data MongoDB 的官方参考文档，涵盖配置、Repository、MongoTemplate、聚合等所有核心功能</td>
+</tr>
+<tr>
+<td>Spring Data MongoDB API 文档</td>
+<td><a href="https://docs.spring.io/spring-data/mongodb/docs/current/api/">https://docs.spring.io/spring-data/mongodb/docs/current/api/</a></td>
+<td>JavaDoc API 文档，查看类和方法的详细接口定义</td>
+</tr>
+<tr>
+<td>Spring Boot MongoDB 指南</td>
+<td><a href="https://spring.io/guides/gs/accessing-data-mongodb">https://spring.io/guides/gs/accessing-data-mongodb</a></td>
+<td>Spring 官方入门指南，快速了解 Spring Boot 与 MongoDB 的集成方式</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-推荐书籍">3. 推荐书籍</h3>
+<table>
+<thead>
+<tr>
+<th>书名</th>
+<th>作者</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>《MongoDB 权威指南（第3版）》</td>
+<td>Shannon Bradshaw 等</td>
+<td>O'Reilly 出版，MongoDB 领域最经典的参考书，系统讲解核心概念、管理与优化</td>
+</tr>
+<tr>
+<td>《MongoDB 实战（第2版）》</td>
+<td>Kyle Banker 等</td>
+<td>Manning 出版，注重实践，通过真实场景讲解 MongoDB 的使用技巧</td>
+</tr>
+<tr>
+<td>《MongoDB Applied Design Patterns》</td>
+<td>Rick Copeland</td>
+<td>O'Reilly 出版，专注于文档模型设计模式和最佳实践</td>
+</tr>
+<tr>
+<td>《Spring Data》</td>
+<td>Mark Pollack 等</td>
+<td>讲解 Spring Data 项目全貌，包含 MongoDB 集成的深入内容</td>
+</tr>
+<tr>
+<td>《Spring Boot 实战》</td>
+<td>Craig Walls</td>
+<td>涵盖 Spring Boot 与各种数据存储（含 MongoDB）的集成开发</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-在线学习平台">4. 在线学习平台</h3>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>链接</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MongoDB University</td>
+<td><a href="https://learn.mongodb.com/">https://learn.mongodb.com/</a></td>
+<td>官方平台，提供 M001（入门）、M121（聚合）、M320（建模）等免费课程</td>
+</tr>
+<tr>
+<td>Baeldung（MongoDB 专区）</td>
+<td><a href="https://www.baeldung.com/tag/mongodb">https://www.baeldung.com/tag/mongodb</a></td>
+<td>Java 开发者最常用的技术博客之一，大量 Spring + MongoDB 实战教程</td>
+</tr>
+<tr>
+<td>Bilibili（B站）</td>
+<td><a href="https://www.bilibili.com/">https://www.bilibili.com/</a></td>
+<td>搜索&quot;MongoDB&quot;或&quot;Spring Data MongoDB&quot;可找到大量中文视频教程</td>
+</tr>
+<tr>
+<td>慕课网</td>
+<td><a href="https://www.imooc.com/">https://www.imooc.com/</a></td>
+<td>国内知名在线学习平台，提供 MongoDB 相关的中文实战课程</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-社区资源">5. 社区资源</h3>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>链接</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MongoDB Community Forums</td>
+<td><a href="https://www.mongodb.com/community/forums/">https://www.mongodb.com/community/forums/</a></td>
+<td>MongoDB 官方社区论坛，提问和浏览常见问题的最佳场所</td>
+</tr>
+<tr>
+<td>Stack Overflow（MongoDB 标签）</td>
+<td><a href="https://stackoverflow.com/questions/tagged/mongodb">https://stackoverflow.com/questions/tagged/mongodb</a></td>
+<td>全球最大的技术问答社区，MongoDB 标签下有海量问答</td>
+</tr>
+<tr>
+<td>Stack Overflow（Spring-Data-MongoDB 标签）</td>
+<td><a href="https://stackoverflow.com/questions/tagged/spring-data-mongodb">https://stackoverflow.com/questions/tagged/spring-data-mongodb</a></td>
+<td>Spring Data MongoDB 相关的技术问答</td>
+</tr>
+<tr>
+<td>掘金（MongoDB 标签）</td>
+<td><a href="https://juejin.cn/tag/MongoDB">https://juejin.cn/tag/MongoDB</a></td>
+<td>国内开发者社区，有大量高质量的 MongoDB 中文技术文章</td>
+</tr>
+<tr>
+<td>SegmentFault</td>
+<td><a href="https://segmentfault.com/t/mongodb">https://segmentfault.com/t/mongodb</a></td>
+<td>国内技术问答社区，MongoDB 相关问答和专栏文章</td>
+</tr>
+</tbody>
+</table>
+<h3 id="6-工具推荐">6. 工具推荐</h3>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>链接</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MongoDB Compass</td>
+<td><a href="https://www.mongodb.com/products/compass">https://www.mongodb.com/products/compass</a></td>
+<td>MongoDB 官方 GUI 工具，免费，支持可视化查询构建、性能分析、索引管理、聚合管道构建</td>
+</tr>
+<tr>
+<td>mongosh</td>
+<td><a href="https://www.mongodb.com/docs/mongodb-shell/">https://www.mongodb.com/docs/mongodb-shell/</a></td>
+<td>MongoDB 官方新一代 Shell 工具，支持语法高亮、自动补全、丰富的脚本能力</td>
+</tr>
+<tr>
+<td>Navicat for MongoDB</td>
+<td><a href="https://www.navicat.com/en/products/navicat-for-mongodb">https://www.navicat.com/en/products/navicat-for-mongodb</a></td>
+<td>商业 GUI 工具，界面友好，适合习惯 Navicat 的用户</td>
+</tr>
+<tr>
+<td>Studio 3T</td>
+<td><a href="https://studio3t.com/">https://studio3t.com/</a></td>
+<td>功能丰富的 MongoDB GUI 工具，支持 SQL 查询、数据导入导出、IntelliShell 等</td>
+</tr>
+<tr>
+<td>MongoDB Database Tools</td>
+<td><a href="https://www.mongodb.com/docs/database-tools/">https://www.mongodb.com/docs/database-tools/</a></td>
+<td>官方命令行工具集，包含 mongodump、mongorestore、mongoexport、mongoimport 等</td>
+</tr>
+<tr>
+<td>Spring Initializr</td>
+<td><a href="https://start.spring.io/">https://start.spring.io/</a></td>
+<td>Spring 官方项目脚手架，快速生成包含 Spring Data MongoDB 依赖的项目模板</td>
+</tr>
+<tr>
+<td>Testcontainers</td>
+<td><a href="https://testcontainers.com/modules/mongodb/">https://testcontainers.com/modules/mongodb/</a></td>
+<td>基于 Docker 的轻量级测试库，为集成测试提供一次性 MongoDB 实例</td>
+</tr>
+<tr>
+<td>Embedded MongoDB（de.flapdoodle）</td>
+<td><a href="https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo">https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo</a></td>
+<td>嵌入式 MongoDB 库，无需 Docker 即可在单元/集成测试中启动独立 MongoDB 进程</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<blockquote>
+<p><strong>学习建议：</strong> 本课程配合 MongoDB 官方文档和 Spring Data MongoDB 参考文档一起使用效果最佳。遇到问题时，优先查阅官方文档，其次在 Stack Overflow 和社区论坛中搜索，通常都能找到解决方案。建议在 MongoDB University 完成 M001（基础）和 M121（聚合框架）两门免费课程来巩固所学内容。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

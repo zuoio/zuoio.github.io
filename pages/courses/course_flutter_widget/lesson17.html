@@ -1,0 +1,2892 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第17课-对话框与弹出层组件">第17课 对话框与弹出层组件</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter 常用组件系统学习<br />
+<strong>适用人群</strong>：有 Dart 语言基础，了解 Flutter 基本概念的开发者<br />
+<strong>课程目标</strong>：系统掌握 Flutter 中各种对话框、底部弹出层、提示消息等&quot;弹出层&quot;组件的使用方式，理解其异步返回值机制</p>
+</blockquote>
+<hr />
+<h2 id="弹出层的核心概念">弹出层的核心概念</h2>
+<p>Flutter 中的&quot;弹出层&quot;组件有一个共同特征：它们通过<strong>方法调用</strong>（而非声明式组件嵌套）来显示，且大多数方法返回一个 <code>Future</code>，代表用户关闭弹出层后的结果。这是因为弹出层本质上是在当前 Navigator 之上 push 了一个新的 Route（对话框）或插入了一个 Overlay（SnackBar、Tooltip 等）。</p>
+<p>理解这一点非常重要：<code>showDialog</code>、<code>showModalBottomSheet</code> 等方法都是<strong>异步</strong>的，返回 <code>Future&lt;T?&gt;</code>。当用户关闭弹出层时，这个 Future 会 complete，你可以通过 <code>await</code> 或 <code>.then()</code> 获取用户的选择结果。</p>
+<hr />
+<h2 id="1-showdialog-与-alertdialog">1. showDialog 与 AlertDialog</h2>
+<h3 id="11-基本用法">1.1 基本用法</h3>
+<p><code>showDialog</code> 是显示对话框的核心方法，它接收一个 <code>builder</code> 参数来构建对话框内容。<code>AlertDialog</code> 是 Material Design 中最常用的对话框组件。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.blue, useMaterial3: true),
+      home: const AlertDialogDemo(),
+    );
+  }
+}
+
+class AlertDialogDemo extends StatefulWidget {
+  const AlertDialogDemo({super.key});
+
+  @override
+  State&lt;AlertDialogDemo&gt; createState() =&gt; _AlertDialogDemoState();
+}
+
+class _AlertDialogDemoState extends State&lt;AlertDialogDemo&gt; {
+  String _result = '尚未选择';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('AlertDialog 演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('用户选择: $_result', style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () =&gt; _showBasicDialog(context),
+              child: const Text('显示基础对话框'),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () =&gt; _showDialogWithResult(context),
+              child: const Text('显示带返回值的对话框'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 基础 AlertDialog
+  void _showBasicDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      // 点击对话框外部区域是否关闭，默认为 true
+      barrierDismissible: true,
+      // 遮罩层颜色
+      barrierColor: Colors.black54,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          // 对话框标题
+          title: const Text('提示'),
+          // 对话框内容
+          content: const Text('这是一个基础的 AlertDialog，点击按钮或外部区域关闭。'),
+          // 操作按钮列表
+          actions: [
+            TextButton(
+              onPressed: () =&gt; Navigator.pop(dialogContext),
+              child: const Text('知道了'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// 带返回值的 AlertDialog —— 展示 Future 机制
+  Future&lt;void&gt; _showDialogWithResult(BuildContext context) async {
+    // showDialog 返回 Future&lt;T?&gt;，T 由 Navigator.pop 的第二个参数决定
+    final bool? confirmed = await showDialog&lt;bool&gt;(
+      context: context,
+      barrierDismissible: false, // 禁止点击外部关闭，强制用户做出选择
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          icon: const Icon(Icons.warning_amber_rounded, size: 48),
+          title: const Text('确认删除'),
+          content: const Text('此操作不可撤销，确定要删除这条记录吗？'),
+          actions: [
+            TextButton(
+              onPressed: () =&gt; Navigator.pop(dialogContext, false), // 返回 false
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              onPressed: () =&gt; Navigator.pop(dialogContext, true), // 返回 true
+              child: const Text('确认删除'),
+            ),
+          ],
+        );
+      },
+    );
+
+    // 检查 mounted 防止异步操作后 Widget 已被销毁
+    if (!mounted) return;
+
+    setState(() {
+      if (confirmed == true) {
+        _result = '用户确认删除';
+      } else {
+        _result = '用户取消删除';
+      }
+    });
+  }
+}
+</code></pre>
+<h3 id="12-alertdialog-的常用属性">1.2 AlertDialog 的常用属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td><code>Widget?</code></td>
+<td>对话框标题</td>
+</tr>
+<tr>
+<td><code>content</code></td>
+<td><code>Widget?</code></td>
+<td>对话框主体内容</td>
+</tr>
+<tr>
+<td><code>actions</code></td>
+<td><code>List&lt;Widget&gt;?</code></td>
+<td>底部操作按钮</td>
+</tr>
+<tr>
+<td><code>icon</code></td>
+<td><code>Widget?</code></td>
+<td>标题上方的图标</td>
+</tr>
+<tr>
+<td><code>shape</code></td>
+<td><code>ShapeBorder?</code></td>
+<td>对话框形状（圆角等）</td>
+</tr>
+<tr>
+<td><code>elevation</code></td>
+<td><code>double?</code></td>
+<td>阴影高度</td>
+</tr>
+<tr>
+<td><code>backgroundColor</code></td>
+<td><code>Color?</code></td>
+<td>背景色</td>
+</tr>
+<tr>
+<td><code>contentPadding</code></td>
+<td><code>EdgeInsetsGeometry?</code></td>
+<td>内容区域内边距</td>
+</tr>
+<tr>
+<td><code>actionsPadding</code></td>
+<td><code>EdgeInsetsGeometry?</code></td>
+<td>按钮区域内边距</td>
+</tr>
+<tr>
+<td><code>actionsAlignment</code></td>
+<td><code>MainAxisAlignment?</code></td>
+<td>按钮对齐方式</td>
+</tr>
+<tr>
+<td><code>scrollable</code></td>
+<td><code>bool</code></td>
+<td>内容区域是否可滚动</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13-showdialog-的关键参数">1.3 showDialog 的关键参数</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>context</code></td>
+<td><code>BuildContext</code></td>
+<td>用于定位 Navigator</td>
+</tr>
+<tr>
+<td><code>builder</code></td>
+<td><code>WidgetBuilder</code></td>
+<td>构建对话框内容</td>
+</tr>
+<tr>
+<td><code>barrierDismissible</code></td>
+<td><code>bool</code></td>
+<td>点击遮罩是否关闭（默认 <code>true</code>）</td>
+</tr>
+<tr>
+<td><code>barrierColor</code></td>
+<td><code>Color?</code></td>
+<td>遮罩层颜色（默认半透明黑色）</td>
+</tr>
+<tr>
+<td><code>barrierLabel</code></td>
+<td><code>String?</code></td>
+<td>无障碍标签</td>
+</tr>
+<tr>
+<td><code>useSafeArea</code></td>
+<td><code>bool</code></td>
+<td>是否避开系统安全区（默认 <code>true</code>）</td>
+</tr>
+<tr>
+<td><code>useRootNavigator</code></td>
+<td><code>bool</code></td>
+<td>是否使用根 Navigator（默认 <code>true</code>）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意事项</strong>：<code>showDialog</code> 的 <code>builder</code> 回调参数中的 <code>context</code>（示例中命名为 <code>dialogContext</code>）与外层的 <code>context</code> 不同。在调用 <code>Navigator.pop</code> 关闭对话框时，应使用 <code>builder</code> 提供的 context，这样可以精确地 pop 当前对话框的 Route。</p>
+</blockquote>
+<hr />
+<h2 id="2-simpledialog">2. SimpleDialog</h2>
+<p><code>SimpleDialog</code> 适用于让用户在几个选项中做出选择的场景。每个选项由 <code>SimpleDialogOption</code> 表示。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.teal, useMaterial3: true),
+      home: const SimpleDialogDemo(),
+    );
+  }
+}
+
+class SimpleDialogDemo extends StatefulWidget {
+  const SimpleDialogDemo({super.key});
+
+  @override
+  State&lt;SimpleDialogDemo&gt; createState() =&gt; _SimpleDialogDemoState();
+}
+
+class _SimpleDialogDemoState extends State&lt;SimpleDialogDemo&gt; {
+  String _selectedLanguage = '未选择';
+
+  Future&lt;void&gt; _showLanguageDialog() async {
+    final languages = ['Dart', 'Kotlin', 'Swift', 'TypeScript', 'Rust'];
+
+    // SimpleDialog 同样通过 showDialog 显示
+    final String? result = await showDialog&lt;String&gt;(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return SimpleDialog(
+          title: const Text('选择你最喜欢的编程语言'),
+          // children 通常是一组 SimpleDialogOption
+          children: languages.map((lang) {
+            return SimpleDialogOption(
+              onPressed: () =&gt; Navigator.pop(dialogContext, lang),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              child: Row(
+                children: [
+                  const Icon(Icons.code, size: 20),
+                  const SizedBox(width: 12),
+                  Text(lang, style: const TextStyle(fontSize: 16)),
+                ],
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+
+    if (!mounted) return;
+    if (result != null) {
+      setState(() =&gt; _selectedLanguage = result);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('SimpleDialog 演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('已选择: $_selectedLanguage', style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _showLanguageDialog,
+              child: const Text('选择编程语言'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：<code>SimpleDialog</code> 适合 2-6 个选项的简单选择场景。如果选项过多，考虑使用 <code>showModalBottomSheet</code> 配合 <code>ListView</code> 替代，体验更好。</p>
+</blockquote>
+<hr />
+<h2 id="3-dialog">3. Dialog</h2>
+<p><code>Dialog</code> 是 <code>AlertDialog</code> 和 <code>SimpleDialog</code> 的基类，当内置对话框无法满足设计需求时，可以直接使用 <code>Dialog</code> 进行完全自定义。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.deepPurple, useMaterial3: true),
+      home: const CustomDialogDemo(),
+    );
+  }
+}
+
+class CustomDialogDemo extends StatelessWidget {
+  const CustomDialogDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('自定义 Dialog 演示')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () =&gt; _showCustomDialog(context),
+          child: const Text('显示自定义对话框'),
+        ),
+      ),
+    );
+  }
+
+  void _showCustomDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          // 自定义形状：圆角矩形
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          // 阴影高度
+          elevation: 16,
+          // 对话框与屏幕边缘的距离
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+          // 完全自定义的子组件
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 顶部图片或图标区
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Theme.of(dialogContext).colorScheme.primaryContainer,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.celebration,
+                    size: 40,
+                    color: Theme.of(dialogContext).colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  '恭喜完成！',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  '你已成功完成所有课程任务。继续保持学习的热情吧！',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: Colors.grey),
+                ),
+                const SizedBox(height: 24),
+                // 自定义按钮
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () =&gt; Navigator.pop(dialogContext),
+                    child: const Text('太棒了！'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () =&gt; Navigator.pop(dialogContext),
+                  child: const Text('稍后查看'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+</code></pre>
+<h3 id="31-dialog-与-alertdialog-的关系">3.1 Dialog 与 AlertDialog 的关系</h3>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>定位</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Dialog</code></td>
+<td>基类，提供基础样式（形状、阴影、内边距）</td>
+<td>完全自定义布局</td>
+</tr>
+<tr>
+<td><code>AlertDialog</code></td>
+<td>继承自 <code>Dialog</code>，预设了 title/content/actions 布局</td>
+<td>标准确认/警告对话框</td>
+</tr>
+<tr>
+<td><code>SimpleDialog</code></td>
+<td>继承自 <code>Dialog</code>，预设了 title/children 布局</td>
+<td>简单选项列表</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：优先使用 <code>AlertDialog</code> 或 <code>SimpleDialog</code>，只在它们无法满足需求时才用 <code>Dialog</code> 自定义。直接使用 <code>Dialog</code> 需要自己处理所有布局细节，但灵活性最高。</p>
+</blockquote>
+<hr />
+<h2 id="4-showmodalbottomsheet">4. showModalBottomSheet</h2>
+<p><code>showModalBottomSheet</code> 用于从屏幕底部弹出一个模态面板。用户必须关闭它才能继续操作下面的页面，这一点与非模态的 <code>showBottomSheet</code> 不同。</p>
+<h3 id="41-基础用法">4.1 基础用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
+      home: const BottomSheetDemo(),
+    );
+  }
+}
+
+class BottomSheetDemo extends StatefulWidget {
+  const BottomSheetDemo({super.key});
+
+  @override
+  State&lt;BottomSheetDemo&gt; createState() =&gt; _BottomSheetDemoState();
+}
+
+class _BottomSheetDemoState extends State&lt;BottomSheetDemo&gt; {
+  String _selected = '无';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('ModalBottomSheet 演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('已选择: $_selected', style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _showBasicBottomSheet,
+              child: const Text('基础底部弹出'),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: _showFullScreenBottomSheet,
+              child: const Text('全屏底部弹出'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future&lt;void&gt; _showBasicBottomSheet() async {
+    final result = await showModalBottomSheet&lt;String&gt;(
+      context: context,
+      // 自定义顶部圆角
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      // 是否可以点击外部关闭
+      isDismissible: true,
+      // 是否可以下拉关闭
+      enableDrag: true,
+      // 是否使用安全区域（避开刘海等）
+      useSafeArea: true,
+      builder: (BuildContext sheetContext) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // 高度自适应内容
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 拖拽指示条
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const Text(
+                '选择分享方式',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              _buildShareOption(sheetContext, Icons.link, '复制链接', 'link'),
+              _buildShareOption(sheetContext, Icons.chat, '发送给朋友', 'friend'),
+              _buildShareOption(sheetContext, Icons.share, '分享到朋友圈', 'moments'),
+              _buildShareOption(sheetContext, Icons.bookmark, '收藏', 'favorite'),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (!mounted || result == null) return;
+    setState(() =&gt; _selected = result);
+  }
+
+  Widget _buildShareOption(
+    BuildContext sheetContext,
+    IconData icon,
+    String label,
+    String value,
+  ) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(label),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      onTap: () =&gt; Navigator.pop(sheetContext, value),
+    );
+  }
+
+  Future&lt;void&gt; _showFullScreenBottomSheet() async {
+    await showModalBottomSheet(
+      context: context,
+      // 关键属性：允许底部弹出占据全屏高度
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      // 约束底部弹出面板的最大宽度/高度
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.85,
+      ),
+      builder: (BuildContext sheetContext) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // 拖拽指示条
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const Text(
+                '评论列表',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const Divider(),
+              // 用 Expanded 包裹可滚动内容
+              Expanded(
+                child: ListView.builder(
+                  itemCount: 30,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: CircleAvatar(child: Text('${index + 1}')),
+                      title: Text('用户${index + 1}的评论'),
+                      subtitle: Text('这是第${index + 1}条评论内容...'),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+</code></pre>
+<h3 id="42-showmodalbottomsheet-的关键参数">4.2 showModalBottomSheet 的关键参数</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>builder</code></td>
+<td><code>WidgetBuilder</code></td>
+<td>构建底部面板内容</td>
+</tr>
+<tr>
+<td><code>shape</code></td>
+<td><code>ShapeBorder?</code></td>
+<td>面板形状（通常设置顶部圆角）</td>
+</tr>
+<tr>
+<td><code>isScrollControlled</code></td>
+<td><code>bool</code></td>
+<td>为 <code>true</code> 时允许面板高度超过屏幕一半（默认 <code>false</code>）</td>
+</tr>
+<tr>
+<td><code>isDismissible</code></td>
+<td><code>bool</code></td>
+<td>点击遮罩是否关闭（默认 <code>true</code>）</td>
+</tr>
+<tr>
+<td><code>enableDrag</code></td>
+<td><code>bool</code></td>
+<td>是否允许下拉手势关闭（默认 <code>true</code>）</td>
+</tr>
+<tr>
+<td><code>useSafeArea</code></td>
+<td><code>bool</code></td>
+<td>是否避开系统安全区域（默认 <code>false</code>）</td>
+</tr>
+<tr>
+<td><code>constraints</code></td>
+<td><code>BoxConstraints?</code></td>
+<td>面板尺寸约束</td>
+</tr>
+<tr>
+<td><code>backgroundColor</code></td>
+<td><code>Color?</code></td>
+<td>背景色</td>
+</tr>
+<tr>
+<td><code>elevation</code></td>
+<td><code>double?</code></td>
+<td>阴影高度</td>
+</tr>
+<tr>
+<td><code>showDragHandle</code></td>
+<td><code>bool?</code></td>
+<td>是否显示默认拖拽手柄（Material 3）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意事项</strong>：当 <code>isScrollControlled</code> 为 <code>true</code> 时，<code>builder</code> 返回的组件需要自己管理高度。如果内容不固定，务必使用 <code>constraints</code> 或 <code>FractionallySizedBox</code> 等方式限制最大高度，否则面板可能覆盖整个屏幕。</p>
+</blockquote>
+<hr />
+<h2 id="5-showbottomsheet">5. showBottomSheet</h2>
+<p><code>showBottomSheet</code> 创建一个<strong>持久的、非模态的</strong>底部面板。它与 <code>showModalBottomSheet</code> 的核心区别在于：用户可以继续与页面其他部分交互，不会有遮罩层。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.green, useMaterial3: true),
+      home: const PersistentBottomSheetDemo(),
+    );
+  }
+}
+
+class PersistentBottomSheetDemo extends StatefulWidget {
+  const PersistentBottomSheetDemo({super.key});
+
+  @override
+  State&lt;PersistentBottomSheetDemo&gt; createState() =&gt;
+      _PersistentBottomSheetDemoState();
+}
+
+class _PersistentBottomSheetDemoState extends State&lt;PersistentBottomSheetDemo&gt; {
+  bool _isSheetOpen = false;
+
+  void _toggleBottomSheet() {
+    if (_isSheetOpen) return;
+
+    setState(() =&gt; _isSheetOpen = true);
+
+    // showBottomSheet 需要通过 Scaffold 的 context 调用
+    // 返回 PersistentBottomSheetController，可用于编程式关闭
+    final controller = showBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext sheetContext) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          height: 200,
+          child: Column(
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const Text(
+                '持久底部面板',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              const Text('这是一个非模态面板，你可以继续操作下方页面内容。'),
+              const Spacer(),
+              FilledButton(
+                onPressed: () =&gt; Navigator.pop(sheetContext),
+                child: const Text('关闭面板'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    // 监听面板关闭事件
+    controller.closed.then((_) {
+      if (mounted) {
+        setState(() =&gt; _isSheetOpen = false);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('showBottomSheet 演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('页面内容区域', style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 8),
+            const Text('面板打开后你仍然可以操作这里'),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _isSheetOpen ? null : _toggleBottomSheet,
+              child: Text(_isSheetOpen ? '面板已打开' : '打开持久底部面板'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="51-showbottomsheet-与-showmodalbottomsheet-的对比">5.1 showBottomSheet 与 showModalBottomSheet 的对比</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th><code>showModalBottomSheet</code></th>
+<th><code>showBottomSheet</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>遮罩层</td>
+<td>有（半透明黑色）</td>
+<td>无</td>
+</tr>
+<tr>
+<td>用户能否与页面交互</td>
+<td>不能，必须先关闭</td>
+<td>可以</td>
+</tr>
+<tr>
+<td>显示方式</td>
+<td>push 一个 ModalRoute</td>
+<td>通过 Scaffold 显示</td>
+</tr>
+<tr>
+<td>返回类型</td>
+<td><code>Future&lt;T?&gt;</code></td>
+<td><code>PersistentBottomSheetController</code></td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>需要用户做出选择后才继续</td>
+<td>辅助信息面板、播放器控制条等</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意事项</strong>：<code>showBottomSheet</code> 必须在 <code>Scaffold</code> 的子树中调用（即 <code>context</code> 能找到 <code>Scaffold</code>），否则会抛出异常。</p>
+</blockquote>
+<hr />
+<h2 id="6-draggablescrollablesheet">6. DraggableScrollableSheet</h2>
+<p><code>DraggableScrollableSheet</code> 是一个可拖动的底部面板，用户可以通过手势拖拽来调整面板高度。它通常与 <code>showModalBottomSheet</code> 组合使用。</p>
+<h3 id="61-独立使用">6.1 独立使用</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.orange, useMaterial3: true),
+      home: const DraggableSheetDemo(),
+    );
+  }
+}
+
+class DraggableSheetDemo extends StatelessWidget {
+  const DraggableSheetDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('DraggableScrollableSheet 演示')),
+      body: Stack(
+        children: [
+          // 背景内容
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.map, size: 100, color: Colors.grey[300]),
+                const SizedBox(height: 16),
+                const Text('地图内容区域', style: TextStyle(color: Colors.grey)),
+              ],
+            ),
+          ),
+          // 可拖动面板
+          DraggableScrollableSheet(
+            // 初始高度占屏幕的 30%
+            initialChildSize: 0.3,
+            // 最小高度占屏幕的 10%
+            minChildSize: 0.1,
+            // 最大高度占屏幕的 80%
+            maxChildSize: 0.8,
+            // 开启吸附效果
+            snap: true,
+            // 吸附位置（介于 min 和 max 之间）
+            snapSizes: const [0.3, 0.5, 0.8],
+            builder: (BuildContext context, ScrollController scrollController) {
+              // 必须将 scrollController 传给内部的可滚动组件
+              return Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: ListView.builder(
+                  controller: scrollController, // 关键：绑定 scrollController
+                  itemCount: 25,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      // 第一项作为拖拽指示器
+                      return Column(
+                        children: [
+                          const SizedBox(height: 8),
+                          Center(
+                            child: Container(
+                              width: 40,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[400],
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Text(
+                              '附近的地点',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    return ListTile(
+                      leading: const Icon(Icons.place),
+                      title: Text('地点 $index'),
+                      subtitle: Text('距离 ${index * 0.5} km'),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="62-与-showmodalbottomsheet-组合使用">6.2 与 showModalBottomSheet 组合使用</h3>
+<p>这是实际开发中最常见的模式——在模态底部弹出中嵌入可拖动面板：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.cyan, useMaterial3: true),
+      home: const CombinedSheetDemo(),
+    );
+  }
+}
+
+class CombinedSheetDemo extends StatelessWidget {
+  const CombinedSheetDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('组合使用演示')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () =&gt; _showDraggableModalSheet(context),
+          child: const Text('打开可拖动的模态底部面板'),
+        ),
+      ),
+    );
+  }
+
+  void _showDraggableModalSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      // 必须设为 true，否则 DraggableScrollableSheet 无法超过屏幕一半
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext sheetContext) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.4,
+          minChildSize: 0.2,
+          maxChildSize: 0.9,
+          snap: true,
+          snapSizes: const [0.4, 0.7, 0.9],
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: 40,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return Column(
+                      children: [
+                        const SizedBox(height: 8),
+                        Center(
+                          child: Container(
+                            width: 40,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[400],
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Text(
+                            '搜索结果',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const Divider(),
+                      ],
+                    );
+                  }
+                  return ListTile(
+                    leading: CircleAvatar(child: Text('$index')),
+                    title: Text('结果项 $index'),
+                    subtitle: const Text('详细描述信息...'),
+                    trailing: const Icon(Icons.chevron_right),
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+</code></pre>
+<h3 id="63-使用-draggablescrollablecontroller">6.3 使用 DraggableScrollableController</h3>
+<p><code>DraggableScrollableController</code> 可以编程式地控制面板位置，以及监听面板大小变化：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.pink, useMaterial3: true),
+      home: const ControllerSheetDemo(),
+    );
+  }
+}
+
+class ControllerSheetDemo extends StatefulWidget {
+  const ControllerSheetDemo({super.key});
+
+  @override
+  State&lt;ControllerSheetDemo&gt; createState() =&gt; _ControllerSheetDemoState();
+}
+
+class _ControllerSheetDemoState extends State&lt;ControllerSheetDemo&gt; {
+  final DraggableScrollableController _sheetController =
+      DraggableScrollableController();
+  double _currentSize = 0.3;
+
+  @override
+  void initState() {
+    super.initState();
+    // 监听面板大小变化
+    _sheetController.addListener(_onSheetSizeChanged);
+  }
+
+  void _onSheetSizeChanged() {
+    setState(() {
+      _currentSize = _sheetController.size;
+    });
+  }
+
+  @override
+  void dispose() {
+    _sheetController.removeListener(_onSheetSizeChanged);
+    _sheetController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('DraggableScrollableController 演示')),
+      body: Stack(
+        children: [
+          // 背景按钮区
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Text(
+                  '当前面板高度: ${(_currentSize * 100).toStringAsFixed(1)}%',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () =&gt; _sheetController.animateTo(
+                        0.1,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      ),
+                      child: const Text('收起'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () =&gt; _sheetController.animateTo(
+                        0.5,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      ),
+                      child: const Text('半屏'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () =&gt; _sheetController.animateTo(
+                        0.9,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      ),
+                      child: const Text('全屏'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          // 可拖动面板
+          DraggableScrollableSheet(
+            controller: _sheetController,
+            initialChildSize: 0.3,
+            minChildSize: 0.1,
+            maxChildSize: 0.9,
+            snap: true,
+            snapSizes: const [0.1, 0.3, 0.5, 0.9],
+            builder: (context, scrollController) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: 30,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return const Column(
+                        children: [
+                          SizedBox(height: 12),
+                          Icon(Icons.drag_handle, color: Colors.grey),
+                          Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Text(
+                              '可编程控制的面板',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    return ListTile(
+                      title: Text('列表项 $index'),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：<code>DraggableScrollableSheet</code> 的 <code>builder</code> 回调提供的 <code>scrollController</code> <strong>必须</strong>传递给内部的可滚动组件（如 <code>ListView</code>、<code>GridView</code>），否则拖拽手势和滚动不会正常联动。</p>
+</blockquote>
+<hr />
+<h2 id="7-snackbar-与-scaffoldmessenger">7. SnackBar 与 ScaffoldMessenger</h2>
+<p><code>SnackBar</code> 用于在屏幕底部显示简短的提示消息。通过 <code>ScaffoldMessenger.of(context).showSnackBar()</code> 来显示。</p>
+<h3 id="71-基础用法与不同-behavior">7.1 基础用法与不同 behavior</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.amber, useMaterial3: true),
+      home: const SnackBarDemo(),
+    );
+  }
+}
+
+class SnackBarDemo extends StatelessWidget {
+  const SnackBarDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('SnackBar 演示')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 1. fixed 模式（默认）
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('这是 fixed 模式的 SnackBar'),
+                    // fixed: 贴底显示，在 FAB 和 BottomNavigationBar 下方
+                    behavior: SnackBarBehavior.fixed,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
+              child: const Text('Fixed SnackBar（贴底）'),
+            ),
+            const SizedBox(height: 12),
+
+            // 2. floating 模式
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('这是 floating 模式的 SnackBar'),
+                    // floating: 悬浮显示，带圆角和阴影
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    margin: const EdgeInsets.all(12),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              },
+              child: const Text('Floating SnackBar（悬浮）'),
+            ),
+            const SizedBox(height: 12),
+
+            // 3. 带操作按钮
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('已删除 1 条记录'),
+                    behavior: SnackBarBehavior.floating,
+                    // 操作按钮
+                    action: SnackBarAction(
+                      label: '撤销',
+                      onPressed: () {
+                        // 执行撤销操作
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('已撤销删除'),
+                            behavior: SnackBarBehavior.floating,
+                            duration: Duration(seconds: 1),
+                          ),
+                        );
+                      },
+                    ),
+                    duration: const Duration(seconds: 4),
+                  ),
+                );
+              },
+              child: const Text('带撤销操作的 SnackBar'),
+            ),
+            const SizedBox(height: 12),
+
+            // 4. 带关闭按钮
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('这条消息可以手动关闭'),
+                    behavior: SnackBarBehavior.floating,
+                    // 显示右侧关闭图标
+                    showCloseIcon: true,
+                    closeIconColor: Colors.white,
+                    duration: const Duration(seconds: 10),
+                  ),
+                );
+              },
+              child: const Text('带关闭按钮的 SnackBar'),
+            ),
+            const SizedBox(height: 12),
+
+            // 5. 自定义样式
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Row(
+                      children: [
+                        Icon(Icons.check_circle, color: Colors.white),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '操作成功',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                '数据已保存到服务器',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: Colors.green[700],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 6,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              },
+              child: const Text('自定义样式 SnackBar'),
+            ),
+            const SizedBox(height: 12),
+
+            // 6. 清除当前所有 SnackBar
+            OutlinedButton(
+              onPressed: () {
+                // clearSnackBars 会移除队列中所有 SnackBar
+                ScaffoldMessenger.of(context).clearSnackBars();
+              },
+              child: const Text('清除所有 SnackBar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="72-snackbar-常用属性">7.2 SnackBar 常用属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>content</code></td>
+<td><code>Widget</code></td>
+<td>主体内容（通常是 <code>Text</code>）</td>
+</tr>
+<tr>
+<td><code>action</code></td>
+<td><code>SnackBarAction?</code></td>
+<td>右侧操作按钮</td>
+</tr>
+<tr>
+<td><code>duration</code></td>
+<td><code>Duration</code></td>
+<td>显示时长（默认 4 秒）</td>
+</tr>
+<tr>
+<td><code>behavior</code></td>
+<td><code>SnackBarBehavior?</code></td>
+<td><code>fixed</code>（贴底）或 <code>floating</code>（悬浮）</td>
+</tr>
+<tr>
+<td><code>showCloseIcon</code></td>
+<td><code>bool</code></td>
+<td>是否显示关闭按钮</td>
+</tr>
+<tr>
+<td><code>backgroundColor</code></td>
+<td><code>Color?</code></td>
+<td>背景色</td>
+</tr>
+<tr>
+<td><code>shape</code></td>
+<td><code>ShapeBorder?</code></td>
+<td>形状</td>
+</tr>
+<tr>
+<td><code>elevation</code></td>
+<td><code>double?</code></td>
+<td>阴影高度</td>
+</tr>
+<tr>
+<td><code>margin</code></td>
+<td><code>EdgeInsetsGeometry?</code></td>
+<td>外边距（仅 <code>floating</code> 模式有效）</td>
+</tr>
+<tr>
+<td><code>padding</code></td>
+<td><code>EdgeInsetsGeometry?</code></td>
+<td>内边距</td>
+</tr>
+<tr>
+<td><code>width</code></td>
+<td><code>double?</code></td>
+<td>固定宽度（仅 <code>floating</code> 模式有效）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>连续显示多条 SnackBar 时，<code>ScaffoldMessenger</code> 会自动排队。如果只想显示最新的一条，先调用 <code>clearSnackBars()</code> 再 <code>showSnackBar()</code>。</li>
+<li>使用 <code>floating</code> 模式时，SnackBar 不会遮挡 <code>FloatingActionButton</code>，视觉效果更佳。</li>
+<li><code>ScaffoldMessenger.of(context)</code> 会向上查找最近的 <code>ScaffoldMessenger</code>（<code>MaterialApp</code> 会自动创建一个）。如果你在 <code>Scaffold</code> 的 <code>build</code> 方法内创建了一个按钮，该按钮的 <code>context</code> 可以正确找到对应的 <code>ScaffoldMessenger</code>。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="8-materialbanner">8. MaterialBanner</h2>
+<p><code>MaterialBanner</code> 用于在页面顶部显示横幅提示，适合需要用户关注但不阻断操作的场景（如网络断开提醒、版本更新提示等）。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.red, useMaterial3: true),
+      home: const MaterialBannerDemo(),
+    );
+  }
+}
+
+class MaterialBannerDemo extends StatelessWidget {
+  const MaterialBannerDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('MaterialBanner 演示')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 1. 基础横幅
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showMaterialBanner(
+                  MaterialBanner(
+                    content: const Text('网络连接已断开，部分功能可能不可用。'),
+                    // 左侧图标
+                    leading: const Icon(Icons.wifi_off, color: Colors.red),
+                    // 操作按钮（至少需要一个）
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          // 关闭横幅
+                          ScaffoldMessenger.of(context)
+                              .hideCurrentMaterialBanner();
+                        },
+                        child: const Text('忽略'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context)
+                              .hideCurrentMaterialBanner();
+                          // 执行重连操作...
+                        },
+                        child: const Text('重试'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: const Text('显示网络断开横幅'),
+            ),
+            const SizedBox(height: 12),
+
+            // 2. 自定义样式横幅
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showMaterialBanner(
+                  MaterialBanner(
+                    content: const Text(
+                      '新版本 v2.0 已发布，包含重要功能更新。',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    leading: const Icon(Icons.system_update, color: Colors.blue),
+                    backgroundColor: Colors.blue.shade50,
+                    dividerColor: Colors.blue.shade200,
+                    padding: const EdgeInsets.all(16),
+                    leadingPadding: const EdgeInsets.only(right: 16),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context)
+                              .hideCurrentMaterialBanner();
+                        },
+                        child: const Text('稍后'),
+                      ),
+                      FilledButton(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context)
+                              .hideCurrentMaterialBanner();
+                          // 跳转到更新页面...
+                        },
+                        child: const Text('立即更新'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: const Text('显示版本更新横幅'),
+            ),
+            const SizedBox(height: 12),
+
+            // 3. 清除横幅
+            OutlinedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).clearMaterialBanners();
+              },
+              child: const Text('清除所有横幅'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>MaterialBanner</code> 的 <code>actions</code> 不能为空列表，至少需要一个操作按钮。</li>
+<li>与 <code>SnackBar</code> 不同，<code>MaterialBanner</code> 不会自动消失，必须通过代码调用 <code>hideCurrentMaterialBanner()</code> 或 <code>clearMaterialBanners()</code> 来关闭。</li>
+<li><code>MaterialBanner</code> 也会排队显示，如果需要立即替换当前横幅，先调用 <code>hideCurrentMaterialBanner()</code>。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="9-tooltip">9. Tooltip</h2>
+<p><code>Tooltip</code> 在用户<strong>长按</strong>（移动端）或<strong>鼠标悬浮</strong>（桌面端）时显示简短的文字说明。适合为图标按钮等无文字组件添加辅助说明。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.purple, useMaterial3: true),
+      home: const TooltipDemo(),
+    );
+  }
+}
+
+class TooltipDemo extends StatelessWidget {
+  const TooltipDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Tooltip 演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 1. 基础 Tooltip
+            const Tooltip(
+              message: '这是收藏按钮',
+              child: Icon(Icons.favorite, size: 48, color: Colors.red),
+            ),
+            const SizedBox(height: 32),
+
+            // 2. 自定义样式 Tooltip
+            Tooltip(
+              message: '分享到社交媒体',
+              // 自定义装饰
+              decoration: BoxDecoration(
+                color: Colors.deepPurple,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: const [
+                  BoxShadow(color: Colors.black26, blurRadius: 4),
+                ],
+              ),
+              textStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+              ),
+              // 等待多久后显示（鼠标悬浮场景）
+              waitDuration: const Duration(milliseconds: 500),
+              // 显示持续时间
+              showDuration: const Duration(seconds: 2),
+              // Tooltip 相对于子组件的垂直偏移
+              verticalOffset: 30,
+              // 优先显示在下方
+              preferBelow: true,
+              child: IconButton(
+                icon: const Icon(Icons.share, size: 36),
+                onPressed: () {},
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // 3. 富文本 Tooltip（使用 richMessage）
+            Tooltip(
+              richMessage: TextSpan(
+                children: [
+                  const TextSpan(
+                    text: '快捷键: ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(
+                    text: 'Ctrl + S',
+                    style: TextStyle(
+                      color: Colors.yellow[200],
+                      fontFamily: 'monospace',
+                    ),
+                  ),
+                ],
+              ),
+              decoration: BoxDecoration(
+                color: Colors.grey[800],
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const IconButton(
+                icon: Icon(Icons.save, size: 36),
+                onPressed: null,
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // 4. 包裹任意组件
+            Tooltip(
+              message: '点击查看个人资料',
+              child: GestureDetector(
+                onTap: () {},
+                child: const Chip(
+                  avatar: CircleAvatar(child: Text('A')),
+                  label: Text('Alice'),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="91-tooltip-常用属性">9.1 Tooltip 常用属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>message</code></td>
+<td><code>String?</code></td>
+<td>提示文本</td>
+</tr>
+<tr>
+<td><code>richMessage</code></td>
+<td><code>InlineSpan?</code></td>
+<td>富文本提示（与 <code>message</code> 二选一）</td>
+</tr>
+<tr>
+<td><code>child</code></td>
+<td><code>Widget?</code></td>
+<td>被包裹的子组件</td>
+</tr>
+<tr>
+<td><code>decoration</code></td>
+<td><code>Decoration?</code></td>
+<td>提示框装饰（背景色、圆角等）</td>
+</tr>
+<tr>
+<td><code>textStyle</code></td>
+<td><code>TextStyle?</code></td>
+<td>文字样式</td>
+</tr>
+<tr>
+<td><code>waitDuration</code></td>
+<td><code>Duration?</code></td>
+<td>鼠标悬浮后等待多久才显示</td>
+</tr>
+<tr>
+<td><code>showDuration</code></td>
+<td><code>Duration?</code></td>
+<td>显示持续时间</td>
+</tr>
+<tr>
+<td><code>verticalOffset</code></td>
+<td><code>double?</code></td>
+<td>垂直偏移量</td>
+</tr>
+<tr>
+<td><code>preferBelow</code></td>
+<td><code>bool?</code></td>
+<td>优先显示在子组件下方</td>
+</tr>
+<tr>
+<td><code>triggerMode</code></td>
+<td><code>TooltipTriggerMode?</code></td>
+<td>触发方式：<code>longPress</code>、<code>tap</code>、<code>manual</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：<code>IconButton</code> 等 Material 组件已内置 <code>tooltip</code> 参数，使用 <code>IconButton(tooltip: '说明', ...)</code> 比手动包裹 <code>Tooltip</code> 更简洁。</p>
+</blockquote>
+<hr />
+<h2 id="10-showmenu">10. showMenu</h2>
+<p><code>showMenu</code> 可以在页面上任意位置弹出一个菜单。它需要一个 <code>RelativeRect</code> 来指定菜单的弹出位置。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.brown, useMaterial3: true),
+      home: const ShowMenuDemo(),
+    );
+  }
+}
+
+class ShowMenuDemo extends StatefulWidget {
+  const ShowMenuDemo({super.key});
+
+  @override
+  State&lt;ShowMenuDemo&gt; createState() =&gt; _ShowMenuDemoState();
+}
+
+class _ShowMenuDemoState extends State&lt;ShowMenuDemo&gt; {
+  String _lastAction = '无操作';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('showMenu 演示')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('上次操作: $_lastAction', style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 24),
+
+            // 1. 通过按钮位置弹出菜单
+            Builder(
+              builder: (buttonContext) {
+                return ElevatedButton.icon(
+                  icon: const Icon(Icons.more_vert),
+                  label: const Text('在按钮位置弹出菜单'),
+                  onPressed: () =&gt; _showMenuAtButton(buttonContext),
+                );
+              },
+            ),
+            const SizedBox(height: 24),
+
+            // 2. 在任意点击位置弹出菜单（右键菜单效果）
+            GestureDetector(
+              onTapDown: (details) =&gt; _showMenuAtPosition(details),
+              child: Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey[400]!),
+                ),
+                child: const Center(
+                  child: Text('在此区域点击弹出菜单', style: TextStyle(color: Colors.grey)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 在按钮位置弹出菜单
+  Future&lt;void&gt; _showMenuAtButton(BuildContext buttonContext) async {
+    // 获取按钮的渲染信息
+    final RenderBox button = buttonContext.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
+
+    // 计算菜单弹出位置（按钮左下角）
+    final RelativeRect position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(Offset.zero, ancestor: overlay),
+        button.localToGlobal(
+          button.size.bottomRight(Offset.zero),
+          ancestor: overlay,
+        ),
+      ),
+      Offset.zero &amp; overlay.size,
+    );
+
+    // showMenu 返回 Future&lt;T?&gt;，T 由 PopupMenuItem 的 value 决定
+    final String? result = await showMenu&lt;String&gt;(
+      context: context,
+      position: position,
+      // 菜单项列表（PopupMenuEntry 的子类）
+      items: [
+        const PopupMenuItem(
+          value: 'edit',
+          child: ListTile(
+            leading: Icon(Icons.edit),
+            title: Text('编辑'),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+        const PopupMenuItem(
+          value: 'share',
+          child: ListTile(
+            leading: Icon(Icons.share),
+            title: Text('分享'),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+        const PopupMenuDivider(), // 分割线
+        const PopupMenuItem(
+          value: 'delete',
+          child: ListTile(
+            leading: Icon(Icons.delete, color: Colors.red),
+            title: Text('删除', style: TextStyle(color: Colors.red)),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+      ],
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    );
+
+    if (!mounted || result == null) return;
+    setState(() =&gt; _lastAction = result);
+  }
+
+  /// 在点击位置弹出菜单
+  Future&lt;void&gt; _showMenuAtPosition(TapDownDetails details) async {
+    final RenderBox overlay =
+        Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
+
+    final RelativeRect position = RelativeRect.fromLTRB(
+      details.globalPosition.dx,
+      details.globalPosition.dy,
+      overlay.size.width - details.globalPosition.dx,
+      overlay.size.height - details.globalPosition.dy,
+    );
+
+    final String? result = await showMenu&lt;String&gt;(
+      context: context,
+      position: position,
+      items: const [
+        PopupMenuItem(value: 'copy', child: Text('复制')),
+        PopupMenuItem(value: 'paste', child: Text('粘贴')),
+        PopupMenuItem(value: 'select_all', child: Text('全选')),
+      ],
+    );
+
+    if (!mounted || result == null) return;
+    setState(() =&gt; _lastAction = result);
+  }
+}
+</code></pre>
+<h3 id="101-showmenu-的关键参数">10.1 showMenu 的关键参数</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>context</code></td>
+<td><code>BuildContext</code></td>
+<td>用于定位 Navigator</td>
+</tr>
+<tr>
+<td><code>position</code></td>
+<td><code>RelativeRect</code></td>
+<td>菜单弹出位置，相对于 Overlay</td>
+</tr>
+<tr>
+<td><code>items</code></td>
+<td><code>List&lt;PopupMenuEntry&lt;T&gt;&gt;</code></td>
+<td>菜单项列表</td>
+</tr>
+<tr>
+<td><code>elevation</code></td>
+<td><code>double?</code></td>
+<td>阴影高度</td>
+</tr>
+<tr>
+<td><code>shape</code></td>
+<td><code>ShapeBorder?</code></td>
+<td>菜单形状</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td><code>Color?</code></td>
+<td>菜单背景色</td>
+</tr>
+<tr>
+<td><code>initialValue</code></td>
+<td><code>T?</code></td>
+<td>初始选中值（会高亮显示）</td>
+</tr>
+<tr>
+<td><code>constraints</code></td>
+<td><code>BoxConstraints?</code></td>
+<td>菜单尺寸约束</td>
+</tr>
+</tbody>
+</table>
+<h3 id="102-popupmenuentry-的子类">10.2 PopupMenuEntry 的子类</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PopupMenuItem&lt;T&gt;</code></td>
+<td>标准菜单项，有 <code>value</code> 和 <code>child</code></td>
+</tr>
+<tr>
+<td><code>CheckedPopupMenuItem&lt;T&gt;</code></td>
+<td>带勾选标记的菜单项</td>
+</tr>
+<tr>
+<td><code>PopupMenuDivider</code></td>
+<td>分割线</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：简单场景可直接使用 <code>PopupMenuButton</code> 组件（第15课已介绍），它封装了按钮点击 + <code>showMenu</code> 的完整逻辑。当需要在非按钮位置弹出菜单（如长按、右键等自定义手势）时，才使用 <code>showMenu</code>。</p>
+</blockquote>
+<hr />
+<h2 id="异步返回值机制总结">异步返回值机制总结</h2>
+<p>所有弹出层方法的返回值对比：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>返回类型</th>
+<th>如何传递结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>showDialog&lt;T&gt;</code></td>
+<td><code>Future&lt;T?&gt;</code></td>
+<td><code>Navigator.pop(context, result)</code></td>
+</tr>
+<tr>
+<td><code>showModalBottomSheet&lt;T&gt;</code></td>
+<td><code>Future&lt;T?&gt;</code></td>
+<td><code>Navigator.pop(context, result)</code></td>
+</tr>
+<tr>
+<td><code>showBottomSheet</code></td>
+<td><code>PersistentBottomSheetController</code></td>
+<td>通过 <code>controller.closed</code> 监听关闭</td>
+</tr>
+<tr>
+<td><code>showMenu&lt;T&gt;</code></td>
+<td><code>Future&lt;T?&gt;</code></td>
+<td>用户点击 <code>PopupMenuItem</code> 时自动返回其 <code>value</code></td>
+</tr>
+<tr>
+<td><code>ScaffoldMessenger.showSnackBar</code></td>
+<td><code>ScaffoldFeatureController</code></td>
+<td>通过 <code>controller.closed</code> 监听关闭原因</td>
+</tr>
+<tr>
+<td><code>ScaffoldMessenger.showMaterialBanner</code></td>
+<td><code>ScaffoldFeatureController</code></td>
+<td>通过 <code>controller.closed</code> 监听关闭原因</td>
+</tr>
+</tbody>
+</table>
+<p>核心模式：</p>
+<pre><code class="language-dart">// 通用的弹出层异步使用模式
+Future&lt;void&gt; handleDialogResult() async {
+  // 1. await 弹出层方法
+  final result = await showDialog&lt;String&gt;(
+    context: context,
+    builder: (ctx) =&gt; ...,
+  );
+
+  // 2. 检查 mounted（防止异步期间 Widget 被销毁）
+  if (!mounted) return;
+
+  // 3. 根据 result 处理逻辑（result 为 null 表示用户通过返回/点击外部关闭）
+  if (result != null) {
+    // 处理用户选择
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li>当用户通过点击遮罩层、按返回键等方式关闭弹出层时，<code>Future</code> 的结果为 <code>null</code>。因此返回类型始终是 <code>T?</code>，需要做空值判断。</li>
+<li>在 <code>await</code> 之后、使用 <code>context</code> 之前，务必检查 <code>mounted</code>（StatefulWidget）或 <code>context.mounted</code>（Flutter 3.7+），防止操作已销毁的组件。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="本课小结">本课小结</h2>
+<p>本课系统讲解了 Flutter 中十种对话框与弹出层组件：</p>
+<ol>
+<li><strong>showDialog + AlertDialog</strong>：最常用的警告/确认对话框，通过 <code>Navigator.pop</code> 返回用户选择结果。</li>
+<li><strong>SimpleDialog</strong>：简单选项列表对话框，适合少量选项的选择场景。</li>
+<li><strong>Dialog</strong>：对话框基类，用于完全自定义的对话框布局。</li>
+<li><strong>showModalBottomSheet</strong>：模态底部弹出面板，<code>isScrollControlled</code> 控制最大高度。</li>
+<li><strong>showBottomSheet</strong>：非模态底部面板，用户可继续操作页面。</li>
+<li><strong>DraggableScrollableSheet</strong>：可拖动的底部面板，支持 snap 吸附和编程式控制。</li>
+<li><strong>SnackBar</strong>：底部提示消息，<code>fixed</code> 贴底和 <code>floating</code> 悬浮两种样式。</li>
+<li><strong>MaterialBanner</strong>：顶部横幅提示，不会自动消失，需手动关闭。</li>
+<li><strong>Tooltip</strong>：长按/悬浮显示的简短提示。</li>
+<li><strong>showMenu</strong>：在指定位置弹出菜单，需要计算 <code>RelativeRect</code>。</li>
+</ol>
+<p>核心要点：</p>
+<ul>
+<li>大多数弹出层方法返回 <code>Future&lt;T?&gt;</code>，体现了 Flutter 中弹出层的异步交互模式</li>
+<li>使用 <code>Navigator.pop(context, value)</code> 传递返回值</li>
+<li>异步操作后必须检查 <code>mounted</code> 才能安全使用 <code>context</code></li>
+<li><code>ScaffoldMessenger</code> 是 <code>SnackBar</code> 和 <code>MaterialBanner</code> 的统一管理入口</li>
+</ul>
+<hr />
+<h2 id="课后练习">课后练习</h2>
+<h3 id="练习1确认删除对话框基础">练习1：确认删除对话框（基础）</h3>
+<p>实现一个待办事项列表，每项有删除按钮。点击删除时弹出 <code>AlertDialog</code> 确认，用户确认后才真正删除该项。要求使用 <code>await</code> 获取对话框返回值。</p>
+<h3 id="练习2底部弹出选择器基础">练习2：底部弹出选择器（基础）</h3>
+<p>实现一个颜色选择器，点击按钮后使用 <code>showModalBottomSheet</code> 弹出一个网格布局的颜色面板，用户选择颜色后面板关闭，页面背景色变为所选颜色。</p>
+<h3 id="练习3可拖动的评论面板中级">练习3：可拖动的评论面板（中级）</h3>
+<p>实现一个模拟社交应用的评论功能：</p>
+<ul>
+<li>页面展示一张图片或内容区</li>
+<li>使用 <code>showModalBottomSheet</code> + <code>DraggableScrollableSheet</code> 实现评论面板</li>
+<li>面板支持从 30% 拖动到 90% 屏幕高度</li>
+<li>启用 snap 吸附到 30%、60%、90% 三个位置</li>
+<li>评论列表使用 <code>ListView.builder</code> 展示</li>
+</ul>
+<h3 id="练习4自定义-snackbar-通知系统中级">练习4：自定义 SnackBar 通知系统（中级）</h3>
+<p>封装一个通知工具类，支持以下三种通知类型：</p>
+<ul>
+<li>成功通知（绿色背景 + 勾选图标）</li>
+<li>警告通知（橙色背景 + 警告图标）</li>
+<li>错误通知（红色背景 + 错误图标）</li>
+</ul>
+<p>每种通知使用 <code>floating</code> 模式的 <code>SnackBar</code>，带自定义图标和关闭按钮。提供一个页面包含三个按钮分别触发三种通知。</p>
+<h3 id="练习5右键上下文菜单进阶">练习5：右键上下文菜单（进阶）</h3>
+<p>实现一个卡片列表，支持：</p>
+<ul>
+<li>长按卡片时使用 <code>showMenu</code> 在触摸位置弹出上下文菜单</li>
+<li>菜单包含&quot;编辑&quot;、&quot;复制&quot;、&quot;删除&quot;三个选项</li>
+<li>选择&quot;删除&quot;时弹出 <code>AlertDialog</code> 二次确认</li>
+<li>所有异步操作正确处理 <code>mounted</code> 检查和返回值</li>
+</ul>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：<a href="lesson18_gesture.md">第18课 手势与交互组件</a> —— 深入学习 GestureDetector、InkWell、Dismissible、Draggable 等手势交互组件，理解 Flutter 的手势竞技场机制。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

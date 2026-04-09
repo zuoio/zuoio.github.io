@@ -1,0 +1,2159 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第三章-mapper-xml-映射文件-">第三章 Mapper XML 映射文件 ⭐</h1>
+<blockquote>
+<p><strong>核心必读</strong> —— 这是日常开发的核心战场，必须烂熟于心。<br />
+Mapper XML 是 MyBatis 中编写 SQL 的主要载体，掌握它就掌握了 MyBatis 80% 的日常工作。</p>
+</blockquote>
+<p>本章我们将以一个统一的示例贯穿始终。假设数据库中有如下表：</p>
+<pre><code class="language-sql">CREATE TABLE sys_user (
+    id          BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username    VARCHAR(50)  NOT NULL,
+    email       VARCHAR(100),
+    age         INT,
+    dept_id     BIGINT,
+    status      TINYINT DEFAULT 1,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+</code></pre>
+<p>对应的 Java 实体类：</p>
+<pre><code class="language-java">public class User {
+    private Long id;
+    private String username;
+    private String email;
+    private Integer age;
+    private Long deptId;
+    private Integer status;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
+
+    // getter / setter / toString 省略
+}
+</code></pre>
+<hr />
+<h2 id="31-namespace-与-mapper-接口的绑定规则">3.1 namespace 与 Mapper 接口的绑定规则</h2>
+<p>MyBatis 通过 <strong>namespace</strong> 将 XML 映射文件与 Java 的 Mapper 接口进行绑定。这是整个 Mapper 机制能够工作的基础。</p>
+<h3 id="绑定规则">绑定规则</h3>
+<ol>
+<li><strong>namespace 的值必须是 Mapper 接口的全限定类名</strong>（包名 + 类名）</li>
+<li>XML 中每个 SQL 语句的 <code>id</code> 必须与 Mapper 接口中的<strong>方法名完全一致</strong></li>
+<li>SQL 语句的 <code>parameterType</code> 要与方法的参数类型兼容</li>
+<li>SQL 语句的 <code>resultType</code> / <code>resultMap</code> 要与方法的返回值类型兼容</li>
+</ol>
+<h3 id="mapper-接口">Mapper 接口</h3>
+<pre><code class="language-java">package com.example.mapper;
+
+public interface UserMapper {
+    User selectById(Long id);
+}
+</code></pre>
+<h3 id="xml-映射文件">XML 映射文件</h3>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;!DOCTYPE mapper
+  PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+  &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+
+&lt;mapper namespace=&quot;com.example.mapper.UserMapper&quot;&gt;
+
+    &lt;select id=&quot;selectById&quot; parameterType=&quot;long&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+        SELECT id, username, email, age, dept_id, status, create_time, update_time
+        FROM sys_user
+        WHERE id = #{id}
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<h3 id="常见错误">常见错误</h3>
+<p>如果 namespace 与接口全限定名不一致，启动时会抛出：</p>
+<pre><code>org.apache.ibatis.binding.BindingException: Invalid bound statement (not found): 
+    com.example.mapper.UserMapper.selectById
+</code></pre>
+<p>排查这个错误时，检查以下三点：</p>
+<ol>
+<li>namespace 拼写是否与接口全限定名完全一致（区分大小写）</li>
+<li>XML 文件是否被正确扫描到（检查 <code>mybatis-config.xml</code> 的 <code>&lt;mappers&gt;</code> 配置或 Spring Boot 的 <code>mapper-locations</code>）</li>
+<li>SQL 语句的 <code>id</code> 是否与接口方法名一致</li>
+</ol>
+<h3 id="xml-文件放置位置">XML 文件放置位置</h3>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>位置</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Maven 默认</td>
+<td><code>src/main/resources</code> 下与接口同包名的目录</td>
+<td>例如接口在 <code>com.example.mapper</code>，XML 放在 <code>resources/com/example/mapper/</code></td>
+</tr>
+<tr>
+<td>Spring Boot 配置</td>
+<td><code>mapper-locations</code> 指定</td>
+<td>例如 <code>mybatis.mapper-locations=classpath:mapper/*.xml</code></td>
+</tr>
+<tr>
+<td>与接口同目录</td>
+<td><code>src/main/java</code> 下与接口同包</td>
+<td>需要在 pom.xml 中配置资源过滤，<strong>不推荐</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>推荐做法</strong>：在 <code>resources/mapper/</code> 目录下统一存放 XML 文件，通过 Spring Boot 配置指定路径：</p>
+<pre><code class="language-yaml">mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+</code></pre>
+<hr />
+<h2 id="32-基础-crud-标签">3.2 基础 CRUD 标签</h2>
+<p>MyBatis 提供了四个核心标签来处理增删改查操作：<code>&lt;select&gt;</code>、<code>&lt;insert&gt;</code>、<code>&lt;update&gt;</code>、<code>&lt;delete&gt;</code>。</p>
+<h3 id="321-select--查询">3.2.1 <code>&lt;select&gt;</code> —— 查询</h3>
+<p><code>&lt;select&gt;</code> 是使用频率最高的标签，用于执行查询语句。</p>
+<h4 id="常用属性">常用属性</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>是否必须</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>对应 Mapper 接口的方法名</td>
+<td>是</td>
+</tr>
+<tr>
+<td><code>parameterType</code></td>
+<td>参数类型（可省略，MyBatis 会自动推断）</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>resultType</code></td>
+<td>返回值类型的全限定名或别名</td>
+<td>与 resultMap 二选一</td>
+</tr>
+<tr>
+<td><code>resultMap</code></td>
+<td>引用已定义的 resultMap</td>
+<td>与 resultType 二选一</td>
+</tr>
+<tr>
+<td><code>flushCache</code></td>
+<td>执行后是否清空本地缓存和二级缓存，默认 <code>false</code></td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>useCache</code></td>
+<td>是否使用二级缓存，默认 <code>true</code></td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>超时时间（秒）</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>fetchSize</code></td>
+<td>驱动程序每次批量返回的行数提示</td>
+<td>否</td>
+</tr>
+<tr>
+<td><code>statementType</code></td>
+<td><code>STATEMENT</code> / <code>PREPARED</code>(默认) / <code>CALLABLE</code></td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+<h4 id="mapper-接口-1">Mapper 接口</h4>
+<pre><code class="language-java">public interface UserMapper {
+
+    // 根据 ID 查询
+    User selectById(Long id);
+
+    // 查询所有用户
+    List&lt;User&gt; selectAll();
+
+    // 根据用户名模糊查询
+    List&lt;User&gt; selectByUsername(String username);
+
+    // 统计用户数
+    int countAll();
+}
+</code></pre>
+<h4 id="xml-映射">XML 映射</h4>
+<pre><code class="language-xml">&lt;mapper namespace=&quot;com.example.mapper.UserMapper&quot;&gt;
+
+    &lt;!-- 根据 ID 查询单个用户 --&gt;
+    &lt;select id=&quot;selectById&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+        SELECT id, username, email, age, dept_id AS deptId, status, 
+               create_time AS createTime, update_time AS updateTime
+        FROM sys_user
+        WHERE id = #{id}
+    &lt;/select&gt;
+
+    &lt;!-- 查询所有用户（返回 List 时 resultType 写的是集合中元素的类型） --&gt;
+    &lt;select id=&quot;selectAll&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+        SELECT id, username, email, age, dept_id AS deptId, status,
+               create_time AS createTime, update_time AS updateTime
+        FROM sys_user
+    &lt;/select&gt;
+
+    &lt;!-- 模糊查询 --&gt;
+    &lt;select id=&quot;selectByUsername&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+        SELECT id, username, email, age, dept_id AS deptId, status,
+               create_time AS createTime, update_time AS updateTime
+        FROM sys_user
+        WHERE username LIKE CONCAT('%', #{username}, '%')
+    &lt;/select&gt;
+
+    &lt;!-- 统计总数 --&gt;
+    &lt;select id=&quot;countAll&quot; resultType=&quot;int&quot;&gt;
+        SELECT COUNT(*) FROM sys_user
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<blockquote>
+<p><strong>提示</strong>：上面示例中使用了列别名（<code>dept_id AS deptId</code>）来解决数据库下划线命名与 Java 驼峰命名的映射问题。更优雅的方式是开启全局驼峰映射配置 <code>mapUnderscoreToCamelCase=true</code>（见第二章 2.3.1），开启后就不需要手动写别名了。</p>
+</blockquote>
+<hr />
+<h3 id="322-insert--插入含-usegeneratedkeys--selectkey">3.2.2 <code>&lt;insert&gt;</code> —— 插入（含 useGeneratedKeys / selectKey）</h3>
+<p><code>&lt;insert&gt;</code> 用于执行插入操作。在实际开发中，插入后获取自增主键是一个非常常见的需求，MyBatis 提供了两种方式来实现。</p>
+<h4 id="常用属性-1">常用属性</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>对应 Mapper 接口方法名</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>parameterType</code></td>
+<td>参数类型</td>
+<td>可省略</td>
+</tr>
+<tr>
+<td><code>useGeneratedKeys</code></td>
+<td>是否使用 JDBC 的 <code>getGeneratedKeys</code> 获取自增主键</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>keyProperty</code></td>
+<td>将获取到的主键值赋给参数对象的哪个属性</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>keyColumn</code></td>
+<td>数据库中自增主键的列名（多数情况可省略）</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h4 id="基础插入">基础插入</h4>
+<p><strong>Mapper 接口：</strong></p>
+<pre><code class="language-java">public interface UserMapper {
+    int insert(User user);
+}
+</code></pre>
+<p><strong>XML 映射：</strong></p>
+<pre><code class="language-xml">&lt;insert id=&quot;insert&quot; parameterType=&quot;com.example.entity.User&quot;&gt;
+    INSERT INTO sys_user (username, email, age, dept_id, status)
+    VALUES (#{username}, #{email}, #{age}, #{deptId}, #{status})
+&lt;/insert&gt;
+</code></pre>
+<p>调用 <code>insert</code> 方法后，返回值是<strong>受影响的行数</strong>（通常为 1），但此时 <code>user.getId()</code> 仍然是 <code>null</code>，因为我们还没有告诉 MyBatis 要回填主键。</p>
+<hr />
+<h4 id="方式一usegeneratedkeys推荐">方式一：useGeneratedKeys（推荐）</h4>
+<p>这是获取自增主键最简洁、最推荐的方式。它依赖 JDBC 驱动的 <code>Statement.getGeneratedKeys()</code> 方法。</p>
+<p><strong>Mapper 接口：</strong></p>
+<pre><code class="language-java">public interface UserMapper {
+    int insertAndGetId(User user);
+}
+</code></pre>
+<p><strong>XML 映射：</strong></p>
+<pre><code class="language-xml">&lt;insert id=&quot;insertAndGetId&quot; parameterType=&quot;com.example.entity.User&quot;
+        useGeneratedKeys=&quot;true&quot; keyProperty=&quot;id&quot;&gt;
+    INSERT INTO sys_user (username, email, age, dept_id, status)
+    VALUES (#{username}, #{email}, #{age}, #{deptId}, #{status})
+&lt;/insert&gt;
+</code></pre>
+<p><strong>使用示例：</strong></p>
+<pre><code class="language-java">User user = new User();
+user.setUsername(&quot;zhangsan&quot;);
+user.setEmail(&quot;zhangsan@example.com&quot;);
+user.setAge(25);
+user.setDeptId(1L);
+user.setStatus(1);
+
+int rows = userMapper.insertAndGetId(user);
+System.out.println(&quot;影响行数: &quot; + rows);      // 1
+System.out.println(&quot;自增主键: &quot; + user.getId()); // 自增的 ID 值，如 1001
+</code></pre>
+<p><strong>关键点</strong>：</p>
+<ul>
+<li><code>useGeneratedKeys=&quot;true&quot;</code> 告诉 MyBatis 使用 JDBC 原生的 <code>getGeneratedKeys()</code> 来获取自增主键</li>
+<li><code>keyProperty=&quot;id&quot;</code> 指定将获取到的主键值设置到参数对象（User）的 <code>id</code> 属性上</li>
+<li>方法返回值仍然是影响行数，<strong>主键值是通过修改入参对象来传递的</strong></li>
+</ul>
+<hr />
+<h4 id="方式二selectkey">方式二：<code>&lt;selectKey&gt;</code></h4>
+<p><code>&lt;selectKey&gt;</code> 是 MyBatis 提供的更通用的主键获取方式。它通过执行一条额外的 SQL 来获取主键值，适用于以下场景：</p>
+<ul>
+<li>数据库不支持自增主键（如 Oracle 使用 Sequence）</li>
+<li>需要在插入前生成主键（如使用 UUID）</li>
+<li>使用自定义的主键生成策略</li>
+</ul>
+<p><strong>Mapper 接口：</strong></p>
+<pre><code class="language-java">public interface UserMapper {
+    int insertWithSelectKey(User user);
+}
+</code></pre>
+<p><strong>MySQL 示例（插入后获取）：</strong></p>
+<pre><code class="language-xml">&lt;insert id=&quot;insertWithSelectKey&quot; parameterType=&quot;com.example.entity.User&quot;&gt;
+    &lt;selectKey keyProperty=&quot;id&quot; resultType=&quot;long&quot; order=&quot;AFTER&quot;&gt;
+        SELECT LAST_INSERT_ID()
+    &lt;/selectKey&gt;
+    INSERT INTO sys_user (username, email, age, dept_id, status)
+    VALUES (#{username}, #{email}, #{age}, #{deptId}, #{status})
+&lt;/insert&gt;
+</code></pre>
+<p><strong>Oracle 示例（插入前获取 Sequence）：</strong></p>
+<pre><code class="language-xml">&lt;insert id=&quot;insertWithSelectKey&quot; parameterType=&quot;com.example.entity.User&quot;&gt;
+    &lt;selectKey keyProperty=&quot;id&quot; resultType=&quot;long&quot; order=&quot;BEFORE&quot;&gt;
+        SELECT user_seq.NEXTVAL FROM DUAL
+    &lt;/selectKey&gt;
+    INSERT INTO sys_user (id, username, email, age, dept_id, status)
+    VALUES (#{id}, #{username}, #{email}, #{age}, #{deptId}, #{status})
+&lt;/insert&gt;
+</code></pre>
+<p><strong>UUID 示例（插入前生成）：</strong></p>
+<pre><code class="language-xml">&lt;insert id=&quot;insertWithUUID&quot; parameterType=&quot;com.example.entity.User&quot;&gt;
+    &lt;selectKey keyProperty=&quot;id&quot; resultType=&quot;string&quot; order=&quot;BEFORE&quot;&gt;
+        SELECT REPLACE(UUID(), '-', '')
+    &lt;/selectKey&gt;
+    INSERT INTO sys_user (id, username, email, age, dept_id, status)
+    VALUES (#{id}, #{username}, #{email}, #{age}, #{deptId}, #{status})
+&lt;/insert&gt;
+</code></pre>
+<h4 id="selectkey-属性说明"><code>&lt;selectKey&gt;</code> 属性说明</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>keyProperty</code></td>
+<td>将结果设置到参数对象的哪个属性</td>
+</tr>
+<tr>
+<td><code>resultType</code></td>
+<td>返回值类型</td>
+</tr>
+<tr>
+<td><code>order</code></td>
+<td><code>BEFORE</code>：在 INSERT 之前执行；<code>AFTER</code>：在 INSERT 之后执行</td>
+</tr>
+<tr>
+<td><code>statementType</code></td>
+<td>默认 <code>PREPARED</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="两种方式对比">两种方式对比</h4>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th><code>useGeneratedKeys</code></th>
+<th><code>&lt;selectKey&gt;</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>实现原理</strong></td>
+<td>依赖 JDBC 驱动的 <code>getGeneratedKeys()</code></td>
+<td>执行额外的 SQL 查询</td>
+</tr>
+<tr>
+<td><strong>执行时机</strong></td>
+<td>INSERT 之后自动获取</td>
+<td>可以在 INSERT 之前或之后</td>
+</tr>
+<tr>
+<td><strong>适用数据库</strong></td>
+<td>支持自增主键的数据库（MySQL、SQL Server 等）</td>
+<td>所有数据库（Oracle Sequence、UUID 等）</td>
+</tr>
+<tr>
+<td><strong>性能</strong></td>
+<td>更好（无需额外 SQL）</td>
+<td>多一次 SQL 查询</td>
+</tr>
+<tr>
+<td><strong>灵活性</strong></td>
+<td>低，仅支持自增主键</td>
+<td>高，支持任意主键生成策略</td>
+</tr>
+<tr>
+<td><strong>推荐场景</strong></td>
+<td>MySQL / PostgreSQL 自增主键</td>
+<td>Oracle Sequence、UUID、自定义主键策略</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：MySQL 环境下优先使用 <code>useGeneratedKeys</code>，简洁高效；Oracle 或需要自定义主键策略时使用 <code>&lt;selectKey&gt;</code>。</p>
+</blockquote>
+<hr />
+<h3 id="323-update--更新">3.2.3 <code>&lt;update&gt;</code> —— 更新</h3>
+<p><code>&lt;update&gt;</code> 用于执行更新操作，返回值为受影响的行数。</p>
+<h4 id="mapper-接口-2">Mapper 接口</h4>
+<pre><code class="language-java">public interface UserMapper {
+
+    // 根据 ID 更新用户信息
+    int updateById(User user);
+
+    // 根据 ID 更新状态
+    int updateStatus(@Param(&quot;id&quot;) Long id, @Param(&quot;status&quot;) Integer status);
+}
+</code></pre>
+<h4 id="xml-映射-1">XML 映射</h4>
+<pre><code class="language-xml">&lt;!-- 根据 ID 更新全部字段 --&gt;
+&lt;update id=&quot;updateById&quot; parameterType=&quot;com.example.entity.User&quot;&gt;
+    UPDATE sys_user
+    SET username = #{username},
+        email = #{email},
+        age = #{age},
+        dept_id = #{deptId},
+        status = #{status},
+        update_time = NOW()
+    WHERE id = #{id}
+&lt;/update&gt;
+
+&lt;!-- 根据 ID 更新状态 --&gt;
+&lt;update id=&quot;updateStatus&quot;&gt;
+    UPDATE sys_user
+    SET status = #{status}, update_time = NOW()
+    WHERE id = #{id}
+&lt;/update&gt;
+</code></pre>
+<p><strong>使用示例：</strong></p>
+<pre><code class="language-java">User user = userMapper.selectById(1L);
+user.setEmail(&quot;new_email@example.com&quot;);
+
+int rows = userMapper.updateById(user);
+System.out.println(&quot;更新了 &quot; + rows + &quot; 行&quot;);
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：上面的 <code>updateById</code> 会把所有字段都更新一遍，即使某些字段没有变化。如果只想更新非空字段，可以结合第四章的动态 SQL <code>&lt;set&gt;</code> + <code>&lt;if&gt;</code> 标签实现。</p>
+</blockquote>
+<hr />
+<h3 id="324-delete--删除">3.2.4 <code>&lt;delete&gt;</code> —— 删除</h3>
+<p><code>&lt;delete&gt;</code> 用于执行删除操作，返回值为受影响的行数。</p>
+<h4 id="mapper-接口-3">Mapper 接口</h4>
+<pre><code class="language-java">public interface UserMapper {
+
+    // 根据 ID 删除
+    int deleteById(Long id);
+
+    // 根据 ID 列表批量删除
+    int deleteBatchIds(@Param(&quot;ids&quot;) List&lt;Long&gt; ids);
+}
+</code></pre>
+<h4 id="xml-映射-2">XML 映射</h4>
+<pre><code class="language-xml">&lt;!-- 根据 ID 删除 --&gt;
+&lt;delete id=&quot;deleteById&quot;&gt;
+    DELETE FROM sys_user WHERE id = #{id}
+&lt;/delete&gt;
+
+&lt;!-- 批量删除（使用动态 SQL foreach，详见第四章） --&gt;
+&lt;delete id=&quot;deleteBatchIds&quot;&gt;
+    DELETE FROM sys_user
+    WHERE id IN
+    &lt;foreach collection=&quot;ids&quot; item=&quot;id&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot;&gt;
+        #{id}
+    &lt;/foreach&gt;
+&lt;/delete&gt;
+</code></pre>
+<p><strong>使用示例：</strong></p>
+<pre><code class="language-java">// 单条删除
+int rows = userMapper.deleteById(1L);
+
+// 批量删除
+List&lt;Long&gt; ids = Arrays.asList(2L, 3L, 4L);
+int batchRows = userMapper.deleteBatchIds(ids);
+</code></pre>
+<h3 id="crud-返回值小结">CRUD 返回值小结</h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>返回值类型</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;select&gt;</code></td>
+<td>实体对象 / List / Map 等</td>
+<td>查询结果</td>
+</tr>
+<tr>
+<td><code>&lt;insert&gt;</code></td>
+<td><code>int</code></td>
+<td>插入的行数（通常为 1）</td>
+</tr>
+<tr>
+<td><code>&lt;update&gt;</code></td>
+<td><code>int</code></td>
+<td>更新影响的行数</td>
+</tr>
+<tr>
+<td><code>&lt;delete&gt;</code></td>
+<td><code>int</code></td>
+<td>删除影响的行数</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>MyBatis 中 insert / update / delete 的返回值也可以声明为 <code>long</code>、<code>boolean</code>（大于 0 为 true）、<code>void</code>。</p>
+</blockquote>
+<hr />
+<h2 id="33-参数传递-重点">3.3 参数传递（⭐ 重点）</h2>
+<p>参数传递是使用 MyBatis 时最容易出错的地方之一。理解参数的传递规则，能让你在编写 SQL 时游刃有余。</p>
+<h3 id="331-单个基本类型参数">3.3.1 单个基本类型参数</h3>
+<p>当 Mapper 方法只有一个参数且为基本类型（或 String、包装类型）时，XML 中可以用<strong>任意名称</strong>引用该参数。</p>
+<h4 id="mapper-接口-4">Mapper 接口</h4>
+<pre><code class="language-java">public interface UserMapper {
+    User selectById(Long id);
+    User selectByUsername(String username);
+}
+</code></pre>
+<h4 id="xml-映射-3">XML 映射</h4>
+<pre><code class="language-xml">&lt;!-- 参数名可以随意写，但建议与方法参数名保持一致以增强可读性 --&gt;
+&lt;select id=&quot;selectById&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user WHERE id = #{id}
+    &lt;!-- 下面这样写也可以，但不推荐 --&gt;
+    &lt;!-- SELECT * FROM sys_user WHERE id = #{whatever} --&gt;
+&lt;/select&gt;
+
+&lt;select id=&quot;selectByUsername&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user WHERE username = #{username}
+&lt;/select&gt;
+</code></pre>
+<p><strong>原理</strong>：当只有一个参数时，MyBatis 不关心 <code>#{}</code> 中的名称，直接将该参数的值设置到 SQL 中。但为了代码可读性，<strong>强烈建议使用与方法参数名一致的名称</strong>。</p>
+<hr />
+<h3 id="332-多个参数--param-注解">3.3.2 多个参数 —— @Param 注解</h3>
+<p>当 Mapper 方法有多个参数时，<strong>必须使用 <code>@Param</code> 注解</strong>来为每个参数指定名称，否则 MyBatis 会使用默认的 <code>arg0, arg1...</code> 或 <code>param1, param2...</code> 来引用参数，可读性极差且容易出错。</p>
+<h4 id="mapper-接口-5">Mapper 接口</h4>
+<pre><code class="language-java">public interface UserMapper {
+
+    // 推荐写法：使用 @Param 注解
+    List&lt;User&gt; selectByAgeRange(@Param(&quot;minAge&quot;) Integer minAge,
+                                 @Param(&quot;maxAge&quot;) Integer maxAge);
+
+    // 不推荐：不使用 @Param
+    List&lt;User&gt; selectByDeptAndStatus(Long deptId, Integer status);
+}
+</code></pre>
+<h4 id="xml-映射-4">XML 映射</h4>
+<pre><code class="language-xml">&lt;!-- 使用 @Param 注解后，XML 中用注解指定的名称引用 --&gt;
+&lt;select id=&quot;selectByAgeRange&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user
+    WHERE age BETWEEN #{minAge} AND #{maxAge}
+&lt;/select&gt;
+
+&lt;!-- 不使用 @Param 时，只能用默认名称（不推荐！） --&gt;
+&lt;select id=&quot;selectByDeptAndStatus&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user
+    WHERE dept_id = #{param1} AND status = #{param2}
+    &lt;!-- 或者用 #{arg0} #{arg1}，同样不推荐 --&gt;
+&lt;/select&gt;
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：只要方法有两个及以上参数，<strong>一律加 <code>@Param</code> 注解</strong>。虽然某些编译器配置（<code>-parameters</code>）可以让 MyBatis 自动获取参数名，但显式标注 <code>@Param</code> 更可靠、更清晰。</p>
+</blockquote>
+<h4 id="参数名解析规则详解">参数名解析规则详解</h4>
+<p>当 Mapper 方法有多个参数时，MyBatis 会将参数封装到一个 <code>Map</code> 中。以下是可用的 key：</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>可用的 key</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>使用 <code>@Param(&quot;name&quot;)</code></td>
+<td>注解值 + <code>param1, param2...</code></td>
+<td><code>#{name}</code> 或 <code>#{param1}</code></td>
+</tr>
+<tr>
+<td>未使用 <code>@Param</code></td>
+<td><code>arg0, arg1...</code> + <code>param1, param2...</code></td>
+<td><code>#{arg0}</code> 或 <code>#{param1}</code></td>
+</tr>
+<tr>
+<td>编译时开启 <code>-parameters</code></td>
+<td>形参名 + <code>param1, param2...</code></td>
+<td><code>#{deptId}</code> 或 <code>#{param1}</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="333-pojo--map--list-作为参数">3.3.3 POJO / Map / List 作为参数</h3>
+<h4 id="pojo-作为参数">POJO 作为参数</h4>
+<p>当参数是一个 POJO（Java Bean）时，MyBatis 会通过 getter 方法获取属性值，<code>#{}</code> 中直接写属性名即可。</p>
+<p><strong>Mapper 接口：</strong></p>
+<pre><code class="language-java">public interface UserMapper {
+    int insert(User user);
+    List&lt;User&gt; selectByCondition(User user);
+}
+</code></pre>
+<p><strong>XML 映射：</strong></p>
+<pre><code class="language-xml">&lt;insert id=&quot;insert&quot; parameterType=&quot;com.example.entity.User&quot;
+        useGeneratedKeys=&quot;true&quot; keyProperty=&quot;id&quot;&gt;
+    INSERT INTO sys_user (username, email, age, dept_id, status)
+    VALUES (#{username}, #{email}, #{age}, #{deptId}, #{status})
+&lt;/insert&gt;
+
+&lt;select id=&quot;selectByCondition&quot; parameterType=&quot;com.example.entity.User&quot;
+        resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user
+    WHERE dept_id = #{deptId} AND status = #{status}
+&lt;/select&gt;
+</code></pre>
+<h4 id="map-作为参数">Map 作为参数</h4>
+<p>当查询条件不固定、不想为此创建 POJO 时，可以使用 <code>Map</code> 传参。<code>#{}</code> 中写的是 Map 的 key。</p>
+<p><strong>Mapper 接口：</strong></p>
+<pre><code class="language-java">public interface UserMapper {
+    List&lt;User&gt; selectByMap(Map&lt;String, Object&gt; params);
+}
+</code></pre>
+<p><strong>XML 映射：</strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;selectByMap&quot; parameterType=&quot;map&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user
+    WHERE dept_id = #{deptId} AND status = #{status}
+&lt;/select&gt;
+</code></pre>
+<p><strong>使用示例：</strong></p>
+<pre><code class="language-java">Map&lt;String, Object&gt; params = new HashMap&lt;&gt;();
+params.put(&quot;deptId&quot;, 1L);
+params.put(&quot;status&quot;, 1);
+List&lt;User&gt; users = userMapper.selectByMap(params);
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：Map 传参虽然灵活，但缺乏类型检查和语义表达。在业务代码中，推荐使用 POJO（或专门的查询条件对象 DTO），Map 仅在非常灵活的查询场景下使用。</p>
+</blockquote>
+<h4 id="list--array-作为参数">List / Array 作为参数</h4>
+<p>集合参数主要用于 IN 查询和批量操作，通常需要配合 <code>&lt;foreach&gt;</code> 标签使用。</p>
+<p><strong>Mapper 接口：</strong></p>
+<pre><code class="language-java">public interface UserMapper {
+    List&lt;User&gt; selectByIds(@Param(&quot;ids&quot;) List&lt;Long&gt; ids);
+}
+</code></pre>
+<p><strong>XML 映射：</strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;selectByIds&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user
+    WHERE id IN
+    &lt;foreach collection=&quot;ids&quot; item=&quot;id&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot;&gt;
+        #{id}
+    &lt;/foreach&gt;
+&lt;/select&gt;
+</code></pre>
+<p><strong>使用示例：</strong></p>
+<pre><code class="language-java">List&lt;Long&gt; ids = Arrays.asList(1L, 2L, 3L);
+List&lt;User&gt; users = userMapper.selectByIds(ids);
+// 生成的 SQL: SELECT * FROM sys_user WHERE id IN (1, 2, 3)
+</code></pre>
+<blockquote>
+<p><strong>关于 <code>collection</code> 属性</strong>：当使用 <code>@Param(&quot;ids&quot;)</code> 注解时，<code>collection</code> 的值就是注解指定的名称。如果不使用 <code>@Param</code>，则 List 类型默认用 <code>list</code>、数组类型默认用 <code>array</code>。<strong>强烈建议始终使用 <code>@Param</code></strong>，避免记忆默认规则。</p>
+</blockquote>
+<h4 id="pojo--param-混合使用">POJO + @Param 混合使用</h4>
+<p>在复杂场景下，可以同时传递 POJO 和其他参数：</p>
+<p><strong>Mapper 接口：</strong></p>
+<pre><code class="language-java">public interface UserMapper {
+    List&lt;User&gt; selectByPage(@Param(&quot;user&quot;) User user,
+                            @Param(&quot;offset&quot;) int offset,
+                            @Param(&quot;limit&quot;) int limit);
+}
+</code></pre>
+<p><strong>XML 映射：</strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;selectByPage&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user
+    WHERE dept_id = #{user.deptId} AND status = #{user.status}
+    LIMIT #{offset}, #{limit}
+&lt;/select&gt;
+</code></pre>
+<p>注意 POJO 属性的引用方式：<code>#{user.deptId}</code>，需要加上 <code>@Param</code> 指定的前缀。</p>
+<hr />
+<h3 id="334--vs---预编译与字符串拼接的本质区别sql-注入防范">3.3.4 <code>#{}</code> vs <code>${}</code> —— 预编译与字符串拼接的本质区别（SQL 注入防范）</h3>
+<p><strong>这是本章乃至整个 MyBatis 课程最重要的知识点之一。</strong> 搞不清 <code>#{}</code> 和 <code>${}</code> 的区别，轻则功能异常，重则引发 SQL 注入漏洞。</p>
+<h4 id="核心区别对比">核心区别对比</h4>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th><code>#{}</code>（井号）</th>
+<th><code>${}</code>（美元符）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>本质</strong></td>
+<td>占位符（Parameter Marker）</td>
+<td>字符串拼接（String Substitution）</td>
+</tr>
+<tr>
+<td><strong>底层实现</strong></td>
+<td><code>PreparedStatement</code>，参数用 <code>?</code> 占位</td>
+<td><code>Statement</code>，参数直接拼入 SQL 字符串</td>
+</tr>
+<tr>
+<td><strong>SQL 注入</strong></td>
+<td><strong>安全</strong> —— 参数不参与 SQL 编译</td>
+<td><strong>不安全</strong> —— 参数直接拼入 SQL，有注入风险</td>
+</tr>
+<tr>
+<td><strong>参数类型处理</strong></td>
+<td>自动调用 TypeHandler 进行类型转换</td>
+<td>原样拼接，不做类型转换</td>
+</tr>
+<tr>
+<td><strong>字符串参数</strong></td>
+<td>自动加单引号</td>
+<td>不会自动加引号</td>
+</tr>
+<tr>
+<td><strong>性能</strong></td>
+<td>可利用 PreparedStatement 预编译缓存</td>
+<td>每次都需要重新编译 SQL</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td><strong>绝大多数场景</strong>（WHERE 条件值、INSERT 值等）</td>
+<td>表名、列名、ORDER BY 等<strong>不能用占位符</strong>的场景</td>
+</tr>
+</tbody>
+</table>
+<h4 id="-的工作原理"><code>#{}</code> 的工作原理</h4>
+<pre><code class="language-xml">&lt;select id=&quot;selectById&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user WHERE id = #{id}
+&lt;/select&gt;
+</code></pre>
+<p>MyBatis 处理过程：</p>
+<pre><code>1. 解析 SQL → SELECT * FROM sys_user WHERE id = ?
+2. 创建 PreparedStatement
+3. 调用 ps.setLong(1, 1001)  ← 通过 TypeHandler 设置参数
+4. 执行查询
+</code></pre>
+<p>等价的 JDBC 代码：</p>
+<pre><code class="language-java">String sql = &quot;SELECT * FROM sys_user WHERE id = ?&quot;;
+PreparedStatement ps = connection.prepareStatement(sql);
+ps.setLong(1, 1001L);
+ResultSet rs = ps.executeQuery();
+</code></pre>
+<h4 id="-的工作原理-1"><code>${}</code> 的工作原理</h4>
+<pre><code class="language-xml">&lt;select id=&quot;selectByColumn&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user ORDER BY ${orderColumn}
+&lt;/select&gt;
+</code></pre>
+<p>MyBatis 处理过程：</p>
+<pre><code>1. 将参数值直接拼接到 SQL 字符串中
+2. 假设 orderColumn = &quot;username&quot;
+3. 最终 SQL → SELECT * FROM sys_user ORDER BY username
+4. 创建 Statement 并执行
+</code></pre>
+<p>等价的 JDBC 代码：</p>
+<pre><code class="language-java">String sql = &quot;SELECT * FROM sys_user ORDER BY &quot; + orderColumn;
+Statement stmt = connection.createStatement();
+ResultSet rs = stmt.executeQuery(sql);
+</code></pre>
+<h4 id="sql-注入演示">SQL 注入演示</h4>
+<p>假设有一个用错了 <code>${}</code> 的查询：</p>
+<pre><code class="language-xml">&lt;!-- ❌ 错误示范：WHERE 条件值使用 ${} --&gt;
+&lt;select id=&quot;selectByUsername&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user WHERE username = '${username}'
+&lt;/select&gt;
+</code></pre>
+<p>正常调用时一切正常：</p>
+<pre><code>输入: username = &quot;zhangsan&quot;
+SQL:  SELECT * FROM sys_user WHERE username = 'zhangsan'   ✅ 正常
+</code></pre>
+<p>但恶意用户可以构造如下输入：</p>
+<pre><code>输入: username = &quot;' OR '1'='1&quot;
+SQL:  SELECT * FROM sys_user WHERE username = '' OR '1'='1'
+</code></pre>
+<p><strong>这条 SQL 会返回所有用户数据！</strong> 因为 <code>'1'='1'</code> 永远为真。</p>
+<p>更危险的注入：</p>
+<pre><code>输入: username = &quot;'; DROP TABLE sys_user; --&quot;
+SQL:  SELECT * FROM sys_user WHERE username = ''; DROP TABLE sys_user; --'
+</code></pre>
+<p><strong>这将删除整个用户表！</strong></p>
+<p>如果使用 <code>#{}</code> 则完全不会有这个问题：</p>
+<pre><code class="language-xml">&lt;!-- ✅ 正确写法：使用 #{} --&gt;
+&lt;select id=&quot;selectByUsername&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user WHERE username = #{username}
+&lt;/select&gt;
+</code></pre>
+<pre><code>输入: username = &quot;' OR '1'='1&quot;
+SQL:  SELECT * FROM sys_user WHERE username = ?
+参数: ps.setString(1, &quot;' OR '1'='1'&quot;)   ← 整个字符串被当作普通文本值
+结果: 查询 username 等于 &quot;' OR '1'='1'&quot; 的用户（不存在），返回空  ✅ 安全
+</code></pre>
+<h4 id="什么时候必须用-">什么时候必须用 <code>${}</code>？</h4>
+<p>SQL 语法中有些位置不允许使用 <code>?</code> 占位符，此时只能用 <code>${}</code>：</p>
+<p><strong>1. 动态表名：</strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;selectFromTable&quot; resultType=&quot;map&quot;&gt;
+    SELECT * FROM ${tableName}
+&lt;/select&gt;
+</code></pre>
+<p><strong>2. 动态列名（ORDER BY / GROUP BY）：</strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;selectAllOrdered&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user ORDER BY ${orderColumn} ${orderDir}
+&lt;/select&gt;
+</code></pre>
+<p><strong>3. 动态 SQL 关键字：</strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;selectWithSchema&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM ${schema}.sys_user WHERE id = #{id}
+&lt;/select&gt;
+</code></pre>
+<h4 id="使用--时的安全防范措施">使用 <code>${}</code> 时的安全防范措施</h4>
+<p>既然有些场景不得不用 <code>${}</code>，那如何防范 SQL 注入？</p>
+<p><strong>方式一：Java 代码中校验白名单</strong></p>
+<pre><code class="language-java">private static final Set&lt;String&gt; ALLOWED_COLUMNS = 
+    Set.of(&quot;id&quot;, &quot;username&quot;, &quot;email&quot;, &quot;age&quot;, &quot;create_time&quot;);
+
+public List&lt;User&gt; selectAllOrdered(String orderColumn) {
+    if (!ALLOWED_COLUMNS.contains(orderColumn)) {
+        throw new IllegalArgumentException(&quot;非法的排序字段: &quot; + orderColumn);
+    }
+    return userMapper.selectAllOrdered(orderColumn);
+}
+</code></pre>
+<p><strong>方式二：使用枚举限制合法值</strong></p>
+<pre><code class="language-java">public enum OrderColumn {
+    ID(&quot;id&quot;), USERNAME(&quot;username&quot;), CREATE_TIME(&quot;create_time&quot;);
+    
+    private final String column;
+    OrderColumn(String column) { this.column = column; }
+    public String getColumn() { return column; }
+}
+</code></pre>
+<p><strong>方式三：在 SQL 中使用 <code>&lt;choose&gt;</code> 代替 <code>${}</code></strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;selectAllOrdered&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user
+    ORDER BY
+    &lt;choose&gt;
+        &lt;when test=&quot;orderColumn == 'username'&quot;&gt;username&lt;/when&gt;
+        &lt;when test=&quot;orderColumn == 'age'&quot;&gt;age&lt;/when&gt;
+        &lt;when test=&quot;orderColumn == 'createTime'&quot;&gt;create_time&lt;/when&gt;
+        &lt;otherwise&gt;id&lt;/otherwise&gt;
+    &lt;/choose&gt;
+&lt;/select&gt;
+</code></pre>
+<blockquote>
+<p>这种方式最安全——排序字段直接写死在 XML 中，用户输入只是用来做条件判断，完全杜绝了注入可能。</p>
+</blockquote>
+<h4 id="总结选择原则">总结：选择原则</h4>
+<pre><code>默认用 #{} ——→ 安全、高效、自动类型转换
+
+只在以下场景用 ${}：
+  ├── 动态表名
+  ├── 动态列名（ORDER BY / GROUP BY）
+  ├── 动态 Schema
+  └── 其他不能使用占位符的语法位置
+
+使用 ${} 时必须：
+  ├── 后端白名单校验
+  ├── 绝不允许用户输入直接传入
+  └── 或用 &lt;choose&gt; 等方式替代
+</code></pre>
+<hr />
+<h2 id="34-返回值映射">3.4 返回值映射</h2>
+<p>MyBatis 的强大之处在于能将 SQL 查询结果自动映射为 Java 对象。根据映射复杂度的不同，提供了 <code>resultType</code> 和 <code>resultMap</code> 两种机制。</p>
+<h3 id="341-resulttype--简单映射">3.4.1 resultType —— 简单映射</h3>
+<p><code>resultType</code> 适用于查询结果列与 Java 对象属性可以<strong>直接对应</strong>的场景。</p>
+<h4 id="映射规则">映射规则</h4>
+<p>MyBatis 将查询结果的<strong>列名</strong>与 Java 对象的<strong>属性名</strong>进行匹配（通过 setter 方法）：</p>
+<ul>
+<li>列名与属性名<strong>完全一致</strong>时自动映射（不区分大小写）</li>
+<li>开启 <code>mapUnderscoreToCamelCase</code> 后，<code>dept_id</code> 自动映射到 <code>deptId</code></li>
+<li>不匹配的列会被忽略，不匹配的属性保持默认值</li>
+</ul>
+<h4 id="常见的-resulttype-类型">常见的 resultType 类型</h4>
+<p><strong>1. 映射到实体类：</strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;selectById&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user WHERE id = #{id}
+&lt;/select&gt;
+</code></pre>
+<p><strong>2. 映射到基本类型 / 包装类型：</strong></p>
+<pre><code class="language-xml">&lt;!-- 返回 int --&gt;
+&lt;select id=&quot;countAll&quot; resultType=&quot;int&quot;&gt;
+    SELECT COUNT(*) FROM sys_user
+&lt;/select&gt;
+
+&lt;!-- 返回 String --&gt;
+&lt;select id=&quot;selectUsernameById&quot; resultType=&quot;string&quot;&gt;
+    SELECT username FROM sys_user WHERE id = #{id}
+&lt;/select&gt;
+
+&lt;!-- 返回 BigDecimal --&gt;
+&lt;select id=&quot;selectAvgAge&quot; resultType=&quot;java.math.BigDecimal&quot;&gt;
+    SELECT AVG(age) FROM sys_user
+&lt;/select&gt;
+</code></pre>
+<p><strong>3. 映射到 Map：</strong></p>
+<p>当你不想（或不需要）创建实体类时，可以将单行结果映射为 <code>Map&lt;String, Object&gt;</code>，其中 key 是列名，value 是列值。</p>
+<pre><code class="language-java">public interface UserMapper {
+    Map&lt;String, Object&gt; selectMapById(Long id);
+}
+</code></pre>
+<pre><code class="language-xml">&lt;select id=&quot;selectMapById&quot; resultType=&quot;map&quot;&gt;
+    SELECT id, username, email, age FROM sys_user WHERE id = #{id}
+&lt;/select&gt;
+</code></pre>
+<pre><code class="language-java">Map&lt;String, Object&gt; userMap = userMapper.selectMapById(1L);
+// {id=1, username=zhangsan, email=zhangsan@example.com, age=25}
+</code></pre>
+<h4 id="使用类型别名简化-resulttype">使用类型别名简化 resultType</h4>
+<p>在 <code>mybatis-config.xml</code> 中配置别名后，可以使用短名称：</p>
+<pre><code class="language-xml">&lt;typeAliases&gt;
+    &lt;package name=&quot;com.example.entity&quot;/&gt;
+&lt;/typeAliases&gt;
+</code></pre>
+<p>配置后 XML 中可以简写：</p>
+<pre><code class="language-xml">&lt;!-- 配置别名前 --&gt;
+&lt;select id=&quot;selectById&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+
+&lt;!-- 配置别名后（类名首字母小写） --&gt;
+&lt;select id=&quot;selectById&quot; resultType=&quot;user&quot;&gt;
+</code></pre>
+<p>MyBatis 还内置了常用类型的别名：<code>int</code>、<code>long</code>、<code>string</code>、<code>map</code>、<code>list</code> 等，可直接使用。</p>
+<hr />
+<h3 id="342-resultmap--复杂映射详见第五章">3.4.2 resultMap —— 复杂映射（详见第五章）</h3>
+<p>当列名与属性名无法直接对应，或者需要处理关联关系（一对一、一对多）时，需要使用 <code>resultMap</code>。</p>
+<p>本小节先介绍基础用法，高级映射（association、collection）在第五章详细展开。</p>
+<h4 id="基本结构">基本结构</h4>
+<pre><code class="language-xml">&lt;resultMap id=&quot;userResultMap&quot; type=&quot;com.example.entity.User&quot;&gt;
+    &lt;!-- 主键列映射（id 标签有特殊的性能优化意义） --&gt;
+    &lt;id property=&quot;id&quot; column=&quot;id&quot;/&gt;
+    
+    &lt;!-- 普通列映射 --&gt;
+    &lt;result property=&quot;username&quot; column=&quot;username&quot;/&gt;
+    &lt;result property=&quot;email&quot; column=&quot;email&quot;/&gt;
+    &lt;result property=&quot;age&quot; column=&quot;age&quot;/&gt;
+    &lt;result property=&quot;deptId&quot; column=&quot;dept_id&quot;/&gt;
+    &lt;result property=&quot;status&quot; column=&quot;status&quot;/&gt;
+    &lt;result property=&quot;createTime&quot; column=&quot;create_time&quot;/&gt;
+    &lt;result property=&quot;updateTime&quot; column=&quot;update_time&quot;/&gt;
+&lt;/resultMap&gt;
+
+&lt;select id=&quot;selectById&quot; resultMap=&quot;userResultMap&quot;&gt;
+    SELECT * FROM sys_user WHERE id = #{id}
+&lt;/select&gt;
+</code></pre>
+<h4 id="id-与-result-的区别"><code>&lt;id&gt;</code> 与 <code>&lt;result&gt;</code> 的区别</h4>
+<p>两者功能基本相同，但 <code>&lt;id&gt;</code> 标签有额外作用：</p>
+<ul>
+<li>标记主键列，MyBatis 在处理<strong>嵌套结果映射</strong>（association / collection）时，会用 <code>&lt;id&gt;</code> 来判断行的唯一性</li>
+<li>在启用缓存时，<code>&lt;id&gt;</code> 用于构建缓存的 key</li>
+<li><strong>建议</strong>：主键列始终使用 <code>&lt;id&gt;</code> 标签</li>
+</ul>
+<h4 id="什么时候用-resulttype什么时候用-resultmap">什么时候用 resultType，什么时候用 resultMap？</h4>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>列名与属性名一致（或已开启驼峰映射）</td>
+<td><code>resultType</code></td>
+</tr>
+<tr>
+<td>只查询少量字段，映射到基本类型或 Map</td>
+<td><code>resultType</code></td>
+</tr>
+<tr>
+<td>列名与属性名不一致，且无法通过别名或驼峰映射解决</td>
+<td><code>resultMap</code></td>
+</tr>
+<tr>
+<td>需要一对一（association）或一对多（collection）关联</td>
+<td><code>resultMap</code></td>
+</tr>
+<tr>
+<td>需要鉴别器（discriminator）</td>
+<td><code>resultMap</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>实际开发建议</strong>：开启 <code>mapUnderscoreToCamelCase=true</code> 后，大部分简单查询都可以用 <code>resultType</code>。只有在处理复杂关联关系时才需要 <code>resultMap</code>。</p>
+</blockquote>
+<hr />
+<h3 id="343-返回-listmap单个对象的区别">3.4.3 返回 List、Map、单个对象的区别</h3>
+<p>MyBatis 根据 <strong>Mapper 接口方法的返回值类型</strong> 来决定如何处理查询结果。理解这些差异对于正确使用 MyBatis 至关重要。</p>
+<h4 id="返回单个对象">返回单个对象</h4>
+<pre><code class="language-java">public interface UserMapper {
+    User selectById(Long id);
+}
+</code></pre>
+<pre><code class="language-xml">&lt;select id=&quot;selectById&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user WHERE id = #{id}
+&lt;/select&gt;
+</code></pre>
+<ul>
+<li>查询返回 0 行 → 返回 <code>null</code></li>
+<li>查询返回 1 行 → 返回对应的 User 对象</li>
+<li>查询返回多行 → <strong>抛出 <code>TooManyResultsException</code></strong></li>
+</ul>
+<h4 id="返回-listentity">返回 <code>List&lt;Entity&gt;</code></h4>
+<pre><code class="language-java">public interface UserMapper {
+    List&lt;User&gt; selectByDeptId(Long deptId);
+}
+</code></pre>
+<pre><code class="language-xml">&lt;!-- resultType 写的是集合元素的类型，不是 List！ --&gt;
+&lt;select id=&quot;selectByDeptId&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user WHERE dept_id = #{deptId}
+&lt;/select&gt;
+</code></pre>
+<ul>
+<li>查询返回 0 行 → 返回<strong>空 List</strong>（不是 null）</li>
+<li>查询返回 N 行 → 返回包含 N 个 User 的 List</li>
+</ul>
+<blockquote>
+<p><strong>重要</strong>：<code>resultType</code> 中写的是集合<strong>元素</strong>的类型（<code>User</code>），而不是 <code>List</code>。MyBatis 根据接口方法的返回值类型来决定是返回单个对象还是 List。</p>
+</blockquote>
+<h4 id="返回-mapstring-object--单行结果">返回 <code>Map&lt;String, Object&gt;</code> —— 单行结果</h4>
+<p>将<strong>单行</strong>查询结果映射为 Map，key 是列名，value 是列值：</p>
+<pre><code class="language-java">public interface UserMapper {
+    Map&lt;String, Object&gt; selectMapById(Long id);
+}
+</code></pre>
+<pre><code class="language-xml">&lt;select id=&quot;selectMapById&quot; resultType=&quot;map&quot;&gt;
+    SELECT id, username, email, age FROM sys_user WHERE id = #{id}
+&lt;/select&gt;
+</code></pre>
+<pre><code class="language-java">Map&lt;String, Object&gt; result = userMapper.selectMapById(1L);
+// {id=1, username=&quot;zhangsan&quot;, email=&quot;zhangsan@example.com&quot;, age=25}
+</code></pre>
+<h4 id="返回-listmapstring-object--多行结果">返回 <code>List&lt;Map&lt;String, Object&gt;&gt;</code> —— 多行结果</h4>
+<p>将<strong>多行</strong>结果映射为 Map 的 List：</p>
+<pre><code class="language-java">public interface UserMapper {
+    List&lt;Map&lt;String, Object&gt;&gt; selectAllAsMap();
+}
+</code></pre>
+<pre><code class="language-xml">&lt;select id=&quot;selectAllAsMap&quot; resultType=&quot;map&quot;&gt;
+    SELECT id, username, email FROM sys_user
+&lt;/select&gt;
+</code></pre>
+<pre><code class="language-java">List&lt;Map&lt;String, Object&gt;&gt; list = userMapper.selectAllAsMap();
+// [{id=1, username=&quot;zhangsan&quot;, email=&quot;...&quot;}, {id=2, username=&quot;lisi&quot;, email=&quot;...&quot;}, ...]
+</code></pre>
+<h4 id="返回-mapk-v--mapkey--以某列为-key-的-map">返回 <code>Map&lt;K, V&gt;</code> + <code>@MapKey</code> —— 以某列为 key 的 Map</h4>
+<p>这是一个非常实用但容易被忽略的特性。<code>@MapKey</code> 注解可以将查询结果组织成一个以指定列为 key 的 Map，方便后续按 key 快速查找。</p>
+<pre><code class="language-java">public interface UserMapper {
+    @MapKey(&quot;id&quot;)
+    Map&lt;Long, User&gt; selectAllAsIdMap();
+
+    @MapKey(&quot;username&quot;)
+    Map&lt;String, User&gt; selectAllAsUsernameMap();
+}
+</code></pre>
+<pre><code class="language-xml">&lt;!-- resultType 仍然写元素类型 --&gt;
+&lt;select id=&quot;selectAllAsIdMap&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user
+&lt;/select&gt;
+
+&lt;select id=&quot;selectAllAsUsernameMap&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT * FROM sys_user
+&lt;/select&gt;
+</code></pre>
+<p><strong>使用示例：</strong></p>
+<pre><code class="language-java">// 以 id 为 key
+Map&lt;Long, User&gt; idMap = userMapper.selectAllAsIdMap();
+User user = idMap.get(1001L);  // 直接用 ID 获取，无需遍历
+
+// 以 username 为 key
+Map&lt;String, User&gt; nameMap = userMapper.selectAllAsUsernameMap();
+User zhangsan = nameMap.get(&quot;zhangsan&quot;);
+</code></pre>
+<p><strong><code>@MapKey</code> 的典型使用场景：</strong></p>
+<ul>
+<li>批量查询后需要按 ID 快速查找（避免 N+1 查询）</li>
+<li>构建缓存 Map</li>
+<li>需要对结果进行去重或分组（注意：相同 key 的后面会覆盖前面）</li>
+</ul>
+<h4 id="返回值类型完整速查">返回值类型完整速查</h4>
+<table>
+<thead>
+<tr>
+<th>Mapper 方法返回值</th>
+<th>resultType 写什么</th>
+<th>查询结果行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>User</code></td>
+<td><code>com.example.entity.User</code></td>
+<td>0行→null；1行→对象；多行→异常</td>
+</tr>
+<tr>
+<td><code>List&lt;User&gt;</code></td>
+<td><code>com.example.entity.User</code></td>
+<td>0行→空List；N行→N个元素的List</td>
+</tr>
+<tr>
+<td><code>Map&lt;String, Object&gt;</code></td>
+<td><code>map</code></td>
+<td>单行→{列名:值}；多行→异常</td>
+</tr>
+<tr>
+<td><code>List&lt;Map&lt;String, Object&gt;&gt;</code></td>
+<td><code>map</code></td>
+<td>多行→[{列名:值}, ...]</td>
+</tr>
+<tr>
+<td><code>@MapKey(&quot;id&quot;) Map&lt;Long, User&gt;</code></td>
+<td><code>com.example.entity.User</code></td>
+<td>以id为key的Map</td>
+</tr>
+<tr>
+<td><code>int</code> / <code>long</code></td>
+<td><code>int</code> / <code>long</code></td>
+<td>返回数值（如 COUNT）</td>
+</tr>
+<tr>
+<td><code>String</code></td>
+<td><code>string</code></td>
+<td>返回单个字符串值</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="35-sql-与-include--sql-片段复用">3.5 <code>&lt;sql&gt;</code> 与 <code>&lt;include&gt;</code> —— SQL 片段复用</h2>
+<p>在实际项目中，很多 SQL 语句都有重复的部分，比如查询的列列表、通用的 WHERE 条件等。MyBatis 提供了 <code>&lt;sql&gt;</code> 和 <code>&lt;include&gt;</code> 标签来实现 SQL 片段的复用，避免重复编写、便于统一维护。</p>
+<h3 id="基本用法">基本用法</h3>
+<p><strong>定义 SQL 片段：</strong></p>
+<pre><code class="language-xml">&lt;mapper namespace=&quot;com.example.mapper.UserMapper&quot;&gt;
+
+    &lt;!-- 定义通用的列列表片段 --&gt;
+    &lt;sql id=&quot;baseColumns&quot;&gt;
+        id, username, email, age, dept_id, status, create_time, update_time
+    &lt;/sql&gt;
+
+    &lt;!-- 定义带表别名的列列表 --&gt;
+    &lt;sql id=&quot;baseColumnsWithAlias&quot;&gt;
+        ${alias}.id, ${alias}.username, ${alias}.email, ${alias}.age,
+        ${alias}.dept_id, ${alias}.status, ${alias}.create_time, ${alias}.update_time
+    &lt;/sql&gt;
+
+    &lt;!-- 定义通用的 WHERE 条件片段 --&gt;
+    &lt;sql id=&quot;activeCondition&quot;&gt;
+        status = 1
+    &lt;/sql&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<p><strong>引用 SQL 片段：</strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;selectById&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT
+    &lt;include refid=&quot;baseColumns&quot;/&gt;
+    FROM sys_user
+    WHERE id = #{id}
+&lt;/select&gt;
+
+&lt;select id=&quot;selectAll&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT
+    &lt;include refid=&quot;baseColumns&quot;/&gt;
+    FROM sys_user
+    WHERE &lt;include refid=&quot;activeCondition&quot;/&gt;
+&lt;/select&gt;
+
+&lt;select id=&quot;selectByDeptId&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT
+    &lt;include refid=&quot;baseColumns&quot;/&gt;
+    FROM sys_user
+    WHERE dept_id = #{deptId} AND &lt;include refid=&quot;activeCondition&quot;/&gt;
+&lt;/select&gt;
+</code></pre>
+<p>最终生成的 SQL：</p>
+<pre><code class="language-sql">-- selectById
+SELECT id, username, email, age, dept_id, status, create_time, update_time
+FROM sys_user WHERE id = ?
+
+-- selectAll
+SELECT id, username, email, age, dept_id, status, create_time, update_time
+FROM sys_user WHERE status = 1
+
+-- selectByDeptId
+SELECT id, username, email, age, dept_id, status, create_time, update_time
+FROM sys_user WHERE dept_id = ? AND status = 1
+</code></pre>
+<h3 id="带参数的-sql-片段">带参数的 SQL 片段</h3>
+<p><code>&lt;include&gt;</code> 可以通过 <code>&lt;property&gt;</code> 子标签向 SQL 片段传递参数：</p>
+<pre><code class="language-xml">&lt;!-- 定义带参数的片段 --&gt;
+&lt;sql id=&quot;baseColumnsWithAlias&quot;&gt;
+    ${alias}.id, ${alias}.username, ${alias}.email, ${alias}.age,
+    ${alias}.dept_id, ${alias}.status, ${alias}.create_time, ${alias}.update_time
+&lt;/sql&gt;
+
+&lt;!-- 使用时传递参数 --&gt;
+&lt;select id=&quot;selectUserWithDept&quot; resultType=&quot;map&quot;&gt;
+    SELECT
+    &lt;include refid=&quot;baseColumnsWithAlias&quot;&gt;
+        &lt;property name=&quot;alias&quot; value=&quot;u&quot;/&gt;
+    &lt;/include&gt;,
+    d.dept_name
+    FROM sys_user u
+    LEFT JOIN sys_dept d ON u.dept_id = d.id
+    WHERE u.id = #{id}
+&lt;/select&gt;
+</code></pre>
+<p>生成的 SQL：</p>
+<pre><code class="language-sql">SELECT u.id, u.username, u.email, u.age, u.dept_id, u.status, 
+       u.create_time, u.update_time, d.dept_name
+FROM sys_user u
+LEFT JOIN sys_dept d ON u.dept_id = d.id
+WHERE u.id = ?
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>&lt;sql&gt;</code> 片段中使用 <code>&lt;property&gt;</code> 传入的参数时，必须用 <code>${}</code>（因为这是在 SQL 解析阶段进行的文本替换，不是运行时参数），这里的 <code>${}</code> 是安全的，因为值来自 XML 中的硬编码而非用户输入。</p>
+</blockquote>
+<h3 id="跨-mapper-引用-sql-片段">跨 Mapper 引用 SQL 片段</h3>
+<p>在大型项目中，可以将通用的 SQL 片段定义在一个公共的 Mapper XML 中，然后在其他 Mapper 中通过 <code>namespace.id</code> 的形式引用：</p>
+<p><strong>CommonMapper.xml：</strong></p>
+<pre><code class="language-xml">&lt;mapper namespace=&quot;com.example.mapper.CommonMapper&quot;&gt;
+
+    &lt;sql id=&quot;paginationSuffix&quot;&gt;
+        LIMIT #{offset}, #{limit}
+    &lt;/sql&gt;
+
+    &lt;sql id=&quot;orderBy&quot;&gt;
+        ORDER BY ${orderColumn} ${orderDir}
+    &lt;/sql&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<p><strong>UserMapper.xml 中引用：</strong></p>
+<pre><code class="language-xml">&lt;select id=&quot;selectPage&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+    SELECT
+    &lt;include refid=&quot;baseColumns&quot;/&gt;
+    FROM sys_user
+    WHERE &lt;include refid=&quot;activeCondition&quot;/&gt;
+    &lt;include refid=&quot;com.example.mapper.CommonMapper.orderBy&quot;&gt;
+        &lt;property name=&quot;orderColumn&quot; value=&quot;create_time&quot;/&gt;
+        &lt;property name=&quot;orderDir&quot; value=&quot;DESC&quot;/&gt;
+    &lt;/include&gt;
+    &lt;include refid=&quot;com.example.mapper.CommonMapper.paginationSuffix&quot;/&gt;
+&lt;/select&gt;
+</code></pre>
+<h3 id="实际项目中的完整复用示例">实际项目中的完整复用示例</h3>
+<p>下面是一个贴近实际开发的完整示例，展示如何通过 <code>&lt;sql&gt;</code> + <code>&lt;include&gt;</code> 减少重复代码：</p>
+<pre><code class="language-xml">&lt;mapper namespace=&quot;com.example.mapper.UserMapper&quot;&gt;
+
+    &lt;!-- ==================== SQL 片段定义 ==================== --&gt;
+
+    &lt;sql id=&quot;tableName&quot;&gt;sys_user&lt;/sql&gt;
+
+    &lt;sql id=&quot;baseColumns&quot;&gt;
+        id, username, email, age, dept_id, status, create_time, update_time
+    &lt;/sql&gt;
+
+    &lt;sql id=&quot;whereActive&quot;&gt;
+        &lt;where&gt;
+            status = 1
+            &lt;if test=&quot;username != null and username != ''&quot;&gt;
+                AND username LIKE CONCAT('%', #{username}, '%')
+            &lt;/if&gt;
+            &lt;if test=&quot;deptId != null&quot;&gt;
+                AND dept_id = #{deptId}
+            &lt;/if&gt;
+            &lt;if test=&quot;minAge != null&quot;&gt;
+                AND age &amp;gt;= #{minAge}
+            &lt;/if&gt;
+            &lt;if test=&quot;maxAge != null&quot;&gt;
+                AND age &amp;lt;= #{maxAge}
+            &lt;/if&gt;
+        &lt;/where&gt;
+    &lt;/sql&gt;
+
+    &lt;!-- ==================== CRUD 语句 ==================== --&gt;
+
+    &lt;select id=&quot;selectById&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+        SELECT &lt;include refid=&quot;baseColumns&quot;/&gt;
+        FROM &lt;include refid=&quot;tableName&quot;/&gt;
+        WHERE id = #{id}
+    &lt;/select&gt;
+
+    &lt;select id=&quot;selectList&quot; resultType=&quot;com.example.entity.User&quot;&gt;
+        SELECT &lt;include refid=&quot;baseColumns&quot;/&gt;
+        FROM &lt;include refid=&quot;tableName&quot;/&gt;
+        &lt;include refid=&quot;whereActive&quot;/&gt;
+        ORDER BY create_time DESC
+    &lt;/select&gt;
+
+    &lt;select id=&quot;countByCondition&quot; resultType=&quot;int&quot;&gt;
+        SELECT COUNT(*)
+        FROM &lt;include refid=&quot;tableName&quot;/&gt;
+        &lt;include refid=&quot;whereActive&quot;/&gt;
+    &lt;/select&gt;
+
+    &lt;insert id=&quot;insert&quot; useGeneratedKeys=&quot;true&quot; keyProperty=&quot;id&quot;&gt;
+        INSERT INTO &lt;include refid=&quot;tableName&quot;/&gt;
+        (username, email, age, dept_id, status)
+        VALUES (#{username}, #{email}, #{age}, #{deptId}, #{status})
+    &lt;/insert&gt;
+
+    &lt;update id=&quot;updateById&quot;&gt;
+        UPDATE &lt;include refid=&quot;tableName&quot;/&gt;
+        SET username = #{username}, email = #{email}, age = #{age},
+            dept_id = #{deptId}, update_time = NOW()
+        WHERE id = #{id}
+    &lt;/update&gt;
+
+    &lt;delete id=&quot;deleteById&quot;&gt;
+        DELETE FROM &lt;include refid=&quot;tableName&quot;/&gt; WHERE id = #{id}
+    &lt;/delete&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<h3 id="sql--include-使用建议"><code>&lt;sql&gt;</code> / <code>&lt;include&gt;</code> 使用建议</h3>
+<table>
+<thead>
+<tr>
+<th>建议</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>列列表必须抽取</strong></td>
+<td>这是最高频的重复代码，一旦加字段只需改一处</td>
+</tr>
+<tr>
+<td><strong>通用条件可以抽取</strong></td>
+<td>多个查询共享相同的 WHERE 条件时</td>
+</tr>
+<tr>
+<td><strong>不要过度抽取</strong></td>
+<td>如果片段只被用了一次，直接写在 SQL 中更清晰</td>
+</tr>
+<tr>
+<td><strong>命名要语义化</strong></td>
+<td><code>baseColumns</code>、<code>detailColumns</code>、<code>activeCondition</code> 比 <code>sql1</code>、<code>sql2</code> 好得多</td>
+</tr>
+<tr>
+<td><strong>跨 Mapper 引用要谨慎</strong></td>
+<td>过多跨文件引用会增加理解成本，仅对真正通用的片段使用</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<p>本章完整介绍了 Mapper XML 映射文件的核心内容，这些知识是日常 MyBatis 开发的基石：</p>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>掌握程度要求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>namespace 绑定规则</td>
+<td>必须理解，否则连基本的 Mapper 都无法使用</td>
+</tr>
+<tr>
+<td>CRUD 四个标签</td>
+<td>烂熟于心，这是每天都要写的</td>
+</tr>
+<tr>
+<td>useGeneratedKeys vs selectKey</td>
+<td>理解原理和适用场景，根据数据库选择</td>
+</tr>
+<tr>
+<td>参数传递规则</td>
+<td>必须掌握，尤其是 @Param 的使用时机</td>
+</tr>
+<tr>
+<td><code>#{}</code> vs <code>${}</code></td>
+<td><strong>最重要的知识点</strong>，直接关系到系统安全</td>
+</tr>
+<tr>
+<td>resultType vs resultMap</td>
+<td>理解各自适用场景</td>
+</tr>
+<tr>
+<td>返回 List / Map / @MapKey</td>
+<td>灵活运用不同的返回值类型</td>
+</tr>
+<tr>
+<td><code>&lt;sql&gt;</code> + <code>&lt;include&gt;</code></td>
+<td>养成复用习惯，保持代码整洁</td>
+</tr>
+</tbody>
+</table>
+<p><strong>下一章预告</strong>：第四章将介绍动态 SQL，这是 MyBatis 最强大的特性之一。掌握动态 SQL 后，你就可以用 XML 优雅地处理各种复杂的条件查询，告别字符串拼接 SQL 的噩梦。</p>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

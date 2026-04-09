@@ -1,0 +1,1297 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第二章unix-io-模型理解一切的理论基础">第二章：Unix IO 模型——理解一切的理论基础</h1>
+<blockquote>
+<p><strong>学习目标</strong>：从操作系统层面，搞清楚一次 IO 到底发生了什么，为理解 BIO/NIO/AIO 打下地基。</p>
+</blockquote>
+<hr />
+<h2 id="21-先搞清楚操作系统是怎么读数据的">2.1 先搞清楚：操作系统是怎么读数据的？</h2>
+<p>在学 IO 模型之前，我们必须先弄懂几个基础概念，否则后面全是空中楼阁。</p>
+<h3 id="什么是用户空间和内核空间">什么是用户空间和内核空间？</h3>
+<p>你的电脑内存并不是所有程序都能随便访问的。操作系统把内存划分为两个区域：</p>
+<pre><code>┌──────────────────────────────────┐
+│          内核空间                  │  ← 操作系统专用，你的程序不能直接碰
+│  (操作系统内核、驱动程序住在这里)    │
+├──────────────────────────────────┤
+│          用户空间                  │  ← 你的 Java 程序住在这里
+│  (你的应用程序、JVM 住在这里)       │
+└──────────────────────────────────┘
+</code></pre>
+<p><strong>为什么要分开？</strong> 安全。如果你的 Java 程序能直接操作硬件（磁盘、网卡），一个 bug 就可能搞崩整个系统。所以操作系统把硬件操作权垄断在内核空间，你的程序想读文件、收网络数据，必须&quot;求&quot;操作系统帮你做。</p>
+<h3 id="什么是系统调用system-call">什么是系统调用（System Call）？</h3>
+<p>你的程序想读一个文件，不能自己去操作磁盘，必须通过<strong>系统调用</strong>请求操作系统来做。</p>
+<pre><code>你的 Java 代码：inputStream.read()
+        │
+        ▼
+    JVM 内部调用
+        │
+        ▼
+    系统调用 read()   ← 这一步从&quot;用户态&quot;切换到&quot;内核态&quot;
+        │
+        ▼
+    操作系统内核去操作磁盘/网卡
+</code></pre>
+<p><strong>关键点</strong>：发起系统调用后，<strong>仍然是你这个线程在执行</strong>，只不过它的身份从&quot;用户态&quot;切换到了&quot;内核态&quot;。操作系统不会另起一个线程帮你读。你可以理解为：你的线程走进了&quot;操作系统的办公室&quot;，用操作系统的权限去干活。</p>
+<h3 id="一次读文件到底发生了什么">一次读文件到底发生了什么？</h3>
+<p>当你执行 <code>FileInputStream.read()</code> 时：</p>
+<pre><code>步骤1：你的线程发起系统调用 read()
+       → 线程从&quot;用户态&quot;切换到&quot;内核态&quot;
+
+步骤2：操作系统命令 DMA 控制器去磁盘读数据
+       → DMA 控制器独立工作，把数据从磁盘搬到&quot;内核缓冲区&quot;
+       → 这个过程中 CPU 不需要参与搬运，可以干别的事
+       → 但你的线程在等 DMA 搬完，所以线程是挂起的（阻塞）
+
+步骤3：DMA 搬完了，数据在&quot;内核缓冲区&quot;中
+       → CPU 把数据从&quot;内核缓冲区&quot;复制到&quot;用户缓冲区&quot;（你程序的 byte[] 数组）
+       → 这一步需要 CPU 参与，但很快（内存到内存的复制）
+
+步骤4：复制完毕，线程从&quot;内核态&quot;切回&quot;用户态&quot;
+       → read() 方法返回，你可以用数据了
+</code></pre>
+<h3 id="什么是-dma为什么说不消耗-cpu">什么是 DMA？为什么说&quot;不消耗 CPU&quot;？</h3>
+<p><strong>DMA（Direct Memory Access，直接内存访问）</strong> 是硬件上的一个控制器。它的工作是：在<strong>不需要 CPU 参与</strong>的情况下，把数据在磁盘/网卡和内存之间搬运。</p>
+<p>可以把 CPU 想象成<strong>经理</strong>，DMA 想象成<strong>搬运工</strong>。经理（CPU）下了一个命令&quot;把仓库（磁盘）里的货搬到办公室（内存）&quot;，然后搬运工（DMA）就去干活了，经理可以去做别的事。搬完了，搬运工通知经理&quot;搞定了&quot;。</p>
+<p>所以当我们说&quot;阻塞等待期间不消耗 CPU&quot;时，意思是：</p>
+<ul>
+<li><strong>CPU 不需要亲自搬数据</strong>（DMA 在搬）</li>
+<li><strong>但你的线程确实被挂起了</strong>，在那等着，什么都干不了</li>
+<li>CPU 可以被操作系统调度给其他线程使用</li>
+</ul>
+<hr />
+<h2 id="22-为什么要讨论-io-模型从读文件到网络通信">2.2 为什么要讨论 IO 模型？——从&quot;读文件&quot;到&quot;网络通信&quot;</h2>
+<h3 id="读文件时阻塞其实问题不大">读文件时，阻塞其实问题不大</h3>
+<p>你说得对——如果你的主线程要读一个文件，读完才能继续执行，那确实只能等着。这种场景下讨论&quot;阻塞还是非阻塞&quot;意义不大。</p>
+<pre><code class="language-java">// 读文件：我就是需要这个数据，不读完没法往下走
+byte[] data = Files.readAllBytes(Paths.get(&quot;config.json&quot;));
+// 必须等 data 有了，下面才能用
+processConfig(data);
+</code></pre>
+<p><strong>但问题出在网络通信上。</strong> 网络通信和读文件有一个巨大的区别：</p>
+<h3 id="网络通信的特殊性等待是不确定的">网络通信的特殊性：等待是不确定的</h3>
+<p>读文件时，数据就在你自己的磁盘上，读取速度虽然比内存慢，但至少是可预测的、很快就能完成的。</p>
+<p>网络通信就不一样了：</p>
+<ul>
+<li>你是一个服务器，有 1000 个客户端连着你</li>
+<li>客户端什么时候发数据？<strong>不知道！</strong> 可能 1 秒后发，可能 1 小时后才发，可能永远不发</li>
+<li>你的线程在那里 <code>read()</code>，等的是对方从网络发来的数据</li>
+</ul>
+<pre><code>读文件：数据在本地磁盘，几毫秒就能搬到内存 → 等一下没关系
+网络IO：数据在对方电脑上，什么时候发过来不确定 → 一直等就出大问题
+</code></pre>
+<h3 id="这就是-io-模型真正要解决的问题">这就是 IO 模型真正要解决的问题</h3>
+<p>想象你是一个服务器程序，同时连着 1000 个客户端：</p>
+<p><strong>用阻塞模型</strong>：你给每个客户端分配一个线程等着，1000 个客户端就要 1000 个线程，而且大部分线程都在干等（因为客户端不是每时每刻都在发数据）。</p>
+<pre><code>线程1: 等客户端A发数据... 等啊等... 等了3秒... 来了！处理！又开始等...
+线程2: 等客户端B发数据... 等啊等... 等了10秒... 来了！处理！又开始等...
+线程3: 等客户端C发数据... 等啊等... 还在等... 一直等...
+...
+线程1000: 等客户端ZZZ发数据...
+</code></pre>
+<p><strong>1000 个线程，990 个在发呆。</strong> 这就是浪费。</p>
+<p><strong>IO 模型就是在解决这个问题：如何高效地等待和处理大量网络连接的数据。</strong></p>
+<blockquote>
+<p><strong>总结</strong>：五种 IO 模型主要针对的是<strong>网络 IO</strong> 场景。读文件时一般不需要纠结模型，但网络通信中，&quot;如何高效地等待不确定什么时候到来的数据&quot;是一个核心问题。</p>
+</blockquote>
+<hr />
+<h2 id="23-一次网络-io-操作的两个阶段">2.3 一次网络 IO 操作的两个阶段</h2>
+<p>当服务器要从一个网络连接中读取数据时，分两个阶段：</p>
+<pre><code>                          你的线程
+                             │
+                     ┌───────┴───────┐
+                     │  发起read()   │
+                     │  系统调用      │
+                     └───────┬───────┘
+                             │
+              ═══════════════╪═══════════════  （用户态 / 内核态 分界线）
+                             │
+                  ┌──────────▼──────────┐
+                  │    阶段一：等待数据    │  ← 等对方把数据通过网络发过来
+                  │  （数据从网卡 → 内核） │     数据到达网卡后 DMA 搬到内核缓冲区
+                  │                      │     这个过程可能很快，也可能很慢
+                  │   耗时：不确定！       │     取决于对方什么时候发数据
+                  └──────────┬──────────┘
+                             │
+                  ┌──────────▼──────────┐
+                  │    阶段二：复制数据    │  ← 数据到了内核缓冲区，
+                  │  （内核缓冲 → 用户缓冲）│     CPU 复制到你程序的 byte[] 中
+                  │                      │
+                  │   耗时：很快（微秒级） │     内存到内存的复制
+                  └──────────┬──────────┘
+                             │
+              ═══════════════╪═══════════════
+                             │
+                     ┌───────▼───────┐
+                     │  read() 返回   │
+                     │  你拿到数据了   │
+                     └───────────────┘
+</code></pre>
+<p><strong>核心认知</strong>：</p>
+<ul>
+<li><strong>阶段一</strong>是最耗时的，因为要等对方发数据，这个等待时间可能很长</li>
+<li><strong>阶段二</strong>很快，就是内存之间的拷贝</li>
+<li><strong>五种 IO 模型的区别，就在于这两个阶段中，你的线程是在等还是去做别的事</strong></li>
+</ul>
+<hr />
+<h2 id="24-五种-unix-io-模型">2.4 五种 Unix IO 模型</h2>
+<p>现在你已经理解了背景知识，我们来看五种模型。为了便于理解，我统一用<strong>一个生活场景</strong>来类比：</p>
+<blockquote>
+<p><strong>场景</strong>：你开了一家快递驿站，有 100 个快递柜。你需要知道哪个柜子里有新快递到了，然后取出来处理。</p>
+</blockquote>
+<h3 id="模型一阻塞式-ioblocking-io">模型一：阻塞式 IO（Blocking IO）</h3>
+<p><strong>你的做法</strong>：站在第 1 个快递柜前等。快递到了就取出来处理，然后走到第 2 个柜子前等……</p>
+<pre><code>你的线程                          操作系统内核
+   │                               │
+   │──── read(连接A) ────────────→│
+   │                               │
+   │    线程挂起，啥都干不了          │  等客户端A的数据从网络到达...
+   │    （CPU可以去服务其他线程）      │  ...可能等几毫秒，可能等几秒...
+   │                               │  数据到了！DMA搬到内核缓冲区
+   │                               │  CPU把数据复制到你的byte[]
+   │                               │
+   │←── 返回数据 ──────────────────│
+   │                               │
+   ▼ 处理数据，然后去read(连接B)...   │
+</code></pre>
+<p><strong>问题</strong>：你同时只能盯一个柜子。100 个柜子就要 100 个人（线程），95 个在发呆。</p>
+<h3 id="模型二非阻塞式-ionon-blocking-io">模型二：非阻塞式 IO（Non-blocking IO）</h3>
+<p><strong>你的做法</strong>：挨个柜子看一眼&quot;有快递没？&quot;，没有就立刻看下一个，一直循环。</p>
+<pre><code>你的线程                          操作系统内核
+   │                               │
+   │──── read(连接A) ────────────→│
+   │←── &quot;没数据&quot; ──────────────────│  数据还没到
+   │                               │
+   │──── read(连接B) ────────────→│
+   │←── &quot;没数据&quot; ──────────────────│  数据还没到
+   │                               │
+   │──── read(连接A) ────────────→│
+   │←── &quot;没数据&quot; ──────────────────│  数据还没到
+   │                               │
+   │──── read(连接A) ────────────→│
+   │←── &quot;有数据！&quot; ────────────────│  数据到了，返回给你
+   │                               │
+   ▼ 处理数据                       │
+</code></pre>
+<p><strong>问题</strong>：虽然一个线程可以&quot;照顾&quot;多个连接，但你的 CPU 一直在做&quot;跑过去看一眼、没有、跑回来&quot;的无用功。就像你在 100 个柜子之间来回跑，每次跑一圈发现都没快递——累死你但没产出。</p>
+<h3 id="模型三io-多路复用io-multiplexing">模型三：IO 多路复用（IO Multiplexing）</h3>
+<p><strong>你的做法</strong>：在驿站装了一个<strong>监控大屏</strong>（Selector/epoll），大屏能同时监控 100 个柜子。你只需要盯着大屏——大屏亮了&quot;柜子 3 有快递&quot;，你就去柜子 3 取。</p>
+<pre><code>你的线程                          操作系统内核
+   │                               │
+   │──── select(100个连接) ──────→│ 帮你同时盯着100个连接
+   │                               │
+   │    线程挂起，等着               │  盯着... 盯着...
+   │    （但这次是同时等100个！）     │  连接A没数据、连接B没数据...
+   │                               │  连接C有数据到了！
+   │                               │
+   │←── &quot;连接C就绪&quot; ────────────── │
+   │                               │
+   │──── read(连接C) ────────────→│  读连接C的数据
+   │←── 返回数据 ──────────────────│
+   │                               │
+   ▼ 处理连接C的数据                 │
+</code></pre>
+<p><strong>优势</strong>：一个线程就能管 100 个（甚至上万个）连接！不用为每个连接开一个线程，也不用做无用的轮询。</p>
+<p><strong>和前面两个的关键区别</strong>：</p>
+<ul>
+<li>和阻塞 IO 比：<strong>虽然也在等，但一次等的是多个连接</strong>，任何一个有数据就能处理</li>
+<li>和非阻塞 IO 比：<strong>不用做无用的轮询</strong>，而是内核帮你监控，有数据才通知</li>
+</ul>
+<p><strong>这就是 Java NIO 的底层原理。</strong></p>
+<h3 id="模型四信号驱动-iosignal-driven-io">模型四：信号驱动 IO（Signal-driven IO）</h3>
+<p><strong>你的做法</strong>：给每个柜子装一个门铃。你不用盯着任何柜子，该干嘛干嘛。快递到了柜子会响铃（发信号），你听到铃声再去取。</p>
+<pre><code>你的线程                          操作系统内核
+   │                               │
+   │──── &quot;连接A有数据就通知我&quot; ────→│  注册信号
+   │←── &quot;好的&quot; ────────────────────│
+   │                               │
+   │  你去做其他事...                │  盯着...
+   │  处理别的业务...                │  数据到了！
+   │                               │
+   │←── 信号：&quot;连接A有数据了！&quot; ────│  内核发信号通知你
+   │                               │
+   │──── read(连接A) ────────────→│  你来取数据
+   │←── 返回数据 ──────────────────│
+   │                               │
+   ▼ 处理数据                       │
+</code></pre>
+<p><strong>和 IO 多路复用的区别</strong>：</p>
+<ul>
+<li>IO 多路复用：你盯着监控大屏等（select 阻塞），<strong>大屏亮了告诉你&quot;数据好了，你来取&quot;</strong></li>
+<li>信号驱动：你不盯大屏，<strong>柜子自己会按门铃通知你&quot;数据好了，你来取&quot;</strong></li>
+</ul>
+<p><strong>共同点</strong>：<strong>都需要你自己去取数据</strong>（调用 read）。通知你的只是&quot;数据到了内核缓冲区&quot;，你还要把数据从内核搬到你的程序里。</p>
+<h3 id="模型五异步-ioasynchronous-io">模型五：异步 IO（Asynchronous IO）</h3>
+<p><strong>你的做法</strong>：告诉快递系统&quot;有快递就直接送到我办公桌上&quot;。你完全不用管，快递系统把快递取出柜子、拆好包装、放到你桌上，然后通知你&quot;全搞定了，直接用吧&quot;。</p>
+<pre><code>你的线程                          操作系统内核
+   │                               │
+   │──── &quot;读连接A，完了直接          │
+   │      放到我的byte[]里&quot; ───────→│  注册异步读取
+   │←── &quot;好的&quot; ────────────────────│
+   │                               │
+   │  你去做其他事...                │  等数据...
+   │  处理别的业务...                │  数据到了！（阶段一完成）
+   │  完全不用管连接A...             │  复制到你的byte[]里！（阶段二完成）
+   │                               │
+   │←── &quot;全搞定了，数据已经          │
+   │     在你的byte[]里了&quot; ─────────│  通知你
+   │                               │
+   ▼ 直接使用数据                    │
+</code></pre>
+<p><strong>和前面所有模型的本质区别</strong>：</p>
+<ul>
+<li><strong>前四种</strong>：内核只负责&quot;通知你数据到了&quot;或者&quot;等你来取&quot;，<strong>你必须自己调 read() 把数据从内核搬到你的程序</strong></li>
+<li><strong>异步 IO</strong>：内核把所有事情都做了——等数据、搬数据——<strong>全搞定后才通知你，你拿到通知时数据已经在你的 byte[] 里了</strong></li>
+</ul>
+<hr />
+<h2 id="25-用一张图区分五种模型">2.5 用一张图区分五种模型</h2>
+<p>到这里你可能已经有点晕了。让我们把五种模型放在一起对比，<strong>关键看两点：阶段一你在干嘛？通知你的时候数据是在内核还是已经到你手里了？</strong></p>
+<pre><code>                      阶段一（等数据到达）        阶段二（搬到你程序里）     你拿到通知时
+───────────────────────────────────────────────────────────────────────────────────
+阻塞IO            你在等（线程挂起）              你在等              数据到手
+非阻塞IO          你在轮询（不停问）              你在等              数据到手
+IO多路复用         你在等（但同时等多个）           你在等              数据到手
+信号驱动IO        你在做别的事                    你在等              数据到手
+异步IO            你在做别的事                   内核帮你搬好了       数据到手
+───────────────────────────────────────────────────────────────────────────────────
+                                                  ↑
+                                          前四种都要你自己搬
+                                          第五种内核帮你搬好了
+</code></pre>
+<hr />
+<h2 id="26-同步-io-vs-异步-io面试必问">2.6 同步 IO vs 异步 IO（面试必问）</h2>
+<p>这两个概念容易混淆。关键就一句话：</p>
+<blockquote>
+<p><strong>看&quot;阶段二&quot;（把数据从内核搬到你的程序里）是谁干的。</strong></p>
+<ul>
+<li>你自己搬 → 同步 IO</li>
+<li>内核帮你搬好了再通知 → 异步 IO</li>
+</ul>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>IO 模型</th>
+<th>阶段一你在干嘛</th>
+<th>阶段二谁搬数据</th>
+<th>属于</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>阻塞式 IO</td>
+<td>等着</td>
+<td><strong>你搬</strong>（线程阻塞等搬完）</td>
+<td><strong>同步</strong></td>
+</tr>
+<tr>
+<td>非阻塞式 IO</td>
+<td>不停问</td>
+<td><strong>你搬</strong>（线程阻塞等搬完）</td>
+<td><strong>同步</strong></td>
+</tr>
+<tr>
+<td>IO 多路复用</td>
+<td>等着（但等多个）</td>
+<td><strong>你搬</strong>（线程阻塞等搬完）</td>
+<td><strong>同步</strong></td>
+</tr>
+<tr>
+<td>信号驱动 IO</td>
+<td>做别的事</td>
+<td><strong>你搬</strong>（线程阻塞等搬完）</td>
+<td><strong>同步</strong></td>
+</tr>
+<tr>
+<td>异步 IO</td>
+<td>做别的事</td>
+<td><strong>内核帮你搬好了</strong></td>
+<td><strong>异步</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>关键结论：前四种都是同步 IO！</strong> 因为最终都要你的线程自己去把数据从内核搬到用户空间。</p>
+<h3 id="阻塞非阻塞-vs-同步异步">阻塞/非阻塞 vs 同步/异步</h3>
+<p>这两组概念是不同维度的：</p>
+<ul>
+<li><strong>阻塞/非阻塞</strong>：问的是&quot;阶段一你等不等？&quot;——等数据到达时你是干等还是做别的</li>
+<li><strong>同步/异步</strong>：问的是&quot;阶段二谁干活？&quot;——搬数据这活是你干还是内核帮你干</li>
+</ul>
+<pre><code>            │   同步                异步
+            │  （你自己搬数据）    （内核帮你搬好）
+────────────┼──────────────────────────────
+ 阻塞       │  阻塞式 IO            ──
+            │  IO 多路复用
+────────────┼──────────────────────────────
+ 非阻塞     │  非阻塞式 IO          异步 IO
+            │  信号驱动 IO
+</code></pre>
+<h3 id="面试常见误区">面试常见误区</h3>
+<blockquote>
+<p><strong>误区</strong>：非阻塞 IO 就是异步 IO</p>
+<p><strong>纠正</strong>：非阻塞 IO 只是在阶段一不用等（通过轮询），但在阶段二（搬数据）你的线程仍然要等着搬完，所以它还是同步 IO。就像快递到了门口（阶段一完成），但你还是要自己下楼去拿（阶段二）。异步 IO 是快递直接送到你桌上。</p>
+</blockquote>
+<hr />
+<h2 id="27-io-多路复用的三种实现select--poll--epoll">2.7 IO 多路复用的三种实现：select / poll / epoll</h2>
+<p>IO 多路复用是最重要的模型（Java NIO 就是基于它），它有三种操作系统实现。</p>
+<h3 id="三者的核心区别">三者的核心区别</h3>
+<p>还是用驿站的比喻：</p>
+<ul>
+<li>
+<p><strong>select</strong>：你给前台一张<strong>手写清单</strong>（最多写 1024 个柜子号），前台挨个检查清单上的柜子，查完告诉你&quot;有 3 个柜子有快递&quot;，但不告诉你具体哪 3 个——你得自己再挨个看。<strong>每次查都要重新写清单、重新交给前台。</strong></p>
+</li>
+<li>
+<p><strong>poll</strong>：和 select 一样，只是清单不限制长度了。但前台还是挨个查，还是不告诉你具体是哪个。</p>
+</li>
+<li>
+<p><strong>epoll</strong>：前台有一块<strong>智能电子屏</strong>。你只需要注册一次&quot;我关心柜子 1~100&quot;，之后电子屏自动监控。有快递时，屏幕<strong>直接显示&quot;柜子 3、柜子 7 有快递&quot;</strong>——你直接去取，不用自己遍历。而且不需要每次重新注册。</p>
+</li>
+</ul>
+<h3 id="对比表">对比表</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>select</th>
+<th>poll</th>
+<th>epoll</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最大连接数</td>
+<td>1024</td>
+<td>无限制</td>
+<td>无限制</td>
+</tr>
+<tr>
+<td>每次调用是否要重传清单</td>
+<td>是</td>
+<td>是</td>
+<td>否（只注册一次）</td>
+</tr>
+<tr>
+<td>结果</td>
+<td>只告诉有几个就绪，你自己遍历</td>
+<td>同 select</td>
+<td>直接告诉你哪几个就绪</td>
+</tr>
+<tr>
+<td>时间复杂度</td>
+<td>O(n)（要遍历所有）</td>
+<td>O(n)</td>
+<td>O(1)（只返回就绪的）</td>
+</tr>
+<tr>
+<td>平台支持</td>
+<td>跨平台</td>
+<td>跨平台</td>
+<td>Linux 独有</td>
+</tr>
+</tbody>
+</table>
+<h3 id="适用场景">适用场景</h3>
+<ul>
+<li>连接数少（&lt;1000），要跨平台 → <strong>select/poll</strong></li>
+<li>连接数多（上万），运行在 Linux → <strong>epoll</strong></li>
+</ul>
+<p><strong>Java NIO 在 Linux 上的底层实现就是 epoll。</strong> 这也是为什么高性能 Java 服务器通常部署在 Linux 上。</p>
+<h3 id="epoll-的两种触发模式了解即可">epoll 的两种触发模式（了解即可）</h3>
+<ul>
+<li><strong>LT（水平触发）</strong>：柜子里有快递，每次你去看电子屏都会显示。安全，不怕你忘。<strong>默认模式。</strong></li>
+<li><strong>ET（边缘触发）</strong>：柜子里来了新快递时只通知一次。你必须一次取完，否则不会再通知。效率高但编程难度大。</li>
+</ul>
+<hr />
+<h2 id="28-到底该选哪个模型">2.8 到底该选哪个模型？</h2>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐模型</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>读写本地文件</td>
+<td>直接阻塞读就行</td>
+<td>文件在本地，速度可预测，阻塞时间短</td>
+</tr>
+<tr>
+<td>少量网络连接（&lt;100）</td>
+<td>阻塞 IO + 多线程</td>
+<td>简单好写，线程数可控</td>
+</tr>
+<tr>
+<td>大量网络连接（上万）</td>
+<td>IO 多路复用</td>
+<td>一个线程管所有连接，资源占用小</td>
+</tr>
+<tr>
+<td>Windows 平台 + 大量连接</td>
+<td>异步 IO</td>
+<td>IOCP 是真正的异步</td>
+</tr>
+<tr>
+<td>实际项目</td>
+<td>Netty（基于 IO 多路复用）</td>
+<td>封装好了，不用自己踩坑</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>面试考察频率</th>
+<th>关键记忆</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>用户空间 vs 内核空间</td>
+<td>⭐⭐⭐</td>
+<td>程序不能直接操作硬件，必须通过系统调用</td>
+</tr>
+<tr>
+<td>DMA</td>
+<td>⭐⭐</td>
+<td>硬件搬运工，不消耗 CPU</td>
+</tr>
+<tr>
+<td>IO 的两个阶段</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>等数据 + 搬数据</td>
+</tr>
+<tr>
+<td>五种 IO 模型</td>
+<td>⭐⭐⭐⭐</td>
+<td>能说清每种模型两个阶段的行为</td>
+</tr>
+<tr>
+<td>同步 vs 异步</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>看阶段二谁搬数据：你搬=同步，内核搬=异步</td>
+</tr>
+<tr>
+<td>阻塞 vs 非阻塞</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>看阶段一你等不等</td>
+</tr>
+<tr>
+<td>select/poll/epoll</td>
+<td>⭐⭐⭐⭐</td>
+<td>epoll 最优，Java NIO 底层</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>下一章预告</strong>：理论有了，接下来进入 Java 世界，先看最传统的网络编程方式——BIO（阻塞式 IO）。</p>
+</blockquote>
+<hr />
+<h2 id="附录你可能也会有的疑问">附录：你可能也会有的疑问</h2>
+<h3 id="q1应用程序读文件时是应用程序的线程在读还是操作系统另起一个线程在读">Q1：应用程序读文件时，是应用程序的线程在读，还是操作系统另起一个线程在读？</h3>
+<p><strong>是你自己的线程在读。</strong> 操作系统不会为你创建新线程。</p>
+<p>当你调用 <code>inputStream.read()</code> 时，你的线程会通过系统调用（System Call）从&quot;用户态&quot;切换到&quot;内核态&quot;。切换后，仍然是你这个线程在执行，只不过它现在拥有了操作系统的权限，可以操作硬件了。</p>
+<p>具体来说：你的线程进入内核态后，命令 DMA 控制器去磁盘搬数据。DMA 是硬件，它独立工作不需要 CPU。在 DMA 搬数据的过程中，你的线程就挂在那里等（阻塞），CPU 被操作系统调度给别的线程用。DMA 搬完后，你的线程被唤醒，CPU 帮你把数据从内核缓冲区复制到你的 byte[] 中，然后 read() 返回。</p>
+<p>全程只有你这一个线程，没有&quot;系统线程&quot;帮你读。</p>
+<h3 id="q2如果主线程读文件必须等数据读完才能往下执行那阻塞不是很正常吗讨论阻塞好像没意义">Q2：如果主线程读文件，必须等数据读完才能往下执行，那阻塞不是很正常吗？讨论&quot;阻塞&quot;好像没意义？</h3>
+<p><strong>你说得完全对！</strong> 对于读文件来说，阻塞确实是很自然的事。</p>
+<p>五种 IO 模型主要是为<strong>网络通信</strong>场景设计的，不是为读文件。网络通信的特殊之处是：</p>
+<ul>
+<li>你不知道对方什么时候发数据（可能等 1 毫秒，可能等 1 小时）</li>
+<li>你可能同时连着 1000 个客户端，每个都可能随时发数据</li>
+</ul>
+<p>如果每个连接都阻塞一个线程等着，1000 个连接就要 1000 个线程。而且这 1000 个线程大部分时间都在发呆（等对方发数据），这是巨大的浪费。</p>
+<p>所以 IO 多路复用（NIO）的价值在于：<strong>一个线程就能同时等 1000 个连接，谁先来数据就先处理谁。</strong> 这在文件读取场景下确实没啥用，但在网络服务器场景下是革命性的。</p>
+<h3 id="q3等待期间线程挂起不消耗-cpu把数据加载到内存不消耗-cpu-吗">Q3：&quot;等待期间线程挂起，不消耗 CPU&quot;——把数据加载到内存不消耗 CPU 吗？</h3>
+<p><strong>从磁盘/网卡搬数据到内核缓冲区这一步，确实不怎么消耗 CPU。</strong> 因为这是 DMA 控制器（硬件）在干活，CPU 不需要参与。</p>
+<p>但&quot;把数据从内核缓冲区复制到用户缓冲区&quot;这一步确实需要 CPU。好消息是这一步非常快（内存到内存的复制，微秒级别），所以通常不是性能瓶颈。</p>
+<p>所以更准确的描述是：</p>
+<ul>
+<li><strong>等待数据阶段</strong>（阶段一）：DMA 干活，CPU 不参与 → <strong>不消耗 CPU</strong></li>
+<li><strong>复制数据阶段</strong>（阶段二）：CPU 干活 → <strong>消耗 CPU，但很快</strong></li>
+<li>合在一起说&quot;不消耗 CPU&quot;指的是最耗时的&quot;等待&quot;阶段</li>
+</ul>
+<h3 id="q4io-多路复用信号驱动-io异步-io-看起来都是数据到了通知应用程序有什么区别">Q4：IO 多路复用、信号驱动 IO、异步 IO 看起来都是&quot;数据到了通知应用程序&quot;，有什么区别？</h3>
+<p>区别在于<strong>通知你的时机不同</strong>和<strong>通知后你要不要自己搬数据</strong>。用取快递来比喻：</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>通知你的时机</th>
+<th>通知后你要做什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>IO 多路复用</strong></td>
+<td>&quot;柜子里有快递了&quot;（数据到了内核缓冲区）</td>
+<td>你自己去柜子取出来（调 read，阻塞等搬完）</td>
+</tr>
+<tr>
+<td><strong>信号驱动 IO</strong></td>
+<td>&quot;柜子里有快递了&quot;（数据到了内核缓冲区）</td>
+<td>你自己去柜子取出来（调 read，阻塞等搬完）</td>
+</tr>
+<tr>
+<td><strong>异步 IO</strong></td>
+<td>&quot;快递已经放你桌上了&quot;（数据已经在你的 byte[] 里）</td>
+<td><strong>什么都不用做，直接用</strong></td>
+</tr>
+</tbody>
+</table>
+<p>IO 多路复用和信号驱动 IO 通知的内容是一样的——&quot;数据到了内核&quot;，区别只是通知方式：</p>
+<ul>
+<li>IO 多路复用：你坐在监控大屏前<strong>等着看</strong>（select 阻塞），大屏亮了你去取</li>
+<li>信号驱动 IO：你不用盯大屏，<strong>大屏主动给你发消息</strong>（信号），你收到消息去取</li>
+</ul>
+<p>而异步 IO 是质的飞跃：<strong>通知你的时候，连&quot;取&quot;这步都帮你做好了</strong>，数据直接在你的程序内存里了。</p>
+<p>所以本质区别是：</p>
+<ul>
+<li><strong>前两个通知的是&quot;半成品&quot;</strong>（数据到了内核，你还要自己搬）</li>
+<li><strong>异步 IO 通知的是&quot;成品&quot;</strong>（数据已经到你手里了）</li>
+</ul>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2744 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第21课-显式动画组件">第21课 显式动画组件</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter 常用组件系统学习<br />
+<strong>适用人群</strong>：有 Dart 语言基础，了解 Flutter 基本概念的开发者<br />
+<strong>课程目标</strong>：掌握 Flutter 显式动画体系，能够使用 AnimationController、Tween、Transition 组件以及交错动画、Hero 动画等高级技巧，实现对动画的完全控制</p>
+</blockquote>
+<p>本课是动画系列的第二课。在第20课中，我们学习了隐式动画——你只需要声明目标状态，Flutter 自动完成过渡。但在实际开发中，很多场景需要更精细的控制：循环播放的加载动画、手势驱动的交互动画、多个动画按时序编排的复杂效果……这些都是隐式动画力不从心的地方。<strong>显式动画</strong>（Explicit Animation）让你能完全掌控动画的播放、暂停、倒放、循环、联动等一切行为。</p>
+<hr />
+<h2 id="1-隐式动画-vs-显式动画何时升级">1. 隐式动画 vs 显式动画：何时升级</h2>
+<p>在深入显式动画之前，先明确两者的定位和选择策略。</p>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>隐式动画（第20课）</th>
+<th>显式动画（本课）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>核心思想</strong></td>
+<td>声明目标值，自动过渡</td>
+<td>手动控制动画的每一帧</td>
+</tr>
+<tr>
+<td><strong>AnimationController</strong></td>
+<td>内部自动管理，开发者不可见</td>
+<td>开发者手动创建和管理</td>
+</tr>
+<tr>
+<td><strong>控制能力</strong></td>
+<td>只能&quot;从当前值到目标值&quot;</td>
+<td>播放、暂停、倒放、循环、跳转到任意位置</td>
+</tr>
+<tr>
+<td><strong>多动画编排</strong></td>
+<td>不支持</td>
+<td>一个 Controller 驱动多个 Tween + Interval</td>
+</tr>
+<tr>
+<td><strong>手势联动</strong></td>
+<td>不支持</td>
+<td>controller.value 可与手势位移绑定</td>
+</tr>
+<tr>
+<td><strong>性能优化</strong></td>
+<td>自动处理</td>
+<td>可通过 AnimatedBuilder 的 child 参数手动优化</td>
+</tr>
+<tr>
+<td><strong>代码量</strong></td>
+<td>少</td>
+<td>多（需要 mixin、dispose 等）</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>状态变化触发的简单过渡</td>
+<td>循环动画、交错动画、手势驱动、页面转场</td>
+</tr>
+</tbody>
+</table>
+<p><strong>选择原则</strong>：</p>
+<ul>
+<li>如果动画只是&quot;属性 A 变到属性 B&quot;的一次性过渡 → 用<strong>隐式动画</strong></li>
+<li>如果动画需要循环、暂停、倒放、与手势联动、多动画编排 → 用<strong>显式动画</strong></li>
+<li>如果你不确定 → 先试隐式动画，不够用了再升级到显式动画</li>
+</ul>
+<hr />
+<h2 id="2-animationcontroller-与-tickerprovider">2. AnimationController 与 TickerProvider</h2>
+<p><code>AnimationController</code> 是显式动画的核心引擎，它产生一个在指定时间内从 <code>lowerBound</code> 到 <code>upperBound</code> 线性变化的值（默认 0.0 → 1.0）。</p>
+<h3 id="21-vsync-与-tickerproviderstatemixin">2.1 vsync 与 TickerProviderStateMixin</h3>
+<p><code>AnimationController</code> 需要一个 <code>TickerProvider</code> 来驱动每一帧的回调。<code>Ticker</code> 的作用是在每个垂直同步信号（vsync）到来时通知动画更新，这确保了动画与屏幕刷新率同步（通常 60fps 或 120fps），避免不必要的计算。</p>
+<ul>
+<li><strong><code>SingleTickerProviderStateMixin</code></strong>：当 State 中<strong>只有一个</strong> AnimationController 时使用</li>
+<li><strong><code>TickerProviderStateMixin</code></strong>：当 State 中有<strong>多个</strong> AnimationController 时使用</li>
+</ul>
+<blockquote>
+<p><strong>注意</strong>：vsync 参数传入 <code>this</code>，前提是当前 State 类混入了上述 mixin。如果组件不在屏幕上显示（比如被切到后台），Ticker 会自动停止，节省资源。</p>
+</blockquote>
+<h3 id="22-创建与配置-animationcontroller">2.2 创建与配置 AnimationController</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const ControllerBasicDemo(),
+    );
+  }
+}
+
+class ControllerBasicDemo extends StatefulWidget {
+  const ControllerBasicDemo({super.key});
+
+  @override
+  State&lt;ControllerBasicDemo&gt; createState() =&gt; _ControllerBasicDemoState();
+}
+
+/// 使用 SingleTickerProviderStateMixin，因为只有一个 AnimationController
+class _ControllerBasicDemoState extends State&lt;ControllerBasicDemo&gt;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      // 动画时长
+      duration: const Duration(seconds: 2),
+      // 值的下界，默认 0.0
+      lowerBound: 0.0,
+      // 值的上界，默认 1.0
+      upperBound: 1.0,
+      // vsync 绑定当前 State 的 Ticker
+      vsync: this,
+    );
+
+    // 监听动画值变化
+    _controller.addListener(() {
+      setState(() {});
+    });
+
+    // 监听动画状态变化
+    _controller.addStatusListener((status) {
+      debugPrint('动画状态: $status');
+      // AnimationStatus.dismissed  — 动画停在起点
+      // AnimationStatus.forward    — 正在正向播放
+      // AnimationStatus.reverse    — 正在反向播放
+      // AnimationStatus.completed  — 动画停在终点
+    });
+  }
+
+  @override
+  void dispose() {
+    // 必须释放 AnimationController，否则会内存泄漏！
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('AnimationController 基础')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 用 controller 的值控制容器的大小
+            Container(
+              width: 50 + 150 * _controller.value,
+              height: 50 + 150 * _controller.value,
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              '当前值: ${_controller.value.toStringAsFixed(2)}',
+              style: const TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
+      ),
+      // 控制按钮区域
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Wrap(
+          spacing: 8,
+          alignment: WrapAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () =&gt; _controller.forward(),
+              child: const Text('forward'),
+            ),
+            ElevatedButton(
+              onPressed: () =&gt; _controller.reverse(),
+              child: const Text('reverse'),
+            ),
+            ElevatedButton(
+              onPressed: () =&gt; _controller.repeat(),
+              child: const Text('repeat'),
+            ),
+            ElevatedButton(
+              onPressed: () =&gt; _controller.repeat(reverse: true),
+              child: const Text('repeat 往返'),
+            ),
+            ElevatedButton(
+              onPressed: () =&gt; _controller.stop(),
+              child: const Text('stop'),
+            ),
+            ElevatedButton(
+              onPressed: () =&gt; _controller.reset(),
+              child: const Text('reset'),
+            ),
+            ElevatedButton(
+              onPressed: () =&gt; _controller.animateTo(0.5),
+              child: const Text('animateTo(0.5)'),
+            ),
+            ElevatedButton(
+              onPressed: () =&gt; _controller.fling(),
+              child: const Text('fling'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="23-animationcontroller-常用方法总结">2.3 AnimationController 常用方法总结</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>forward({from})</code></td>
+<td>从当前位置（或 <code>from</code>）正向播放到 <code>upperBound</code></td>
+</tr>
+<tr>
+<td><code>reverse({from})</code></td>
+<td>从当前位置（或 <code>from</code>）反向播放到 <code>lowerBound</code></td>
+</tr>
+<tr>
+<td><code>repeat({reverse, min, max, period})</code></td>
+<td>循环播放；<code>reverse: true</code> 表示往返循环</td>
+</tr>
+<tr>
+<td><code>stop({canceled})</code></td>
+<td>停止动画，保持在当前位置</td>
+</tr>
+<tr>
+<td><code>reset()</code></td>
+<td>重置到 <code>lowerBound</code>，不触发动画</td>
+</tr>
+<tr>
+<td><code>animateTo(target, {duration, curve})</code></td>
+<td>动画过渡到指定值，可自定义时长和曲线</td>
+</tr>
+<tr>
+<td><code>animateBack(target, {duration, curve})</code></td>
+<td>动画过渡回指定值</td>
+</tr>
+<tr>
+<td><code>fling({velocity})</code></td>
+<td>以物理弹性方式快速弹到边界</td>
+</tr>
+<tr>
+<td><code>dispose()</code></td>
+<td>释放资源，<strong>必须在 State.dispose 中调用</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="24-dispose-释放资源">2.4 dispose 释放资源</h3>
+<blockquote>
+<p><strong>⚠️ 最佳实践</strong>：每个 <code>AnimationController</code> 都<strong>必须</strong>在 <code>dispose()</code> 方法中释放。这是显式动画最容易出错的地方——忘记 dispose 会导致内存泄漏和 Ticker 异常。</p>
+</blockquote>
+<pre><code class="language-dart">@override
+void dispose() {
+  _controller.dispose();
+  // 如果有多个控制器，每个都要 dispose
+  // _controller2.dispose();
+  // _controller3.dispose();
+  super.dispose();
+}
+</code></pre>
+<p>如果在 dispose 之后还试图使用 controller，会抛出如下错误：</p>
+<pre><code class="language-text">FlutterError: AnimationController.forward() called after AnimationController.dispose()
+</code></pre>
+<hr />
+<h2 id="3-tween-与-curvedanimation">3. Tween 与 CurvedAnimation</h2>
+<p><code>AnimationController</code> 只产生 0.0 → 1.0 的线性值。要将它映射到实际需要的值范围（如颜色、大小、偏移量），需要 <code>Tween</code>；要改变动画的节奏（缓入缓出等），需要 <code>CurvedAnimation</code>。</p>
+<h3 id="31-tweent-值映射">3.1 Tween&lt;T&gt; 值映射</h3>
+<p><code>Tween&lt;T&gt;</code> 将 0.0 → 1.0 的输入映射到 <code>begin</code> → <code>end</code> 的输出。</p>
+<pre><code class="language-dart">// 将 0.0~1.0 映射到 50.0~200.0
+final sizeTween = Tween&lt;double&gt;(begin: 50.0, end: 200.0);
+
+// 获取中间值：当 controller.value = 0.5 时
+// sizeTween.evaluate(controller) = 125.0
+</code></pre>
+<p>Flutter 提供了多种内置 Tween 子类：</p>
+<table>
+<thead>
+<tr>
+<th>Tween 类</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Tween&lt;double&gt;</code></td>
+<td>双精度值映射</td>
+<td><code>Tween(begin: 0.0, end: 1.0)</code></td>
+</tr>
+<tr>
+<td><code>ColorTween</code></td>
+<td>颜色插值</td>
+<td><code>ColorTween(begin: Colors.red, end: Colors.blue)</code></td>
+</tr>
+<tr>
+<td><code>IntTween</code></td>
+<td>整数映射</td>
+<td><code>IntTween(begin: 0, end: 255)</code></td>
+</tr>
+<tr>
+<td><code>SizeTween</code></td>
+<td>Size 插值</td>
+<td><code>SizeTween(begin: Size(50,50), end: Size(200,200))</code></td>
+</tr>
+<tr>
+<td><code>RectTween</code></td>
+<td>Rect 插值</td>
+<td><code>RectTween(begin: Rect.zero, end: Rect.fromLTWH(...))</code></td>
+</tr>
+<tr>
+<td><code>AlignmentTween</code></td>
+<td>对齐插值</td>
+<td><code>AlignmentTween(begin: Alignment.topLeft, end: Alignment.bottomRight)</code></td>
+</tr>
+<tr>
+<td><code>BorderRadiusTween</code></td>
+<td>圆角插值</td>
+<td><code>BorderRadiusTween(begin: BorderRadius.zero, end: BorderRadius.circular(20))</code></td>
+</tr>
+<tr>
+<td><code>DecorationTween</code></td>
+<td>Decoration 插值</td>
+<td><code>DecorationTween(begin: BoxDecoration(...), end: BoxDecoration(...))</code></td>
+</tr>
+<tr>
+<td><code>EdgeInsetsTween</code></td>
+<td>内边距插值</td>
+<td><code>EdgeInsetsTween(begin: EdgeInsets.zero, end: EdgeInsets.all(20))</code></td>
+</tr>
+<tr>
+<td><code>TextStyleTween</code></td>
+<td>文字样式插值</td>
+<td><code>TextStyleTween(begin: TextStyle(...), end: TextStyle(...))</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-curvedanimation-动画曲线">3.2 CurvedAnimation 动画曲线</h3>
+<p><code>CurvedAnimation</code> 不改变值的范围，而是改变值随时间的变化节奏。它是 <code>AnimationController</code> 的包装器。</p>
+<pre><code class="language-dart">late AnimationController _controller;
+late Animation&lt;double&gt; _curvedAnimation;
+
+@override
+void initState() {
+  super.initState();
+  _controller = AnimationController(
+    duration: const Duration(seconds: 1),
+    vsync: this,
+  );
+
+  // 用 CurvedAnimation 包装，正向使用 easeInOut，反向使用 easeIn
+  _curvedAnimation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeInOut,
+    reverseCurve: Curves.easeIn,
+  );
+}
+</code></pre>
+<p>常用曲线（<code>Curves</code> 类）：</p>
+<table>
+<thead>
+<tr>
+<th>曲线</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Curves.linear</code></td>
+<td>匀速</td>
+</tr>
+<tr>
+<td><code>Curves.easeIn</code></td>
+<td>缓入（开始慢，结束快）</td>
+</tr>
+<tr>
+<td><code>Curves.easeOut</code></td>
+<td>缓出（开始快，结束慢）</td>
+</tr>
+<tr>
+<td><code>Curves.easeInOut</code></td>
+<td>缓入缓出</td>
+</tr>
+<tr>
+<td><code>Curves.bounceOut</code></td>
+<td>弹跳效果</td>
+</tr>
+<tr>
+<td><code>Curves.elasticIn</code></td>
+<td>弹性效果</td>
+</tr>
+<tr>
+<td><code>Curves.decelerate</code></td>
+<td>减速</td>
+</tr>
+<tr>
+<td><code>Curves.fastOutSlowIn</code></td>
+<td>Material Design 标准曲线</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-链式写法tweenanimatecontroller">3.3 链式写法：tween.animate(controller)</h3>
+<p>这是显式动画中最常用的写法——将 Tween 和 CurvedAnimation（或 controller）链接在一起，生成一个可直接使用的 <code>Animation&lt;T&gt;</code> 对象。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const TweenChainDemo(),
+    );
+  }
+}
+
+class TweenChainDemo extends StatefulWidget {
+  const TweenChainDemo({super.key});
+
+  @override
+  State&lt;TweenChainDemo&gt; createState() =&gt; _TweenChainDemoState();
+}
+
+class _TweenChainDemoState extends State&lt;TweenChainDemo&gt;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation&lt;double&gt; _sizeAnimation;
+  late Animation&lt;Color?&gt; _colorAnimation;
+  late Animation&lt;BorderRadius?&gt; _borderRadiusAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+
+    // 使用 CurvedAnimation 包装曲线
+    final curvedAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+
+    // 链式写法：Tween.animate(curvedAnimation)
+    _sizeAnimation = Tween&lt;double&gt;(begin: 80, end: 200).animate(curvedAnimation);
+    _colorAnimation = ColorTween(begin: Colors.blue, end: Colors.orange).animate(curvedAnimation);
+    _borderRadiusAnimation = BorderRadiusTween(
+      begin: BorderRadius.circular(8),
+      end: BorderRadius.circular(100),
+    ).animate(curvedAnimation);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Tween 链式写法')),
+      body: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Center(
+            child: Container(
+              width: _sizeAnimation.value,
+              height: _sizeAnimation.value,
+              decoration: BoxDecoration(
+                color: _colorAnimation.value,
+                borderRadius: _borderRadiusAnimation.value,
+              ),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (_controller.isCompleted) {
+            _controller.reverse();
+          } else {
+            _controller.forward();
+          }
+        },
+        child: const Icon(Icons.play_arrow),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>tween.animate(parent)</code> 返回的是一个 <code>Animation&lt;T&gt;</code> 对象，它本身不产生值，而是在 <code>parent</code>（controller 或 curvedAnimation）变化时计算映射值。你不需要手动 dispose 这个 Animation 对象，只需 dispose controller 即可。</p>
+</blockquote>
+<hr />
+<h2 id="4-animatedbuilder">4. AnimatedBuilder</h2>
+<p><code>AnimatedBuilder</code>（Flutter 3.x 中是 <code>AnimatedBuilder</code> 的正式名称，历史版本中也写作 <code>AnimatedBuilder</code>）是显式动画中<strong>最推荐</strong>的构建方式。它的核心优势是将动画逻辑与 UI 构建分离，并通过 <code>child</code> 参数优化性能。</p>
+<h3 id="41-基本用法">4.1 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const AnimatedBuilderDemo(),
+    );
+  }
+}
+
+class AnimatedBuilderDemo extends StatefulWidget {
+  const AnimatedBuilderDemo({super.key});
+
+  @override
+  State&lt;AnimatedBuilderDemo&gt; createState() =&gt; _AnimatedBuilderDemoState();
+}
+
+class _AnimatedBuilderDemoState extends State&lt;AnimatedBuilderDemo&gt;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation&lt;double&gt; _rotationAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    )..repeat(); // 无限循环旋转
+
+    _rotationAnimation = Tween&lt;double&gt;(begin: 0, end: 2 * 3.14159).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('AnimatedBuilder 示例')),
+      body: Center(
+        // AnimatedBuilder 监听 _controller，每帧调用 builder 重建
+        child: AnimatedBuilder(
+          animation: _controller,
+          // child 参数传入不需要动画的子树，避免每帧重建
+          child: Container(
+            width: 100,
+            height: 100,
+            color: Colors.blue,
+            child: const Center(
+              child: Text(
+                'Flutter',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          builder: (context, child) {
+            // builder 每帧都会调用，但 child 不会重建
+            return Transform.rotate(
+              angle: _rotationAnimation.value,
+              child: child, // 复用上面传入的 child
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="42-child-参数的性能优化">4.2 child 参数的性能优化</h3>
+<p><code>AnimatedBuilder</code> 的 <code>builder</code> 回调在每一帧都会被调用。如果在 <code>builder</code> 中直接构建整个子树，那些不需要动画的部分也会被反复重建，造成不必要的性能开销。</p>
+<p><strong>优化方案</strong>：将不参与动画的子树通过 <code>child</code> 参数传入 <code>AnimatedBuilder</code>。这个 <code>child</code> 在父级 build 时创建一次，之后每帧复用。</p>
+<pre><code class="language-dart">// ❌ 错误写法：Text 每帧都重建
+AnimatedBuilder(
+  animation: _controller,
+  builder: (context, child) {
+    return Transform.scale(
+      scale: _scaleAnimation.value,
+      child: Container(
+        width: 100,
+        height: 100,
+        color: Colors.blue,
+        child: const Text('每帧都会重建我'), // 不必要的重建
+      ),
+    );
+  },
+)
+
+// ✅ 正确写法：Text 只构建一次
+AnimatedBuilder(
+  animation: _controller,
+  child: Container(
+    width: 100,
+    height: 100,
+    color: Colors.blue,
+    child: const Text('我只构建一次'),
+  ),
+  builder: (context, child) {
+    return Transform.scale(
+      scale: _scaleAnimation.value,
+      child: child, // 复用
+    );
+  },
+)
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：始终尽可能利用 <code>child</code> 参数。即使当前看不出性能差异，养成良好的习惯可以在复杂 UI 中避免掉帧。</p>
+</blockquote>
+<hr />
+<h2 id="5-animatedwidget-子类化">5. AnimatedWidget 子类化</h2>
+<p><code>AnimatedWidget</code> 提供了另一种封装动画的方式——将动画组件封装为独立的 Widget 类。适合创建<strong>可复用</strong>的动画组件。</p>
+<h3 id="51-基本原理">5.1 基本原理</h3>
+<p><code>AnimatedWidget</code> 内部会自动监听传入的 <code>Listenable</code>（通常是 <code>AnimationController</code> 或 <code>Animation</code>），当值变化时自动调用 <code>build</code> 方法重建。你不需要手动 <code>addListener</code> + <code>setState</code>。</p>
+<h3 id="52-自定义-animatedwidget">5.2 自定义 AnimatedWidget</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const AnimatedWidgetDemo(),
+    );
+  }
+}
+
+/// 自定义 AnimatedWidget：脉冲缩放效果
+class PulseWidget extends AnimatedWidget {
+  final Widget child;
+
+  const PulseWidget({
+    super.key,
+    required Animation&lt;double&gt; animation,
+    required this.child,
+  }) : super(listenable: animation);
+
+  @override
+  Widget build(BuildContext context) {
+    final animation = listenable as Animation&lt;double&gt;;
+    return Transform.scale(
+      scale: animation.value,
+      child: child,
+    );
+  }
+}
+
+class AnimatedWidgetDemo extends StatefulWidget {
+  const AnimatedWidgetDemo({super.key});
+
+  @override
+  State&lt;AnimatedWidgetDemo&gt; createState() =&gt; _AnimatedWidgetDemoState();
+}
+
+class _AnimatedWidgetDemoState extends State&lt;AnimatedWidgetDemo&gt;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation&lt;double&gt; _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _scaleAnimation = Tween&lt;double&gt;(begin: 0.8, end: 1.2).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('自定义 AnimatedWidget')),
+      body: Center(
+        // 使用自定义的 PulseWidget，代码清爽
+        child: PulseWidget(
+          animation: _scaleAnimation,
+          child: const Icon(Icons.favorite, color: Colors.red, size: 80),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="53-animatedbuilder-vs-animatedwidget">5.3 AnimatedBuilder vs AnimatedWidget</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>AnimatedBuilder</th>
+<th>AnimatedWidget 子类</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>使用方式</strong></td>
+<td>在 build 方法中内联使用</td>
+<td>封装为独立类</td>
+</tr>
+<tr>
+<td><strong>child 优化</strong></td>
+<td>内置 child 参数</td>
+<td>需手动实现</td>
+</tr>
+<tr>
+<td><strong>可复用性</strong></td>
+<td>较低，通常一次性使用</td>
+<td>高，可在多处复用</td>
+</tr>
+<tr>
+<td><strong>代码组织</strong></td>
+<td>适合简单、一次性的动画</td>
+<td>适合需要复用的动画组件</td>
+</tr>
+<tr>
+<td><strong>推荐场景</strong></td>
+<td>大多数场景</td>
+<td>动画组件需要在多处使用</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-内置-transition-组件">6. 内置 Transition 组件</h2>
+<p>Flutter 提供了一组开箱即用的 Transition 组件，它们都是 <code>AnimatedWidget</code> 的子类，分别对应常见的动画效果。使用它们可以避免手写 Transform/Opacity 等包装代码。</p>
+<h3 id="61-组件概览">6.1 组件概览</h3>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>动画属性</th>
+<th>参数名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FadeTransition</code></td>
+<td>透明度</td>
+<td><code>opacity</code></td>
+<td>淡入淡出</td>
+</tr>
+<tr>
+<td><code>SlideTransition</code></td>
+<td>偏移量</td>
+<td><code>position</code></td>
+<td>滑动进出</td>
+</tr>
+<tr>
+<td><code>ScaleTransition</code></td>
+<td>缩放比例</td>
+<td><code>scale</code></td>
+<td>缩放进出</td>
+</tr>
+<tr>
+<td><code>RotationTransition</code></td>
+<td>旋转圈数</td>
+<td><code>turns</code></td>
+<td>旋转效果</td>
+</tr>
+<tr>
+<td><code>SizeTransition</code></td>
+<td>尺寸比例</td>
+<td><code>sizeFactor</code></td>
+<td>尺寸展开/收起</td>
+</tr>
+<tr>
+<td><code>DecoratedBoxTransition</code></td>
+<td>Decoration</td>
+<td><code>decoration</code></td>
+<td>装饰过渡</td>
+</tr>
+<tr>
+<td><code>PositionedTransition</code></td>
+<td>RelativeRect</td>
+<td><code>rect</code></td>
+<td>在 Stack 中的位置过渡</td>
+</tr>
+<tr>
+<td><code>RelativePositionedTransition</code></td>
+<td>Rect</td>
+<td><code>rect</code></td>
+<td>相对位置过渡</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-完整示例六大-transition">6.2 完整示例：六大 Transition</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const TransitionShowcase(),
+    );
+  }
+}
+
+class TransitionShowcase extends StatefulWidget {
+  const TransitionShowcase({super.key});
+
+  @override
+  State&lt;TransitionShowcase&gt; createState() =&gt; _TransitionShowcaseState();
+}
+
+class _TransitionShowcaseState extends State&lt;TransitionShowcase&gt;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  // 各种动画
+  late Animation&lt;double&gt; _fadeAnimation;
+  late Animation&lt;Offset&gt; _slideAnimation;
+  late Animation&lt;double&gt; _scaleAnimation;
+  late Animation&lt;double&gt; _rotationAnimation;
+  late Animation&lt;double&gt; _sizeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+
+    final curved = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+
+    // 透明度：0 → 1
+    _fadeAnimation = Tween&lt;double&gt;(begin: 0.0, end: 1.0).animate(curved);
+
+    // 滑动偏移：从左侧滑入（-1 表示向左偏移一个自身宽度）
+    _slideAnimation = Tween&lt;Offset&gt;(
+      begin: const Offset(-1.0, 0.0),
+      end: Offset.zero,
+    ).animate(curved);
+
+    // 缩放：从 0 到 1
+    _scaleAnimation = Tween&lt;double&gt;(begin: 0.0, end: 1.0).animate(curved);
+
+    // 旋转：旋转 1 圈（turns = 1.0 表示 360°）
+    _rotationAnimation = Tween&lt;double&gt;(begin: 0.0, end: 1.0).animate(curved);
+
+    // 尺寸：从 0 展开到完整尺寸
+    _sizeAnimation = Tween&lt;double&gt;(begin: 0.0, end: 1.0).animate(curved);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Widget _buildCard(String label, Widget child) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            SizedBox(width: 140, child: Text(label, style: const TextStyle(fontSize: 14))),
+            Expanded(child: Center(child: child)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final box = Container(width: 50, height: 50, color: Colors.blue);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('内置 Transition 组件')),
+      body: ListView(
+        children: [
+          _buildCard(
+            'FadeTransition',
+            FadeTransition(opacity: _fadeAnimation, child: box),
+          ),
+          _buildCard(
+            'SlideTransition',
+            SlideTransition(position: _slideAnimation, child: box),
+          ),
+          _buildCard(
+            'ScaleTransition',
+            ScaleTransition(scale: _scaleAnimation, child: box),
+          ),
+          _buildCard(
+            'RotationTransition',
+            RotationTransition(turns: _rotationAnimation, child: box),
+          ),
+          _buildCard(
+            'SizeTransition',
+            SizeTransition(
+              sizeFactor: _sizeAnimation,
+              axisAlignment: -1.0, // 从顶部展开
+              child: box,
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (_controller.isCompleted) {
+            _controller.reverse();
+          } else {
+            _controller.forward();
+          }
+        },
+        child: const Icon(Icons.play_arrow),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="63-decoratedboxtransition-示例">6.3 DecoratedBoxTransition 示例</h3>
+<p><code>DecoratedBoxTransition</code> 可以在两个 <code>Decoration</code> 之间平滑过渡，非常适合背景渐变、边框变化等效果。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const DecoratedBoxTransitionDemo(),
+    );
+  }
+}
+
+class DecoratedBoxTransitionDemo extends StatefulWidget {
+  const DecoratedBoxTransitionDemo({super.key});
+
+  @override
+  State&lt;DecoratedBoxTransitionDemo&gt; createState() =&gt; _DecoratedBoxTransitionDemoState();
+}
+
+class _DecoratedBoxTransitionDemoState extends State&lt;DecoratedBoxTransitionDemo&gt;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation&lt;Decoration&gt; _decorationAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _decorationAnimation = DecorationTween(
+      begin: BoxDecoration(
+        color: Colors.blue.shade100,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 4)],
+      ),
+      end: BoxDecoration(
+        color: Colors.orange.shade100,
+        borderRadius: BorderRadius.circular(40),
+        boxShadow: const [BoxShadow(color: Colors.black45, blurRadius: 20, spreadRadius: 2)],
+      ),
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('DecoratedBoxTransition')),
+      body: Center(
+        child: DecoratedBoxTransition(
+          decoration: _decorationAnimation,
+          child: const SizedBox(
+            width: 150,
+            height: 150,
+            child: Center(child: Text('装饰动画', style: TextStyle(fontSize: 18))),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="7-staggered-animation交错动画">7. Staggered Animation（交错动画）</h2>
+<p>交错动画是显式动画最强大的特性之一——用<strong>一个</strong> <code>AnimationController</code> 驱动<strong>多个</strong> Tween，通过 <code>Interval</code> 控制每个 Tween 在总时间线中的播放区间，实现&quot;此起彼伏&quot;的编排效果。</p>
+<h3 id="71-interval-的作用">7.1 Interval 的作用</h3>
+<p><code>Interval</code> 是一种特殊的 <code>Curve</code>，它定义了动画在 controller 0.0~1.0 时间线中的激活区间。</p>
+<pre><code class="language-dart">// 这个动画只在 controller 进度 0%~40% 时活跃
+CurvedAnimation(
+  parent: controller,
+  curve: const Interval(0.0, 0.4, curve: Curves.easeOut),
+)
+
+// 这个动画只在 controller 进度 40%~70% 时活跃
+CurvedAnimation(
+  parent: controller,
+  curve: const Interval(0.4, 0.7, curve: Curves.easeInOut),
+)
+</code></pre>
+<h3 id="72-完整的交错动画示例">7.2 完整的交错动画示例</h3>
+<p>以下示例展示一个多步骤的卡片入场动画：先滑入，再展开，然后淡入文字，最后显示按钮。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const StaggeredAnimationDemo(),
+    );
+  }
+}
+
+class StaggeredAnimationDemo extends StatefulWidget {
+  const StaggeredAnimationDemo({super.key});
+
+  @override
+  State&lt;StaggeredAnimationDemo&gt; createState() =&gt; _StaggeredAnimationDemoState();
+}
+
+class _StaggeredAnimationDemoState extends State&lt;StaggeredAnimationDemo&gt;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  // 第1阶段（0%~30%）：卡片从下方滑入
+  late Animation&lt;Offset&gt; _slideAnimation;
+  // 第2阶段（20%~50%）：卡片透明度渐入
+  late Animation&lt;double&gt; _fadeAnimation;
+  // 第3阶段（40%~70%）：卡片宽度展开
+  late Animation&lt;double&gt; _widthAnimation;
+  // 第4阶段（60%~85%）：标题文字淡入
+  late Animation&lt;double&gt; _titleFadeAnimation;
+  // 第5阶段（75%~100%）：按钮缩放出现
+  late Animation&lt;double&gt; _buttonScaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 2500),
+      vsync: this,
+    );
+
+    // 每个动画使用不同的 Interval，在总时间线的不同区间激活
+    _slideAnimation = Tween&lt;Offset&gt;(
+      begin: const Offset(0.0, 1.5),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.0, 0.3, curve: Curves.easeOut),
+    ));
+
+    _fadeAnimation = Tween&lt;double&gt;(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.2, 0.5, curve: Curves.easeIn),
+      ),
+    );
+
+    _widthAnimation = Tween&lt;double&gt;(begin: 200.0, end: 340.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.4, 0.7, curve: Curves.easeInOut),
+      ),
+    );
+
+    _titleFadeAnimation = Tween&lt;double&gt;(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.6, 0.85, curve: Curves.easeIn),
+      ),
+    );
+
+    _buttonScaleAnimation = Tween&lt;double&gt;(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.75, 1.0, curve: Curves.elasticOut),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('交错动画（Staggered Animation）')),
+      body: Center(
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return SlideTransition(
+              position: _slideAnimation,
+              child: Opacity(
+                opacity: _fadeAnimation.value,
+                child: Container(
+                  width: _widthAnimation.value,
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.check_circle, color: Colors.green, size: 60),
+                      const SizedBox(height: 16),
+                      // 标题淡入
+                      Opacity(
+                        opacity: _titleFadeAnimation.value,
+                        child: const Column(
+                          children: [
+                            Text(
+                              '支付成功！',
+                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              '您的订单已确认，感谢您的购买。',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 14, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // 按钮缩放出现
+                      Transform.scale(
+                        scale: _buttonScaleAnimation.value,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                          ),
+                          child: const Text('查看订单'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+      backgroundColor: Colors.grey.shade200,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (_controller.isCompleted) {
+            _controller.reverse();
+          } else {
+            _controller.forward(from: 0.0);
+          }
+        },
+        child: const Icon(Icons.play_arrow),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="73-交错动画时间线图解">7.3 交错动画时间线图解</h3>
+<pre><code class="language-text">Controller 时间线:  0%───────────────────────────100%
+                    |                               |
+第1阶段 滑入:       |████████░░░░░░░░░░░░░░░░░░░░░░| 0%~30%
+第2阶段 淡入:       |░░░░░████████░░░░░░░░░░░░░░░░░| 20%~50%
+第3阶段 展开:       |░░░░░░░░░░░░████████░░░░░░░░░░| 40%~70%
+第4阶段 标题:       |░░░░░░░░░░░░░░░░░████████░░░░░| 60%~85%
+第5阶段 按钮:       |░░░░░░░░░░░░░░░░░░░░░████████ | 75%~100%
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：交错动画的区间可以重叠（如上例的滑入和淡入），这样可以让多个效果略有重叠地出现，视觉上更加自然流畅。避免让所有动画串行排列，那样会显得生硬。</p>
+</blockquote>
+<hr />
+<h2 id="8-hero-动画">8. Hero 动画</h2>
+<p><code>Hero</code> 是 Flutter 内置的页面间共享元素过渡动画。当两个页面中存在相同 <code>tag</code> 的 <code>Hero</code> 组件时，在页面切换过程中 Flutter 会自动生成&quot;飞行&quot;过渡效果。</p>
+<h3 id="81-基本用法">8.1 基本用法</h3>
+<p>要实现 Hero 动画只需两步：</p>
+<ol>
+<li>在<strong>源页面</strong>和<strong>目标页面</strong>中分别用 <code>Hero</code> 包裹要过渡的组件</li>
+<li>两个 <code>Hero</code> 的 <code>tag</code> 必须相同</li>
+</ol>
+<h3 id="82-完整的-hero-动画示例">8.2 完整的 Hero 动画示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const HeroListPage(),
+    );
+  }
+}
+
+/// 源页面：图片列表
+class HeroListPage extends StatelessWidget {
+  const HeroListPage({super.key});
+
+  // 模拟图片数据
+  static const List&lt;Map&lt;String, String&gt;&gt; _items = [
+    {'id': '1', 'title': '山川风景', 'url': 'https://picsum.photos/id/10/400/300'},
+    {'id': '2', 'title': '城市夜景', 'url': 'https://picsum.photos/id/20/400/300'},
+    {'id': '3', 'title': '海边日落', 'url': 'https://picsum.photos/id/30/400/300'},
+    {'id': '4', 'title': '森林小径', 'url': 'https://picsum.photos/id/40/400/300'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('图片画廊')),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(12),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 12,
+          crossAxisSpacing: 12,
+        ),
+        itemCount: _items.length,
+        itemBuilder: (context, index) {
+          final item = _items[index];
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =&gt; HeroDetailPage(
+                    id: item['id']!,
+                    title: item['title']!,
+                    url: item['url']!,
+                  ),
+                ),
+              );
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              // Hero 包裹要过渡的图片，tag 使用唯一 id
+              child: Hero(
+                tag: 'image_${item['id']}',
+                child: Image.network(
+                  item['url']!,
+                  fit: BoxFit.cover,
+                  // 加载时显示灰色占位
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(color: Colors.grey.shade300);
+                  },
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// 目标页面：图片详情
+class HeroDetailPage extends StatelessWidget {
+  final String id;
+  final String title;
+  final String url;
+
+  const HeroDetailPage({
+    super.key,
+    required this.id,
+    required this.title,
+    required this.url,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 目标页面的 Hero，tag 与源页面一致
+          Hero(
+            tag: 'image_$id',
+            child: Image.network(
+              url,
+              height: 300,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Text(
+                  '这是 $title 的详细描述。Hero 动画会自动在页面切换时，'
+                  '为具有相同 tag 的组件生成平滑的飞行过渡效果。',
+                  style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="83-自定义-hero-飞行路径">8.3 自定义 Hero 飞行路径</h3>
+<p>默认的 Hero 飞行路径是直线。通过 <code>createRectTween</code> 可以自定义飞行轨迹：</p>
+<pre><code class="language-dart">Hero(
+  tag: 'custom_hero',
+  // 自定义飞行路径：弧线轨迹
+  createRectTween: (begin, end) {
+    return MaterialRectCenterArcTween(begin: begin, end: end);
+  },
+  child: Image.network('https://picsum.photos/200'),
+)
+</code></pre>
+<h3 id="84-flightshuttlebuilder-自定义飞行中的外观">8.4 flightShuttleBuilder 自定义飞行中的外观</h3>
+<p><code>flightShuttleBuilder</code> 允许你自定义 Hero 在飞行过程中的外观（默认使用目标页面的子组件）：</p>
+<pre><code class="language-dart">Hero(
+  tag: 'avatar_hero',
+  // 在飞行过程中显示自定义的 Widget
+  flightShuttleBuilder: (
+    BuildContext flightContext,
+    Animation&lt;double&gt; animation,
+    HeroFlightDirection flightDirection,
+    BuildContext fromHeroContext,
+    BuildContext toHeroContext,
+  ) {
+    // 飞行过程中显示圆形裁剪的图片，并带有阴影
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, child) {
+        return Material(
+          elevation: 8 * animation.value,
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: Image.network('https://picsum.photos/200', fit: BoxFit.cover),
+        );
+      },
+    );
+  },
+  child: const CircleAvatar(radius: 30, backgroundImage: NetworkImage('https://picsum.photos/200')),
+)
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li>Hero 的 <code>tag</code> 在同一页面中必须唯一，否则会抛出异常</li>
+<li>Hero 只在 <code>MaterialPageRoute</code> 或 <code>CupertinoPageRoute</code> 等标准路由切换中生效</li>
+<li>如果源页面和目标页面的 Hero 子组件差异很大（如从小圆形变大矩形），考虑使用 <code>flightShuttleBuilder</code> 定义平滑的过渡外观</li>
+<li>Hero 动画期间，子组件会被提升到 Overlay 层渲染，脱离原页面的布局</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="9-animatedlist-与-animatedgrid">9. AnimatedList 与 AnimatedGrid</h2>
+<p><code>AnimatedList</code> 和 <code>AnimatedGrid</code> 为列表/网格的增删操作提供了平滑的动画效果，是构建动态列表不可或缺的组件。</p>
+<h3 id="91-animatedlist-基础">9.1 AnimatedList 基础</h3>
+<p><code>AnimatedList</code> 的核心在于：</p>
+<ul>
+<li>使用 <code>GlobalKey&lt;AnimatedListState&gt;</code> 获取列表状态</li>
+<li>通过 <code>insertItem()</code> 和 <code>removeItem()</code> 触发增删动画</li>
+<li>增删时需同步操作数据源和 AnimatedList</li>
+</ul>
+<h3 id="92-完整的增删动画列表">9.2 完整的增删动画列表</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const AnimatedListDemo(),
+    );
+  }
+}
+
+class AnimatedListDemo extends StatefulWidget {
+  const AnimatedListDemo({super.key});
+
+  @override
+  State&lt;AnimatedListDemo&gt; createState() =&gt; _AnimatedListDemoState();
+}
+
+class _AnimatedListDemoState extends State&lt;AnimatedListDemo&gt; {
+  // 用 GlobalKey 获取 AnimatedListState
+  final _listKey = GlobalKey&lt;AnimatedListState&gt;();
+  // 数据源
+  final List&lt;String&gt; _items = ['苹果', '香蕉', '橙子'];
+  int _counter = 0;
+
+  /// 插入新项目
+  void _addItem() {
+    _counter++;
+    final index = _items.length;
+    _items.insert(index, '新水果 $_counter');
+    // 通知 AnimatedList 插入项目，触发入场动画
+    _listKey.currentState?.insertItem(
+      index,
+      duration: const Duration(milliseconds: 500),
+    );
+  }
+
+  /// 删除指定项目
+  void _removeItem(int index) {
+    final removedItem = _items[index];
+    _items.removeAt(index);
+    // 通知 AnimatedList 移除项目，提供退场动画的 builder
+    _listKey.currentState?.removeItem(
+      index,
+      (context, animation) =&gt; _buildItem(removedItem, animation),
+      duration: const Duration(milliseconds: 400),
+    );
+  }
+
+  /// 构建列表项（入场和退场共用）
+  Widget _buildItem(String item, Animation&lt;double&gt; animation) {
+    return SizeTransition(
+      sizeFactor: animation,
+      child: FadeTransition(
+        opacity: animation,
+        child: Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: ListTile(
+            leading: const CircleAvatar(child: Icon(Icons.fastfood)),
+            title: Text(item),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete_outline, color: Colors.red),
+              onPressed: () {
+                final currentIndex = _items.indexOf(item);
+                if (currentIndex != -1) {
+                  _removeItem(currentIndex);
+                }
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('AnimatedList 示例'),
+        actions: [
+          IconButton(
+            onPressed: _addItem,
+            icon: const Icon(Icons.add),
+            tooltip: '添加',
+          ),
+        ],
+      ),
+      body: AnimatedList(
+        key: _listKey,
+        // 初始项目数量
+        initialItemCount: _items.length,
+        itemBuilder: (context, index, animation) {
+          return _buildItem(_items[index], animation);
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="93-animatedlist-自定义入场退场动画">9.3 AnimatedList 自定义入场/退场动画</h3>
+<p>你可以组合多种 Transition 来创建更丰富的入场/退场效果：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const FancyAnimatedListDemo(),
+    );
+  }
+}
+
+class FancyAnimatedListDemo extends StatefulWidget {
+  const FancyAnimatedListDemo({super.key});
+
+  @override
+  State&lt;FancyAnimatedListDemo&gt; createState() =&gt; _FancyAnimatedListDemoState();
+}
+
+class _FancyAnimatedListDemoState extends State&lt;FancyAnimatedListDemo&gt; {
+  final _listKey = GlobalKey&lt;AnimatedListState&gt;();
+  final List&lt;String&gt; _items = [];
+  int _nextId = 1;
+
+  void _addItem() {
+    final index = _items.length;
+    _items.add('任务 ${_nextId++}');
+    _listKey.currentState?.insertItem(index, duration: const Duration(milliseconds: 600));
+  }
+
+  void _removeItem(int index) {
+    final removed = _items.removeAt(index);
+    _listKey.currentState?.removeItem(
+      index,
+      (context, animation) {
+        // 退场动画：向右滑出 + 淡出
+        return SlideTransition(
+          position: Tween&lt;Offset&gt;(
+            begin: Offset.zero,
+            end: const Offset(1.0, 0.0),
+          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeIn)),
+          child: FadeTransition(
+            opacity: animation,
+            child: _buildTile(removed, animation),
+          ),
+        );
+      },
+      duration: const Duration(milliseconds: 400),
+    );
+  }
+
+  Widget _buildTile(String item, Animation&lt;double&gt; animation) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: ListTile(
+        leading: CircleAvatar(child: Text(item.split(' ').last)),
+        title: Text(item),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('自定义入场/退场动画')),
+      body: AnimatedList(
+        key: _listKey,
+        initialItemCount: _items.length,
+        itemBuilder: (context, index, animation) {
+          // 入场动画：从左滑入 + 淡入
+          return SlideTransition(
+            position: Tween&lt;Offset&gt;(
+              begin: const Offset(-1.0, 0.0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+            child: FadeTransition(
+              opacity: animation,
+              child: _buildTile(_items[index], animation),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            heroTag: 'add',
+            onPressed: _addItem,
+            child: const Icon(Icons.add),
+          ),
+          const SizedBox(height: 8),
+          FloatingActionButton(
+            heroTag: 'remove',
+            onPressed: () {
+              if (_items.isNotEmpty) _removeItem(0);
+            },
+            backgroundColor: Colors.red,
+            child: const Icon(Icons.remove),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="94-animatedgrid">9.4 AnimatedGrid</h3>
+<p><code>AnimatedGrid</code>（Flutter 3.7+）与 <code>AnimatedList</code> 的 API 设计一致，只是布局方式变为网格。使用 <code>GlobalKey&lt;AnimatedGridState&gt;</code> 控制增删。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
+      home: const AnimatedGridDemo(),
+    );
+  }
+}
+
+class AnimatedGridDemo extends StatefulWidget {
+  const AnimatedGridDemo({super.key});
+
+  @override
+  State&lt;AnimatedGridDemo&gt; createState() =&gt; _AnimatedGridDemoState();
+}
+
+class _AnimatedGridDemoState extends State&lt;AnimatedGridDemo&gt; {
+  final _gridKey = GlobalKey&lt;AnimatedGridState&gt;();
+  final List&lt;int&gt; _items = [1, 2, 3, 4, 5, 6];
+  int _nextId = 7;
+
+  void _addItem() {
+    final index = _items.length;
+    _items.add(_nextId++);
+    _gridKey.currentState?.insertItem(index);
+  }
+
+  void _removeItem(int index) {
+    final removed = _items.removeAt(index);
+    _gridKey.currentState?.removeItem(
+      index,
+      (context, animation) =&gt; _buildGridItem(removed, animation),
+    );
+  }
+
+  Widget _buildGridItem(int item, Animation&lt;double&gt; animation) {
+    return ScaleTransition(
+      scale: animation,
+      child: FadeTransition(
+        opacity: animation,
+        child: Card(
+          color: Colors.primaries[item % Colors.primaries.length].shade100,
+          child: Center(
+            child: Text(
+              '$item',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('AnimatedGrid 示例'),
+        actions: [
+          IconButton(onPressed: _addItem, icon: const Icon(Icons.add)),
+          IconButton(
+            onPressed: () {
+              if (_items.isNotEmpty) _removeItem(_items.length - 1);
+            },
+            icon: const Icon(Icons.remove),
+          ),
+        ],
+      ),
+      body: AnimatedGrid(
+        key: _gridKey,
+        initialItemCount: _items.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+        ),
+        padding: const EdgeInsets.all(12),
+        itemBuilder: (context, index, animation) {
+          return _buildGridItem(_items[index], animation);
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li>增删操作必须<strong>同时更新数据源和 AnimatedList/AnimatedGrid 状态</strong>，两者不能漏掉任何一个</li>
+<li><code>removeItem</code> 的 builder 接收的是退场动画的 Animation，此时数据源中该项已被移除，所以要提前保存被移除的数据</li>
+<li><code>initialItemCount</code> 必须与初始数据源的长度一致</li>
+<li>列表项上使用 <code>GlobalKey</code> 时要注意避免 key 冲突</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="10-多个-animationcontroller-的管理">10. 多个 AnimationController 的管理</h2>
+<p>当一个页面需要独立控制多个动画时（如一个循环旋转 + 一个点击触发的缩放），需要使用 <code>TickerProviderStateMixin</code>（注意没有 Single 前缀）。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const MultiControllerDemo(),
+    );
+  }
+}
+
+class MultiControllerDemo extends StatefulWidget {
+  const MultiControllerDemo({super.key});
+
+  @override
+  State&lt;MultiControllerDemo&gt; createState() =&gt; _MultiControllerDemoState();
+}
+
+/// 使用 TickerProviderStateMixin（不带 Single）以支持多个控制器
+class _MultiControllerDemoState extends State&lt;MultiControllerDemo&gt;
+    with TickerProviderStateMixin {
+  // 控制器1：持续旋转
+  late AnimationController _rotationController;
+  // 控制器2：点击缩放
+  late AnimationController _scaleController;
+
+  late Animation&lt;double&gt; _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _rotationController = AnimationController(
+      duration: const Duration(seconds: 4),
+      vsync: this,
+    )..repeat();
+
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween&lt;double&gt;(begin: 1.0, end: 1.5).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.easeOutBack),
+    );
+  }
+
+  @override
+  void dispose() {
+    // 每个控制器都要 dispose
+    _rotationController.dispose();
+    _scaleController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('多个 AnimationController')),
+      body: Center(
+        child: GestureDetector(
+          onTapDown: (_) =&gt; _scaleController.forward(),
+          onTapUp: (_) =&gt; _scaleController.reverse(),
+          onTapCancel: () =&gt; _scaleController.reverse(),
+          child: AnimatedBuilder(
+            animation: Listenable.merge([_rotationController, _scaleController]),
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _scaleAnimation.value,
+                child: Transform.rotate(
+                  angle: _rotationController.value * 2 * 3.14159,
+                  child: child,
+                ),
+              );
+            },
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Colors.blue, Colors.purple],
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Center(
+                child: Icon(Icons.star, color: Colors.white, size: 50),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>只有一个 controller 时用 <code>SingleTickerProviderStateMixin</code>，多个时用 <code>TickerProviderStateMixin</code></li>
+<li>可以使用 <code>Listenable.merge([...])</code> 将多个动画合并为一个 Listenable 传给 <code>AnimatedBuilder</code></li>
+<li>每个 controller 都必须在 <code>dispose()</code> 中释放</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="11-显式动画最佳实践总结">11. 显式动画最佳实践总结</h2>
+<h3 id="111-生命周期管理清单">11.1 生命周期管理清单</h3>
+<pre><code class="language-text">✅ initState() 中创建 AnimationController
+✅ initState() 中创建 Tween 和 CurvedAnimation
+✅ dispose() 中释放每一个 AnimationController
+✅ 使用正确的 TickerProviderStateMixin
+❌ 不要在 build() 中创建 AnimationController
+❌ 不要忘记 dispose()
+❌ 不要在 dispose() 之后再调用 controller 的方法
+</code></pre>
+<h3 id="112-性能优化要点">11.2 性能优化要点</h3>
+<ol>
+<li><strong>使用 AnimatedBuilder 的 child 参数</strong>：将不参与动画的子树缓存起来</li>
+<li><strong>避免在 addListener 回调中调用 setState</strong>：这会导致整个 State 重建。优先使用 <code>AnimatedBuilder</code> 或 <code>AnimatedWidget</code></li>
+<li><strong>合理使用 RepaintBoundary</strong>：为动画密集的区域添加 <code>RepaintBoundary</code>，避免影响其他区域的重绘</li>
+<li><strong>Ticker 的自动暂停</strong>：当组件不可见时（如页面被覆盖），Ticker 会自动暂停，你不需要手动处理</li>
+</ol>
+<h3 id="113-选择动画方案的决策树">11.3 选择动画方案的决策树</h3>
+<pre><code class="language-text">需要动画效果
+  │
+  ├─ 属性 A → 属性 B 的简单过渡？
+  │    ├─ 是 → 使用隐式动画（AnimatedContainer 等）
+  │    └─ 否 ↓
+  │
+  ├─ 需要循环播放？
+  │    ├─ 是 → AnimationController + repeat()
+  │    └─ 否 ↓
+  │
+  ├─ 需要暂停/倒放控制？
+  │    ├─ 是 → AnimationController + forward/reverse/stop
+  │    └─ 否 ↓
+  │
+  ├─ 多个动画需要时序编排？
+  │    ├─ 是 → Staggered Animation（Interval）
+  │    └─ 否 ↓
+  │
+  ├─ 页面间共享元素过渡？
+  │    ├─ 是 → Hero
+  │    └─ 否 ↓
+  │
+  ├─ 列表增删动画？
+  │    ├─ 是 → AnimatedList / AnimatedGrid
+  │    └─ 否 ↓
+  │
+  └─ 需要完全自定义的物理/手势驱动动画？
+       └─ 是 → AnimationController + 自定义逻辑
+</code></pre>
+<hr />
+<h2 id="12-本课小结">12. 本课小结</h2>
+<p>本课系统学习了 Flutter 显式动画体系的核心内容：</p>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>核心要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AnimationController</strong></td>
+<td>动画引擎，产生 0.0~1.0 的值；需要 TickerProvider；必须 dispose</td>
+</tr>
+<tr>
+<td><strong>Tween</strong></td>
+<td>将 controller 的 0~1 映射到任意类型的值范围</td>
+</tr>
+<tr>
+<td><strong>CurvedAnimation</strong></td>
+<td>改变动画节奏（缓入缓出等）</td>
+</tr>
+<tr>
+<td><strong>AnimatedBuilder</strong></td>
+<td>推荐的动画构建方式，child 参数优化性能</td>
+</tr>
+<tr>
+<td><strong>AnimatedWidget</strong></td>
+<td>封装可复用的动画组件</td>
+</tr>
+<tr>
+<td><strong>Transition 系列</strong></td>
+<td>内置的常用动画组件（Fade、Slide、Scale、Rotation、Size 等）</td>
+</tr>
+<tr>
+<td><strong>Staggered Animation</strong></td>
+<td>一个 controller + 多个 Interval，实现多步骤动画编排</td>
+</tr>
+<tr>
+<td><strong>Hero</strong></td>
+<td>页面间共享元素的飞行过渡动画</td>
+</tr>
+<tr>
+<td><strong>AnimatedList/Grid</strong></td>
+<td>列表增删的动画效果</td>
+</tr>
+</tbody>
+</table>
+<p><strong>与第20课的关系</strong>：隐式动画适合&quot;设置目标值自动过渡&quot;的简单场景；显式动画适合需要精细控制（循环、暂停、编排、手势联动）的复杂场景。两者互补，实际项目中往往结合使用。</p>
+<hr />
+<h2 id="13-练习题">13. 练习题</h2>
+<h3 id="基础题">基础题</h3>
+<ol>
+<li>
+<p><strong>呼吸灯效果</strong>：创建一个圆形组件，使用 <code>AnimationController</code> + <code>repeat(reverse: true)</code> 实现不断变大变小的呼吸效果（缩放在 0.8~1.2 之间循环）。</p>
+</li>
+<li>
+<p><strong>颜色渐变循环</strong>：创建一个方形容器，使用 <code>ColorTween</code> 和 <code>AnimationController</code> 实现颜色从红色 → 蓝色 → 红色的无限循环。</p>
+</li>
+<li>
+<p><strong>Fade + Slide 组合入场</strong>：创建一个文本组件，同时使用 <code>FadeTransition</code> 和 <code>SlideTransition</code>，实现从下方淡入滑出的入场效果。</p>
+</li>
+</ol>
+<h3 id="中级题">中级题</h3>
+<ol>
+<li>
+<p><strong>自定义加载动画</strong>：用 <code>RotationTransition</code> 实现一个旋转的加载图标，用 <code>FadeTransition</code> 实现加载文字的闪烁效果，两者共用一个 <code>AnimationController</code>。</p>
+</li>
+<li>
+<p><strong>卡片翻转动画</strong>：使用 <code>AnimationController</code> 和 <code>Transform</code>，实现点击卡片后绕 Y 轴翻转 180° 显示背面内容的效果。提示：前半段（0<del>0.5）显示正面，后半段（0.5</del>1.0）显示背面。</p>
+</li>
+<li>
+<p><strong>改进的 AnimatedList</strong>：在本课 AnimatedList 示例的基础上，增加以下功能：</p>
+<ul>
+<li>长按列表项触发排序动画</li>
+<li>滑动删除（结合 <code>Dismissible</code>）并带有 <code>SnackBar</code> 撤销功能</li>
+</ul>
+</li>
+</ol>
+<h3 id="进阶题">进阶题</h3>
+<ol>
+<li>
+<p><strong>多步骤表单动画</strong>：设计一个三步表单（个人信息 → 地址信息 → 确认），每一步的切换使用交错动画（旧步骤滑出 + 新步骤滑入 + 进度条更新），全部由一个 <code>AnimationController</code> 驱动。</p>
+</li>
+<li>
+<p><strong>Hero + 自定义路由过渡</strong>：实现一个图片画廊，点击缩略图后使用 <code>Hero</code> 跳转到详情页，同时自定义 <code>PageRouteBuilder</code> 的 <code>transitionsBuilder</code>，让页面背景淡入的同时 Hero 飞行，并在详情页支持手势下拉关闭（结合 <code>GestureDetector</code> 和 <code>Navigator.pop</code>）。</p>
+</li>
+<li>
+<p><strong>弹幕动画系统</strong>：使用多个 <code>AnimationController</code> 实现弹幕效果——每条弹幕从右侧滑入到左侧消失，速度随机，垂直位置随机，支持动态添加新弹幕。提示：使用 <code>TickerProviderStateMixin</code> 管理多个控制器。</p>
+</li>
+</ol>
+<hr />
+<blockquote>
+<p>下一课预告：<strong>第22课 异步 UI 组件</strong> —— 学习 FutureBuilder、StreamBuilder 和 ValueListenableBuilder，掌握异步数据驱动 UI 构建的模式。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2203 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第十章-spring--spring-boot-整合-">第十章 Spring / Spring Boot 整合 ⭐</h1>
+<blockquote>
+<p>实际项目中几乎不会单独使用 MyBatis，而是通过 MyBatis-Spring 或 mybatis-spring-boot-starter 与 Spring 生态整合。本章是日常开发的标准使用姿势，务必牢固掌握。</p>
+</blockquote>
+<hr />
+<h2 id="101-mybatis-spring-核心组件">10.1 MyBatis-Spring 核心组件</h2>
+<p>MyBatis-Spring 是 MyBatis 社区维护的一个桥梁模块，它的核心目标是：<strong>让 MyBatis 参与到 Spring 的依赖注入和事务管理体系中</strong>。</p>
+<p>在纯 MyBatis 时代，我们需要手动管理 <code>SqlSessionFactory</code>、手动打开/关闭 <code>SqlSession</code>、手动提交/回滚事务。MyBatis-Spring 通过三个核心组件将这些工作全部交给 Spring 容器：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SqlSessionFactoryBean</code></td>
+<td>在 Spring 中创建并配置 <code>SqlSessionFactory</code></td>
+</tr>
+<tr>
+<td><code>MapperFactoryBean</code> / <code>MapperScannerConfigurer</code></td>
+<td>将 Mapper 接口注册为 Spring Bean</td>
+</tr>
+<tr>
+<td><code>SqlSessionTemplate</code></td>
+<td>线程安全的 <code>SqlSession</code> 实现，替代原生 <code>DefaultSqlSession</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="1011-sqlsessionfactorybean">10.1.1 SqlSessionFactoryBean</h3>
+<p>在纯 MyBatis 中，我们通过 <code>SqlSessionFactoryBuilder</code> 读取 <code>mybatis-config.xml</code> 来构建 <code>SqlSessionFactory</code>。而在 Spring 中，这个工作由 <code>SqlSessionFactoryBean</code> 接管。</p>
+<h4 id="作用">作用</h4>
+<ul>
+<li>接收 <code>DataSource</code>，创建 <code>SqlSessionFactory</code></li>
+<li>加载 MyBatis 的全局配置（可以内联配置，也可以引用外部 <code>mybatis-config.xml</code>）</li>
+<li>扫描并加载 Mapper XML 映射文件</li>
+<li>注册 TypeHandler、TypeAlias、Plugin 等</li>
+</ul>
+<h4 id="spring-xml-配置完整示例">Spring XML 配置完整示例</h4>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xsi:schemaLocation=&quot;
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+
+    &lt;!-- 1. 加载数据库配置文件 --&gt;
+    &lt;context:property-placeholder location=&quot;classpath:db.properties&quot;/&gt;
+
+    &lt;!-- 2. 配置数据源 --&gt;
+    &lt;bean id=&quot;dataSource&quot; class=&quot;com.zaxxer.hikari.HikariDataSource&quot; destroy-method=&quot;close&quot;&gt;
+        &lt;property name=&quot;driverClassName&quot; value=&quot;${jdbc.driver}&quot;/&gt;
+        &lt;property name=&quot;jdbcUrl&quot; value=&quot;${jdbc.url}&quot;/&gt;
+        &lt;property name=&quot;username&quot; value=&quot;${jdbc.username}&quot;/&gt;
+        &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot;/&gt;
+        &lt;property name=&quot;maximumPoolSize&quot; value=&quot;20&quot;/&gt;
+    &lt;/bean&gt;
+
+    &lt;!-- 3. 配置 SqlSessionFactory --&gt;
+    &lt;bean id=&quot;sqlSessionFactory&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;&gt;
+        &lt;!-- 必须：注入数据源 --&gt;
+        &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;
+
+        &lt;!-- 可选：指定 MyBatis 全局配置文件（如果需要保留 mybatis-config.xml） --&gt;
+        &lt;property name=&quot;configLocation&quot; value=&quot;classpath:mybatis-config.xml&quot;/&gt;
+
+        &lt;!-- 可选：指定 Mapper XML 文件位置（支持通配符） --&gt;
+        &lt;property name=&quot;mapperLocations&quot; value=&quot;classpath:mapper/**/*.xml&quot;/&gt;
+
+        &lt;!-- 可选：类型别名包扫描 --&gt;
+        &lt;property name=&quot;typeAliasesPackage&quot; value=&quot;com.example.entity&quot;/&gt;
+
+        &lt;!-- 可选：内联 MyBatis 配置（与 configLocation 二选一，或配合使用） --&gt;
+        &lt;property name=&quot;configuration&quot;&gt;
+            &lt;bean class=&quot;org.apache.ibatis.session.Configuration&quot;&gt;
+                &lt;property name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+                &lt;property name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;
+                &lt;property name=&quot;lazyLoadingEnabled&quot; value=&quot;false&quot;/&gt;
+            &lt;/bean&gt;
+        &lt;/property&gt;
+
+        &lt;!-- 可选：注册插件 --&gt;
+        &lt;property name=&quot;plugins&quot;&gt;
+            &lt;array&gt;
+                &lt;bean class=&quot;com.github.pagehelper.PageInterceptor&quot;&gt;
+                    &lt;property name=&quot;properties&quot;&gt;
+                        &lt;value&gt;helperDialect=mysql&lt;/value&gt;
+                    &lt;/property&gt;
+                &lt;/bean&gt;
+            &lt;/array&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;
+
+&lt;/beans&gt;
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>configLocation</code>（外部配置文件）与 <code>configuration</code>（内联配置对象）不能同时设置，否则会抛出异常。如果你已有 <code>mybatis-config.xml</code> 且不想改动，使用 <code>configLocation</code>；如果想全部由 Spring 管理，用 <code>configuration</code> 内联。</p>
+</blockquote>
+<h4 id="常用属性一览">常用属性一览</h4>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dataSource</code></td>
+<td><strong>必须</strong>。注入数据源</td>
+</tr>
+<tr>
+<td><code>configLocation</code></td>
+<td>MyBatis 全局配置文件路径</td>
+</tr>
+<tr>
+<td><code>mapperLocations</code></td>
+<td>Mapper XML 文件路径（支持 Ant 通配符）</td>
+</tr>
+<tr>
+<td><code>typeAliasesPackage</code></td>
+<td>类型别名扫描包路径</td>
+</tr>
+<tr>
+<td><code>typeHandlersPackage</code></td>
+<td>TypeHandler 扫描包路径</td>
+</tr>
+<tr>
+<td><code>plugins</code></td>
+<td>插件数组</td>
+</tr>
+<tr>
+<td><code>configuration</code></td>
+<td>内联 MyBatis Configuration 对象</td>
+</tr>
+<tr>
+<td><code>databaseIdProvider</code></td>
+<td>数据库厂商标识提供者</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="1012-mapperfactorybean--mapperscannerconfigurer">10.1.2 MapperFactoryBean / MapperScannerConfigurer</h3>
+<p>有了 <code>SqlSessionFactory</code>，下一步就是把 Mapper 接口变成 Spring Bean，这样才能在 Service 中通过 <code>@Autowired</code> 注入使用。</p>
+<h4 id="mapperfactorybean--逐个注册">MapperFactoryBean —— 逐个注册</h4>
+<p><code>MapperFactoryBean</code> 是最基本的注册方式，每个 Mapper 接口需要单独配置一个 Bean 定义：</p>
+<pre><code class="language-xml">&lt;!-- 逐个注册 Mapper（Mapper 较少时可用） --&gt;
+&lt;bean id=&quot;userMapper&quot; class=&quot;org.mybatis.spring.mapper.MapperFactoryBean&quot;&gt;
+    &lt;property name=&quot;mapperInterface&quot; value=&quot;com.example.mapper.UserMapper&quot;/&gt;
+    &lt;property name=&quot;sqlSessionFactory&quot; ref=&quot;sqlSessionFactory&quot;/&gt;
+&lt;/bean&gt;
+
+&lt;bean id=&quot;orderMapper&quot; class=&quot;org.mybatis.spring.mapper.MapperFactoryBean&quot;&gt;
+    &lt;property name=&quot;mapperInterface&quot; value=&quot;com.example.mapper.OrderMapper&quot;/&gt;
+    &lt;property name=&quot;sqlSessionFactory&quot; ref=&quot;sqlSessionFactory&quot;/&gt;
+&lt;/bean&gt;
+</code></pre>
+<p>这种方式的缺点很明显：Mapper 接口数量多时，配置冗长且难以维护。</p>
+<h4 id="mapperscannerconfigurer--批量扫描推荐">MapperScannerConfigurer —— 批量扫描（推荐）</h4>
+<p><code>MapperScannerConfigurer</code> 可以自动扫描指定包下的所有 Mapper 接口，一次性注册为 Spring Bean：</p>
+<pre><code class="language-xml">&lt;!-- 批量扫描注册 Mapper（推荐方式） --&gt;
+&lt;bean class=&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;&gt;
+    &lt;!-- 指定 Mapper 接口所在的包（多个包用逗号分隔） --&gt;
+    &lt;property name=&quot;basePackage&quot; value=&quot;com.example.mapper&quot;/&gt;
+
+    &lt;!-- 可选：指定 SqlSessionFactory 的 Bean 名称 --&gt;
+    &lt;property name=&quot;sqlSessionFactoryBeanName&quot; value=&quot;sqlSessionFactory&quot;/&gt;
+
+    &lt;!-- 可选：只扫描带有特定注解的接口 --&gt;
+    &lt;property name=&quot;annotationClass&quot; value=&quot;org.apache.ibatis.annotations.Mapper&quot;/&gt;
+
+    &lt;!-- 可选：只扫描继承了特定接口的子接口 --&gt;
+    &lt;!-- &lt;property name=&quot;markerInterface&quot; value=&quot;com.example.mapper.BaseMapper&quot;/&gt; --&gt;
+&lt;/bean&gt;
+</code></pre>
+<h4 id="完整的-spring-xml-配置sqlsessionfactorybean--mapperscannerconfigurer">完整的 Spring XML 配置（SqlSessionFactoryBean + MapperScannerConfigurer）</h4>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xsi:schemaLocation=&quot;
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+
+    &lt;context:property-placeholder location=&quot;classpath:db.properties&quot;/&gt;
+
+    &lt;!-- 数据源 --&gt;
+    &lt;bean id=&quot;dataSource&quot; class=&quot;com.zaxxer.hikari.HikariDataSource&quot; destroy-method=&quot;close&quot;&gt;
+        &lt;property name=&quot;driverClassName&quot; value=&quot;${jdbc.driver}&quot;/&gt;
+        &lt;property name=&quot;jdbcUrl&quot; value=&quot;${jdbc.url}&quot;/&gt;
+        &lt;property name=&quot;username&quot; value=&quot;${jdbc.username}&quot;/&gt;
+        &lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot;/&gt;
+    &lt;/bean&gt;
+
+    &lt;!-- SqlSessionFactory --&gt;
+    &lt;bean id=&quot;sqlSessionFactory&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;&gt;
+        &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;
+        &lt;property name=&quot;mapperLocations&quot; value=&quot;classpath:mapper/**/*.xml&quot;/&gt;
+        &lt;property name=&quot;typeAliasesPackage&quot; value=&quot;com.example.entity&quot;/&gt;
+        &lt;property name=&quot;configuration&quot;&gt;
+            &lt;bean class=&quot;org.apache.ibatis.session.Configuration&quot;&gt;
+                &lt;property name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+            &lt;/bean&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;
+
+    &lt;!-- 事务管理器 --&gt;
+    &lt;bean id=&quot;transactionManager&quot; class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;&gt;
+        &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;
+    &lt;/bean&gt;
+
+    &lt;!-- Mapper 扫描 --&gt;
+    &lt;bean class=&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;&gt;
+        &lt;property name=&quot;basePackage&quot; value=&quot;com.example.mapper&quot;/&gt;
+        &lt;property name=&quot;sqlSessionFactoryBeanName&quot; value=&quot;sqlSessionFactory&quot;/&gt;
+    &lt;/bean&gt;
+
+&lt;/beans&gt;
+</code></pre>
+<blockquote>
+<p><strong>实际效果</strong>：<code>MapperScannerConfigurer</code> 扫描到 <code>com.example.mapper</code> 包下的所有接口后，为每个接口创建一个 <code>MapperFactoryBean</code> 实例并注册到 Spring 容器。Service 层就可以直接 <code>@Autowired UserMapper userMapper</code> 使用了。</p>
+</blockquote>
+<hr />
+<h3 id="1013-sqlsessiontemplate--线程安全的-sqlsession">10.1.3 SqlSessionTemplate —— 线程安全的 SqlSession</h3>
+<h4 id="问题背景">问题背景</h4>
+<p>回顾第一章的知识：原生 MyBatis 的 <code>DefaultSqlSession</code> <strong>不是线程安全的</strong>，每次使用都需要手动 <code>openSession()</code> / <code>close()</code>。但在 Spring 的 Web 应用中，Service 是单例 Bean，它内部注入的 Mapper 也是单例的，多个请求线程会并发访问同一个 Mapper 实例。这就需要一个线程安全的 <code>SqlSession</code> 实现。</p>
+<h4 id="sqlsessiontemplate-的角色">SqlSessionTemplate 的角色</h4>
+<p><code>SqlSessionTemplate</code> 是 MyBatis-Spring 提供的 <code>SqlSession</code> 实现，它是<strong>线程安全的</strong>，可以在多个线程间共享。实际上，当你通过 <code>MapperFactoryBean</code> 或 <code>MapperScannerConfigurer</code> 注册 Mapper 时，底层使用的就是 <code>SqlSessionTemplate</code>。</p>
+<pre><code class="language-xml">&lt;!-- 通常不需要手动配置，MapperFactoryBean 内部会自动创建 --&gt;
+&lt;!-- 但如果你需要在 DAO 中直接使用 SqlSession，可以显式配置 --&gt;
+&lt;bean id=&quot;sqlSessionTemplate&quot; class=&quot;org.mybatis.spring.SqlSessionTemplate&quot;&gt;
+    &lt;constructor-arg index=&quot;0&quot; ref=&quot;sqlSessionFactory&quot;/&gt;
+    &lt;!-- 可选：指定执行器类型（SIMPLE, REUSE, BATCH） --&gt;
+    &lt;!-- &lt;constructor-arg index=&quot;1&quot; value=&quot;BATCH&quot;/&gt; --&gt;
+&lt;/bean&gt;
+</code></pre>
+<h4 id="线程安全的实现原理">线程安全的实现原理</h4>
+<p><code>SqlSessionTemplate</code> 的线程安全性<strong>不是通过加锁实现的，而是通过 JDK 动态代理 + ThreadLocal 的方式实现的</strong>。核心机制如下：</p>
+<p><strong>1. 代理模式入口</strong></p>
+<p><code>SqlSessionTemplate</code> 的构造方法中创建了一个 <code>SqlSession</code> 的 JDK 动态代理对象 <code>sqlSessionProxy</code>：</p>
+<pre><code class="language-java">public SqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType,
+    PersistenceExceptionTranslator exceptionTranslator) {
+
+    this.sqlSessionFactory = sqlSessionFactory;
+    this.executorType = executorType;
+    this.exceptionTranslator = exceptionTranslator;
+
+    // 创建代理对象 —— 所有 SqlSession 方法调用都会经过 SqlSessionInterceptor
+    this.sqlSessionProxy = (SqlSession) newProxyInstance(
+        SqlSessionFactory.class.getClassLoader(),
+        new Class[] { SqlSession.class },
+        new SqlSessionInterceptor());
+}
+</code></pre>
+<p>当调用 <code>SqlSessionTemplate</code> 的任何方法（如 <code>selectOne()</code>、<code>insert()</code> 等），实际上都委托给了 <code>sqlSessionProxy</code>，而代理的拦截逻辑在 <code>SqlSessionInterceptor</code> 中。</p>
+<p><strong>2. SqlSessionInterceptor 的工作流程</strong></p>
+<pre><code class="language-java">private class SqlSessionInterceptor implements InvocationHandler {
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        // 关键步骤 1：从 Spring 事务上下文中获取 SqlSession
+        // 内部通过 TransactionSynchronizationManager（基于 ThreadLocal）实现
+        SqlSession sqlSession = getSqlSession(
+            SqlSessionTemplate.this.sqlSessionFactory,
+            SqlSessionTemplate.this.executorType,
+            SqlSessionTemplate.this.exceptionTranslator);
+
+        try {
+            // 关键步骤 2：用当前线程专属的 SqlSession 执行操作
+            Object result = method.invoke(sqlSession, args);
+
+            // 关键步骤 3：如果不在 Spring 事务中，立即提交
+            if (!isSqlSessionTransactional(sqlSession, SqlSessionTemplate.this.sqlSessionFactory)) {
+                sqlSession.commit(true);
+            }
+            return result;
+        } catch (Throwable t) {
+            // 异常处理...
+            throw t;
+        } finally {
+            // 关键步骤 4：关闭/释放 SqlSession
+            if (sqlSession != null) {
+                closeSqlSession(sqlSession, SqlSessionTemplate.this.sqlSessionFactory);
+            }
+        }
+    }
+}
+</code></pre>
+<p><strong>3. <code>getSqlSession()</code> 的 ThreadLocal 机制</strong></p>
+<p><code>getSqlSession()</code> 方法内部调用了 Spring 的 <code>TransactionSynchronizationManager</code>，该管理器使用 <code>ThreadLocal</code> 维护每个线程的资源绑定：</p>
+<pre><code>线程 A 调用 Mapper 方法
+    → SqlSessionInterceptor.invoke()
+    → getSqlSession()
+    → TransactionSynchronizationManager.getResource(sqlSessionFactory)
+    → 从线程 A 的 ThreadLocal 中获取/创建 SqlSession A
+    → 使用 SqlSession A 执行 SQL
+
+线程 B 同时调用同一个 Mapper 方法
+    → SqlSessionInterceptor.invoke()
+    → getSqlSession()
+    → TransactionSynchronizationManager.getResource(sqlSessionFactory)
+    → 从线程 B 的 ThreadLocal 中获取/创建 SqlSession B
+    → 使用 SqlSession B 执行 SQL
+</code></pre>
+<h4 id="核心结论">核心结论</h4>
+<table>
+<thead>
+<tr>
+<th>要点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>外观</td>
+<td><code>SqlSessionTemplate</code> 是一个全局单例，可以被多个线程共享</td>
+</tr>
+<tr>
+<td>内部</td>
+<td>每次方法调用都通过代理拦截，从当前线程的 <code>ThreadLocal</code> 中获取/创建真正的 <code>SqlSession</code></td>
+</tr>
+<tr>
+<td>事务内</td>
+<td>同一个事务中的多次 Mapper 调用使用同一个 <code>SqlSession</code>（由 Spring 事务管理器绑定）</td>
+</tr>
+<tr>
+<td>事务外</td>
+<td>每次 Mapper 调用都会创建新的 <code>SqlSession</code>，执行完立即关闭</td>
+</tr>
+<tr>
+<td>开发者无感</td>
+<td>开发者只需要 <code>@Autowired</code> Mapper 接口，线程安全由框架保证</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>一句话总结</strong>：<code>SqlSessionTemplate</code> 线程安全的秘密在于——它本身不持有任何 <code>SqlSession</code> 状态，而是每次操作都通过动态代理从 Spring 的 <code>TransactionSynchronizationManager</code>（<code>ThreadLocal</code>）中获取当前线程专属的 <code>SqlSession</code> 实例。</p>
+</blockquote>
+<hr />
+<h2 id="102-spring-boot-自动配置mybatis-spring-boot-starter">10.2 Spring Boot 自动配置（mybatis-spring-boot-starter）</h2>
+<p>Spring Boot 的出现让 MyBatis 整合变得极其简单。<code>mybatis-spring-boot-starter</code> 通过自动配置帮你完成了 10.1 节中所有手动配置的工作。</p>
+<p>只需一个依赖：</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;3.0.3&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p>它自动完成的事情：</p>
+<ol>
+<li>检测 <code>DataSource</code> Bean，自动创建 <code>SqlSessionFactory</code></li>
+<li>自动创建 <code>SqlSessionTemplate</code></li>
+<li>自动扫描带 <code>@Mapper</code> 注解的接口并注册为 Spring Bean</li>
+</ol>
+<hr />
+<h3 id="1021-applicationyml-常用配置项速查">10.2.1 application.yml 常用配置项速查</h3>
+<p>以下是 <code>application.yml</code> 中与 MyBatis 相关的所有常用配置项：</p>
+<h4 id="基础配置">基础配置</h4>
+<table>
+<thead>
+<tr>
+<th>配置键</th>
+<th>说明</th>
+<th>示例值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mybatis.config-location</code></td>
+<td>MyBatis 全局配置文件路径</td>
+<td><code>classpath:mybatis-config.xml</code></td>
+</tr>
+<tr>
+<td><code>mybatis.mapper-locations</code></td>
+<td>Mapper XML 文件路径（支持通配符）</td>
+<td><code>classpath:mapper/**/*.xml</code></td>
+</tr>
+<tr>
+<td><code>mybatis.type-aliases-package</code></td>
+<td>类型别名扫描包</td>
+<td><code>com.example.entity</code></td>
+</tr>
+<tr>
+<td><code>mybatis.type-handlers-package</code></td>
+<td>TypeHandler 扫描包</td>
+<td><code>com.example.typehandler</code></td>
+</tr>
+<tr>
+<td><code>mybatis.check-config-location</code></td>
+<td>是否检查配置文件存在性</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>mybatis.executor-type</code></td>
+<td>默认执行器类型</td>
+<td><code>SIMPLE</code> / <code>REUSE</code> / <code>BATCH</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="configuration-子配置mybatisconfiguration">Configuration 子配置（<code>mybatis.configuration.*</code>）</h4>
+<blockquote>
+<p>这些配置项等价于 <code>mybatis-config.xml</code> 中 <code>&lt;settings&gt;</code> 标签的内容。<strong>注意</strong>：<code>mybatis.configuration.*</code> 与 <code>mybatis.config-location</code> 不能同时使用。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>配置键</th>
+<th>说明</th>
+<th>示例值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mybatis.configuration.map-underscore-to-camel-case</code></td>
+<td>下划线自动转驼峰</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.cache-enabled</code></td>
+<td>二级缓存全局开关</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.lazy-loading-enabled</code></td>
+<td>延迟加载全局开关</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.aggressive-lazy-loading</code></td>
+<td>积极懒加载（调用任意方法触发全部加载）</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.default-executor-type</code></td>
+<td>默认执行器类型</td>
+<td><code>SIMPLE</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.default-statement-timeout</code></td>
+<td>SQL 执行超时时间（秒）</td>
+<td><code>30</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.default-fetch-size</code></td>
+<td>默认 fetchSize</td>
+<td><code>100</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.use-generated-keys</code></td>
+<td>全局开启自增主键回填</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.auto-mapping-behavior</code></td>
+<td>自动映射行为</td>
+<td><code>PARTIAL</code> / <code>FULL</code> / <code>NONE</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.auto-mapping-unknown-column-behavior</code></td>
+<td>未知列的处理策略</td>
+<td><code>NONE</code> / <code>WARNING</code> / <code>FAILING</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.log-impl</code></td>
+<td>日志实现类</td>
+<td><code>org.apache.ibatis.logging.stdout.StdOutImpl</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.log-prefix</code></td>
+<td>日志前缀</td>
+<td><code>mybatis.sql.</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.local-cache-scope</code></td>
+<td>一级缓存作用域</td>
+<td><code>SESSION</code> / <code>STATEMENT</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.jdbc-type-for-null</code></td>
+<td>null 值对应的 JDBC 类型</td>
+<td><code>NULL</code> / <code>VARCHAR</code> / <code>OTHER</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.call-setters-on-nulls</code></td>
+<td>结果为 null 时是否调用 setter</td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>mybatis.configuration.return-instance-for-empty-row</code></td>
+<td>空行是否返回空对象（而非 null）</td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="典型的-applicationyml-配置">典型的 application.yml 配置</h4>
+<pre><code class="language-yaml">spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydb?useSSL=false&amp;serverTimezone=Asia/Shanghai&amp;characterEncoding=utf-8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # HikariCP 连接池配置
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.example.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    default-executor-type: SIMPLE
+    local-cache-scope: STATEMENT
+</code></pre>
+<blockquote>
+<p><strong>提示</strong>：生产环境不要使用 <code>StdOutImpl</code> 日志实现，应配合 SLF4J + Logback，通过调整 Mapper 接口所在包的日志级别来控制 SQL 输出：</p>
+<pre><code class="language-yaml">logging:
+  level:
+    com.example.mapper: DEBUG  # 只在需要时开启 SQL 日志
+</code></pre>
+</blockquote>
+<hr />
+<h3 id="1022-mapper-扫描--mapperscan-vs-mapper">10.2.2 Mapper 扫描 —— @MapperScan vs @Mapper</h3>
+<p>在 Spring Boot 中注册 Mapper 有两种方式：<code>@Mapper</code>（标注在每个接口上）和 <code>@MapperScan</code>（标注在配置类上）。</p>
+<h4 id="mapper--逐个标注">@Mapper —— 逐个标注</h4>
+<pre><code class="language-java">import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface UserMapper {
+    User findById(Long id);
+    List&lt;User&gt; findAll();
+}
+</code></pre>
+<pre><code class="language-java">@Mapper
+public interface OrderMapper {
+    Order findById(Long id);
+}
+</code></pre>
+<p>每个 Mapper 接口上都加 <code>@Mapper</code> 注解，mybatis-spring-boot-starter 的自动配置会扫描所有带此注解的接口。</p>
+<h4 id="mapperscan--包级别扫描">@MapperScan —— 包级别扫描</h4>
+<pre><code class="language-java">import org.mybatis.spring.annotation.MapperScan;
+
+@SpringBootApplication
+@MapperScan(&quot;com.example.mapper&quot;)
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+</code></pre>
+<p>一个注解搞定整个包下的所有 Mapper，无需在每个接口上加 <code>@Mapper</code>。</p>
+<h4 id="对比">对比</h4>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th><code>@Mapper</code></th>
+<th><code>@MapperScan</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>作用位置</strong></td>
+<td>标注在每个 Mapper 接口上</td>
+<td>标注在配置类（通常是启动类）上</td>
+</tr>
+<tr>
+<td><strong>扫描范围</strong></td>
+<td>仅标注了 <code>@Mapper</code> 的接口</td>
+<td>指定包下的所有接口</td>
+</tr>
+<tr>
+<td><strong>侵入性</strong></td>
+<td>每个接口都需要加注解</td>
+<td>接口无需任何注解</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>Mapper 数量少；不同包的 Mapper 用不同数据源（不想全扫）</td>
+<td>项目中绝大多数场景（推荐）</td>
+</tr>
+<tr>
+<td><strong>多包支持</strong></td>
+<td>天然支持（只要加了注解就行）</td>
+<td><code>@MapperScan({&quot;com.example.mapper&quot;, &quot;com.example.other&quot;})</code></td>
+</tr>
+<tr>
+<td><strong>精确控制</strong></td>
+<td>可精确控制哪些接口是 Mapper</td>
+<td>可能误扫非 Mapper 接口（可用 <code>annotationClass</code> 过滤）</td>
+</tr>
+<tr>
+<td><strong>与 IDE 的配合</strong></td>
+<td>IDE 能直接识别为 MyBatis Mapper</td>
+<td>部分 IDE 可能出现 &quot;Could not autowire&quot; 误报警告</td>
+</tr>
+</tbody>
+</table>
+<h4 id="实践建议">实践建议</h4>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单数据源、Mapper 集中在一个包</td>
+<td><code>@MapperScan</code> —— 最简洁</td>
+</tr>
+<tr>
+<td>多数据源、不同包对应不同数据源</td>
+<td><code>@MapperScan</code> 分别指定不同包（见 10.2.3）</td>
+</tr>
+<tr>
+<td>团队规范要求每个 Mapper 显式标识</td>
+<td><code>@Mapper</code> 逐个标注</td>
+</tr>
+<tr>
+<td>混合使用</td>
+<td>完全可以，两者不冲突</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>IDE 警告处理</strong>：使用 <code>@MapperScan</code> 时，IntelliJ IDEA 可能在 <code>@Autowired</code> Mapper 处显示红色波浪线（&quot;Could not autowire&quot;），这是 IDE 的误报。解决方式：</p>
+<ol>
+<li>在 Mapper 接口上额外加 <code>@Repository</code> 注解</li>
+<li>使用 <code>@Resource</code> 代替 <code>@Autowired</code></li>
+<li>在 IDEA 设置中降低该检查的级别</li>
+<li>安装 MyBatis 插件（如 MyBatisX）</li>
+</ol>
+</blockquote>
+<hr />
+<h3 id="1023-多数据源配置">10.2.3 多数据源配置</h3>
+<p>实际项目中经常需要连接多个数据库（如主库 + 从库、业务库 + 日志库）。Spring Boot 没有开箱即用的多数据源支持，需要手动配置。</p>
+<h4 id="核心思路">核心思路</h4>
+<p>为每个数据源分别配置一套完整的组件链：</p>
+<pre><code>DataSource → SqlSessionFactory → SqlSessionTemplate → MapperScan
+</code></pre>
+<p>通过 <code>@MapperScan</code> 的 <code>basePackages</code> 指定不同包路径，让不同包下的 Mapper 绑定到不同的数据源。</p>
+<h4 id="项目结构">项目结构</h4>
+<pre><code>src/main/java/com/example/
+├── config/
+│   ├── PrimaryDataSourceConfig.java    # 主数据源配置
+│   └── SecondaryDataSourceConfig.java  # 第二数据源配置
+├── mapper/
+│   ├── primary/                        # 主库 Mapper
+│   │   ├── UserMapper.java
+│   │   └── OrderMapper.java
+│   └── secondary/                      # 第二库 Mapper
+│       ├── LogMapper.java
+│       └── StatMapper.java
+└── Application.java
+</code></pre>
+<h4 id="applicationyml">application.yml</h4>
+<pre><code class="language-yaml">spring:
+  datasource:
+    primary:
+      url: jdbc:mysql://localhost:3306/main_db?useSSL=false&amp;serverTimezone=Asia/Shanghai
+      username: root
+      password: 123456
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    secondary:
+      url: jdbc:mysql://localhost:3306/log_db?useSSL=false&amp;serverTimezone=Asia/Shanghai
+      username: root
+      password: 123456
+      driver-class-name: com.mysql.cj.jdbc.Driver
+</code></pre>
+<h4 id="主数据源配置类">主数据源配置类</h4>
+<pre><code class="language-java">package com.example.config;
+
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+
+import javax.sql.DataSource;
+
+@Configuration
+@MapperScan(
+    basePackages = &quot;com.example.mapper.primary&quot;,
+    sqlSessionFactoryRef = &quot;primarySqlSessionFactory&quot;
+)
+public class PrimaryDataSourceConfig {
+
+    @Primary
+    @Bean(&quot;primaryDataSource&quot;)
+    @ConfigurationProperties(prefix = &quot;spring.datasource.primary&quot;)
+    public DataSource primaryDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
+    @Primary
+    @Bean(&quot;primarySqlSessionFactory&quot;)
+    public SqlSessionFactory primarySqlSessionFactory(
+            @Qualifier(&quot;primaryDataSource&quot;) DataSource dataSource) throws Exception {
+
+        SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+        factoryBean.setDataSource(dataSource);
+        factoryBean.setMapperLocations(
+            new PathMatchingResourcePatternResolver()
+                .getResources(&quot;classpath:mapper/primary/**/*.xml&quot;));
+
+        org.apache.ibatis.session.Configuration configuration =
+            new org.apache.ibatis.session.Configuration();
+        configuration.setMapUnderscoreToCamelCase(true);
+        factoryBean.setConfiguration(configuration);
+
+        return factoryBean.getObject();
+    }
+
+    @Primary
+    @Bean(&quot;primarySqlSessionTemplate&quot;)
+    public SqlSessionTemplate primarySqlSessionTemplate(
+            @Qualifier(&quot;primarySqlSessionFactory&quot;) SqlSessionFactory sqlSessionFactory) {
+        return new SqlSessionTemplate(sqlSessionFactory);
+    }
+
+    @Primary
+    @Bean(&quot;primaryTransactionManager&quot;)
+    public DataSourceTransactionManager primaryTransactionManager(
+            @Qualifier(&quot;primaryDataSource&quot;) DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
+    }
+}
+</code></pre>
+<h4 id="第二数据源配置类">第二数据源配置类</h4>
+<pre><code class="language-java">package com.example.config;
+
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+
+import javax.sql.DataSource;
+
+@Configuration
+@MapperScan(
+    basePackages = &quot;com.example.mapper.secondary&quot;,
+    sqlSessionFactoryRef = &quot;secondarySqlSessionFactory&quot;
+)
+public class SecondaryDataSourceConfig {
+
+    @Bean(&quot;secondaryDataSource&quot;)
+    @ConfigurationProperties(prefix = &quot;spring.datasource.secondary&quot;)
+    public DataSource secondaryDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
+    @Bean(&quot;secondarySqlSessionFactory&quot;)
+    public SqlSessionFactory secondarySqlSessionFactory(
+            @Qualifier(&quot;secondaryDataSource&quot;) DataSource dataSource) throws Exception {
+
+        SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+        factoryBean.setDataSource(dataSource);
+        factoryBean.setMapperLocations(
+            new PathMatchingResourcePatternResolver()
+                .getResources(&quot;classpath:mapper/secondary/**/*.xml&quot;));
+
+        org.apache.ibatis.session.Configuration configuration =
+            new org.apache.ibatis.session.Configuration();
+        configuration.setMapUnderscoreToCamelCase(true);
+        factoryBean.setConfiguration(configuration);
+
+        return factoryBean.getObject();
+    }
+
+    @Bean(&quot;secondarySqlSessionTemplate&quot;)
+    public SqlSessionTemplate secondarySqlSessionTemplate(
+            @Qualifier(&quot;secondarySqlSessionFactory&quot;) SqlSessionFactory sqlSessionFactory) {
+        return new SqlSessionTemplate(sqlSessionFactory);
+    }
+
+    @Bean(&quot;secondaryTransactionManager&quot;)
+    public DataSourceTransactionManager secondaryTransactionManager(
+            @Qualifier(&quot;secondaryDataSource&quot;) DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
+    }
+}
+</code></pre>
+<h4 id="启动类">启动类</h4>
+<pre><code class="language-java">@SpringBootApplication
+// 注意：使用多数据源时，不要在启动类上加 @MapperScan，
+// 已在各数据源配置类中分别指定
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+</code></pre>
+<h4 id="使用时的注意事项">使用时的注意事项</h4>
+<table>
+<thead>
+<tr>
+<th>要点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@Primary</code></td>
+<td>主数据源的所有 Bean 都要标 <code>@Primary</code>，否则 Spring 无法确定默认注入哪个</td>
+</tr>
+<tr>
+<td><code>@Qualifier</code></td>
+<td>通过名称限定注入，避免歧义</td>
+</tr>
+<tr>
+<td>事务管理器</td>
+<td>每个数据源有独立的事务管理器，<code>@Transactional</code> 需指定 <code>transactionManager</code> 名称</td>
+</tr>
+<tr>
+<td>Mapper XML 路径</td>
+<td>每个 <code>SqlSessionFactory</code> 只加载自己数据源对应的 XML 文件</td>
+</tr>
+<tr>
+<td>排除自动配置</td>
+<td>如果遇到冲突，可排除默认的 DataSource 自动配置</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-java">// 在使用非主数据源的 Service 中指定事务管理器
+@Transactional(transactionManager = &quot;secondaryTransactionManager&quot;)
+public void saveLog(LogEntity log) {
+    logMapper.insert(log);
+}
+</code></pre>
+<blockquote>
+<p><strong>替代方案</strong>：如果觉得这种配置太繁琐，可以考虑使用 <code>dynamic-datasource-spring-boot-starter</code>（苞米豆出品）或 <code>AbstractRoutingDataSource</code>（Spring 原生），它们提供了更优雅的动态数据源切换方案。</p>
+</blockquote>
+<hr />
+<h2 id="103-事务管理">10.3 事务管理</h2>
+<h3 id="1031-spring-声明式事务与-mybatis-的协作">10.3.1 Spring 声明式事务与 MyBatis 的协作</h3>
+<h4 id="纯-mybatis-的事务管理">纯 MyBatis 的事务管理</h4>
+<p>在纯 MyBatis 中，事务由 <code>SqlSession</code> 管理：</p>
+<pre><code class="language-java">SqlSession session = sqlSessionFactory.openSession(); // 默认不自动提交
+try {
+    UserMapper mapper = session.getMapper(UserMapper.class);
+    mapper.insert(user);
+    mapper.update(order);
+    session.commit();   // 手动提交
+} catch (Exception e) {
+    session.rollback();  // 手动回滚
+} finally {
+    session.close();     // 手动关闭
+}
+</code></pre>
+<p>问题很明显：事务管理代码和业务代码耦合在一起，且容易遗漏关闭或回滚。</p>
+<h4 id="spring-整合后的事务管理">Spring 整合后的事务管理</h4>
+<p>整合 Spring 后，事务管理交给 Spring 的 <code>DataSourceTransactionManager</code>，开发者只需在 Service 方法上加 <code>@Transactional</code> 即可：</p>
+<pre><code class="language-java">@Service
+public class OrderService {
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @Transactional
+    public void createOrder(User user, Order order) {
+        userMapper.updateBalance(user.getId(), order.getAmount());
+        orderMapper.insert(order);
+        // 方法正常结束 → 自动提交
+        // 抛出 RuntimeException → 自动回滚
+    }
+}
+</code></pre>
+<h4 id="协作原理">协作原理</h4>
+<p>Spring 事务管理器与 MyBatis <code>SqlSession</code> 的协作关系是理解整合的关键：</p>
+<pre><code>@Transactional 方法调用开始
+    │
+    ▼
+TransactionInterceptor（AOP 代理拦截）
+    │
+    ▼
+DataSourceTransactionManager.doBegin()
+    ├── 从 DataSource 获取 Connection
+    ├── 设置 Connection.setAutoCommit(false)
+    └── 将 Connection 绑定到 ThreadLocal
+            （TransactionSynchronizationManager）
+    │
+    ▼
+业务代码执行：userMapper.updateBalance(...)
+    │
+    ▼
+SqlSessionTemplate → SqlSessionInterceptor.invoke()
+    ├── getSqlSession()
+    │       └── 发现当前线程存在 Spring 事务
+    │       └── 创建 SqlSession，使用事务中已绑定的 Connection
+    │       └── 将 SqlSession 也绑定到 ThreadLocal
+    ├── 执行 SQL（使用事务中的 Connection）
+    └── 不提交（因为在 Spring 事务中，提交权交给事务管理器）
+    │
+    ▼
+业务代码执行：orderMapper.insert(...)
+    │
+    ▼
+SqlSessionTemplate → SqlSessionInterceptor.invoke()
+    ├── getSqlSession()
+    │       └── 从 ThreadLocal 获取同一个 SqlSession（复用！）
+    ├── 执行 SQL（使用同一个 Connection）
+    └── 不提交
+    │
+    ▼
+@Transactional 方法正常结束
+    │
+    ▼
+DataSourceTransactionManager.doCommit()
+    ├── Connection.commit()     ← 两条 SQL 作为一个事务提交
+    ├── 关闭 SqlSession
+    └── 释放 Connection
+</code></pre>
+<h4 id="关键协作机制">关键协作机制</h4>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>详细说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Connection 共享</strong></td>
+<td>Spring 事务管理器在事务开始时获取 <code>Connection</code> 并通过 <code>TransactionSynchronizationManager</code> 绑定到 <code>ThreadLocal</code>。MyBatis 的 <code>SpringManagedTransaction</code> 从同一个 <code>ThreadLocal</code> 获取 <code>Connection</code>，保证了 MyBatis 使用的是 Spring 事务管理的那个连接</td>
+</tr>
+<tr>
+<td><strong>SqlSession 复用</strong></td>
+<td>同一个事务中多次 Mapper 调用共享同一个 <code>SqlSession</code>，这由 <code>SqlSessionUtils.getSqlSession()</code> 中的 <code>ThreadLocal</code> 绑定逻辑保证</td>
+</tr>
+<tr>
+<td><strong>提交权转让</strong></td>
+<td>在 Spring 事务内，<code>SqlSessionTemplate</code> 不会自行提交或回滚，而是将控制权完全交给 Spring 的 <code>DataSourceTransactionManager</code>。事务的提交/回滚由 Spring AOP 在方法执行结束后统一处理</td>
+</tr>
+<tr>
+<td><strong>异常触发回滚</strong></td>
+<td>默认情况下，<code>RuntimeException</code> 和 <code>Error</code> 触发回滚，<code>checked Exception</code> 不触发（可通过 <code>rollbackFor</code> 配置）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>核心要点</strong>：Spring 和 MyBatis 能协作的根基是<strong>共享同一个 <code>Connection</code></strong>。Spring 事务管理器和 MyBatis 的 <code>SpringManagedTransaction</code> 通过 <code>TransactionSynchronizationManager</code>（<code>ThreadLocal</code>）共享同一个数据库连接，从而实现统一的事务控制。</p>
+</blockquote>
+<hr />
+<h3 id="1032-transactional-常见失效场景">10.3.2 @Transactional 常见失效场景</h3>
+<p><code>@Transactional</code> 是 Spring 中使用最广泛的注解之一，但它的失效场景也是面试和实际开发中的高频坑点。以下逐一分析：</p>
+<h4 id="场景一方法不是-public-的">场景一：方法不是 public 的</h4>
+<pre><code class="language-java">@Service
+public class UserService {
+
+    @Transactional
+    protected void updateUser(User user) {  // ❌ 事务不生效
+        userMapper.update(user);
+    }
+}
+</code></pre>
+<p><strong>原因</strong>：Spring 的事务代理（无论是 JDK 动态代理还是 CGLIB 代理）默认只对 <code>public</code> 方法生效。<code>protected</code>、<code>private</code>、<code>default</code> 修饰的方法上的 <code>@Transactional</code> 会被忽略。</p>
+<p><strong>解决</strong>：将方法改为 <code>public</code>。</p>
+<blockquote>
+<p>Spring Framework 6.0+ 在非 public 方法上使用 <code>@Transactional</code> 会打印警告日志，但仍不会生效。</p>
+</blockquote>
+<hr />
+<h4 id="场景二同类内部方法调用自调用问题">场景二：同类内部方法调用（自调用问题）</h4>
+<pre><code class="language-java">@Service
+public class OrderService {
+
+    public void createOrder(Order order) {
+        // 直接通过 this 调用，不会经过代理
+        this.saveOrder(order);  // ❌ 事务不生效
+    }
+
+    @Transactional
+    public void saveOrder(Order order) {
+        orderMapper.insert(order);
+        // 即使这里抛异常，也不会回滚
+    }
+}
+</code></pre>
+<p><strong>原因</strong>：<code>@Transactional</code> 基于 AOP 代理实现。外部调用 <code>orderService.saveOrder()</code> 时，调用的是代理对象的方法，代理会拦截并开启事务。但 <code>createOrder()</code> 内部通过 <code>this.saveOrder()</code> 调用时，<code>this</code> 指向的是原始对象而非代理对象，因此绕过了事务拦截器。</p>
+<p><strong>解决方案</strong>：</p>
+<pre><code class="language-java">// 方案 1：注入自身代理
+@Service
+public class OrderService {
+
+    @Autowired
+    private OrderService self;  // Spring 4.3+ 支持注入自身代理
+
+    public void createOrder(Order order) {
+        self.saveOrder(order);  // ✅ 通过代理调用
+    }
+
+    @Transactional
+    public void saveOrder(Order order) {
+        orderMapper.insert(order);
+    }
+}
+
+// 方案 2：从 ApplicationContext 获取代理
+@Service
+public class OrderService {
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    public void createOrder(Order order) {
+        applicationContext.getBean(OrderService.class).saveOrder(order);
+    }
+
+    @Transactional
+    public void saveOrder(Order order) {
+        orderMapper.insert(order);
+    }
+}
+
+// 方案 3：将事务方法抽取到另一个 Service（最推荐）
+@Service
+public class OrderService {
+
+    @Autowired
+    private OrderTransactionService txService;
+
+    public void createOrder(Order order) {
+        txService.saveOrder(order);  // ✅ 跨类调用，走代理
+    }
+}
+
+@Service
+public class OrderTransactionService {
+
+    @Transactional
+    public void saveOrder(Order order) {
+        orderMapper.insert(order);
+    }
+}
+</code></pre>
+<hr />
+<h4 id="场景三异常类型不匹配">场景三：异常类型不匹配</h4>
+<pre><code class="language-java">@Service
+public class UserService {
+
+    @Transactional  // 默认只回滚 RuntimeException 和 Error
+    public void importUsers(List&lt;User&gt; users) throws Exception {
+        for (User user : users) {
+            userMapper.insert(user);
+        }
+        // 抛出 checked exception
+        throw new IOException(&quot;文件读取失败&quot;);  // ❌ 事务不会回滚！
+    }
+}
+</code></pre>
+<p><strong>原因</strong>：<code>@Transactional</code> 默认的回滚规则是：</p>
+<ul>
+<li><code>RuntimeException</code>（及其子类）→ 回滚</li>
+<li><code>Error</code>（及其子类）→ 回滚</li>
+<li><code>checked Exception</code>（如 <code>IOException</code>、<code>SQLException</code>）→ <strong>不回滚</strong>，正常提交</li>
+</ul>
+<p><strong>解决</strong>：</p>
+<pre><code class="language-java">// 方案 1：指定 rollbackFor（推荐）
+@Transactional(rollbackFor = Exception.class)
+public void importUsers(List&lt;User&gt; users) throws Exception {
+    // 现在任何异常都会回滚
+}
+
+// 方案 2：将 checked exception 包装为 RuntimeException
+@Transactional
+public void importUsers(List&lt;User&gt; users) {
+    try {
+        // ...
+    } catch (IOException e) {
+        throw new RuntimeException(&quot;导入失败&quot;, e);
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：团队规范中建议统一使用 <code>@Transactional(rollbackFor = Exception.class)</code>，避免遗漏 checked exception 导致数据不一致。</p>
+</blockquote>
+<hr />
+<h4 id="场景四异常被-catch-吞掉">场景四：异常被 catch 吞掉</h4>
+<pre><code class="language-java">@Service
+public class UserService {
+
+    @Transactional
+    public void batchUpdate(List&lt;User&gt; users) {
+        try {
+            for (User user : users) {
+                userMapper.update(user);
+            }
+            int x = 1 / 0;  // 会抛 ArithmeticException
+        } catch (Exception e) {
+            log.error(&quot;更新失败&quot;, e);
+            // ❌ 异常被 catch 了，事务管理器感知不到异常，不会回滚
+        }
+    }
+}
+</code></pre>
+<p><strong>原因</strong>：Spring 事务管理器通过捕获方法抛出的异常来决定是否回滚。如果异常在方法内部被 <code>catch</code> 吞掉了，方法正常返回，事务管理器认为执行成功，于是提交事务。</p>
+<p><strong>解决</strong>：</p>
+<pre><code class="language-java">@Transactional
+public void batchUpdate(List&lt;User&gt; users) {
+    try {
+        for (User user : users) {
+            userMapper.update(user);
+        }
+        int x = 1 / 0;
+    } catch (Exception e) {
+        log.error(&quot;更新失败&quot;, e);
+        throw e;  // ✅ 重新抛出，让事务管理器感知
+    }
+}
+
+// 或者使用编程式事务回滚
+@Transactional
+public void batchUpdate(List&lt;User&gt; users) {
+    try {
+        // ...
+    } catch (Exception e) {
+        log.error(&quot;更新失败&quot;, e);
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();  // ✅ 手动标记回滚
+    }
+}
+</code></pre>
+<hr />
+<h4 id="场景五propagation-传播行为配置不当">场景五：propagation 传播行为配置不当</h4>
+<pre><code class="language-java">@Service
+public class OuterService {
+
+    @Autowired
+    private InnerService innerService;
+
+    @Transactional
+    public void outerMethod() {
+        // 外层事务
+        userMapper.insert(user);
+
+        try {
+            innerService.innerMethod();  // 内层方法抛异常
+        } catch (Exception e) {
+            log.error(&quot;内层失败，但外层想继续提交&quot;);
+            // ❌ 外层事务仍然会回滚！
+        }
+    }
+}
+
+@Service
+public class InnerService {
+
+    @Transactional  // 默认 REQUIRED，加入外层事务
+    public void innerMethod() {
+        orderMapper.insert(order);
+        throw new RuntimeException(&quot;内层失败&quot;);
+    }
+}
+</code></pre>
+<p><strong>原因</strong>：默认传播行为 <code>REQUIRED</code> 会让内层方法加入外层事务。内层抛异常时，事务已被标记为 <code>rollback-only</code>。即使外层 catch 了异常，在提交时事务管理器发现 <code>rollback-only</code> 标记，仍然会回滚整个事务，并抛出 <code>UnexpectedRollbackException</code>。</p>
+<p><strong>解决</strong>：如果内层失败不应影响外层，使用 <code>REQUIRES_NEW</code> 让内层开启独立事务：</p>
+<pre><code class="language-java">@Transactional(propagation = Propagation.REQUIRES_NEW)
+public void innerMethod() {
+    orderMapper.insert(order);
+    throw new RuntimeException(&quot;内层失败&quot;);
+    // 只回滚内层事务，外层事务不受影响
+}
+</code></pre>
+<hr />
+<h4 id="场景六数据库引擎不支持事务">场景六：数据库引擎不支持事务</h4>
+<pre><code class="language-java">@Transactional
+public void updateUser(User user) {
+    userMapper.update(user);  // ❌ 如果表使用 MyISAM 引擎，事务无效
+}
+</code></pre>
+<p><strong>原因</strong>：事务是数据库层面的能力。MySQL 的 MyISAM 引擎不支持事务，即使 Spring 发起了事务管理，数据库也不会执行真正的事务操作（每条 SQL 立即生效，无法回滚）。</p>
+<p><strong>解决</strong>：确保使用支持事务的存储引擎。MySQL 5.5+ 的默认引擎是 InnoDB（支持事务），如果是老项目需要检查：</p>
+<pre><code class="language-sql">-- 查看表的存储引擎
+SHOW TABLE STATUS WHERE Name = 'user';
+
+-- 修改为 InnoDB
+ALTER TABLE user ENGINE = InnoDB;
+</code></pre>
+<hr />
+<h4 id="场景七未被-spring-管理的类">场景七：未被 Spring 管理的类</h4>
+<pre><code class="language-java">// ❌ 没有 @Service 或 @Component，不是 Spring Bean
+public class UserService {
+
+    @Transactional
+    public void updateUser(User user) {
+        // 事务不生效，因为这个类不在 Spring 容器中
+    }
+}
+</code></pre>
+<p><strong>原因</strong>：<code>@Transactional</code> 依赖 Spring AOP 代理。如果类不是 Spring Bean（没有被 <code>@Service</code>、<code>@Component</code> 等注解标注，或者是通过 <code>new</code> 创建的实例），Spring 无法为其创建代理，<code>@Transactional</code> 自然不生效。</p>
+<p><strong>解决</strong>：确保类被 Spring 管理（加上 <code>@Service</code>、<code>@Component</code> 等注解）。</p>
+<hr />
+<h4 id="场景八多线程环境">场景八：多线程环境</h4>
+<pre><code class="language-java">@Service
+public class AsyncService {
+
+    @Transactional
+    public void asyncBatchInsert(List&lt;User&gt; users) {
+        // 主线程开启事务
+        users.parallelStream().forEach(user -&gt; {
+            userMapper.insert(user);  // ❌ 子线程拿不到主线程的事务
+        });
+    }
+}
+</code></pre>
+<p><strong>原因</strong>：Spring 事务基于 <code>ThreadLocal</code> 实现，事务上下文（<code>Connection</code>、<code>SqlSession</code>）绑定在当前线程。子线程无法获取主线程的 <code>ThreadLocal</code> 数据，因此子线程中的数据库操作在事务管理之外。</p>
+<p><strong>解决</strong>：避免在 <code>@Transactional</code> 方法中使用多线程操作数据库。如果确实需要并发，每个子线程应独立管理自己的事务，或使用分布式事务方案。</p>
+<hr />
+<h4 id="失效场景速查表">失效场景速查表</h4>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失效场景</th>
+<th>根因</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>非 <code>public</code> 方法</td>
+<td>Spring AOP 只代理 public 方法</td>
+<td>改为 <code>public</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>同类内部调用</td>
+<td>绕过了代理对象</td>
+<td>注入自身 / 抽取到另一个 Service</td>
+</tr>
+<tr>
+<td>3</td>
+<td>异常类型不匹配</td>
+<td>默认只回滚 <code>RuntimeException</code></td>
+<td><code>rollbackFor = Exception.class</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>异常被 catch 吞掉</td>
+<td>事务管理器感知不到异常</td>
+<td>重新 throw 或手动 <code>setRollbackOnly()</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>propagation 不当</td>
+<td><code>REQUIRED</code> 下内层异常标记整个事务回滚</td>
+<td>按需使用 <code>REQUIRES_NEW</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>数据库不支持事务</td>
+<td>底层引擎（如 MyISAM）无事务能力</td>
+<td>使用 InnoDB</td>
+</tr>
+<tr>
+<td>7</td>
+<td>类未被 Spring 管理</td>
+<td>非 Spring Bean，无法生成代理</td>
+<td>加 <code>@Service</code> / <code>@Component</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td>多线程</td>
+<td>事务基于 <code>ThreadLocal</code>，子线程不共享</td>
+<td>避免跨线程事务操作</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="104-与-spring-整合后缓存行为的变化">10.4 与 Spring 整合后缓存行为的变化</h2>
+<p>MyBatis 的一级缓存和二级缓存在与 Spring 整合后，行为会发生显著变化。这是一个容易被忽略但非常重要的知识点。</p>
+<h3 id="一级缓存基本失效">一级缓存基本失效</h3>
+<h4 id="回顾一级缓存的前提">回顾：一级缓存的前提</h4>
+<p>一级缓存是 <code>SqlSession</code> 级别的缓存。它的生效前提是：<strong>在同一个 <code>SqlSession</code> 中执行相同的查询</strong>。</p>
+<p>在纯 MyBatis 环境中，开发者手动控制 <code>SqlSession</code> 的生命周期：</p>
+<pre><code class="language-java">try (SqlSession session = sqlSessionFactory.openSession()) {
+    UserMapper mapper = session.getMapper(UserMapper.class);
+    User user1 = mapper.findById(1L);  // 第一次查询，走数据库
+    User user2 = mapper.findById(1L);  // 第二次查询，命中一级缓存 ✅
+    // user1 == user2 （同一个对象引用）
+}
+</code></pre>
+<p>同一个 <code>SqlSession</code> 内两次查询命中缓存，只执行了一次 SQL。</p>
+<h4 id="spring-整合后的行为">Spring 整合后的行为</h4>
+<p>整合 Spring 后，<code>SqlSession</code> 的生命周期由 <code>SqlSessionTemplate</code> 管理：</p>
+<p><strong>情况一：没有 @Transactional（最常见的场景）</strong></p>
+<pre><code class="language-java">@Service
+public class UserService {
+
+    @Autowired
+    private UserMapper userMapper;
+
+    // 没有 @Transactional
+    public void queryTwice() {
+        User user1 = userMapper.findById(1L);  // 创建 SqlSession A，执行 SQL，关闭 SqlSession A
+        User user2 = userMapper.findById(1L);  // 创建 SqlSession B，执行 SQL，关闭 SqlSession B
+        // 两次查询都走了数据库，一级缓存没有生效 ❌
+    }
+}
+</code></pre>
+<p><strong>原因</strong>：没有事务的情况下，<code>SqlSessionTemplate</code> 每次 Mapper 调用都会创建一个新的 <code>SqlSession</code>，执行完立即关闭。两次查询使用的是不同的 <code>SqlSession</code>，一级缓存自然无法命中。</p>
+<p><strong>情况二：有 @Transactional</strong></p>
+<pre><code class="language-java">@Service
+public class UserService {
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Transactional
+    public void queryTwice() {
+        User user1 = userMapper.findById(1L);  // 使用事务绑定的 SqlSession，执行 SQL
+        User user2 = userMapper.findById(1L);  // 复用同一个 SqlSession，命中一级缓存 ✅
+        // 只执行了一次 SQL
+    }
+}
+</code></pre>
+<p><strong>原因</strong>：在 <code>@Transactional</code> 范围内，Spring 事务管理器将 <code>SqlSession</code> 绑定到 <code>ThreadLocal</code>，事务内的所有 Mapper 调用复用同一个 <code>SqlSession</code>，因此一级缓存生效。</p>
+<h4 id="总结一级缓存在-spring-整合后的表现">总结：一级缓存在 Spring 整合后的表现</h4>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th><code>SqlSession</code> 生命周期</th>
+<th>一级缓存</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>纯 MyBatis</td>
+<td>开发者手动管理（<code>try-with-resources</code>）</td>
+<td>在 <code>SqlSession</code> 关闭前有效</td>
+</tr>
+<tr>
+<td>Spring 无事务</td>
+<td>每次 Mapper 调用创建/关闭一个 <code>SqlSession</code></td>
+<td><strong>基本失效</strong></td>
+</tr>
+<tr>
+<td>Spring 有事务</td>
+<td>事务范围内共享同一个 <code>SqlSession</code></td>
+<td>在事务范围内有效</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>为什么说&quot;基本失效&quot;</strong>：在实际项目中，大部分查询操作（特别是 Controller 直接调 Service 的简单查询）不会加 <code>@Transactional</code>，因此一级缓存在大多数场景下不起作用。这也是为什么很多团队直接将一级缓存的作用域设置为 <code>STATEMENT</code>（每次执行完就清空），明确放弃一级缓存：</p>
+<pre><code class="language-yaml">mybatis:
+  configuration:
+    local-cache-scope: STATEMENT  # 每次查询后立即清空一级缓存
+</code></pre>
+</blockquote>
+<h3 id="二级缓存不受影响">二级缓存不受影响</h3>
+<p>二级缓存是 <code>namespace</code>（Mapper）级别的，不依赖特定的 <code>SqlSession</code> 实例。它存储在 <code>SqlSessionFactory</code> 的全局空间中，跨 <code>SqlSession</code> 共享。因此，<strong>二级缓存在 Spring 整合后行为不变</strong>。</p>
+<p>但需要注意的是：</p>
+<ul>
+<li>在 <code>@Transactional</code> 事务提交后，事务中的查询结果才会写入二级缓存</li>
+<li>事务回滚时，不会写入二级缓存</li>
+<li>生产环境是否使用二级缓存需要谨慎评估（参见第七章 7.4 节）</li>
+</ul>
+<h3 id="实践建议-1">实践建议</h3>
+<table>
+<thead>
+<tr>
+<th>建议</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>不要依赖一级缓存</td>
+<td>Spring 整合后一级缓存在无事务场景下失效，不要基于它做性能优化假设</td>
+</tr>
+<tr>
+<td>设置 <code>local-cache-scope: STATEMENT</code></td>
+<td>在配置中明确关闭一级缓存，避免在事务内出现脏读的意外行为</td>
+</tr>
+<tr>
+<td>谨慎使用二级缓存</td>
+<td>适合读多写少、对实时性要求不高的数据。对一致性要求高的场景，使用分布式缓存（如 Redis）</td>
+</tr>
+<tr>
+<td>缓存策略外置</td>
+<td>推荐在 Service 层或专门的缓存层使用 Spring Cache（<code>@Cacheable</code>）配合 Redis，而不是依赖 MyBatis 内置缓存</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MyBatis-Spring 三大组件</td>
+<td><code>SqlSessionFactoryBean</code>（创建工厂）、<code>MapperScannerConfigurer</code>（注册 Mapper）、<code>SqlSessionTemplate</code>（线程安全 SqlSession）</td>
+</tr>
+<tr>
+<td>SqlSessionTemplate 线程安全原理</td>
+<td>通过 JDK 动态代理 + <code>TransactionSynchronizationManager</code>（ThreadLocal），每次调用从当前线程获取专属 SqlSession</td>
+</tr>
+<tr>
+<td>Spring Boot 自动配置</td>
+<td>引入 <code>mybatis-spring-boot-starter</code>，配置 <code>application.yml</code> 即可，自动创建 SqlSessionFactory + SqlSessionTemplate</td>
+</tr>
+<tr>
+<td>@MapperScan vs @Mapper</td>
+<td><code>@MapperScan</code> 包扫描（推荐），<code>@Mapper</code> 逐个标注</td>
+</tr>
+<tr>
+<td>多数据源</td>
+<td>每个数据源独立配置 DataSource → SqlSessionFactory → SqlSessionTemplate → TransactionManager</td>
+</tr>
+<tr>
+<td>Spring 事务与 MyBatis 协作</td>
+<td>通过 ThreadLocal 共享同一个 Connection，事务由 Spring 统一管理</td>
+</tr>
+<tr>
+<td>@Transactional 失效场景</td>
+<td>非 public、同类调用、异常类型不匹配、异常被吞、propagation 不当、数据库不支持、类未被 Spring 管理、多线程</td>
+</tr>
+<tr>
+<td>整合后一级缓存</td>
+<td>无事务时基本失效（每次调用新建 SqlSession），有事务时在事务范围内有效</td>
+</tr>
+<tr>
+<td>整合后二级缓存</td>
+<td>不受影响，但生产环境建议使用 Spring Cache + Redis 替代</td>
+</tr>
+</tbody>
+</table>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1968 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第02课-文本组件">第02课 文本组件</h1>
+<blockquote>
+<p>文本是任何应用中最基础、最常见的 UI 元素。Flutter 提供了一套功能丰富的文本组件体系，从简单的单行文字到复杂的富文本排版，再到可选中、可交互的文本，均有对应的解决方案。本课将系统讲解 Flutter 中所有常用的文本组件及其核心用法。</p>
+</blockquote>
+<hr />
+<h2 id="1-text-组件">1. Text 组件</h2>
+<p><code>Text</code> 是 Flutter 中最基础、使用频率最高的文本组件。它用于在界面上显示一段样式统一的文本。</p>
+<h3 id="11-基础用法">1.1 基础用法</h3>
+<p>最简单的用法只需要传入一个字符串：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Text 基础用法')),
+        body: const Center(
+          child: Text('Hello, Flutter!'),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="12-textstyle-详解">1.2 TextStyle 详解</h3>
+<p><code>TextStyle</code> 是控制文本外观的核心类，可以设置字体大小、粗细、颜色、间距、装饰线等多种属性。</p>
+<h4 id="121-fontsize--字体大小">1.2.1 fontSize —— 字体大小</h4>
+<p><code>fontSize</code> 的单位是逻辑像素（logical pixels），Flutter 默认字体大小为 14.0。</p>
+<pre><code class="language-dart">Text(
+  '这是 24 像素的文字',
+  style: TextStyle(fontSize: 24.0),
+)
+</code></pre>
+<h4 id="122-fontweight--字体粗细">1.2.2 fontWeight —— 字体粗细</h4>
+<p><code>fontWeight</code> 控制字体的粗细程度，取值范围从 <code>FontWeight.w100</code>（最细）到 <code>FontWeight.w900</code>（最粗）。常用的 <code>FontWeight.bold</code> 等同于 <code>FontWeight.w700</code>。</p>
+<pre><code class="language-dart">Text(
+  '粗体文字',
+  style: TextStyle(fontWeight: FontWeight.bold),
+)
+</code></pre>
+<h4 id="123-color--文字颜色">1.2.3 color —— 文字颜色</h4>
+<pre><code class="language-dart">Text(
+  '红色文字',
+  style: TextStyle(color: Colors.red),
+)
+</code></pre>
+<h4 id="124-letterspacing-与-wordspacing--字符间距与单词间距">1.2.4 letterSpacing 与 wordSpacing —— 字符间距与单词间距</h4>
+<ul>
+<li><code>letterSpacing</code>：每个字符之间的额外间距（对中文来说就是每个汉字之间的间距）</li>
+<li><code>wordSpacing</code>：每个单词之间的额外间距（以空格为分隔符，对纯中文无明显效果）</li>
+</ul>
+<pre><code class="language-dart">Text(
+  'Hello Flutter World 你好世界',
+  style: TextStyle(
+    letterSpacing: 4.0,  // 字符间距
+    wordSpacing: 10.0,   // 单词间距
+  ),
+)
+</code></pre>
+<h4 id="125-height--行高">1.2.5 height —— 行高</h4>
+<p><code>height</code> 是一个倍数因子，实际行高 = <code>fontSize * height</code>。例如 <code>fontSize</code> 为 16，<code>height</code> 为 1.5，则实际行高为 24 逻辑像素。不设置时 Flutter 会使用字体自带的默认行高。</p>
+<pre><code class="language-dart">Text(
+  '这是一段多行文本，用于演示行高的效果。'
+  '当文本内容较长时，设置合适的行高可以提升可读性。'
+  '一般正文建议行高倍数为 1.4 ~ 1.8。',
+  style: TextStyle(
+    fontSize: 16.0,
+    height: 1.6, // 行高倍数
+  ),
+)
+</code></pre>
+<h4 id="126-decoration--装饰线">1.2.6 decoration —— 装饰线</h4>
+<p><code>decoration</code> 用于添加文本装饰线（下划线、删除线、上划线），配合 <code>decorationColor</code>、<code>decorationStyle</code> 和 <code>decorationThickness</code> 使用。</p>
+<pre><code class="language-dart">Text(
+  '带下划线的文字',
+  style: TextStyle(
+    decoration: TextDecoration.underline,
+    decorationColor: Colors.blue,
+    decorationStyle: TextDecorationStyle.dashed, // 虚线下划线
+    decorationThickness: 2.0, // 装饰线粗细
+  ),
+)
+</code></pre>
+<p><code>TextDecoration</code> 提供以下常量：</p>
+<ul>
+<li><code>TextDecoration.none</code> —— 无装饰</li>
+<li><code>TextDecoration.underline</code> —— 下划线</li>
+<li><code>TextDecoration.overline</code> —— 上划线</li>
+<li><code>TextDecoration.lineThrough</code> —— 删除线</li>
+</ul>
+<p>也可以组合多种装饰：</p>
+<pre><code class="language-dart">TextDecoration.combine([
+  TextDecoration.underline,
+  TextDecoration.overline,
+])
+</code></pre>
+<h4 id="127-完整-textstyle-示例">1.2.7 完整 TextStyle 示例</h4>
+<p>下面的示例演示了 <code>TextStyle</code> 的主要属性组合使用：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('TextStyle 详解')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 基础样式
+              const Text(
+                '默认样式文本',
+              ),
+              const SizedBox(height: 12),
+
+              // 字体大小与粗细
+              const Text(
+                '大号粗体文本',
+                style: TextStyle(
+                  fontSize: 28.0,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // 颜色与斜体
+              const Text(
+                '蓝色斜体文本',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontStyle: FontStyle.italic,
+                  fontSize: 18.0,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // 字符间距
+              const Text(
+                '宽 字 符 间 距',
+                style: TextStyle(
+                  letterSpacing: 8.0,
+                  fontSize: 18.0,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // 行高
+              const Text(
+                '这是一段较长的文本，用来演示行高属性的效果。'
+                '合适的行高能让多行文本更易阅读，'
+                '推荐正文使用 1.5 到 1.8 的行高倍数。',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  height: 1.8,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // 装饰线
+              const Text(
+                '删除线效果（原价 ¥299）',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  decoration: TextDecoration.lineThrough,
+                  decorationColor: Colors.red,
+                  decorationThickness: 2.0,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // 阴影效果
+              Text(
+                '带阴影的文字',
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  shadows: [
+                    Shadow(
+                      offset: const Offset(2.0, 2.0),
+                      blurRadius: 4.0,
+                      color: Colors.grey.shade400,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="13-textalign--文本对齐">1.3 textAlign —— 文本对齐</h3>
+<p><code>textAlign</code> 控制文本在其布局区域内的水平对齐方式。<strong>注意：只有当 <code>Text</code> 组件的宽度大于文本实际宽度时，对齐才会有可见的效果。</strong></p>
+<p>可用的对齐方式：</p>
+<ul>
+<li><code>TextAlign.left</code> —— 左对齐（默认）</li>
+<li><code>TextAlign.right</code> —— 右对齐</li>
+<li><code>TextAlign.center</code> —— 居中对齐</li>
+<li><code>TextAlign.justify</code> —— 两端对齐（自动调整单词间距使文本填满整行）</li>
+<li><code>TextAlign.start</code> —— 根据文本方向对齐（LTR 时等于 left，RTL 时等于 right）</li>
+<li><code>TextAlign.end</code> —— 与 start 相反</li>
+</ul>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('文本对齐')),
+        body: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                '左对齐（默认）',
+                textAlign: TextAlign.left,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 16),
+              Text(
+                '居中对齐',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 16),
+              Text(
+                '右对齐',
+                textAlign: TextAlign.right,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 16),
+              Text(
+                '两端对齐：这是一段较长的文本内容，用来演示 justify 的效果，'
+                '两端对齐会自动调整单词和字符之间的间距来填满整行。',
+                textAlign: TextAlign.justify,
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="14-overflow--溢出处理">1.4 overflow —— 溢出处理</h3>
+<p>当文本内容超过可用空间时，<code>overflow</code> 决定如何处理溢出的部分：</p>
+<ul>
+<li><code>TextOverflow.clip</code> —— 直接裁剪（默认）</li>
+<li><code>TextOverflow.fade</code> —— 渐隐效果</li>
+<li><code>TextOverflow.ellipsis</code> —— 显示省略号 <code>...</code></li>
+<li><code>TextOverflow.visible</code> —— 允许溢出显示</li>
+</ul>
+<h3 id="15-maxlines--最大行数">1.5 maxLines —— 最大行数</h3>
+<p><code>maxLines</code> 限制文本显示的最大行数，超出部分按 <code>overflow</code> 设置处理。<code>maxLines</code> 和 <code>overflow</code> 通常搭配使用。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const longText = '这是一段很长的文本内容，用于演示文本溢出和最大行数的处理效果。'
+        'Flutter 提供了多种溢出处理方式，包括裁剪、渐隐和省略号。'
+        '在实际开发中，我们经常需要限制文本的显示行数，'
+        '比如列表项中的简介、新闻摘要等场景。';
+
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('溢出与最大行数')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 省略号处理
+              const Text('1. maxLines + ellipsis:',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              const Text(
+                longText,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 15),
+              ),
+              const SizedBox(height: 20),
+
+              // 渐隐处理
+              const Text('2. maxLines + fade:',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              const Text(
+                longText,
+                maxLines: 2,
+                overflow: TextOverflow.fade,
+                style: TextStyle(fontSize: 15),
+              ),
+              const SizedBox(height: 20),
+
+              // 直接裁剪
+              const Text('3. maxLines + clip (默认):',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              const Text(
+                longText,
+                maxLines: 2,
+                overflow: TextOverflow.clip,
+                style: TextStyle(fontSize: 15),
+              ),
+              const SizedBox(height: 20),
+
+              // 不限制行数
+              const Text('4. 不限制行数（完整显示）:',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              const Text(
+                longText,
+                style: TextStyle(fontSize: 15),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践：</strong> 在列表项、卡片标题等有限空间中，务必设置 <code>maxLines</code> 和 <code>overflow: TextOverflow.ellipsis</code>，防止文本溢出导致布局异常。</p>
+</blockquote>
+<h3 id="16-其他常用属性">1.6 其他常用属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>textScaler</code></td>
+<td><code>TextScaler</code></td>
+<td>文本缩放因子，替代已弃用的 <code>textScaleFactor</code></td>
+</tr>
+<tr>
+<td><code>softWrap</code></td>
+<td><code>bool</code></td>
+<td>是否自动换行，默认为 <code>true</code></td>
+</tr>
+<tr>
+<td><code>textDirection</code></td>
+<td><code>TextDirection</code></td>
+<td>文本方向（LTR 或 RTL）</td>
+</tr>
+<tr>
+<td><code>strutStyle</code></td>
+<td><code>StrutStyle</code></td>
+<td>设置支撑样式，用于精确控制行高</td>
+</tr>
+<tr>
+<td><code>semanticsLabel</code></td>
+<td><code>String</code></td>
+<td>无障碍标签，辅助功能读取时使用</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-textrich-与-textspan">2. Text.rich 与 TextSpan</h2>
+<p>当需要在同一行或同一段文本中混合使用不同的样式时，单一的 <code>Text</code> 组件无法胜任——这时就需要 <code>Text.rich</code> 和 <code>TextSpan</code>。</p>
+<h3 id="21-基本概念">2.1 基本概念</h3>
+<ul>
+<li><code>Text.rich</code> 是 <code>Text</code> 的一个命名构造函数，接收一个 <code>InlineSpan</code>（通常是 <code>TextSpan</code>）而非纯字符串</li>
+<li><code>TextSpan</code> 表示一段带样式的文本片段，支持通过 <code>children</code> 属性嵌套多个子 <code>TextSpan</code></li>
+<li>每个 <code>TextSpan</code> 可以有独立的 <code>style</code>、<code>text</code> 和 <code>recognizer</code>（手势识别）</li>
+</ul>
+<h3 id="22-富文本拼接">2.2 富文本拼接</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Text.rich 富文本')),
+        body: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 基础富文本拼接
+              Text.rich(
+                TextSpan(
+                  text: '欢迎使用 ', // 默认样式部分
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                  children: [
+                    TextSpan(
+                      text: 'Flutter',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' 进行开发！',
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 24),
+
+              // 模拟&quot;价格标签&quot;场景
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '¥',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextSpan(
+                      text: '199',
+                      style: TextStyle(
+                        fontSize: 28,
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextSpan(
+                      text: '.00',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.red,
+                      ),
+                    ),
+                    TextSpan(
+                      text: '  ¥399',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                        decoration: TextDecoration.lineThrough,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="23-嵌套-textspan">2.3 嵌套 TextSpan</h3>
+<p><code>TextSpan</code> 支持多层嵌套，子 <code>TextSpan</code> 会继承父级的 <code>style</code>（未显式设置的属性会从父级继承）：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('嵌套 TextSpan')),
+        body: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text.rich(
+            TextSpan(
+              // 顶层样式：所有子节点默认继承此样式
+              style: TextStyle(fontSize: 16, color: Colors.black87),
+              children: [
+                TextSpan(text: '这是普通文字，'),
+                TextSpan(
+                  text: '这段是粗体',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  children: [
+                    // 嵌套的子节点会继承父级的 bold 样式
+                    TextSpan(
+                      text: '（继承粗体并添加红色）',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+                TextSpan(text: '，回到普通样式。'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项：</strong> <code>TextSpan</code> 的样式继承是&quot;合并&quot;式的——子 <code>TextSpan</code> 只覆盖显式设置的属性，其余属性从父级继承。这与 CSS 的样式继承机制类似。</p>
+</blockquote>
+<h3 id="24-gesturerecognizer--部分文字可点击">2.4 GestureRecognizer —— 部分文字可点击</h3>
+<p><code>TextSpan</code> 的 <code>recognizer</code> 属性接收一个 <code>GestureRecognizer</code>，可以让某一段文字响应手势（如点击）。这在实现&quot;同意协议&quot;&quot;阅读更多&quot;等场景时非常有用。</p>
+<p><strong>注意：使用 <code>GestureRecognizer</code> 时必须在 <code>dispose</code> 中释放它，否则会导致内存泄漏。</strong></p>
+<pre><code class="language-dart">import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const AgreementPage(),
+    );
+  }
+}
+
+class AgreementPage extends StatefulWidget {
+  const AgreementPage({super.key});
+
+  @override
+  State&lt;AgreementPage&gt; createState() =&gt; _AgreementPageState();
+}
+
+class _AgreementPageState extends State&lt;AgreementPage&gt; {
+  // 必须持有 recognizer 的引用，以便在 dispose 中释放
+  late final TapGestureRecognizer _termsRecognizer;
+  late final TapGestureRecognizer _privacyRecognizer;
+
+  @override
+  void initState() {
+    super.initState();
+    _termsRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        // 跳转到用户协议页面
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('点击了用户协议')),
+        );
+      };
+    _privacyRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        // 跳转到隐私政策页面
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('点击了隐私政策')),
+        );
+      };
+  }
+
+  @override
+  void dispose() {
+    // 释放手势识别器，防止内存泄漏
+    _termsRecognizer.dispose();
+    _privacyRecognizer.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('协议同意场景')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text.rich(
+          TextSpan(
+            style: const TextStyle(fontSize: 14, color: Colors.black87),
+            children: [
+              const TextSpan(text: '注册即表示您同意'),
+              TextSpan(
+                text: '《用户协议》',
+                style: const TextStyle(color: Colors.blue),
+                recognizer: _termsRecognizer,
+              ),
+              const TextSpan(text: '和'),
+              TextSpan(
+                text: '《隐私政策》',
+                style: const TextStyle(color: Colors.blue),
+                recognizer: _privacyRecognizer,
+              ),
+              const TextSpan(text: '。'),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践：</strong> 对于可点击的文字链接，建议使用不同的颜色（如蓝色）和下划线来提示用户该文本可以交互，提升可发现性。</p>
+</blockquote>
+<hr />
+<h2 id="3-richtext-组件">3. RichText 组件</h2>
+<p><code>RichText</code> 是一个更底层的富文本组件，它直接接收 <code>InlineSpan</code> 并渲染。</p>
+<h3 id="31-基本用法">3.1 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('RichText 示例')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: RichText(
+            text: const TextSpan(
+              style: TextStyle(fontSize: 16, color: Colors.black),
+              children: [
+                TextSpan(text: '使用 '),
+                TextSpan(
+                  text: 'RichText',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
+                    fontSize: 20,
+                  ),
+                ),
+                TextSpan(text: ' 组件可以实现'),
+                TextSpan(
+                  text: '灵活的富文本排版',
+                  style: TextStyle(
+                    color: Colors.orange,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                TextSpan(text: '。'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="32-richtext-中嵌入-widget--widgetspan">3.2 RichText 中嵌入 Widget —— WidgetSpan</h3>
+<p><code>RichText</code> 的一大优势是支持 <code>WidgetSpan</code>，可以在文本中内嵌任意 Widget（如图标、图片、标签等）：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('WidgetSpan 示例')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: RichText(
+            text: TextSpan(
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
+              children: [
+                const TextSpan(text: '点击 '),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.middle,
+                  child: Icon(
+                    Icons.favorite,
+                    color: Colors.red,
+                    size: 20,
+                  ),
+                ),
+                const TextSpan(text: ' 收藏本文，点击 '),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.middle,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Text(
+                      'NEW',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const TextSpan(text: ' 查看最新内容。'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="33-textrich-与-richtext-的区别">3.3 Text.rich 与 RichText 的区别</h3>
+<p><code>Text.rich</code> 和 <code>RichText</code> 都可以实现富文本，但存在以下关键区别：</p>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>Text.rich</th>
+<th>RichText</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>本质</strong></td>
+<td><code>Text</code> 的命名构造函数，内部使用 <code>RichText</code></td>
+<td>独立的 Widget，直接渲染 <code>InlineSpan</code></td>
+</tr>
+<tr>
+<td><strong>默认样式继承</strong></td>
+<td>自动继承 <code>DefaultTextStyle</code></td>
+<td><strong>不会</strong>自动继承 <code>DefaultTextStyle</code>，需手动指定</td>
+</tr>
+<tr>
+<td><strong>文本方向</strong></td>
+<td>从 <code>Directionality</code> 自动获取</td>
+<td>必须通过 <code>textDirection</code> 参数或 <code>Directionality</code> 提供</td>
+</tr>
+<tr>
+<td><strong>selectionColor</strong></td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td><strong>使用场景</strong></td>
+<td>大多数富文本场景</td>
+<td>需要完全控制文本样式、不希望被外层默认样式影响时</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Text.rich vs RichText')),
+        body: const Padding(
+          padding: EdgeInsets.all(16.0),
+          // 设置默认文本样式
+          child: DefaultTextStyle(
+            style: TextStyle(fontSize: 20, color: Colors.green),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Text.rich 会继承 DefaultTextStyle（绿色 20px）
+                Text('普通 Text：继承了绿色大字'),
+                SizedBox(height: 16),
+
+                Text.rich(
+                  TextSpan(
+                    text: 'Text.rich：',
+                    children: [
+                      TextSpan(
+                        text: '也继承了绿色大字',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 16),
+
+                // 注意：这里由于 RichText 不继承 DefaultTextStyle，
+                // 所以如果不手动指定，文字可能显示为默认的白色（不可见）
+                // 必须在 TextSpan 中显式设置样式
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践：</strong> 在大多数场景下，优先使用 <code>Text.rich</code>，因为它能自动继承 <code>DefaultTextStyle</code>，代码更简洁。只有在需要完全控制文本样式（不受外层默认样式影响）时，才使用 <code>RichText</code>。</p>
+</blockquote>
+<hr />
+<h2 id="4-selectabletext-组件">4. SelectableText 组件</h2>
+<p>默认情况下，Flutter 中的 <code>Text</code> 组件是不可选中的。当用户需要复制文本内容时（如文章正文、错误信息、地址等），应使用 <code>SelectableText</code>。</p>
+<h3 id="41-基本用法">4.1 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('SelectableText 示例')),
+        body: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '这是普通 Text，不可选中复制',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              SelectableText(
+                '这是 SelectableText，长按或拖动可以选中文字并复制。'
+                '在需要用户复制内容的场景下非常实用，'
+                '比如订单号、联系方式、文章内容等。',
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="42-ontap-回调与交互控制">4.2 onTap 回调与交互控制</h3>
+<p><code>SelectableText</code> 支持 <code>onTap</code> 回调和 <code>onSelectionChanged</code> 回调，还可以通过 <code>showCursor</code>、<code>cursorColor</code>、<code>cursorWidth</code> 等属性自定义光标样式：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const SelectableTextDemo(),
+    );
+  }
+}
+
+class SelectableTextDemo extends StatefulWidget {
+  const SelectableTextDemo({super.key});
+
+  @override
+  State&lt;SelectableTextDemo&gt; createState() =&gt; _SelectableTextDemoState();
+}
+
+class _SelectableTextDemoState extends State&lt;SelectableTextDemo&gt; {
+  String _selectedText = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('SelectableText 交互')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SelectableText(
+              '订单编号：FL20260324001\n'
+              '收货地址：北京市朝阳区某某路100号\n'
+              '联系电话：138-0000-0000',
+              style: const TextStyle(fontSize: 16, height: 1.8),
+              showCursor: true,
+              cursorColor: Colors.blue,
+              cursorWidth: 2.0,
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('提示：长按可选择文字'),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
+              },
+              onSelectionChanged: (selection, cause) {
+                // 获取选中的文本
+                const fullText = '订单编号：FL20260324001\n'
+                    '收货地址：北京市朝阳区某某路100号\n'
+                    '联系电话：138-0000-0000';
+                if (selection.start != selection.end) {
+                  setState(() {
+                    _selectedText = fullText.substring(
+                      selection.start,
+                      selection.end,
+                    );
+                  });
+                }
+              },
+            ),
+            const SizedBox(height: 20),
+            Text(
+              '当前选中: $_selectedText',
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="43-selectabletextrich--可选中的富文本">4.3 SelectableText.rich —— 可选中的富文本</h3>
+<p><code>SelectableText</code> 也有 <code>rich</code> 构造函数，用于创建可选中的富文本：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('SelectableText.rich')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SelectableText.rich(
+            TextSpan(
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
+              children: const [
+                TextSpan(text: '这是一段'),
+                TextSpan(
+                  text: '可选中的富文本',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextSpan(text: '，你可以选中其中任意部分进行复制。'),
+                TextSpan(
+                  text: '\n\n红色加粗部分',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                TextSpan(text: '也可以被选中。'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项：</strong></p>
+<ul>
+<li><code>SelectableText</code> 不支持 <code>maxLines</code> 和 <code>overflow</code> 属性（因为可选中的文本需要完整展示）</li>
+<li><code>SelectableText</code> 不支持 <code>TextSpan</code> 的 <code>recognizer</code> 属性，如需同时支持可选和可点击，需要考虑使用 <code>SelectionArea</code> 包裹 <code>Text.rich</code> 的方案</li>
+<li>在 Flutter 3.3+ 中，可以使用 <code>SelectionArea</code> 组件包裹任意子树来实现区域内文本可选</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="5-defaulttextstyle-组件">5. DefaultTextStyle 组件</h2>
+<p><code>DefaultTextStyle</code> 是一个 <code>InheritedWidget</code>，它可以为子树中所有未显式设置样式的 <code>Text</code> 组件提供默认样式。</p>
+<h3 id="51-使用场景">5.1 使用场景</h3>
+<p>在实际开发中，一个页面或模块内的多个文本常常共享相同的基础样式（字体大小、颜色等）。如果逐一设置会产生大量重复代码，此时可以使用 <code>DefaultTextStyle</code> 统一管理。</p>
+<h3 id="52-基本用法">5.2 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('DefaultTextStyle 示例')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 使用 DefaultTextStyle 统一设置子树中的文本样式
+              DefaultTextStyle(
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.indigo,
+                  height: 1.6,
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('这段文字继承了默认样式：靛蓝色、18px、1.6倍行高'),
+                    SizedBox(height: 8),
+                    Text('这段文字也继承了相同的默认样式'),
+                    SizedBox(height: 8),
+                    // 局部覆盖部分样式
+                    Text(
+                      '这段文字覆盖了颜色为红色',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // DefaultTextStyle 作用域之外的文字不受影响
+              const Text(
+                '这段文字在 DefaultTextStyle 作用域之外，使用应用级默认样式',
+                style: TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="53-merge-行为">5.3 merge 行为</h3>
+<p><code>DefaultTextStyle.merge</code> 可以在已有默认样式基础上合并新的样式，而不是完全替换。这在需要局部微调样式时非常有用：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('DefaultTextStyle.merge')),
+        body: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: DefaultTextStyle(
+            // 外层默认样式：16px、黑色、普通粗细
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+              fontWeight: FontWeight.normal,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('继承外层样式：16px、黑色、普通粗细'),
+                SizedBox(height: 16),
+
+                // merge 方式：在已有基础上叠加 bold，保留 fontSize 和 color
+                DefaultTextStyle.merge(
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('merge 后：16px、黑色、粗体（只覆盖了 fontWeight）'),
+                      SizedBox(height: 8),
+
+                      // 再次 merge：叠加颜色，保留 fontSize 和 bold
+                      DefaultTextStyle.merge(
+                        style: TextStyle(color: Colors.deepOrange),
+                        child: Text(
+                          '二次 merge：16px、深橙色、粗体',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="54-defaulttextstyle-的工作原理">5.4 DefaultTextStyle 的工作原理</h3>
+<p>当 <code>Text</code> 组件构建时，如果没有设置 <code>style</code>，或者 <code>style</code> 中某些属性为 <code>null</code>，它会通过 <code>DefaultTextStyle.of(context)</code> 获取最近的祖先 <code>DefaultTextStyle</code> 的样式，然后将二者合并。合并规则是：</p>
+<ol>
+<li><code>Text</code> 自身的 <code>style</code> 中<strong>显式设置的属性</strong>优先</li>
+<li>未设置的属性从 <code>DefaultTextStyle</code> 继承</li>
+<li>如果连 <code>DefaultTextStyle</code> 也没有设置，则使用 Flutter 框架的默认值</li>
+</ol>
+<pre><code class="language-dart">// 等效的手动合并写法
+final effectiveStyle = DefaultTextStyle.of(context).style.merge(widget.style);
+</code></pre>
+<blockquote>
+<p><strong>注意事项：</strong></p>
+<ul>
+<li><code>DefaultTextStyle</code> 的 <code>softWrap</code>、<code>overflow</code>、<code>maxLines</code>、<code>textWidthBasis</code> 也会被子 <code>Text</code> 继承</li>
+<li><code>RichText</code> <strong>不会</strong>继承 <code>DefaultTextStyle</code>，这是 <code>Text</code> / <code>Text.rich</code> 与 <code>RichText</code> 的重要区别</li>
+<li><code>MaterialApp</code> 和 <code>Scaffold</code> 会默认在组件树中注入 <code>DefaultTextStyle</code>，这就是为什么即使不设置 style，Text 也有默认外观</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="6-本课小结">6. 本课小结</h2>
+<p>本课系统学习了 Flutter 中的五大文本组件：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>核心用途</th>
+<th>关键特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Text</strong></td>
+<td>显示单一样式文本</td>
+<td>最基础、最常用；支持 TextStyle、对齐、溢出处理</td>
+</tr>
+<tr>
+<td><strong>Text.rich</strong></td>
+<td>显示混合样式的富文本</td>
+<td>基于 TextSpan 拼接；自动继承 DefaultTextStyle</td>
+</tr>
+<tr>
+<td><strong>RichText</strong></td>
+<td>底层富文本渲染</td>
+<td>不继承 DefaultTextStyle；支持 WidgetSpan</td>
+</tr>
+<tr>
+<td><strong>SelectableText</strong></td>
+<td>可选中复制的文本</td>
+<td>支持 onTap、onSelectionChanged；有 rich 构造</td>
+</tr>
+<tr>
+<td><strong>DefaultTextStyle</strong></td>
+<td>统一子树文本样式</td>
+<td>InheritedWidget；支持 merge 合并行为</td>
+</tr>
+</tbody>
+</table>
+<p><strong>核心要点回顾：</strong></p>
+<ol>
+<li><code>TextStyle</code> 是控制文本外观的核心，熟练掌握 <code>fontSize</code>、<code>fontWeight</code>、<code>color</code>、<code>height</code>、<code>letterSpacing</code>、<code>decoration</code> 等属性</li>
+<li>富文本使用 <code>Text.rich</code> + <code>TextSpan</code>，通过嵌套实现不同片段不同样式</li>
+<li><code>TextSpan</code> 的 <code>recognizer</code> 可以实现部分文字可点击，但注意在 <code>dispose</code> 中释放</li>
+<li><code>RichText</code> 与 <code>Text.rich</code> 的最大区别：是否自动继承 <code>DefaultTextStyle</code></li>
+<li><code>SelectableText</code> 用于需要复制文本的场景，但不支持 <code>maxLines</code> 和 <code>overflow</code></li>
+<li><code>DefaultTextStyle</code> 通过 <code>InheritedWidget</code> 机制向下传递样式，<code>merge</code> 方法可以叠加而非替换样式</li>
+</ol>
+<hr />
+<h2 id="7-练习题">7. 练习题</h2>
+<h3 id="练习一商品价格标签">练习一：商品价格标签</h3>
+<p>实现一个商品价格显示组件，要求：</p>
+<ul>
+<li>显示&quot;会员价&quot;三个字（灰色小字）</li>
+<li>接着显示 &quot;¥&quot; 符号（红色 14px）</li>
+<li>接着显示价格整数部分（红色 28px 粗体）</li>
+<li>接着显示价格小数部分（红色 14px）</li>
+<li>最后显示原价，带删除线（灰色小字）</li>
+</ul>
+<p>提示：使用 <code>Text.rich</code> 和多个 <code>TextSpan</code>。</p>
+<h3 id="练习二用户协议富文本">练习二：用户协议富文本</h3>
+<p>实现一段注册协议文字：<br />
+&quot;点击注册即表示您已阅读并同意《服务条款》和《隐私政策》&quot;</p>
+<p>要求：</p>
+<ul>
+<li>&quot;《服务条款》&quot;和&quot;《隐私政策》&quot;为蓝色，可点击（点击后弹出 SnackBar 提示）</li>
+<li>其余文字为默认样式</li>
+<li>注意正确管理 <code>GestureRecognizer</code> 的生命周期</li>
+</ul>
+<h3 id="练习三文章预览卡片">练习三：文章预览卡片</h3>
+<p>使用 <code>Card</code> + <code>Column</code> 实现一个文章预览卡片：</p>
+<ul>
+<li>标题：最多 1 行，超出显示省略号，字体 18px 粗体</li>
+<li>摘要：最多 3 行，超出显示省略号，字体 14px，行高 1.6</li>
+<li>全文：使用 <code>SelectableText</code>，允许用户选中复制</li>
+<li>使用 <code>DefaultTextStyle</code> 为卡片内所有文本设置统一的字体和颜色</li>
+</ul>
+<h3 id="练习四样式继承实验">练习四：样式继承实验</h3>
+<p>创建一个嵌套的 <code>DefaultTextStyle</code> 结构，验证以下行为：</p>
+<ol>
+<li>子 <code>Text</code> 不设置 style 时完全继承父级样式</li>
+<li>子 <code>Text</code> 设置部分 style 属性时，只覆盖设置的属性，其余继承</li>
+<li><code>DefaultTextStyle.merge</code> 和直接使用 <code>DefaultTextStyle</code> 的区别</li>
+<li><code>RichText</code> 是否会继承 <code>DefaultTextStyle</code>（预期答案：不会）</li>
+</ol>
+<hr />
+<blockquote>
+<p><strong>下一课预告：</strong> 第03课将学习 Flutter 中的按钮组件体系，包括 <code>ElevatedButton</code>、<code>TextButton</code>、<code>OutlinedButton</code>、<code>IconButton</code> 等，以及 <code>ButtonStyle</code> 的深度定制。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

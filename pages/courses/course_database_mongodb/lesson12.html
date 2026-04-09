@@ -1,0 +1,1854 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第12章-gridfs-文件存储">第12章 GridFS 文件存储</h1>
+<blockquote>
+<p>MongoDB 的文档大小上限为 16MB，但实际项目中经常需要存储图片、视频、PDF 等大文件。
+GridFS 是 MongoDB 提供的一种文件存储规范，它将大文件拆分为多个小块（chunk）分别存储，
+突破了 16MB 的限制。本章将从原理到实践，系统讲解 GridFS 的使用方法。</p>
+</blockquote>
+<hr />
+<h2 id="121-gridfs-的原理与适用场景">12.1 GridFS 的原理与适用场景</h2>
+<h3 id="1211-gridfs-的工作原理">12.1.1 GridFS 的工作原理</h3>
+<p>GridFS 并不是一个独立的存储引擎，而是 MongoDB 驱动层面的一种<strong>文件存储规范</strong>。它将一个文件拆分为多个固定大小的 chunk（默认 255KB），分别存储在两个集合中：</p>
+<pre><code>                        ┌─────────────────────┐
+   大文件（如 10MB）     │     GridFS 存储      │
+  ──────────────────&gt;   │                     │
+                        │  fs.files 集合       │  ← 文件元数据（文件名、大小、类型等）
+                        │  ┌─────────────┐    │
+                        │  │ fileId       │    │
+                        │  │ filename     │    │
+                        │  │ length       │    │
+                        │  │ chunkSize    │    │
+                        │  │ uploadDate   │    │
+                        │  │ metadata     │    │
+                        │  └─────────────┘    │
+                        │                     │
+                        │  fs.chunks 集合      │  ← 文件内容（二进制数据块）
+                        │  ┌─────────────┐    │
+                        │  │ chunk 0      │    │  255KB
+                        │  │ chunk 1      │    │  255KB
+                        │  │ chunk 2      │    │  255KB
+                        │  │ ...          │    │
+                        │  │ chunk N      │    │  剩余部分
+                        │  └─────────────┘    │
+                        └─────────────────────┘
+</code></pre>
+<h3 id="1212-fsfiles-集合结构">12.1.2 fs.files 集合结构</h3>
+<p><code>fs.files</code> 存储文件的元数据信息：</p>
+<pre><code class="language-javascript">{
+    _id: ObjectId(&quot;6571abcd1234567890abcdef&quot;),  // 文件ID
+    length: 10485760,                            // 文件大小（字节）
+    chunkSize: 261120,                           // 每个 chunk 的大小（默认 255KB = 261120 字节）
+    uploadDate: ISODate(&quot;2024-01-15T08:30:00Z&quot;), // 上传时间
+    filename: &quot;report-2024.pdf&quot;,                 // 文件名
+    metadata: {                                  // 自定义元数据（可选）
+        contentType: &quot;application/pdf&quot;,
+        uploadedBy: &quot;user001&quot;,
+        department: &quot;财务部&quot;,
+        tags: [&quot;年报&quot;, &quot;2024&quot;]
+    }
+}
+</code></pre>
+<h3 id="1213-fschunks-集合结构">12.1.3 fs.chunks 集合结构</h3>
+<p><code>fs.chunks</code> 存储文件的实际二进制内容：</p>
+<pre><code class="language-javascript">{
+    _id: ObjectId(&quot;6571abce...&quot;),
+    files_id: ObjectId(&quot;6571abcd...&quot;),  // 关联 fs.files 的 _id
+    n: 0,                                // chunk 序号（从0开始）
+    data: BinData(0, &quot;base64...&quot;)        // 二进制数据
+}
+
+{
+    _id: ObjectId(&quot;6571abcf...&quot;),
+    files_id: ObjectId(&quot;6571abcd...&quot;),
+    n: 1,
+    data: BinData(0, &quot;base64...&quot;)
+}
+
+// ... 更多 chunks
+</code></pre>
+<p><strong>自动创建的索引：</strong></p>
+<pre><code class="language-javascript">// fs.files 上的索引
+{ filename: 1, uploadDate: 1 }
+
+// fs.chunks 上的索引（保证唯一性和查询效率）
+{ files_id: 1, n: 1 }  // 唯一复合索引
+</code></pre>
+<h3 id="1214-默认-chunk-大小">12.1.4 默认 chunk 大小</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>chunkSize</td>
+<td><strong>255KB</strong>（261120 字节）</td>
+<td>每个 chunk 的大小</td>
+</tr>
+<tr>
+<td>可配置范围</td>
+<td>最小不建议低于 4KB，最大不超过 16MB</td>
+<td>需要在上传时指定</td>
+</tr>
+</tbody>
+</table>
+<p><strong>chunk 大小选择建议：</strong></p>
+<ul>
+<li><strong>默认 255KB</strong> 适合大多数场景</li>
+<li><strong>较大的 chunk</strong>（如 1MB）：适合大文件顺序读取，减少 chunk 数量</li>
+<li><strong>较小的 chunk</strong>（如 64KB）：适合需要随机访问的场景，减少内存占用</li>
+</ul>
+<h3 id="1215-适用场景">12.1.5 适用场景</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>是否适合使用 GridFS</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文件大于 16MB</td>
+<td>✅ <strong>非常适合</strong></td>
+<td>GridFS 的核心用途</td>
+</tr>
+<tr>
+<td>需要部分读取大文件</td>
+<td>✅ <strong>适合</strong></td>
+<td>可以只读取特定的 chunks</td>
+</tr>
+<tr>
+<td>文件需要与业务数据在同一数据库</td>
+<td>✅ <strong>适合</strong></td>
+<td>简化架构，统一备份</td>
+</tr>
+<tr>
+<td>小于 16MB 的文件</td>
+<td>⚠️ <strong>可以但非必须</strong></td>
+<td>小文件可以直接用 BinData 存在文档中</td>
+</tr>
+<tr>
+<td>大量小文件（如缩略图）</td>
+<td>❌ <strong>不推荐</strong></td>
+<td>每个文件至少占两个文档，开销大</td>
+</tr>
+<tr>
+<td>需要 CDN 加速</td>
+<td>❌ <strong>不推荐</strong></td>
+<td>对象存储（如 OSS）更适合</td>
+</tr>
+<tr>
+<td>海量文件存储（TB级别）</td>
+<td>❌ <strong>不推荐</strong></td>
+<td>专业对象存储更合适</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="122-文件的上传下载与删除shell--mongofiles">12.2 文件的上传、下载与删除（Shell / mongofiles）</h2>
+<h3 id="1221-使用-mongofiles-命令行工具">12.2.1 使用 mongofiles 命令行工具</h3>
+<p><code>mongofiles</code> 是 MongoDB 官方提供的 GridFS 命令行工具，包含在 MongoDB Database Tools 中。</p>
+<p><strong>安装确认：</strong></p>
+<pre><code class="language-bash">mongofiles --version
+</code></pre>
+<p>如果未安装，可以从 <a href="https://www.mongodb.com/try/download/database-tools">MongoDB Database Tools</a> 下载。</p>
+<h3 id="1222-常用命令">12.2.2 常用命令</h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>put</code></td>
+<td>上传文件</td>
+<td><code>mongofiles put myfile.pdf</code></td>
+</tr>
+<tr>
+<td><code>get</code></td>
+<td>下载文件</td>
+<td><code>mongofiles get myfile.pdf</code></td>
+</tr>
+<tr>
+<td><code>delete</code></td>
+<td>删除文件</td>
+<td><code>mongofiles delete myfile.pdf</code></td>
+</tr>
+<tr>
+<td><code>list</code></td>
+<td>列出所有文件</td>
+<td><code>mongofiles list</code></td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>搜索文件</td>
+<td><code>mongofiles search report</code></td>
+</tr>
+<tr>
+<td><code>get_id</code></td>
+<td>按ID下载</td>
+<td><code>mongofiles get_id &quot;ObjectId(...)&quot;</code></td>
+</tr>
+<tr>
+<td><code>delete_id</code></td>
+<td>按ID删除</td>
+<td><code>mongofiles delete_id &quot;ObjectId(...)&quot;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="1223-完整示例">12.2.3 完整示例</h3>
+<p><strong>上传文件：</strong></p>
+<pre><code class="language-bash"># 上传到默认数据库 test
+mongofiles --db=mydb put report.pdf
+
+# 指定远程连接
+mongofiles --uri=&quot;mongodb://localhost:27017&quot; --db=mydb put report.pdf
+
+# 上传时指定存储文件名（与本地文件名不同）
+mongofiles --db=mydb put --local=./downloads/report-2024-q1.pdf &quot;reports/2024-Q1-财务报告.pdf&quot;
+
+# 使用认证连接
+mongofiles --uri=&quot;mongodb://admin:password@localhost:27017/mydb?authSource=admin&quot; put avatar.jpg
+</code></pre>
+<p><strong>列出文件：</strong></p>
+<pre><code class="language-bash"># 列出所有文件
+mongofiles --db=mydb list
+
+# 输出示例：
+# report.pdf     2485760
+# avatar.jpg     153600
+# backup.zip     52428800
+
+# 按前缀过滤
+mongofiles --db=mydb list &quot;report&quot;
+</code></pre>
+<p><strong>搜索文件：</strong></p>
+<pre><code class="language-bash"># 搜索文件名包含 &quot;report&quot; 的文件
+mongofiles --db=mydb search report
+</code></pre>
+<p><strong>下载文件：</strong></p>
+<pre><code class="language-bash"># 下载到当前目录
+mongofiles --db=mydb get report.pdf
+
+# 下载并保存为不同的文件名
+mongofiles --db=mydb get --local=./output/downloaded-report.pdf &quot;report.pdf&quot;
+</code></pre>
+<p><strong>删除文件：</strong></p>
+<pre><code class="language-bash"># 按文件名删除
+mongofiles --db=mydb delete report.pdf
+</code></pre>
+<h3 id="1224-在-shell-中查看-gridfs-数据">12.2.4 在 Shell 中查看 GridFS 数据</h3>
+<pre><code class="language-javascript">use mydb;
+
+// 查看文件元数据
+db.fs.files.find().pretty();
+
+// 查看指定文件的元数据
+db.fs.files.findOne({ filename: &quot;report.pdf&quot; });
+
+// 查看文件的 chunk 数量
+db.fs.chunks.countDocuments({ files_id: ObjectId(&quot;6571abcd1234567890abcdef&quot;) });
+
+// 查看所有文件的统计信息
+db.fs.files.aggregate([
+    {
+        $group: {
+            _id: null,
+            totalFiles: { $sum: 1 },
+            totalSize: { $sum: &quot;$length&quot; },
+            avgSize: { $avg: &quot;$length&quot; },
+            maxSize: { $max: &quot;$length&quot; }
+        }
+    },
+    {
+        $project: {
+            _id: 0,
+            totalFiles: 1,
+            totalSizeMB: { $round: [{ $divide: [&quot;$totalSize&quot;, 1048576] }, 2] },
+            avgSizeMB: { $round: [{ $divide: [&quot;$avgSize&quot;, 1048576] }, 2] },
+            maxSizeMB: { $round: [{ $divide: [&quot;$maxSize&quot;, 1048576] }, 2] }
+        }
+    }
+]);
+</code></pre>
+<hr />
+<h2 id="123-在-spring-boot-中集成-gridfs-实现文件服务">12.3 在 Spring Boot 中集成 GridFS 实现文件服务</h2>
+<h3 id="1231-gridfstemplate-配置">12.3.1 GridFsTemplate 配置</h3>
+<p>Spring Data MongoDB 内置了对 GridFS 的支持，核心类是 <code>GridFsTemplate</code>。</p>
+<p><strong>依赖（pom.xml）：</strong></p>
+<pre><code class="language-xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-data-mongodb&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<p><strong>application.yml：</strong></p>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/mydb
+  servlet:
+    multipart:
+      max-file-size: 100MB       # 最大文件大小
+      max-request-size: 100MB    # 最大请求大小
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>GridFsTemplate</code> 由 Spring Boot 自动配置，无需手动声明 Bean。
+只要引入了 <code>spring-boot-starter-data-mongodb</code>，就可以直接注入使用。</p>
+</blockquote>
+<h3 id="1232-文件元数据-dto">12.3.2 文件元数据 DTO</h3>
+<pre><code class="language-java">import java.time.Instant;
+
+public class FileInfo {
+    private String id;
+    private String filename;
+    private String contentType;
+    private long size;
+    private Instant uploadDate;
+    private java.util.Map&lt;String, Object&gt; metadata;
+
+    public FileInfo() {}
+
+    public FileInfo(String id, String filename, String contentType, long size, Instant uploadDate) {
+        this.id = id;
+        this.filename = filename;
+        this.contentType = contentType;
+        this.size = size;
+        this.uploadDate = uploadDate;
+    }
+
+    // getter / setter
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getFilename() { return filename; }
+    public void setFilename(String filename) { this.filename = filename; }
+    public String getContentType() { return contentType; }
+    public void setContentType(String contentType) { this.contentType = contentType; }
+    public long getSize() { return size; }
+    public void setSize(long size) { this.size = size; }
+    public Instant getUploadDate() { return uploadDate; }
+    public void setUploadDate(Instant uploadDate) { this.uploadDate = uploadDate; }
+    public java.util.Map&lt;String, Object&gt; getMetadata() { return metadata; }
+    public void setMetadata(java.util.Map&lt;String, Object&gt; metadata) { this.metadata = metadata; }
+}
+</code></pre>
+<h3 id="1233-完整的文件服务类fileservice">12.3.3 完整的文件服务类（FileService）</h3>
+<pre><code class="language-java">import com.mongodb.client.gridfs.model.GridFSFile;
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsOperations;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+@Service
+public class FileService {
+
+    private static final Logger log = LoggerFactory.getLogger(FileService.class);
+
+    private final GridFsTemplate gridFsTemplate;
+    private final GridFsOperations gridFsOperations;
+
+    public FileService(GridFsTemplate gridFsTemplate, GridFsOperations gridFsOperations) {
+        this.gridFsTemplate = gridFsTemplate;
+        this.gridFsOperations = gridFsOperations;
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param file     上传的文件
+     * @param metadata 自定义元数据（可选）
+     * @return 文件ID
+     */
+    public String uploadFile(MultipartFile file, Map&lt;String, Object&gt; metadata) {
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException(&quot;上传文件不能为空&quot;);
+        }
+
+        try (InputStream inputStream = file.getInputStream()) {
+            // 构建元数据文档
+            Document metadataDoc = new Document();
+            metadataDoc.put(&quot;contentType&quot;, file.getContentType());
+            metadataDoc.put(&quot;originalFilename&quot;, file.getOriginalFilename());
+            metadataDoc.put(&quot;size&quot;, file.getSize());
+
+            if (metadata != null) {
+                metadataDoc.putAll(metadata);
+            }
+
+            // 存储文件到 GridFS
+            ObjectId fileId = gridFsTemplate.store(
+                    inputStream,                    // 文件输入流
+                    file.getOriginalFilename(),     // 文件名
+                    file.getContentType(),          // MIME 类型
+                    metadataDoc                     // 元数据
+            );
+
+            log.info(&quot;文件上传成功: id={}, filename={}, size={}bytes&quot;,
+                    fileId, file.getOriginalFilename(), file.getSize());
+
+            return fileId.toHexString();
+
+        } catch (IOException e) {
+            log.error(&quot;文件上传失败: {}&quot;, e.getMessage(), e);
+            throw new RuntimeException(&quot;文件上传失败: &quot; + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 通过 InputStream 上传文件（适用于非 Web 场景）
+     */
+    public String uploadFile(InputStream inputStream, String filename,
+                             String contentType, Map&lt;String, Object&gt; metadata) {
+        Document metadataDoc = new Document();
+        metadataDoc.put(&quot;contentType&quot;, contentType);
+        if (metadata != null) {
+            metadataDoc.putAll(metadata);
+        }
+
+        ObjectId fileId = gridFsTemplate.store(inputStream, filename, contentType, metadataDoc);
+        log.info(&quot;文件上传成功: id={}, filename={}&quot;, fileId, filename);
+        return fileId.toHexString();
+    }
+
+    /**
+     * 根据文件ID查询文件元数据
+     */
+    public FileInfo getFileInfo(String fileId) {
+        GridFSFile gridFSFile = gridFsTemplate.findOne(
+                new Query(Criteria.where(&quot;_id&quot;).is(new ObjectId(fileId)))
+        );
+
+        if (gridFSFile == null) {
+            throw new FileNotFoundException(&quot;文件不存在: &quot; + fileId);
+        }
+
+        return convertToFileInfo(gridFSFile);
+    }
+
+    /**
+     * 根据文件名查询文件
+     */
+    public FileInfo getFileInfoByName(String filename) {
+        GridFSFile gridFSFile = gridFsTemplate.findOne(
+                new Query(Criteria.where(&quot;filename&quot;).is(filename))
+        );
+
+        if (gridFSFile == null) {
+            throw new FileNotFoundException(&quot;文件不存在: &quot; + filename);
+        }
+
+        return convertToFileInfo(gridFSFile);
+    }
+
+    /**
+     * 查询所有文件
+     */
+    public List&lt;FileInfo&gt; listFiles() {
+        List&lt;FileInfo&gt; files = new ArrayList&lt;&gt;();
+        gridFsTemplate.find(new Query())
+                .into(new ArrayList&lt;&gt;())
+                .forEach(file -&gt; files.add(convertToFileInfo(file)));
+        return files;
+    }
+
+    /**
+     * 根据元数据条件查询文件
+     */
+    public List&lt;FileInfo&gt; findFilesByMetadata(String key, Object value) {
+        Query query = new Query(Criteria.where(&quot;metadata.&quot; + key).is(value));
+        List&lt;FileInfo&gt; files = new ArrayList&lt;&gt;();
+        gridFsTemplate.find(query)
+                .into(new ArrayList&lt;&gt;())
+                .forEach(file -&gt; files.add(convertToFileInfo(file)));
+        return files;
+    }
+
+    /**
+     * 下载文件，返回 GridFsResource
+     */
+    public GridFsResource downloadFile(String fileId) {
+        GridFSFile gridFSFile = gridFsTemplate.findOne(
+                new Query(Criteria.where(&quot;_id&quot;).is(new ObjectId(fileId)))
+        );
+
+        if (gridFSFile == null) {
+            throw new FileNotFoundException(&quot;文件不存在: &quot; + fileId);
+        }
+
+        return gridFsOperations.getResource(gridFSFile);
+    }
+
+    /**
+     * 下载文件（按文件名）
+     */
+    public GridFsResource downloadFileByName(String filename) {
+        GridFSFile gridFSFile = gridFsTemplate.findOne(
+                new Query(Criteria.where(&quot;filename&quot;).is(filename))
+        );
+
+        if (gridFSFile == null) {
+            throw new FileNotFoundException(&quot;文件不存在: &quot; + filename);
+        }
+
+        return gridFsOperations.getResource(gridFSFile);
+    }
+
+    /**
+     * 删除文件
+     */
+    public void deleteFile(String fileId) {
+        gridFsTemplate.delete(
+                new Query(Criteria.where(&quot;_id&quot;).is(new ObjectId(fileId)))
+        );
+        log.info(&quot;文件已删除: id={}&quot;, fileId);
+    }
+
+    /**
+     * 按文件名删除
+     */
+    public void deleteFileByName(String filename) {
+        gridFsTemplate.delete(
+                new Query(Criteria.where(&quot;filename&quot;).is(filename))
+        );
+        log.info(&quot;文件已删除: filename={}&quot;, filename);
+    }
+
+    /**
+     * 批量删除（按元数据条件）
+     */
+    public void deleteFilesByMetadata(String key, Object value) {
+        gridFsTemplate.delete(
+                new Query(Criteria.where(&quot;metadata.&quot; + key).is(value))
+        );
+        log.info(&quot;批量删除文件: metadata.{}={}&quot;, key, value);
+    }
+
+    /**
+     * 判断文件是否存在
+     */
+    public boolean fileExists(String fileId) {
+        GridFSFile file = gridFsTemplate.findOne(
+                new Query(Criteria.where(&quot;_id&quot;).is(new ObjectId(fileId)))
+        );
+        return file != null;
+    }
+
+    /**
+     * GridFSFile 转 FileInfo
+     */
+    private FileInfo convertToFileInfo(GridFSFile gridFSFile) {
+        FileInfo info = new FileInfo();
+        info.setId(gridFSFile.getObjectId().toHexString());
+        info.setFilename(gridFSFile.getFilename());
+        info.setSize(gridFSFile.getLength());
+        info.setUploadDate(gridFSFile.getUploadDate().toInstant());
+
+        Document metadata = gridFSFile.getMetadata();
+        if (metadata != null) {
+            info.setContentType(metadata.getString(&quot;contentType&quot;));
+            info.setMetadata(metadata);
+        }
+
+        return info;
+    }
+
+    /**
+     * 自定义异常
+     */
+    public static class FileNotFoundException extends RuntimeException {
+        public FileNotFoundException(String message) {
+            super(message);
+        }
+    }
+}
+</code></pre>
+<h3 id="1234-完整的文件上传下载-controller">12.3.4 完整的文件上传下载 Controller</h3>
+<pre><code class="language-java">import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping(&quot;/api/files&quot;)
+public class FileController {
+
+    private static final Logger log = LoggerFactory.getLogger(FileController.class);
+
+    private final FileService fileService;
+
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
+    }
+
+    /**
+     * 上传单个文件
+     * POST /api/files/upload
+     */
+    @PostMapping(&quot;/upload&quot;)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; uploadFile(
+            @RequestParam(&quot;file&quot;) MultipartFile file,
+            @RequestParam(value = &quot;uploadedBy&quot;, required = false) String uploadedBy,
+            @RequestParam(value = &quot;category&quot;, required = false) String category) {
+
+        // 构建自定义元数据
+        Map&lt;String, Object&gt; metadata = new HashMap&lt;&gt;();
+        if (uploadedBy != null) metadata.put(&quot;uploadedBy&quot;, uploadedBy);
+        if (category != null) metadata.put(&quot;category&quot;, category);
+
+        String fileId = fileService.uploadFile(file, metadata);
+
+        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+        response.put(&quot;success&quot;, true);
+        response.put(&quot;fileId&quot;, fileId);
+        response.put(&quot;filename&quot;, file.getOriginalFilename());
+        response.put(&quot;size&quot;, file.getSize());
+        response.put(&quot;contentType&quot;, file.getContentType());
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 批量上传文件
+     * POST /api/files/upload/batch
+     */
+    @PostMapping(&quot;/upload/batch&quot;)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; uploadFiles(
+            @RequestParam(&quot;files&quot;) MultipartFile[] files,
+            @RequestParam(value = &quot;category&quot;, required = false) String category) {
+
+        List&lt;Map&lt;String, String&gt;&gt; results = new java.util.ArrayList&lt;&gt;();
+
+        for (MultipartFile file : files) {
+            Map&lt;String, Object&gt; metadata = new HashMap&lt;&gt;();
+            if (category != null) metadata.put(&quot;category&quot;, category);
+
+            String fileId = fileService.uploadFile(file, metadata);
+
+            Map&lt;String, String&gt; fileResult = new HashMap&lt;&gt;();
+            fileResult.put(&quot;fileId&quot;, fileId);
+            fileResult.put(&quot;filename&quot;, file.getOriginalFilename());
+            results.add(fileResult);
+        }
+
+        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+        response.put(&quot;success&quot;, true);
+        response.put(&quot;count&quot;, results.size());
+        response.put(&quot;files&quot;, results);
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 下载文件（以附件形式）
+     * GET /api/files/download/{fileId}
+     */
+    @GetMapping(&quot;/download/{fileId}&quot;)
+    public ResponseEntity&lt;InputStreamResource&gt; downloadFile(@PathVariable String fileId) {
+        try {
+            GridFsResource resource = fileService.downloadFile(fileId);
+            FileInfo fileInfo = fileService.getFileInfo(fileId);
+
+            String encodedFilename = URLEncoder.encode(
+                    fileInfo.getFilename(), StandardCharsets.UTF_8
+            ).replace(&quot;+&quot;, &quot;%20&quot;);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(
+                            fileInfo.getContentType() != null
+                                    ? fileInfo.getContentType()
+                                    : MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                    .contentLength(fileInfo.getSize())
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            &quot;attachment; filename*=UTF-8''&quot; + encodedFilename)
+                    .body(new InputStreamResource(resource.getInputStream()));
+
+        } catch (FileService.FileNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            log.error(&quot;文件下载失败: {}&quot;, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * 在线预览文件（图片、PDF等）
+     * GET /api/files/preview/{fileId}
+     */
+    @GetMapping(&quot;/preview/{fileId}&quot;)
+    public ResponseEntity&lt;InputStreamResource&gt; previewFile(@PathVariable String fileId) {
+        try {
+            GridFsResource resource = fileService.downloadFile(fileId);
+            FileInfo fileInfo = fileService.getFileInfo(fileId);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(
+                            fileInfo.getContentType() != null
+                                    ? fileInfo.getContentType()
+                                    : MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                    .contentLength(fileInfo.getSize())
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            &quot;inline; filename*=UTF-8''&quot; + URLEncoder.encode(
+                                    fileInfo.getFilename(), StandardCharsets.UTF_8))
+                    .body(new InputStreamResource(resource.getInputStream()));
+
+        } catch (FileService.FileNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            log.error(&quot;文件预览失败: {}&quot;, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * 获取文件信息
+     * GET /api/files/info/{fileId}
+     */
+    @GetMapping(&quot;/info/{fileId}&quot;)
+    public ResponseEntity&lt;FileInfo&gt; getFileInfo(@PathVariable String fileId) {
+        try {
+            FileInfo fileInfo = fileService.getFileInfo(fileId);
+            return ResponseEntity.ok(fileInfo);
+        } catch (FileService.FileNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * 列出所有文件
+     * GET /api/files
+     */
+    @GetMapping
+    public ResponseEntity&lt;List&lt;FileInfo&gt;&gt; listFiles() {
+        return ResponseEntity.ok(fileService.listFiles());
+    }
+
+    /**
+     * 按分类查询文件
+     * GET /api/files/category/{category}
+     */
+    @GetMapping(&quot;/category/{category}&quot;)
+    public ResponseEntity&lt;List&lt;FileInfo&gt;&gt; listFilesByCategory(@PathVariable String category) {
+        return ResponseEntity.ok(fileService.findFilesByMetadata(&quot;category&quot;, category));
+    }
+
+    /**
+     * 删除文件
+     * DELETE /api/files/{fileId}
+     */
+    @DeleteMapping(&quot;/{fileId}&quot;)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; deleteFile(@PathVariable String fileId) {
+        try {
+            if (!fileService.fileExists(fileId)) {
+                return ResponseEntity.notFound().build();
+            }
+            fileService.deleteFile(fileId);
+
+            Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+            response.put(&quot;success&quot;, true);
+            response.put(&quot;message&quot;, &quot;文件已删除&quot;);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error(&quot;文件删除失败: {}&quot;, e.getMessage(), e);
+            Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+            response.put(&quot;success&quot;, false);
+            response.put(&quot;message&quot;, &quot;文件删除失败: &quot; + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+}
+</code></pre>
+<h3 id="1235-全局异常处理">12.3.5 全局异常处理</h3>
+<pre><code class="language-java">import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+
+import java.util.Map;
+
+@RestControllerAdvice
+public class FileExceptionHandler {
+
+    @ExceptionHandler(FileService.FileNotFoundException.class)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleFileNotFound(FileService.FileNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of(&quot;error&quot;, e.getMessage()));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleMaxSizeExceeded(MaxUploadSizeExceededException e) {
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(Map.of(&quot;error&quot;, &quot;文件大小超过限制，最大允许 100MB&quot;));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleIllegalArgument(IllegalArgumentException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(&quot;error&quot;, e.getMessage()));
+    }
+}
+</code></pre>
+<h3 id="1236-使用-curl-测试接口">12.3.6 使用 cURL 测试接口</h3>
+<pre><code class="language-bash"># 上传文件
+curl -X POST http://localhost:8080/api/files/upload \
+  -F &quot;file=@/path/to/report.pdf&quot; \
+  -F &quot;uploadedBy=zhangsan&quot; \
+  -F &quot;category=reports&quot;
+
+# 响应示例：
+# {
+#   &quot;success&quot;: true,
+#   &quot;fileId&quot;: &quot;6571abcd1234567890abcdef&quot;,
+#   &quot;filename&quot;: &quot;report.pdf&quot;,
+#   &quot;size&quot;: 2485760,
+#   &quot;contentType&quot;: &quot;application/pdf&quot;
+# }
+
+# 批量上传
+curl -X POST http://localhost:8080/api/files/upload/batch \
+  -F &quot;files=@photo1.jpg&quot; \
+  -F &quot;files=@photo2.jpg&quot; \
+  -F &quot;category=photos&quot;
+
+# 获取文件信息
+curl http://localhost:8080/api/files/info/6571abcd1234567890abcdef
+
+# 列出所有文件
+curl http://localhost:8080/api/files
+
+# 按分类查询
+curl http://localhost:8080/api/files/category/reports
+
+# 下载文件
+curl -O http://localhost:8080/api/files/download/6571abcd1234567890abcdef
+
+# 在浏览器中预览
+# 直接访问: http://localhost:8080/api/files/preview/6571abcd1234567890abcdef
+
+# 删除文件
+curl -X DELETE http://localhost:8080/api/files/6571abcd1234567890abcdef
+</code></pre>
+<hr />
+<h2 id="124-gridfs-vs-对象存储oss的对比选型">12.4 GridFS vs 对象存储（OSS）的对比选型</h2>
+<h3 id="1241-方案对比表">12.4.1 方案对比表</h3>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>GridFS</th>
+<th>本地文件系统</th>
+<th>MinIO / S3</th>
+<th>阿里云 OSS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>存储位置</strong></td>
+<td>MongoDB 数据库内</td>
+<td>服务器磁盘</td>
+<td>自建对象存储集群</td>
+<td>云端</td>
+</tr>
+<tr>
+<td><strong>最大文件大小</strong></td>
+<td>无限制（分块存储）</td>
+<td>受文件系统限制</td>
+<td>5TB（单对象）</td>
+<td>48.8TB</td>
+</tr>
+<tr>
+<td><strong>部署复杂度</strong></td>
+<td>无需额外部署（用已有的 MongoDB）</td>
+<td>无需额外部署</td>
+<td>需要单独部署和维护</td>
+<td>无需部署，开通即用</td>
+</tr>
+<tr>
+<td><strong>备份恢复</strong></td>
+<td>随 MongoDB 一起备份</td>
+<td>需要单独的备份方案</td>
+<td>需要单独的备份方案</td>
+<td>云服务商自动备份</td>
+</tr>
+<tr>
+<td><strong>CDN 支持</strong></td>
+<td>❌ 不支持</td>
+<td>❌ 需要额外配置</td>
+<td>⚠️ 需要对接</td>
+<td>✅ 原生支持</td>
+</tr>
+<tr>
+<td><strong>访问控制</strong></td>
+<td>通过 MongoDB 权限控制</td>
+<td>操作系统文件权限</td>
+<td>S3 兼容的 ACL</td>
+<td>完善的 RAM 权限体系</td>
+</tr>
+<tr>
+<td><strong>读写性能</strong></td>
+<td>中等（受 chunk 分块影响）</td>
+<td>高（直接磁盘 IO）</td>
+<td>高（分布式存储）</td>
+<td>高（云端优化）</td>
+</tr>
+<tr>
+<td><strong>水平扩展</strong></td>
+<td>跟随 MongoDB 分片扩展</td>
+<td>❌ 难以扩展</td>
+<td>✅ 容易扩展</td>
+<td>✅ 自动扩展</td>
+</tr>
+<tr>
+<td><strong>成本</strong></td>
+<td>占用 MongoDB 存储空间</td>
+<td>服务器磁盘成本</td>
+<td>服务器 + 磁盘成本</td>
+<td>按量付费</td>
+</tr>
+<tr>
+<td><strong>运维成本</strong></td>
+<td>低（复用 MongoDB 运维）</td>
+<td>低</td>
+<td>中等</td>
+<td>极低</td>
+</tr>
+<tr>
+<td><strong>事务支持</strong></td>
+<td>✅ 可与业务数据同事务</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td><strong>元数据查询</strong></td>
+<td>✅ 支持 MongoDB 查询语法</td>
+<td>❌ 需要额外数据库</td>
+<td>⚠️ 有限的标签查询</td>
+<td>⚠️ 有限的标签查询</td>
+</tr>
+<tr>
+<td><strong>适合的文件大小</strong></td>
+<td>16MB ~ 数百MB</td>
+<td>任意</td>
+<td>任意</td>
+<td>任意</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1242-各方案的优缺点">12.4.2 各方案的优缺点</h3>
+<p><strong>GridFS 优点：</strong></p>
+<ul>
+<li>无需引入额外的存储系统，降低架构复杂度</li>
+<li>文件与业务数据在同一数据库，备份恢复一致</li>
+<li>支持丰富的元数据查询（利用 MongoDB 查询能力）</li>
+<li>可以和业务数据放在同一个事务中</li>
+<li>自动处理大文件分块和重组</li>
+</ul>
+<p><strong>GridFS 缺点：</strong></p>
+<ul>
+<li>占用 MongoDB 存储空间和内存，可能影响业务数据库性能</li>
+<li>不支持 CDN 加速，不适合高并发的静态资源访问</li>
+<li>读写性能不如专业的文件/对象存储系统</li>
+<li>大量文件存储时，MongoDB 的运维压力增大</li>
+</ul>
+<p><strong>对象存储（OSS/S3/MinIO）优点：</strong></p>
+<ul>
+<li>专为文件存储设计，性能优秀</li>
+<li>天然支持 CDN 加速</li>
+<li>海量存储能力，成本相对低廉</li>
+<li>丰富的权限管理和访问控制</li>
+</ul>
+<p><strong>对象存储缺点：</strong></p>
+<ul>
+<li>引入额外的系统依赖，增加架构复杂度</li>
+<li>文件和业务数据分离，一致性需要额外保证</li>
+<li>云服务有网络延迟和带宽成本</li>
+<li>自建（MinIO）需要额外的运维投入</li>
+</ul>
+<h3 id="1243-选型建议">12.4.3 选型建议</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐方案</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>小型项目 / MVP</strong></td>
+<td>GridFS</td>
+<td>简化架构，快速交付，不需要额外组件</td>
+</tr>
+<tr>
+<td><strong>文件与业务数据强关联</strong></td>
+<td>GridFS</td>
+<td>利用 MongoDB 的查询和事务能力</td>
+</tr>
+<tr>
+<td><strong>文件数量少（&lt; 1万）、总量小（&lt; 10GB）</strong></td>
+<td>GridFS</td>
+<td>完全够用，没必要引入额外系统</td>
+</tr>
+<tr>
+<td><strong>需要公网访问 / CDN 加速</strong></td>
+<td>云 OSS</td>
+<td>CDN 是刚需，GridFS 无法满足</td>
+</tr>
+<tr>
+<td><strong>大量静态资源（图片/视频）</strong></td>
+<td>云 OSS / MinIO</td>
+<td>专业的对象存储更合适</td>
+</tr>
+<tr>
+<td><strong>海量文件（TB 级别）</strong></td>
+<td>云 OSS / MinIO</td>
+<td>成本和性能更优</td>
+</tr>
+<tr>
+<td><strong>私有化部署 + 大量文件</strong></td>
+<td>MinIO</td>
+<td>S3 兼容 API，自建可控</td>
+</tr>
+<tr>
+<td><strong>临时文件 / 中间结果</strong></td>
+<td>GridFS 或本地文件系统</td>
+<td>简单够用，便于清理</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>务实建议</strong>：如果你的项目已经使用了 MongoDB，且文件存储需求不大（几百个文件，总量几个 GB），
+GridFS 是最简单直接的选择。当文件量增长到一定规模，或需要 CDN、公网访问等能力时，
+再迁移到对象存储也不迟——文件服务通常是独立的模块，迁移成本可控。</p>
+</blockquote>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GridFS 原理</td>
+<td>将文件拆分为 chunk 存储在 fs.files 和 fs.chunks 两个集合中</td>
+</tr>
+<tr>
+<td>chunk 大小</td>
+<td>默认 255KB，可配置</td>
+</tr>
+<tr>
+<td>mongofiles</td>
+<td>命令行工具，支持 put/get/delete/list/search</td>
+</tr>
+<tr>
+<td>GridFsTemplate</td>
+<td>Spring Data MongoDB 提供的 GridFS 操作模板</td>
+</tr>
+<tr>
+<td>文件上传</td>
+<td><code>gridFsTemplate.store(inputStream, filename, contentType, metadata)</code></td>
+</tr>
+<tr>
+<td>文件下载</td>
+<td><code>gridFsTemplate.findOne()</code> + <code>gridFsOperations.getResource()</code></td>
+</tr>
+<tr>
+<td>文件删除</td>
+<td><code>gridFsTemplate.delete(query)</code></td>
+</tr>
+<tr>
+<td>元数据</td>
+<td>支持自定义 metadata，可用 MongoDB 查询语法检索</td>
+</tr>
+<tr>
+<td>选型建议</td>
+<td>小规模用 GridFS，大规模 / 需要 CDN 用对象存储</td>
+</tr>
+</tbody>
+</table>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

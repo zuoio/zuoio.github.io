@@ -1,0 +1,2536 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第08章-文档模型设计">第08章 文档模型设计</h1>
+<blockquote>
+<p>文档模型设计是 MongoDB 开发中最关键的环节。不同于关系型数据库遵循范式化设计，MongoDB 的核心理念是**&quot;以查询需求驱动数据结构&quot;**。好的文档模型可以大幅提升读取性能和开发效率，而糟糕的设计则会让系统陷入性能泥潭。本章将系统讲解文档模型设计的原则、策略和常见模式。</p>
+</blockquote>
+<hr />
+<h2 id="81-内嵌文档-vs-引用文档--设计原则">8.1 内嵌文档 vs 引用文档 —— 设计原则</h2>
+<p>MongoDB 中有两种主要的数据组织方式：<strong>内嵌文档（Embedding）</strong> 和<strong>引用文档（Referencing）</strong>。选择哪种方式直接影响到应用的读写性能和数据维护复杂度。</p>
+<h3 id="811-内嵌文档embedding">8.1.1 内嵌文档（Embedding）</h3>
+<p>内嵌文档是将相关数据直接嵌入到父文档中，形成一个自包含的文档结构。</p>
+<p><strong>JSON 示例：将用户地址内嵌到用户文档</strong></p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;U001&quot;,
+  &quot;name&quot;: &quot;张三&quot;,
+  &quot;email&quot;: &quot;zhangsan@example.com&quot;,
+  &quot;address&quot;: {
+    &quot;province&quot;: &quot;北京市&quot;,
+    &quot;city&quot;: &quot;北京&quot;,
+    &quot;district&quot;: &quot;朝阳区&quot;,
+    &quot;street&quot;: &quot;建国路88号&quot;,
+    &quot;zipCode&quot;: &quot;100022&quot;
+  },
+  &quot;orders&quot;: [
+    {
+      &quot;orderNo&quot;: &quot;ORD001&quot;,
+      &quot;totalAmount&quot;: 599,
+      &quot;status&quot;: &quot;completed&quot;,
+      &quot;orderDate&quot;: &quot;2024-03-15T10:30:00Z&quot;
+    },
+    {
+      &quot;orderNo&quot;: &quot;ORD002&quot;,
+      &quot;totalAmount&quot;: 1299,
+      &quot;status&quot;: &quot;shipped&quot;,
+      &quot;orderDate&quot;: &quot;2024-04-01T14:20:00Z&quot;
+    }
+  ]
+}
+</code></pre>
+<p><strong>优点：</strong></p>
+<table>
+<thead>
+<tr>
+<th>优势</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>读取性能好</td>
+<td>一次查询即可获取所有相关数据，无需关联查询</td>
+</tr>
+<tr>
+<td>原子更新</td>
+<td>对单个文档的操作是原子性的，无需事务</td>
+</tr>
+<tr>
+<td>数据局部性</td>
+<td>相关数据存储在一起，减少磁盘 I/O</td>
+</tr>
+<tr>
+<td>查询简单</td>
+<td>不需要写 JOIN（$lookup），代码更简洁</td>
+</tr>
+</tbody>
+</table>
+<p><strong>缺点：</strong></p>
+<table>
+<thead>
+<tr>
+<th>缺点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文档大小限制</td>
+<td>单个文档最大 16MB，内嵌数据过多时可能超限</td>
+</tr>
+<tr>
+<td>数据冗余</td>
+<td>相同数据可能在多个文档中重复存储</td>
+</tr>
+<tr>
+<td>更新复杂</td>
+<td>被嵌入的数据更新时，所有包含该数据的文档都需要更新</td>
+</tr>
+<tr>
+<td>数组增长问题</td>
+<td>内嵌数组不断增长会导致文档频繁迁移，影响性能</td>
+</tr>
+</tbody>
+</table>
+<h3 id="812-引用文档referencing">8.1.2 引用文档（Referencing）</h3>
+<p>引用文档通过存储另一个文档的 <code>_id</code> 来建立关联，类似于关系型数据库的外键。</p>
+<p><strong>JSON 示例：用户和订单分别存储，通过 userId 关联</strong></p>
+<p>用户文档（users 集合）：</p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;U001&quot;,
+  &quot;name&quot;: &quot;张三&quot;,
+  &quot;email&quot;: &quot;zhangsan@example.com&quot;,
+  &quot;address&quot;: {
+    &quot;province&quot;: &quot;北京市&quot;,
+    &quot;city&quot;: &quot;北京&quot;,
+    &quot;district&quot;: &quot;朝阳区&quot;
+  }
+}
+</code></pre>
+<p>订单文档（orders 集合）：</p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;ORD001&quot;,
+  &quot;userId&quot;: &quot;U001&quot;,
+  &quot;totalAmount&quot;: 599,
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;orderDate&quot;: &quot;2024-03-15T10:30:00Z&quot;,
+  &quot;items&quot;: [
+    { &quot;productId&quot;: &quot;P001&quot;, &quot;quantity&quot;: 1, &quot;price&quot;: 399 },
+    { &quot;productId&quot;: &quot;P002&quot;, &quot;quantity&quot;: 2, &quot;price&quot;: 100 }
+  ]
+}
+</code></pre>
+<p><strong>优点：</strong></p>
+<table>
+<thead>
+<tr>
+<th>优势</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据规范化</td>
+<td>没有冗余数据，更新一处即可</td>
+</tr>
+<tr>
+<td>文档精简</td>
+<td>每个文档独立且大小可控</td>
+</tr>
+<tr>
+<td>灵活性好</td>
+<td>可以独立查询和更新各个集合</td>
+</tr>
+<tr>
+<td>适合大量数据</td>
+<td>不受 16MB 文档大小限制</td>
+</tr>
+</tbody>
+</table>
+<p><strong>缺点：</strong></p>
+<table>
+<thead>
+<tr>
+<th>缺点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>需要多次查询</td>
+<td>获取完整数据需要 $lookup 或多次查询</td>
+</tr>
+<tr>
+<td>没有外键约束</td>
+<td>MongoDB 不强制引用完整性，需要应用层保证</td>
+</tr>
+<tr>
+<td>读取性能低</td>
+<td>关联查询比内嵌文档慢</td>
+</tr>
+<tr>
+<td>无法原子更新</td>
+<td>跨集合操作需要事务支持</td>
+</tr>
+</tbody>
+</table>
+<h3 id="813-选择原则访问模式决定设计">8.1.3 选择原则：访问模式决定设计</h3>
+<p><strong>核心原则</strong>：根据应用的<strong>读写模式</strong>来决定数据结构，而不是根据数据之间的逻辑关系。</p>
+<p><strong>选择内嵌的场景：</strong></p>
+<ul>
+<li>数据之间存在&quot;包含&quot;关系（整体与部分）</li>
+<li>子数据总是随父数据一起被读取</li>
+<li>子数据数量有限且不会无限增长</li>
+<li>子数据不需要被独立查询</li>
+<li>读多写少</li>
+</ul>
+<p><strong>选择引用的场景：</strong></p>
+<ul>
+<li>子数据会被独立查询和使用</li>
+<li>子数据数量会持续增长（如评论、日志）</li>
+<li>子数据被多个父文档共享</li>
+<li>数据更新频繁且需要保持一致性</li>
+<li>文档大小可能超过 16MB</li>
+</ul>
+<h3 id="814-决策流程">8.1.4 决策流程</h3>
+<p>以下是选择内嵌还是引用的决策参考路径：</p>
+<pre><code>开始：数据 A 和数据 B 之间有关联关系
+  │
+  ├── 问题1：B 是否总是和 A 一起被读取？
+  │   ├── 是 → 倾向内嵌
+  │   └── 否 → 问题2
+  │
+  ├── 问题2：B 的数量是否会持续增长且无上限？
+  │   ├── 是 → 使用引用
+  │   └── 否 → 问题3
+  │
+  ├── 问题3：B 是否需要被独立查询？
+  │   ├── 是 → 使用引用
+  │   └── 否 → 问题4
+  │
+  ├── 问题4：B 是否被多个 A 共享？
+  │   ├── 是 → 使用引用
+  │   └── 否 → 问题5
+  │
+  └── 问题5：A + B 的文档大小是否可能超过 16MB？
+      ├── 是 → 使用引用
+      └── 否 → 使用内嵌
+</code></pre>
+<hr />
+<h2 id="82-一对一一对多多对多的建模策略">8.2 一对一、一对多、多对多的建模策略</h2>
+<h3 id="821-一对一one-to-one">8.2.1 一对一（One-to-One）</h3>
+<p>一对一关系通常优先使用内嵌，除非子文档特别大或需要独立访问。</p>
+<p><strong>场景：用户（User）与用户详情（UserProfile）</strong></p>
+<p><strong>方案一：内嵌（推荐）</strong></p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;U001&quot;,
+  &quot;username&quot;: &quot;zhangsan&quot;,
+  &quot;password&quot;: &quot;$2a$10$xxxxxxxxxxx&quot;,
+  &quot;status&quot;: &quot;active&quot;,
+  &quot;profile&quot;: {
+    &quot;realName&quot;: &quot;张三&quot;,
+    &quot;gender&quot;: &quot;male&quot;,
+    &quot;birthday&quot;: &quot;1995-06-15&quot;,
+    &quot;phone&quot;: &quot;13800138000&quot;,
+    &quot;bio&quot;: &quot;全栈工程师，热爱开源&quot;,
+    &quot;avatar&quot;: &quot;/avatars/zhangsan.jpg&quot;
+  },
+  &quot;createdAt&quot;: &quot;2024-01-10T08:00:00Z&quot;
+}
+</code></pre>
+<p>对应的 Java 实体类：</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Document(collection = &quot;users&quot;)
+public class User {
+
+    @Id
+    private String id;
+    private String username;
+    private String password;
+    private String status;
+    private UserProfile profile;
+    private LocalDateTime createdAt;
+
+    // getter / setter 省略
+}
+
+public class UserProfile {
+
+    private String realName;
+    private String gender;
+    private LocalDate birthday;
+    private String phone;
+    private String bio;
+    private String avatar;
+
+    // getter / setter 省略
+}
+</code></pre>
+<p><strong>方案二：引用（当详情很大或需独立管理时）</strong></p>
+<p>用户文档：</p>
+<pre><code class="language-json">{ &quot;_id&quot;: &quot;U001&quot;, &quot;username&quot;: &quot;zhangsan&quot;, &quot;password&quot;: &quot;...&quot;, &quot;profileId&quot;: &quot;UP001&quot; }
+</code></pre>
+<p>用户详情文档（user_profiles 集合）：</p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;UP001&quot;,
+  &quot;userId&quot;: &quot;U001&quot;,
+  &quot;realName&quot;: &quot;张三&quot;,
+  &quot;gender&quot;: &quot;male&quot;,
+  &quot;birthday&quot;: &quot;1995-06-15&quot;,
+  &quot;phone&quot;: &quot;13800138000&quot;,
+  &quot;bio&quot;: &quot;全栈工程师，热爱开源&quot;,
+  &quot;avatar&quot;: &quot;/avatars/zhangsan.jpg&quot;,
+  &quot;preferences&quot;: { /* 大量偏好设置数据 */ }
+}
+</code></pre>
+<p>对应的 Java 实体类：</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+
+@Document(collection = &quot;users&quot;)
+public class User {
+
+    @Id
+    private String id;
+    private String username;
+    private String password;
+
+    @DBRef
+    private UserProfile profile;
+
+    // getter / setter 省略
+}
+
+@Document(collection = &quot;user_profiles&quot;)
+public class UserProfile {
+
+    @Id
+    private String id;
+    private String userId;
+    private String realName;
+    private String gender;
+    // ... 其他字段
+
+    // getter / setter 省略
+}
+</code></pre>
+<blockquote>
+<p><strong>选择建议</strong>：一对一关系在绝大多数场景下使用内嵌。只有当子文档非常大（例如用户的详细偏好设置包含数百个字段）或有独立的访问控制需求时，才考虑引用。</p>
+</blockquote>
+<h3 id="822-一对多--少量one-to-few">8.2.2 一对多 —— 少量（One-to-Few）</h3>
+<p>当&quot;多&quot;的一方数量较少且有上限时（通常 &lt; 100 条），使用内嵌数组。</p>
+<p><strong>场景：文章（Article）与评论（少于50条）</strong></p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;A001&quot;,
+  &quot;title&quot;: &quot;MongoDB 文档模型设计最佳实践&quot;,
+  &quot;content&quot;: &quot;文章正文内容...&quot;,
+  &quot;author&quot;: &quot;张三&quot;,
+  &quot;tags&quot;: [&quot;MongoDB&quot;, &quot;数据库设计&quot;],
+  &quot;comments&quot;: [
+    {
+      &quot;userId&quot;: &quot;U002&quot;,
+      &quot;userName&quot;: &quot;李四&quot;,
+      &quot;content&quot;: &quot;写得非常好，受益匪浅！&quot;,
+      &quot;createdAt&quot;: &quot;2024-03-16T10:30:00Z&quot;
+    },
+    {
+      &quot;userId&quot;: &quot;U003&quot;,
+      &quot;userName&quot;: &quot;王五&quot;,
+      &quot;content&quot;: &quot;请问 Bucket 模式有更详细的例子吗？&quot;,
+      &quot;createdAt&quot;: &quot;2024-03-16T14:20:00Z&quot;
+    }
+  ],
+  &quot;commentCount&quot;: 2,
+  &quot;createdAt&quot;: &quot;2024-03-15T08:00:00Z&quot;
+}
+</code></pre>
+<p>对应的 Java 实体类：</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Document(collection = &quot;articles&quot;)
+public class Article {
+
+    @Id
+    private String id;
+    private String title;
+    private String content;
+    private String author;
+    private List&lt;String&gt; tags;
+    private List&lt;Comment&gt; comments;
+    private int commentCount;
+    private LocalDateTime createdAt;
+
+    // getter / setter 省略
+}
+
+public class Comment {
+
+    private String userId;
+    private String userName;
+    private String content;
+    private LocalDateTime createdAt;
+
+    // getter / setter 省略
+}
+</code></pre>
+<blockquote>
+<p><strong>适用条件</strong>：评论数量有限（例如 &lt; 50 条），且评论不需要被独立查询。如果评论可能增长到数百上千条，应改用引用方式。</p>
+</blockquote>
+<h3 id="823-一对多--大量one-to-many">8.2.3 一对多 —— 大量（One-to-Many）</h3>
+<p>当&quot;多&quot;的一方数量很大或会持续增长时，使用引用。</p>
+<p><strong>场景：作者（Author）与文章（可能有上千篇）</strong></p>
+<p>作者文档（authors 集合）：</p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;A001&quot;,
+  &quot;name&quot;: &quot;张三&quot;,
+  &quot;email&quot;: &quot;zhangsan@example.com&quot;,
+  &quot;bio&quot;: &quot;技术博主，专注Java和MongoDB&quot;,
+  &quot;followerCount&quot;: 5600,
+  &quot;articleCount&quot;: 128
+}
+</code></pre>
+<p>文章文档（articles 集合）：</p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;ART001&quot;,
+  &quot;title&quot;: &quot;MongoDB 聚合管道深入解析&quot;,
+  &quot;content&quot;: &quot;文章正文...&quot;,
+  &quot;authorId&quot;: &quot;A001&quot;,
+  &quot;authorName&quot;: &quot;张三&quot;,
+  &quot;category&quot;: &quot;数据库&quot;,
+  &quot;tags&quot;: [&quot;MongoDB&quot;, &quot;聚合&quot;],
+  &quot;viewCount&quot;: 3200,
+  &quot;likeCount&quot;: 156,
+  &quot;createdAt&quot;: &quot;2024-03-15T08:00:00Z&quot;
+}
+</code></pre>
+<p>注意这里做了一个<strong>适度冗余</strong>：在文章文档中同时存储了 <code>authorId</code> 和 <code>authorName</code>。这样在展示文章列表时无需再查询作者集合。</p>
+<p>对应的 Java 实体类：</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.index.Indexed;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Document(collection = &quot;authors&quot;)
+public class Author {
+
+    @Id
+    private String id;
+    private String name;
+    private String email;
+    private String bio;
+    private int followerCount;
+    private int articleCount;
+
+    // getter / setter 省略
+}
+
+@Document(collection = &quot;articles&quot;)
+public class Article {
+
+    @Id
+    private String id;
+    private String title;
+    private String content;
+
+    @Indexed
+    private String authorId;
+    private String authorName;
+
+    private String category;
+    private List&lt;String&gt; tags;
+    private int viewCount;
+    private int likeCount;
+    private LocalDateTime createdAt;
+
+    // getter / setter 省略
+}
+</code></pre>
+<p><strong>查询示例：</strong></p>
+<pre><code class="language-java">// 查询某作者的所有文章
+public List&lt;Article&gt; findArticlesByAuthor(String authorId) {
+    Query query = new Query(Criteria.where(&quot;authorId&quot;).is(authorId));
+    query.with(Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));
+    return mongoTemplate.find(query, Article.class);
+}
+
+// 使用 $lookup 关联查询作者详情
+public List&lt;Map&gt; getArticlesWithAuthorDetail() {
+    Aggregation aggregation = Aggregation.newAggregation(
+        Aggregation.lookup(&quot;authors&quot;, &quot;authorId&quot;, &quot;_id&quot;, &quot;authorInfo&quot;),
+        Aggregation.unwind(&quot;authorInfo&quot;),
+        Aggregation.project(&quot;title&quot;, &quot;viewCount&quot;, &quot;createdAt&quot;)
+            .and(&quot;authorInfo.name&quot;).as(&quot;authorName&quot;)
+            .and(&quot;authorInfo.bio&quot;).as(&quot;authorBio&quot;)
+    );
+    return mongoTemplate.aggregate(aggregation, &quot;articles&quot;, Map.class).getMappedResults();
+}
+</code></pre>
+<h3 id="824-多对多many-to-many">8.2.4 多对多（Many-to-Many）</h3>
+<p>多对多关系在 MongoDB 中通常使用<strong>双向引用数组</strong>实现。</p>
+<p><strong>场景：学生（Student）与课程（Course）</strong></p>
+<p>学生文档（students 集合）：</p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;S001&quot;,
+  &quot;name&quot;: &quot;张三&quot;,
+  &quot;grade&quot;: &quot;大三&quot;,
+  &quot;major&quot;: &quot;计算机科学&quot;,
+  &quot;courseIds&quot;: [&quot;CS101&quot;, &quot;CS201&quot;, &quot;MATH301&quot;],
+  &quot;courseCount&quot;: 3
+}
+</code></pre>
+<p>课程文档（courses 集合）：</p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;CS101&quot;,
+  &quot;name&quot;: &quot;数据结构与算法&quot;,
+  &quot;teacher&quot;: &quot;李教授&quot;,
+  &quot;credits&quot;: 4,
+  &quot;maxStudents&quot;: 120,
+  &quot;studentIds&quot;: [&quot;S001&quot;, &quot;S002&quot;, &quot;S003&quot;, &quot;S005&quot;, &quot;S008&quot;],
+  &quot;studentCount&quot;: 5,
+  &quot;semester&quot;: &quot;2024春&quot;
+}
+</code></pre>
+<p>对应的 Java 实体类：</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.List;
+
+@Document(collection = &quot;students&quot;)
+public class Student {
+
+    @Id
+    private String id;
+    private String name;
+    private String grade;
+    private String major;
+    private List&lt;String&gt; courseIds;
+    private int courseCount;
+
+    // getter / setter 省略
+}
+
+@Document(collection = &quot;courses&quot;)
+public class Course {
+
+    @Id
+    private String id;
+    private String name;
+    private String teacher;
+    private int credits;
+    private int maxStudents;
+    private List&lt;String&gt; studentIds;
+    private int studentCount;
+    private String semester;
+
+    // getter / setter 省略
+}
+</code></pre>
+<p><strong>选课 / 退选操作：</strong></p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+
+@Service
+public class EnrollmentService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public EnrollmentService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 学生选课：双向更新
+     */
+    public void enrollCourse(String studentId, String courseId) {
+        // 将课程ID添加到学生的 courseIds 数组
+        mongoTemplate.updateFirst(
+            new Query(Criteria.where(&quot;_id&quot;).is(studentId)),
+            new Update().addToSet(&quot;courseIds&quot;, courseId).inc(&quot;courseCount&quot;, 1),
+            &quot;students&quot;
+        );
+
+        // 将学生ID添加到课程的 studentIds 数组
+        mongoTemplate.updateFirst(
+            new Query(Criteria.where(&quot;_id&quot;).is(courseId)),
+            new Update().addToSet(&quot;studentIds&quot;, studentId).inc(&quot;studentCount&quot;, 1),
+            &quot;courses&quot;
+        );
+    }
+
+    /**
+     * 学生退选：双向移除
+     */
+    public void dropCourse(String studentId, String courseId) {
+        mongoTemplate.updateFirst(
+            new Query(Criteria.where(&quot;_id&quot;).is(studentId)),
+            new Update().pull(&quot;courseIds&quot;, courseId).inc(&quot;courseCount&quot;, -1),
+            &quot;students&quot;
+        );
+
+        mongoTemplate.updateFirst(
+            new Query(Criteria.where(&quot;_id&quot;).is(courseId)),
+            new Update().pull(&quot;studentIds&quot;, studentId).inc(&quot;studentCount&quot;, -1),
+            &quot;courses&quot;
+        );
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：当多对多关系的引用数组可能增长到非常大（如数万条）时，应该考虑使用<strong>中间集合</strong>（类似关系数据库的中间表）来代替引用数组。</p>
+</blockquote>
+<p><strong>使用中间集合的方案：</strong></p>
+<pre><code class="language-json">// enrollments 集合（选课记录）
+{
+  &quot;_id&quot;: &quot;E001&quot;,
+  &quot;studentId&quot;: &quot;S001&quot;,
+  &quot;courseId&quot;: &quot;CS101&quot;,
+  &quot;enrollDate&quot;: &quot;2024-02-15T08:00:00Z&quot;,
+  &quot;grade&quot;: null,
+  &quot;status&quot;: &quot;enrolled&quot;
+}
+</code></pre>
+<hr />
+<h2 id="83-常见设计模式">8.3 常见设计模式</h2>
+<h3 id="831-bucket-模式分桶模式">8.3.1 Bucket 模式（分桶模式）</h3>
+<p><strong>适用场景</strong>：时间序列数据、IoT 传感器数据、日志数据等。</p>
+<p><strong>核心思想</strong>：将一段时间内的多条记录聚合到同一个文档中，减少文档数量，提升查询效率。</p>
+<p><strong>场景：IoT 温度传感器数据</strong></p>
+<p><strong>不用 Bucket 模式（每条记录一个文档）：</strong></p>
+<pre><code class="language-json">{ &quot;sensorId&quot;: &quot;SENSOR_001&quot;, &quot;temperature&quot;: 22.5, &quot;humidity&quot;: 65, &quot;timestamp&quot;: &quot;2024-03-15T10:00:00Z&quot; }
+{ &quot;sensorId&quot;: &quot;SENSOR_001&quot;, &quot;temperature&quot;: 22.8, &quot;humidity&quot;: 64, &quot;timestamp&quot;: &quot;2024-03-15T10:01:00Z&quot; }
+{ &quot;sensorId&quot;: &quot;SENSOR_001&quot;, &quot;temperature&quot;: 23.1, &quot;humidity&quot;: 63, &quot;timestamp&quot;: &quot;2024-03-15T10:02:00Z&quot; }
+// ... 每分钟一条，一天1440条，一个月43200条
+</code></pre>
+<p>这种方式会产生海量文档，每个文档还需要存储重复的 <code>sensorId</code> 等元数据。</p>
+<p><strong>使用 Bucket 模式（按小时分桶）：</strong></p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: ObjectId(&quot;...&quot;),
+  &quot;sensorId&quot;: &quot;SENSOR_001&quot;,
+  &quot;date&quot;: &quot;2024-03-15&quot;,
+  &quot;hour&quot;: 10,
+  &quot;count&quot;: 60,
+  &quot;sumTemperature&quot;: 1380.5,
+  &quot;sumHumidity&quot;: 3840,
+  &quot;minTemperature&quot;: 22.1,
+  &quot;maxTemperature&quot;: 24.3,
+  &quot;readings&quot;: [
+    { &quot;minute&quot;: 0, &quot;temperature&quot;: 22.5, &quot;humidity&quot;: 65 },
+    { &quot;minute&quot;: 1, &quot;temperature&quot;: 22.8, &quot;humidity&quot;: 64 },
+    { &quot;minute&quot;: 2, &quot;temperature&quot;: 23.1, &quot;humidity&quot;: 63 },
+    // ... 最多60条（一小时内每分钟一条）
+  ]
+}
+</code></pre>
+<p>对应的 Java 实体类：</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import java.util.List;
+
+@Document(collection = &quot;sensor_readings&quot;)
+@CompoundIndex(name = &quot;sensor_date_hour_idx&quot;, def = &quot;{'sensorId': 1, 'date': 1, 'hour': 1}&quot;, unique = true)
+public class SensorBucket {
+
+    @Id
+    private String id;
+    private String sensorId;
+    private String date;
+    private int hour;
+    private int count;
+    private double sumTemperature;
+    private double sumHumidity;
+    private double minTemperature;
+    private double maxTemperature;
+    private List&lt;Reading&gt; readings;
+
+    // getter / setter 省略
+}
+
+public class Reading {
+    private int minute;
+    private double temperature;
+    private double humidity;
+
+    // getter / setter 省略
+}
+</code></pre>
+<p><strong>写入数据的逻辑：</strong></p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+@Service
+public class SensorDataService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public SensorDataService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    public void recordReading(String sensorId, double temperature, double humidity) {
+        LocalDateTime now = LocalDateTime.now();
+        String date = now.format(DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd&quot;));
+        int hour = now.getHour();
+        int minute = now.getMinute();
+
+        Query query = new Query(
+            Criteria.where(&quot;sensorId&quot;).is(sensorId)
+                .and(&quot;date&quot;).is(date)
+                .and(&quot;hour&quot;).is(hour)
+        );
+
+        Update update = new Update()
+            .inc(&quot;count&quot;, 1)
+            .inc(&quot;sumTemperature&quot;, temperature)
+            .inc(&quot;sumHumidity&quot;, humidity)
+            .min(&quot;minTemperature&quot;, temperature)
+            .max(&quot;maxTemperature&quot;, temperature)
+            .push(&quot;readings&quot;, new Reading(minute, temperature, humidity));
+
+        mongoTemplate.upsert(query, update, &quot;sensor_readings&quot;);
+    }
+}
+</code></pre>
+<p><strong>Bucket 模式的优势：</strong></p>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>不分桶（每条记录）</th>
+<th>按小时分桶</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>每日文档数</td>
+<td>1440</td>
+<td>24</td>
+</tr>
+<tr>
+<td>每月文档数</td>
+<td>~43,200</td>
+<td>~720</td>
+</tr>
+<tr>
+<td>索引条目</td>
+<td>43,200</td>
+<td>720</td>
+</tr>
+<tr>
+<td>重复元数据</td>
+<td>每条都重复</td>
+<td>每小时存一次</td>
+</tr>
+<tr>
+<td>查询&quot;10点的数据&quot;</td>
+<td>扫描60个文档</td>
+<td>读取1个文档</td>
+</tr>
+</tbody>
+</table>
+<h3 id="832-polymorphic-模式多态模式">8.3.2 Polymorphic 模式（多态模式）</h3>
+<p><strong>适用场景</strong>：同一集合中存储不同类型但结构类似的文档。</p>
+<p><strong>核心思想</strong>：使用一个 <code>type</code> 字段区分文档类型，共享通用字段，各类型有自己的专属字段。</p>
+<p><strong>场景：商品集合中存储不同类型的产品</strong></p>
+<pre><code class="language-json">// 电子产品
+{
+  &quot;_id&quot;: &quot;P001&quot;,
+  &quot;type&quot;: &quot;electronics&quot;,
+  &quot;name&quot;: &quot;MacBook Pro 16&quot;,
+  &quot;brand&quot;: &quot;Apple&quot;,
+  &quot;price&quot;: 19999,
+  &quot;status&quot;: &quot;on_sale&quot;,
+  &quot;specs&quot;: {
+    &quot;cpu&quot;: &quot;M3 Max&quot;,
+    &quot;ram&quot;: &quot;36GB&quot;,
+    &quot;storage&quot;: &quot;1TB SSD&quot;,
+    &quot;screenSize&quot;: &quot;16.2英寸&quot;,
+    &quot;batteryLife&quot;: &quot;22小时&quot;
+  },
+  &quot;warranty&quot;: &quot;1年&quot;
+}
+
+// 图书
+{
+  &quot;_id&quot;: &quot;P002&quot;,
+  &quot;type&quot;: &quot;book&quot;,
+  &quot;name&quot;: &quot;MongoDB实战（第二版）&quot;,
+  &quot;brand&quot;: &quot;人民邮电出版社&quot;,
+  &quot;price&quot;: 89,
+  &quot;status&quot;: &quot;on_sale&quot;,
+  &quot;specs&quot;: {
+    &quot;author&quot;: &quot;Kyle Banker&quot;,
+    &quot;isbn&quot;: &quot;978-7-115-XXXXX-X&quot;,
+    &quot;pages&quot;: 480,
+    &quot;language&quot;: &quot;中文&quot;
+  },
+  &quot;format&quot;: &quot;paperback&quot;
+}
+
+// 服装
+{
+  &quot;_id&quot;: &quot;P003&quot;,
+  &quot;type&quot;: &quot;clothing&quot;,
+  &quot;name&quot;: &quot;男士休闲夹克&quot;,
+  &quot;brand&quot;: &quot;优衣库&quot;,
+  &quot;price&quot;: 399,
+  &quot;status&quot;: &quot;on_sale&quot;,
+  &quot;specs&quot;: {
+    &quot;material&quot;: &quot;100%棉&quot;,
+    &quot;color&quot;: &quot;藏青色&quot;,
+    &quot;sizes&quot;: [&quot;S&quot;, &quot;M&quot;, &quot;L&quot;, &quot;XL&quot;, &quot;XXL&quot;]
+  },
+  &quot;season&quot;: &quot;春秋&quot;
+}
+</code></pre>
+<p>对应的 Java 实体类（使用继承）：</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.Map;
+
+@Document(collection = &quot;products&quot;)
+public class BaseProduct {
+
+    @Id
+    private String id;
+    private String type;
+    private String name;
+    private String brand;
+    private double price;
+    private String status;
+    private Map&lt;String, Object&gt; specs;
+
+    // getter / setter 省略
+}
+
+public class ElectronicsProduct extends BaseProduct {
+    private String warranty;
+    // getter / setter 省略
+}
+
+public class BookProduct extends BaseProduct {
+    private String format;
+    // getter / setter 省略
+}
+
+public class ClothingProduct extends BaseProduct {
+    private String season;
+    // getter / setter 省略
+}
+</code></pre>
+<p><strong>查询示例：</strong></p>
+<pre><code class="language-java">// 查询所有电子产品
+public List&lt;BaseProduct&gt; findElectronics() {
+    Query query = new Query(Criteria.where(&quot;type&quot;).is(&quot;electronics&quot;));
+    return mongoTemplate.find(query, BaseProduct.class);
+}
+
+// 查询特定CPU的电子产品
+public List&lt;BaseProduct&gt; findByCpu(String cpu) {
+    Query query = new Query(
+        Criteria.where(&quot;type&quot;).is(&quot;electronics&quot;)
+            .and(&quot;specs.cpu&quot;).is(cpu)
+    );
+    return mongoTemplate.find(query, BaseProduct.class);
+}
+</code></pre>
+<blockquote>
+<p><strong>优点</strong>：所有产品在同一集合，可以统一搜索和排序（如按价格排序所有类型的商品），也可以按类型筛选。比为每种类型创建单独的集合更灵活。</p>
+</blockquote>
+<h3 id="833-attribute-模式属性模式">8.3.3 Attribute 模式（属性模式）</h3>
+<p><strong>适用场景</strong>：不同文档拥有不同数量和名称的动态属性。</p>
+<p><strong>核心思想</strong>：将不确定数量的键值对属性统一存储为数组，方便建立索引和查询。</p>
+<p><strong>场景：商品规格参数（不同商品的规格项不同）</strong></p>
+<p><strong>反面示例 —— 直接用顶层字段：</strong></p>
+<pre><code class="language-json">// 手机
+{ &quot;name&quot;: &quot;iPhone 15&quot;, &quot;screen&quot;: &quot;6.1英寸&quot;, &quot;cpu&quot;: &quot;A16&quot;, &quot;ram&quot;: &quot;6GB&quot;, &quot;battery&quot;: &quot;3877mAh&quot; }
+// 笔记本
+{ &quot;name&quot;: &quot;ThinkPad X1&quot;, &quot;screen&quot;: &quot;14英寸&quot;, &quot;cpu&quot;: &quot;i7-1365U&quot;, &quot;ram&quot;: &quot;16GB&quot;, &quot;weight&quot;: &quot;1.12kg&quot; }
+</code></pre>
+<p>问题：不同商品的规格字段名不同，无法统一建索引，也无法按&quot;任意规格属性&quot;查询。</p>
+<p><strong>使用 Attribute 模式：</strong></p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;P001&quot;,
+  &quot;name&quot;: &quot;iPhone 15&quot;,
+  &quot;category&quot;: &quot;手机&quot;,
+  &quot;price&quot;: 5999,
+  &quot;attributes&quot;: [
+    { &quot;key&quot;: &quot;screen&quot;,  &quot;value&quot;: &quot;6.1英寸&quot;,   &quot;unit&quot;: &quot;英寸&quot; },
+    { &quot;key&quot;: &quot;cpu&quot;,     &quot;value&quot;: &quot;A16&quot;,        &quot;unit&quot;: null },
+    { &quot;key&quot;: &quot;ram&quot;,     &quot;value&quot;: &quot;6&quot;,          &quot;unit&quot;: &quot;GB&quot; },
+    { &quot;key&quot;: &quot;battery&quot;, &quot;value&quot;: &quot;3877&quot;,       &quot;unit&quot;: &quot;mAh&quot; },
+    { &quot;key&quot;: &quot;weight&quot;,  &quot;value&quot;: &quot;171&quot;,        &quot;unit&quot;: &quot;g&quot; },
+    { &quot;key&quot;: &quot;os&quot;,      &quot;value&quot;: &quot;iOS 17&quot;,     &quot;unit&quot;: null }
+  ]
+}
+
+{
+  &quot;_id&quot;: &quot;P002&quot;,
+  &quot;name&quot;: &quot;ThinkPad X1 Carbon&quot;,
+  &quot;category&quot;: &quot;笔记本&quot;,
+  &quot;price&quot;: 9999,
+  &quot;attributes&quot;: [
+    { &quot;key&quot;: &quot;screen&quot;,  &quot;value&quot;: &quot;14英寸&quot;,      &quot;unit&quot;: &quot;英寸&quot; },
+    { &quot;key&quot;: &quot;cpu&quot;,     &quot;value&quot;: &quot;i7-1365U&quot;,    &quot;unit&quot;: null },
+    { &quot;key&quot;: &quot;ram&quot;,     &quot;value&quot;: &quot;16&quot;,          &quot;unit&quot;: &quot;GB&quot; },
+    { &quot;key&quot;: &quot;storage&quot;, &quot;value&quot;: &quot;512&quot;,         &quot;unit&quot;: &quot;GB&quot; },
+    { &quot;key&quot;: &quot;weight&quot;,  &quot;value&quot;: &quot;1.12&quot;,        &quot;unit&quot;: &quot;kg&quot; }
+  ]
+}
+</code></pre>
+<p>可以对 <code>attributes.key</code> 和 <code>attributes.value</code> 创建复合索引：</p>
+<pre><code class="language-javascript">db.products.createIndex({ &quot;attributes.key&quot;: 1, &quot;attributes.value&quot;: 1 })
+</code></pre>
+<p>对应的 Java 实体类：</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.List;
+
+@Document(collection = &quot;products&quot;)
+public class Product {
+
+    @Id
+    private String id;
+    private String name;
+    private String category;
+    private double price;
+    private List&lt;Attribute&gt; attributes;
+
+    // getter / setter 省略
+}
+
+public class Attribute {
+    private String key;
+    private String value;
+    private String unit;
+
+    public Attribute() {}
+
+    public Attribute(String key, String value, String unit) {
+        this.key = key;
+        this.value = value;
+        this.unit = unit;
+    }
+
+    // getter / setter 省略
+}
+</code></pre>
+<p><strong>查询示例：</strong></p>
+<pre><code class="language-java">// 查询 RAM &gt;= 8GB 的商品
+public List&lt;Product&gt; findByMinRam(int minRam) {
+    Query query = new Query(
+        Criteria.where(&quot;attributes&quot;).elemMatch(
+            Criteria.where(&quot;key&quot;).is(&quot;ram&quot;)
+                .and(&quot;value&quot;).gte(String.valueOf(minRam))
+        )
+    );
+    return mongoTemplate.find(query, Product.class);
+}
+</code></pre>
+<h3 id="834-computed-模式预计算模式">8.3.4 Computed 模式（预计算模式）</h3>
+<p><strong>适用场景</strong>：频繁需要读取的统计数据，如计数、汇总值等。</p>
+<p><strong>核心思想</strong>：将需要频繁读取的计算结果预先存储在文档中，写入时更新，避免每次读取都执行聚合查询。</p>
+<p><strong>场景：文章的评论数冗余到文章文档</strong></p>
+<p>文章文档：</p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;ART001&quot;,
+  &quot;title&quot;: &quot;MongoDB 设计模式详解&quot;,
+  &quot;author&quot;: &quot;张三&quot;,
+  &quot;content&quot;: &quot;文章正文...&quot;,
+  &quot;stats&quot;: {
+    &quot;viewCount&quot;: 15600,
+    &quot;likeCount&quot;: 432,
+    &quot;commentCount&quot;: 87,
+    &quot;shareCount&quot;: 56
+  },
+  &quot;createdAt&quot;: &quot;2024-03-15T08:00:00Z&quot;,
+  &quot;updatedAt&quot;: &quot;2024-04-10T16:30:00Z&quot;
+}
+</code></pre>
+<p>评论集合中独立存储评论：</p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;CMT001&quot;,
+  &quot;articleId&quot;: &quot;ART001&quot;,
+  &quot;userId&quot;: &quot;U002&quot;,
+  &quot;userName&quot;: &quot;李四&quot;,
+  &quot;content&quot;: &quot;非常棒的文章！&quot;,
+  &quot;createdAt&quot;: &quot;2024-03-16T10:30:00Z&quot;
+}
+</code></pre>
+<p><strong>写入评论时同步更新计数：</strong></p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import com.example.mongo.entity.Comment;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+
+@Service
+public class CommentService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public CommentService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    public Comment addComment(String articleId, String userId, String userName, String content) {
+        // 1. 插入评论文档
+        Comment comment = new Comment();
+        comment.setArticleId(articleId);
+        comment.setUserId(userId);
+        comment.setUserName(userName);
+        comment.setContent(content);
+        comment.setCreatedAt(java.time.LocalDateTime.now());
+        mongoTemplate.insert(comment);
+
+        // 2. 更新文章的 commentCount（预计算字段）
+        mongoTemplate.updateFirst(
+            new Query(Criteria.where(&quot;_id&quot;).is(articleId)),
+            new Update().inc(&quot;stats.commentCount&quot;, 1),
+            &quot;articles&quot;
+        );
+
+        return comment;
+    }
+
+    public void deleteComment(String commentId, String articleId) {
+        mongoTemplate.remove(
+            new Query(Criteria.where(&quot;_id&quot;).is(commentId)),
+            &quot;comments&quot;
+        );
+
+        mongoTemplate.updateFirst(
+            new Query(Criteria.where(&quot;_id&quot;).is(articleId)),
+            new Update().inc(&quot;stats.commentCount&quot;, -1),
+            &quot;articles&quot;
+        );
+    }
+}
+</code></pre>
+<p><strong>优势</strong>：查询文章列表时，<code>commentCount</code> 直接可用，无需每次都对 comments 集合执行 count 聚合。</p>
+<h3 id="835-subset-模式子集模式">8.3.5 Subset 模式（子集模式）</h3>
+<p><strong>适用场景</strong>：只需要频繁访问大数据集合中的部分&quot;热数据&quot;。</p>
+<p><strong>核心思想</strong>：将最常访问的数据子集内嵌到主文档中，完整数据存储在独立集合中。</p>
+<p><strong>场景：商品评价 —— 主文档中只保留最近3条评价</strong></p>
+<p>商品文档（products 集合）：</p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;P001&quot;,
+  &quot;name&quot;: &quot;机械键盘&quot;,
+  &quot;price&quot;: 399,
+  &quot;rating&quot;: 4.5,
+  &quot;reviewCount&quot;: 2860,
+  &quot;recentReviews&quot;: [
+    {
+      &quot;userId&quot;: &quot;U100&quot;,
+      &quot;userName&quot;: &quot;用户A&quot;,
+      &quot;rating&quot;: 5,
+      &quot;content&quot;: &quot;手感非常好，推荐！&quot;,
+      &quot;createdAt&quot;: &quot;2024-04-10T16:00:00Z&quot;
+    },
+    {
+      &quot;userId&quot;: &quot;U099&quot;,
+      &quot;userName&quot;: &quot;用户B&quot;,
+      &quot;rating&quot;: 4,
+      &quot;content&quot;: &quot;性价比不错，就是声音有点大&quot;,
+      &quot;createdAt&quot;: &quot;2024-04-09T12:00:00Z&quot;
+    },
+    {
+      &quot;userId&quot;: &quot;U098&quot;,
+      &quot;userName&quot;: &quot;用户C&quot;,
+      &quot;rating&quot;: 5,
+      &quot;content&quot;: &quot;买了两个，办公和家里各一个&quot;,
+      &quot;createdAt&quot;: &quot;2024-04-08T09:30:00Z&quot;
+    }
+  ]
+}
+</code></pre>
+<p>完整评价数据（reviews 集合）：</p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;R001&quot;,
+  &quot;productId&quot;: &quot;P001&quot;,
+  &quot;userId&quot;: &quot;U100&quot;,
+  &quot;userName&quot;: &quot;用户A&quot;,
+  &quot;rating&quot;: 5,
+  &quot;content&quot;: &quot;手感非常好，推荐！&quot;,
+  &quot;images&quot;: [&quot;review_img1.jpg&quot;, &quot;review_img2.jpg&quot;],
+  &quot;createdAt&quot;: &quot;2024-04-10T16:00:00Z&quot;
+}
+</code></pre>
+<p><strong>添加评价时维护子集：</strong></p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ReviewService {
+
+    private static final int RECENT_REVIEW_LIMIT = 3;
+    private final MongoTemplate mongoTemplate;
+
+    public ReviewService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    public void addReview(String productId, String userId, String userName,
+                          int rating, String content) {
+        // 1. 插入完整评价到 reviews 集合
+        Review review = new Review(productId, userId, userName, rating, content);
+        mongoTemplate.insert(review);
+
+        // 2. 更新商品的 recentReviews 子集（保留最近3条）
+        RecentReview recentReview = new RecentReview(userId, userName, rating, content);
+
+        mongoTemplate.updateFirst(
+            new Query(Criteria.where(&quot;_id&quot;).is(productId)),
+            new Update()
+                .push(&quot;recentReviews&quot;)
+                    .sort(org.springframework.data.domain.Sort.by(
+                        org.springframework.data.domain.Sort.Direction.DESC, &quot;createdAt&quot;))
+                    .slice(RECENT_REVIEW_LIMIT)
+                    .value(recentReview)
+                .inc(&quot;reviewCount&quot;, 1),
+            &quot;products&quot;
+        );
+    }
+}
+</code></pre>
+<p><strong>优势</strong>：商品详情页只需查询一次即可获得最新评价。用户点击&quot;查看全部评价&quot;时，再从 reviews 集合分页加载。</p>
+<hr />
+<h2 id="84-反范式化设计的取舍与冗余数据维护">8.4 反范式化设计的取舍与冗余数据维护</h2>
+<h3 id="841-什么时候反范式化">8.4.1 什么时候反范式化</h3>
+<p>MongoDB 鼓励反范式化设计（冗余数据），但这不意味着所有数据都应该冗余。</p>
+<p><strong>适合反范式化的场景：</strong></p>
+<table>
+<thead>
+<tr>
+<th>场景特征</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>读多写少</td>
+<td>文章作者名、商品分类名</td>
+</tr>
+<tr>
+<td>关联数据变化极少</td>
+<td>国家名、省份名</td>
+</tr>
+<tr>
+<td>读性能要求高</td>
+<td>首页推荐列表、搜索结果</td>
+</tr>
+<tr>
+<td>数据变更不频繁</td>
+<td>用户昵称（偶尔修改）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>不适合反范式化的场景：</strong></p>
+<table>
+<thead>
+<tr>
+<th>场景特征</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>写多读少</td>
+<td>实时库存数量</td>
+</tr>
+<tr>
+<td>关联数据频繁变更</td>
+<td>实时价格、实时评分</td>
+</tr>
+<tr>
+<td>数据一致性要求极高</td>
+<td>金融交易金额</td>
+</tr>
+<tr>
+<td>冗余范围非常广</td>
+<td>一处修改需要更新数万文档</td>
+</tr>
+</tbody>
+</table>
+<h3 id="842-冗余数据的同步策略">8.4.2 冗余数据的同步策略</h3>
+<p>当进行反范式化设计后，冗余数据的同步是一个重要问题。以下是几种常见的同步策略：</p>
+<p><strong>策略一：应用层双写</strong></p>
+<p>在更新源数据时，同时更新所有冗余副本。</p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthorService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public AuthorService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 修改作者姓名 —— 需要同步更新所有冗余位置
+     */
+    public void updateAuthorName(String authorId, String newName) {
+        // 1. 更新作者集合中的姓名
+        mongoTemplate.updateFirst(
+            new Query(Criteria.where(&quot;_id&quot;).is(authorId)),
+            new Update().set(&quot;name&quot;, newName),
+            &quot;authors&quot;
+        );
+
+        // 2. 同步更新所有文章中的冗余作者名
+        mongoTemplate.updateMulti(
+            new Query(Criteria.where(&quot;authorId&quot;).is(authorId)),
+            new Update().set(&quot;authorName&quot;, newName),
+            &quot;articles&quot;
+        );
+
+        // 3. 同步更新评论中的冗余作者名（如果有）
+        mongoTemplate.updateMulti(
+            new Query(Criteria.where(&quot;userId&quot;).is(authorId)),
+            new Update().set(&quot;userName&quot;, newName),
+            &quot;comments&quot;
+        );
+    }
+}
+</code></pre>
+<p><strong>优点</strong>：实现简单，一致性有保证（在同一请求中完成）。</p>
+<p><strong>缺点</strong>：如果冗余位置很多，更新操作会很慢。如果某个更新失败，数据不一致（可以使用事务解决）。</p>
+<p><strong>策略二：异步消息同步</strong></p>
+<p>通过消息队列异步处理冗余数据的更新：</p>
+<pre><code class="language-java">// 伪代码：修改姓名时发送消息
+public void updateAuthorName(String authorId, String newName) {
+    // 1. 更新主数据
+    mongoTemplate.updateFirst(
+        new Query(Criteria.where(&quot;_id&quot;).is(authorId)),
+        new Update().set(&quot;name&quot;, newName),
+        &quot;authors&quot;
+    );
+
+    // 2. 发送异步消息，由消费者负责更新冗余数据
+    messageQueue.send(&quot;author-name-changed&quot;, Map.of(
+        &quot;authorId&quot;, authorId,
+        &quot;newName&quot;, newName
+    ));
+}
+</code></pre>
+<p><strong>优点</strong>：主操作快速完成，不阻塞用户请求。</p>
+<p><strong>缺点</strong>：存在短暂的数据不一致窗口（最终一致性）。</p>
+<p><strong>策略三：Change Streams 自动同步</strong></p>
+<p>利用 MongoDB 的 Change Streams 监听源数据的变更，自动更新冗余数据。这是最优雅的方案，将在第11章详细讲解。</p>
+<pre><code class="language-java">// 简要示例：监听 authors 集合的更新事件
+@Component
+public class AuthorChangeListener {
+
+    private final MongoTemplate mongoTemplate;
+
+    public AuthorChangeListener(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    // 监听到 authors 集合的 update 事件后，自动更新文章中的冗余作者名
+    public void onAuthorChanged(ChangeStreamDocument&lt;Document&gt; change) {
+        if (change.getOperationType() == OperationType.UPDATE) {
+            Document updateDesc = change.getUpdateDescription().getUpdatedFields();
+            if (updateDesc.containsKey(&quot;name&quot;)) {
+                String authorId = change.getDocumentKey().getString(&quot;_id&quot;).getValue();
+                String newName = updateDesc.getString(&quot;name&quot;);
+
+                mongoTemplate.updateMulti(
+                    new Query(Criteria.where(&quot;authorId&quot;).is(authorId)),
+                    new Update().set(&quot;authorName&quot;, newName),
+                    &quot;articles&quot;
+                );
+            }
+        }
+    }
+}
+</code></pre>
+<h3 id="843-各策略对比">8.4.3 各策略对比</h3>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>一致性</th>
+<th>实现复杂度</th>
+<th>性能影响</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>应用层双写</td>
+<td>强一致（可配合事务）</td>
+<td>低</td>
+<td>同步更新慢</td>
+<td>冗余位置少，更新频率低</td>
+</tr>
+<tr>
+<td>异步消息</td>
+<td>最终一致</td>
+<td>中</td>
+<td>主操作快</td>
+<td>冗余位置多，容忍短暂不一致</td>
+</tr>
+<tr>
+<td>Change Streams</td>
+<td>最终一致</td>
+<td>中高</td>
+<td>主操作不受影响</td>
+<td>需要解耦，多消费者场景</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="85-从关系型数据库迁移到-mongodb-的思维转换">8.5 从关系型数据库迁移到 MongoDB 的思维转换</h2>
+<h3 id="851-关键思维转换">8.5.1 关键思维转换</h3>
+<p><strong>不要直接把表映射为集合。</strong> 这是从关系型数据库迁移到 MongoDB 最常见的错误。</p>
+<table>
+<thead>
+<tr>
+<th>关系型思维</th>
+<th>MongoDB 思维</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>先设计表结构，再写查询</td>
+<td>先分析查询需求，再设计文档结构</td>
+</tr>
+<tr>
+<td>数据规范化，消除冗余</td>
+<td>适度冗余，为读取优化</td>
+</tr>
+<tr>
+<td>用 JOIN 组合多表数据</td>
+<td>将常一起读取的数据内嵌在同一文档</td>
+</tr>
+<tr>
+<td>通用的表结构</td>
+<td>为具体的访问模式定制文档结构</td>
+</tr>
+<tr>
+<td>外键约束保证完整性</td>
+<td>应用层保证数据完整性</td>
+</tr>
+<tr>
+<td>固定的列结构</td>
+<td>灵活的文档结构（Schema-less）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="852-以查询需求驱动设计">8.5.2 以查询需求驱动设计</h3>
+<p>设计文档结构的正确流程：</p>
+<pre><code>1. 列出所有的查询场景（UI 页面 / API 接口）
+2. 分析每个查询需要哪些数据
+3. 确定数据之间的关系和访问模式
+4. 决定内嵌还是引用
+5. 考虑写入模式和更新频率
+6. 设计索引策略
+</code></pre>
+<h3 id="853-完整案例电商系统从关系型到-mongodb">8.5.3 完整案例：电商系统从关系型到 MongoDB</h3>
+<p>下面通过一个完整的电商系统案例，展示如何将关系型设计转换为 MongoDB 文档设计。</p>
+<h4 id="关系型数据库设计转换前">关系型数据库设计（转换前）</h4>
+<pre><code>┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│ users            │     │ orders           │     │ products        │
+├─────────────────┤     ├──────────────────┤     ├─────────────────┤
+│ id (PK)         │◄────│ user_id (FK)     │     │ id (PK)         │
+│ username        │     │ id (PK)          │     │ name            │
+│ email           │     │ order_no         │     │ category_id(FK) │
+│ password        │     │ total_amount     │     │ price           │
+│ phone           │     │ status           │     │ description     │
+│ created_at      │     │ payment_method   │     │ stock           │
+└─────────────────┘     │ address_id (FK)  │     │ created_at      │
+                        │ created_at       │     └─────────────────┘
+┌─────────────────┐     └──────────────────┘            │
+│ user_addresses   │            │                        │
+├─────────────────┤     ┌──────────────────┐     ┌──────┴──────────┐
+│ id (PK)         │     │ order_items      │     │ categories      │
+│ user_id (FK)    │     ├──────────────────┤     ├─────────────────┤
+│ province        │     │ id (PK)          │     │ id (PK)         │
+│ city            │     │ order_id (FK)    │     │ name            │
+│ district        │     │ product_id (FK)  │     │ parent_id (FK)  │
+│ street          │     │ quantity         │     │ level           │
+│ is_default      │     │ price            │     └─────────────────┘
+└─────────────────┘     └──────────────────┘
+
+共6张表，查询订单详情需要 JOIN 5张表
+</code></pre>
+<p>SQL 查询一个订单详情需要：</p>
+<pre><code class="language-sql">SELECT o.order_no, o.total_amount, o.status,
+       u.username, u.phone,
+       a.province, a.city, a.district, a.street,
+       p.name AS product_name, p.price AS product_price,
+       oi.quantity, oi.price AS order_price,
+       c.name AS category_name
+FROM orders o
+JOIN users u ON o.user_id = u.id
+JOIN user_addresses a ON o.address_id = a.id
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON oi.product_id = p.id
+JOIN categories c ON p.category_id = c.id
+WHERE o.id = 1001;
+</code></pre>
+<h4 id="mongodb-文档设计转换后">MongoDB 文档设计（转换后）</h4>
+<p>分析查询场景：</p>
+<table>
+<thead>
+<tr>
+<th>页面 / 功能</th>
+<th>需要的数据</th>
+<th>访问频率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>订单列表</td>
+<td>订单号、金额、状态、商品名称缩略</td>
+<td>非常高</td>
+</tr>
+<tr>
+<td>订单详情</td>
+<td>订单全部信息、收货地址、商品详情</td>
+<td>高</td>
+</tr>
+<tr>
+<td>用户主页</td>
+<td>用户基本信息</td>
+<td>高</td>
+</tr>
+<tr>
+<td>商品列表</td>
+<td>商品名、价格、分类名</td>
+<td>非常高</td>
+</tr>
+<tr>
+<td>商品详情</td>
+<td>商品完整信息、分类信息</td>
+<td>高</td>
+</tr>
+</tbody>
+</table>
+<p><strong>用户集合（users）设计：</strong></p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;U001&quot;,
+  &quot;username&quot;: &quot;zhangsan&quot;,
+  &quot;email&quot;: &quot;zhangsan@example.com&quot;,
+  &quot;password&quot;: &quot;$2a$10$...&quot;,
+  &quot;phone&quot;: &quot;13800138000&quot;,
+  &quot;addresses&quot;: [
+    {
+      &quot;id&quot;: &quot;ADDR001&quot;,
+      &quot;province&quot;: &quot;北京市&quot;,
+      &quot;city&quot;: &quot;北京&quot;,
+      &quot;district&quot;: &quot;朝阳区&quot;,
+      &quot;street&quot;: &quot;建国路88号&quot;,
+      &quot;isDefault&quot;: true
+    },
+    {
+      &quot;id&quot;: &quot;ADDR002&quot;,
+      &quot;province&quot;: &quot;上海市&quot;,
+      &quot;city&quot;: &quot;上海&quot;,
+      &quot;district&quot;: &quot;浦东新区&quot;,
+      &quot;street&quot;: &quot;陆家嘴环路100号&quot;,
+      &quot;isDefault&quot;: false
+    }
+  ],
+  &quot;createdAt&quot;: &quot;2024-01-10T08:00:00Z&quot;
+}
+</code></pre>
+<p>设计决策：地址<strong>内嵌</strong>到用户文档中。原因：地址数量有限（通常不超过10个）、总是随用户一起读取、不需要被独立查询。</p>
+<p><strong>商品集合（products）设计：</strong></p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;P001&quot;,
+  &quot;name&quot;: &quot;MacBook Pro 16&quot;,
+  &quot;category&quot;: {
+    &quot;id&quot;: &quot;CAT003&quot;,
+    &quot;name&quot;: &quot;笔记本电脑&quot;,
+    &quot;path&quot;: [&quot;电子产品&quot;, &quot;电脑&quot;, &quot;笔记本电脑&quot;]
+  },
+  &quot;price&quot;: 19999,
+  &quot;originalPrice&quot;: 21999,
+  &quot;description&quot;: &quot;搭载 M3 Max 芯片...&quot;,
+  &quot;images&quot;: [
+    &quot;/products/mbp16_1.jpg&quot;,
+    &quot;/products/mbp16_2.jpg&quot;
+  ],
+  &quot;attributes&quot;: [
+    { &quot;key&quot;: &quot;品牌&quot;, &quot;value&quot;: &quot;Apple&quot; },
+    { &quot;key&quot;: &quot;CPU&quot;, &quot;value&quot;: &quot;M3 Max&quot; },
+    { &quot;key&quot;: &quot;内存&quot;, &quot;value&quot;: &quot;36GB&quot; },
+    { &quot;key&quot;: &quot;存储&quot;, &quot;value&quot;: &quot;1TB SSD&quot; }
+  ],
+  &quot;stock&quot;: 50,
+  &quot;salesCount&quot;: 1280,
+  &quot;rating&quot;: 4.8,
+  &quot;reviewCount&quot;: 356,
+  &quot;status&quot;: &quot;on_sale&quot;,
+  &quot;createdAt&quot;: &quot;2024-01-15T10:00:00Z&quot;
+}
+</code></pre>
+<p>设计决策：</p>
+<ul>
+<li>分类信息<strong>冗余内嵌</strong>（包含分类ID、名称和路径）：分类变更极少，读取频率极高。</li>
+<li>使用 <strong>Attribute 模式</strong>存储商品属性：不同商品属性项不同。</li>
+<li>销量、评分、评价数<strong>预计算</strong>冗余到文档中（Computed 模式）。</li>
+</ul>
+<p><strong>订单集合（orders）设计：</strong></p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: &quot;ORD20240315001&quot;,
+  &quot;orderNo&quot;: &quot;ORD20240315001&quot;,
+  &quot;user&quot;: {
+    &quot;id&quot;: &quot;U001&quot;,
+    &quot;username&quot;: &quot;zhangsan&quot;,
+    &quot;phone&quot;: &quot;13800138000&quot;
+  },
+  &quot;shippingAddress&quot;: {
+    &quot;province&quot;: &quot;北京市&quot;,
+    &quot;city&quot;: &quot;北京&quot;,
+    &quot;district&quot;: &quot;朝阳区&quot;,
+    &quot;street&quot;: &quot;建国路88号&quot;,
+    &quot;receiverName&quot;: &quot;张三&quot;,
+    &quot;receiverPhone&quot;: &quot;13800138000&quot;
+  },
+  &quot;items&quot;: [
+    {
+      &quot;productId&quot;: &quot;P001&quot;,
+      &quot;productName&quot;: &quot;MacBook Pro 16&quot;,
+      &quot;productImage&quot;: &quot;/products/mbp16_1.jpg&quot;,
+      &quot;price&quot;: 19999,
+      &quot;quantity&quot;: 1,
+      &quot;subtotal&quot;: 19999
+    },
+    {
+      &quot;productId&quot;: &quot;P008&quot;,
+      &quot;productName&quot;: &quot;USB-C 拓展坞&quot;,
+      &quot;productImage&quot;: &quot;/products/usbc_dock.jpg&quot;,
+      &quot;price&quot;: 299,
+      &quot;quantity&quot;: 2,
+      &quot;subtotal&quot;: 598
+    }
+  ],
+  &quot;totalAmount&quot;: 20597,
+  &quot;discountAmount&quot;: 200,
+  &quot;payableAmount&quot;: 20397,
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;paymentMethod&quot;: &quot;alipay&quot;,
+  &quot;paymentTime&quot;: &quot;2024-03-15T10:35:00Z&quot;,
+  &quot;shippingInfo&quot;: {
+    &quot;company&quot;: &quot;顺丰速运&quot;,
+    &quot;trackingNo&quot;: &quot;SF1234567890&quot;,
+    &quot;shippedAt&quot;: &quot;2024-03-16T09:00:00Z&quot;
+  },
+  &quot;createdAt&quot;: &quot;2024-03-15T10:30:00Z&quot;,
+  &quot;completedAt&quot;: &quot;2024-03-18T14:20:00Z&quot;
+}
+</code></pre>
+<p>设计决策：</p>
+<ul>
+<li>用户基本信息（ID、用户名、手机号）<strong>冗余内嵌</strong>：订单列表页需要显示。</li>
+<li>收货地址<strong>快照内嵌</strong>：下单时的地址不应随用户修改地址而改变。</li>
+<li>商品信息（名称、图片、价格）<strong>快照内嵌</strong>：订单中的价格是下单时的价格，不随商品调价变化。</li>
+<li>物流信息<strong>内嵌</strong>：总是和订单一起读取。</li>
+</ul>
+<p><strong>对应的 Java 实体类：</strong></p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Document(collection = &quot;orders&quot;)
+@CompoundIndex(name = &quot;user_date_idx&quot;, def = &quot;{'user.id': 1, 'createdAt': -1}&quot;)
+public class Order {
+
+    @Id
+    private String id;
+
+    @Indexed(unique = true)
+    private String orderNo;
+
+    private OrderUser user;
+    private ShippingAddress shippingAddress;
+    private List&lt;OrderItem&gt; items;
+    private double totalAmount;
+    private double discountAmount;
+    private double payableAmount;
+
+    @Indexed
+    private String status;
+
+    private String paymentMethod;
+    private LocalDateTime paymentTime;
+    private ShippingInfo shippingInfo;
+    private LocalDateTime createdAt;
+    private LocalDateTime completedAt;
+
+    // getter / setter 省略
+}
+
+public class OrderUser {
+    private String id;
+    private String username;
+    private String phone;
+    // getter / setter 省略
+}
+
+public class ShippingAddress {
+    private String province;
+    private String city;
+    private String district;
+    private String street;
+    private String receiverName;
+    private String receiverPhone;
+    // getter / setter 省略
+}
+
+public class OrderItem {
+    private String productId;
+    private String productName;
+    private String productImage;
+    private double price;
+    private int quantity;
+    private double subtotal;
+    // getter / setter 省略
+}
+
+public class ShippingInfo {
+    private String company;
+    private String trackingNo;
+    private LocalDateTime shippedAt;
+    // getter / setter 省略
+}
+</code></pre>
+<h4 id="转换前后对比">转换前后对比</h4>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>关系型数据库（转换前）</th>
+<th>MongoDB（转换后）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>表 / 集合数</td>
+<td>6 张表</td>
+<td>3 个集合</td>
+</tr>
+<tr>
+<td>查询订单详情</td>
+<td>JOIN 5 张表</td>
+<td>单次查询 1 个文档</td>
+</tr>
+<tr>
+<td>查询性能</td>
+<td>多表 JOIN，性能随数据量下降</td>
+<td>单文档读取，稳定高效</td>
+</tr>
+<tr>
+<td>数据冗余</td>
+<td>无</td>
+<td>有（用户名、商品名、分类名等）</td>
+</tr>
+<tr>
+<td>修改用户名</td>
+<td>更新 1 条记录</td>
+<td>更新用户集合 + 异步更新冗余</td>
+</tr>
+<tr>
+<td>修改商品价格</td>
+<td>更新 1 条记录</td>
+<td>只更新商品集合（历史订单保留旧价格）</td>
+</tr>
+<tr>
+<td>收货地址变更</td>
+<td>历史订单被影响（地址引用）</td>
+<td>历史订单不受影响（地址快照）</td>
+</tr>
+<tr>
+<td>数据一致性</td>
+<td>外键约束保证</td>
+<td>应用层保证</td>
+</tr>
+<tr>
+<td>扩展灵活性</td>
+<td>加字段需要 ALTER TABLE</td>
+<td>直接写入即可</td>
+</tr>
+</tbody>
+</table>
+<h4 id="迁移最佳实践总结">迁移最佳实践总结</h4>
+<ol>
+<li>
+<p><strong>从查询场景出发</strong>，而不是从数据关系出发。列出你的 API 接口，分析每个接口需要的数据。</p>
+</li>
+<li>
+<p><strong>拥抱冗余</strong>，但要有策略。对于读多写少的数据大胆冗余，对于频繁变更的数据谨慎冗余。</p>
+</li>
+<li>
+<p><strong>使用快照</strong>保存关键时刻的数据状态。订单中的商品价格、收货地址应该是下单时的快照。</p>
+</li>
+<li>
+<p><strong>逐步迁移</strong>，先从读密集的模块开始，用 MongoDB 优化读取性能。</p>
+</li>
+<li>
+<p><strong>建立冗余数据的维护机制</strong>，不管是双写、消息队列还是 Change Streams。</p>
+</li>
+<li>
+<p><strong>不要过度内嵌</strong>。如果内嵌导致文档过大或更新过于复杂，就应该考虑拆分为独立集合。</p>
+</li>
+</ol>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>核心内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内嵌 vs 引用</td>
+<td>内嵌适合读取密集、数据量小的场景；引用适合数据量大、需要独立查询的场景</td>
+</tr>
+<tr>
+<td>一对一</td>
+<td>通常内嵌，除非子文档特别大</td>
+</tr>
+<tr>
+<td>一对少</td>
+<td>内嵌数组，适合数量有限（&lt; 100）的子数据</td>
+</tr>
+<tr>
+<td>一对多</td>
+<td>使用引用，在引用处适度冗余常用字段</td>
+</tr>
+<tr>
+<td>多对多</td>
+<td>双向引用数组，数量极大时使用中间集合</td>
+</tr>
+<tr>
+<td>Bucket 模式</td>
+<td>时间序列数据分桶存储，减少文档数量和索引开销</td>
+</tr>
+<tr>
+<td>Polymorphic 模式</td>
+<td>用 type 字段区分类型，同一集合存储不同结构的文档</td>
+</tr>
+<tr>
+<td>Attribute 模式</td>
+<td>动态属性使用键值对数组存储，便于索引和查询</td>
+</tr>
+<tr>
+<td>Computed 模式</td>
+<td>预计算并冗余存储统计数据（计数、汇总），提升读取性能</td>
+</tr>
+<tr>
+<td>Subset 模式</td>
+<td>主文档中只保留热数据子集，完整数据存独立集合</td>
+</tr>
+<tr>
+<td>反范式化取舍</td>
+<td>读多写少适合冗余，冗余数据需要同步策略（双写 / 消息 / Change Streams）</td>
+</tr>
+<tr>
+<td>迁移思维</td>
+<td>不要直接映射表为集合，以查询需求驱动设计，拥抱冗余但有策略</td>
+</tr>
+</tbody>
+</table>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

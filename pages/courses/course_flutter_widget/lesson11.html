@@ -1,0 +1,2950 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第11课-tab-导航与页面切换">第11课 Tab 导航与页面切换</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter 常用组件系统学习<br />
+<strong>适用人群</strong>：有 Dart 语言基础，已学完前 10 课（基础组件、布局、Scaffold）的开发者<br />
+<strong>课程目标</strong>：掌握 Tab 导航与页面切换的各种实现方式，能够构建带标签页和可滑动页面的复杂界面</p>
+</blockquote>
+<p>本课是导航系列的第二课，承接第 10 课 Scaffold。在上一课中，我们学习了如何使用 BottomNavigationBar 实现底部导航切换，但在实际应用中，&quot;顶部标签栏&quot;同样是一种非常常见的导航模式——比如新闻应用的分类标签、社交应用的动态/关注/推荐切换等。Flutter 提供了 <code>TabBar</code> + <code>TabBarView</code> 这套组合来实现标签页导航，同时还提供了更底层的 <code>PageView</code> 来实现任意的可滑动页面效果。本课将全面讲解这些组件的使用方法和内部原理。</p>
+<hr />
+<h2 id="1-defaulttabcontroller-与-tabcontroller">1. DefaultTabController 与 TabController</h2>
+<p>在使用 <code>TabBar</code> 和 <code>TabBarView</code> 之前，必须先提供一个 <strong>TabController</strong> 来协调标签栏与页面内容之间的联动关系。Flutter 提供了两种方式来创建 TabController：</p>
+<h3 id="11-defaulttabcontroller简单快速的方式">1.1 DefaultTabController：简单快速的方式</h3>
+<p><code>DefaultTabController</code> 是 Flutter 提供的一个便捷 Widget，它会在内部自动创建并管理一个 <code>TabController</code>，并通过 InheritedWidget 机制将其传递给子树中的 <code>TabBar</code> 和 <code>TabBarView</code>。</p>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>标签数量固定不变</li>
+<li>不需要在代码中手动控制标签切换（如监听切换事件、编程式跳转到某个标签）</li>
+<li>快速原型开发或简单场景</li>
+</ul>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'DefaultTabController 示例',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const DefaultTabControllerDemo(),
+    );
+  }
+}
+
+class DefaultTabControllerDemo extends StatelessWidget {
+  const DefaultTabControllerDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // DefaultTabController 包裹在 Scaffold 外层
+    // length 表示标签的数量，必须与 TabBar 和 TabBarView 的子项数量一致
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('DefaultTabController 示例'),
+          // TabBar 放在 AppBar 的 bottom 位置
+          bottom: const TabBar(
+            tabs: [
+              Tab(icon: Icon(Icons.home), text: '首页'),
+              Tab(icon: Icon(Icons.star), text: '收藏'),
+              Tab(icon: Icon(Icons.person), text: '我的'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            Center(child: Text('首页内容', style: TextStyle(fontSize: 24))),
+            Center(child: Text('收藏内容', style: TextStyle(fontSize: 24))),
+            Center(child: Text('我的内容', style: TextStyle(fontSize: 24))),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>关键要点</strong>：</p>
+<ul>
+<li><code>DefaultTabController</code> 必须放在 <code>TabBar</code> 和 <code>TabBarView</code> 的共同祖先位置</li>
+<li><code>length</code> 参数必须与 <code>TabBar</code> 的 <code>tabs</code> 数量和 <code>TabBarView</code> 的 <code>children</code> 数量严格一致，否则会抛出断言错误</li>
+<li>子树中的 <code>TabBar</code> 和 <code>TabBarView</code> 会自动通过 <code>DefaultTabController.of(context)</code> 获取控制器</li>
+</ul>
+<blockquote>
+<p><strong>注意事项</strong>：<code>DefaultTabController</code> 内部使用的是 <code>StatefulWidget</code>，它自己管理了 TabController 的创建和销毁。如果你需要在 <code>DefaultTabController</code> 的子树中获取当前选中的标签索引，可以使用 <code>DefaultTabController.of(context).index</code>。</p>
+</blockquote>
+<h3 id="12-tabcontroller完全掌控的方式">1.2 TabController：完全掌控的方式</h3>
+<p>当你需要更精细地控制标签行为时——比如监听标签切换事件、在代码中编程式地跳转到某个标签、或者在标签切换时执行额外逻辑——就需要手动创建 <code>TabController</code>。</p>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>需要监听标签切换事件（<code>addListener</code>）</li>
+<li>需要编程式地跳转到某个标签（<code>animateTo</code>）</li>
+<li>标签数量可能动态变化</li>
+<li>需要在标签切换时执行网络请求、数据加载等逻辑</li>
+<li>需要阻止某些标签的切换（如未登录时跳转登录页）</li>
+</ul>
+<p>使用 <code>TabController</code> 有一个重要前提：宿主 State 必须混入 <code>TickerProviderStateMixin</code>（如果只有一个 AnimationController / TabController 也可以使用 <code>SingleTickerProviderStateMixin</code>）。这是因为 <code>TabController</code> 内部使用了动画来驱动标签切换时的过渡效果，而动画需要一个 <code>TickerProvider</code> 来提供时钟脉冲。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'TabController 示例',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const TabControllerDemo(),
+    );
+  }
+}
+
+class TabControllerDemo extends StatefulWidget {
+  const TabControllerDemo({super.key});
+
+  @override
+  State&lt;TabControllerDemo&gt; createState() =&gt; _TabControllerDemoState();
+}
+
+// 必须混入 TickerProviderStateMixin 以提供 Ticker
+class _TabControllerDemoState extends State&lt;TabControllerDemo&gt;
+    with TickerProviderStateMixin {
+  late final TabController _tabController;
+
+  final List&lt;String&gt; _tabTitles = ['推荐', '热门', '最新', '关注'];
+
+  @override
+  void initState() {
+    super.initState();
+    // 创建 TabController，vsync 传入 this（即当前 State，它实现了 TickerProvider）
+    _tabController = TabController(
+      length: _tabTitles.length,
+      vsync: this,
+      initialIndex: 0, // 初始选中第一个标签（默认值也是 0）
+    );
+
+    // 监听标签切换事件
+    _tabController.addListener(_onTabChanged);
+  }
+
+  void _onTabChanged() {
+    // 注意：TabController 的 listener 在动画过程中会被多次调用
+    // 使用 indexIsChanging 可以只在切换确认时执行一次
+    if (_tabController.indexIsChanging) {
+      debugPrint('标签切换中：${_tabController.previousIndex} -&gt; ${_tabController.index}');
+    }
+  }
+
+  @override
+  void dispose() {
+    // 务必在 dispose 中移除监听并销毁 TabController，避免内存泄漏
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('TabController 示例'),
+        bottom: TabBar(
+          controller: _tabController, // 显式传入 TabController
+          tabs: _tabTitles.map((title) =&gt; Tab(text: title)).toList(),
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController, // TabBar 和 TabBarView 必须使用同一个 controller
+        children: _tabTitles.map((title) {
+          return Center(
+            child: Text(
+              '$title 的内容',
+              style: const TextStyle(fontSize: 24),
+            ),
+          );
+        }).toList(),
+      ),
+      // 演示编程式跳转：通过 FAB 跳转到最后一个标签
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // animateTo 会带有平滑的动画效果
+          _tabController.animateTo(_tabTitles.length - 1);
+        },
+        child: const Icon(Icons.last_page),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="13-两种方式详细对比">1.3 两种方式详细对比</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>DefaultTabController</th>
+<th>TabController</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>使用复杂度</strong></td>
+<td>简单，只需用 Widget 包裹</td>
+<td>较复杂，需要 StatefulWidget + Mixin</td>
+</tr>
+<tr>
+<td><strong>TickerProviderStateMixin</strong></td>
+<td>不需要（内部自行管理）</td>
+<td>必须混入</td>
+</tr>
+<tr>
+<td><strong>监听切换事件</strong></td>
+<td>需通过 <code>DefaultTabController.of(context)</code> 获取后监听</td>
+<td>直接通过 <code>_tabController.addListener()</code></td>
+</tr>
+<tr>
+<td><strong>编程式跳转</strong></td>
+<td>需先获取控制器引用</td>
+<td>直接调用 <code>_tabController.animateTo(index)</code></td>
+</tr>
+<tr>
+<td><strong>动态标签数量</strong></td>
+<td>修改 <code>length</code> 后会重建整个控制器</td>
+<td>需要重新创建 TabController</td>
+</tr>
+<tr>
+<td><strong>适合场景</strong></td>
+<td>简单的标签页、固定标签数</td>
+<td>复杂交互、需要精细控制</td>
+</tr>
+<tr>
+<td><strong>生命周期管理</strong></td>
+<td>自动管理</td>
+<td>需要手动 <code>dispose()</code></td>
+</tr>
+<tr>
+<td><strong>Widget 类型</strong></td>
+<td>可在 StatelessWidget 中使用</td>
+<td>必须在 StatefulWidget 中使用</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>大多数简单的标签页场景，优先使用 <code>DefaultTabController</code>，代码更简洁。</li>
+<li>当你发现需要调用 <code>animateTo()</code> 或 <code>addListener()</code> 时，切换为手动 <code>TabController</code>。</li>
+<li>使用 <code>TabController</code> 时，<code>dispose()</code> 中的清理工作不可遗漏，否则会导致内存泄漏和&quot;A TabController was used after being disposed&quot;错误。</li>
+<li>当页面中只有一个 <code>TabController</code> 时，可以使用 <code>SingleTickerProviderStateMixin</code> 替代 <code>TickerProviderStateMixin</code>，前者性能略优，因为它不需要维护一个 Ticker 列表。</li>
+</ul>
+</blockquote>
+<h3 id="14-tickerproviderstatemixin-详解">1.4 TickerProviderStateMixin 详解</h3>
+<p><code>Ticker</code> 是 Flutter 动画系统的核心组件之一，它在每一帧回调时触发，驱动动画前进。<code>TickerProviderStateMixin</code> 的作用是让 State 对象成为一个能够提供 Ticker 的&quot;工厂&quot;。</p>
+<pre><code class="language-dart">// SingleTickerProviderStateMixin：只有一个动画控制器时使用
+class _MyState extends State&lt;MyWidget&gt; with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+  // ...
+}
+
+// TickerProviderStateMixin：有多个动画控制器时使用
+class _MyState2 extends State&lt;MyWidget&gt; with TickerProviderStateMixin {
+  late final TabController _tabController;
+  late final AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+  // ...
+}
+</code></pre>
+<p>为什么需要 <code>vsync</code>？因为动画需要与屏幕刷新率同步。如果当前页面不可见（如被另一个页面覆盖），<code>TickerProviderStateMixin</code> 会自动暂停 Ticker，从而避免在不可见时浪费 CPU 资源执行动画计算。</p>
+<hr />
+<h2 id="2-tabbar标签栏样式定制">2. TabBar：标签栏样式定制</h2>
+<p><code>TabBar</code> 是 Material Design 规范中的顶部标签栏组件，通常放置在 <code>AppBar</code> 的 <code>bottom</code> 属性中。它提供了丰富的样式定制选项。</p>
+<h3 id="21-基础结构与-tab-widget">2.1 基础结构与 Tab Widget</h3>
+<p><code>TabBar</code> 的 <code>tabs</code> 属性接收一个 <code>Widget</code> 列表，通常使用 <code>Tab</code> Widget 来构建每个标签项。<code>Tab</code> 支持以下内容组合：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text</code></td>
+<td>标签文字</td>
+</tr>
+<tr>
+<td><code>icon</code></td>
+<td>标签图标（显示在文字上方）</td>
+</tr>
+<tr>
+<td><code>child</code></td>
+<td>完全自定义的标签内容（与 <code>text</code>/<code>icon</code> 互斥）</td>
+</tr>
+<tr>
+<td><code>height</code></td>
+<td>标签高度（默认 72，仅有文字或仅有图标时为 46）</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">// 仅文字
+Tab(text: '首页')
+
+// 仅图标
+Tab(icon: Icon(Icons.home))
+
+// 文字 + 图标
+Tab(icon: Icon(Icons.home), text: '首页')
+
+// 完全自定义
+Tab(
+  child: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(Icons.home),
+      SizedBox(width: 4),
+      Text('首页'),
+      SizedBox(width: 4),
+      // 显示未读数角标
+      Container(
+        padding: EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          shape: BoxShape.circle,
+        ),
+        child: Text('3', style: TextStyle(color: Colors.white, fontSize: 10)),
+      ),
+    ],
+  ),
+)
+</code></pre>
+<h3 id="22-指示器样式定制">2.2 指示器样式定制</h3>
+<p>TabBar 底部的指示器（indicator）是用户感知当前选中标签的关键视觉元素，Flutter 提供了多个属性来定制它的外观。</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>indicator</code></td>
+<td><code>Decoration</code></td>
+<td>完全自定义指示器装饰（如 BoxDecoration），设置后其他 indicator 属性会被忽略</td>
+</tr>
+<tr>
+<td><code>indicatorColor</code></td>
+<td><code>Color</code></td>
+<td>指示器颜色</td>
+</tr>
+<tr>
+<td><code>indicatorWeight</code></td>
+<td><code>double</code></td>
+<td>指示器厚度（默认 2.0）</td>
+</tr>
+<tr>
+<td><code>indicatorSize</code></td>
+<td><code>TabBarIndicatorSize</code></td>
+<td>指示器宽度模式：<code>.tab</code>（与标签同宽）或 <code>.label</code>（与文字同宽）</td>
+</tr>
+<tr>
+<td><code>indicatorPadding</code></td>
+<td><code>EdgeInsets</code></td>
+<td>指示器的内边距</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'TabBar 指示器样式',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const IndicatorStyleDemo(),
+    );
+  }
+}
+
+class IndicatorStyleDemo extends StatelessWidget {
+  const IndicatorStyleDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('指示器样式'),
+          bottom: TabBar(
+            // 指示器颜色
+            indicatorColor: Colors.orange,
+            // 指示器厚度
+            indicatorWeight: 4.0,
+            // 指示器宽度模式：与文字标签同宽（而非与整个 Tab 同宽）
+            indicatorSize: TabBarIndicatorSize.label,
+            tabs: const [
+              Tab(text: '推荐'),
+              Tab(text: '热门视频'),
+              Tab(text: '直播'),
+              Tab(text: '图片'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            Center(child: Text('推荐内容')),
+            Center(child: Text('热门视频内容')),
+            Center(child: Text('直播内容')),
+            Center(child: Text('图片内容')),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>使用 <code>indicator</code> 属性可以创建更复杂的指示器效果，比如圆角矩形背景：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '自定义指示器',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const CustomIndicatorDemo(),
+    );
+  }
+}
+
+class CustomIndicatorDemo extends StatelessWidget {
+  const CustomIndicatorDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('自定义指示器'),
+          bottom: TabBar(
+            // 使用 BoxDecoration 创建圆角矩形填充背景作为指示器
+            indicator: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.blue.shade100,
+            ),
+            // 与文字同宽
+            indicatorSize: TabBarIndicatorSize.tab,
+            // 通过 indicatorPadding 控制指示器与标签边缘的间距
+            indicatorPadding: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 6,
+            ),
+            labelColor: Colors.blue.shade900,
+            unselectedLabelColor: Colors.grey,
+            tabs: const [
+              Tab(text: '全部'),
+              Tab(text: '未读'),
+              Tab(text: '已读'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            Center(child: Text('全部消息')),
+            Center(child: Text('未读消息')),
+            Center(child: Text('已读消息')),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="23-标签文字样式定制">2.3 标签文字样式定制</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>labelStyle</code></td>
+<td><code>TextStyle</code></td>
+<td>选中标签的文字样式</td>
+</tr>
+<tr>
+<td><code>unselectedLabelStyle</code></td>
+<td><code>TextStyle</code></td>
+<td>未选中标签的文字样式</td>
+</tr>
+<tr>
+<td><code>labelColor</code></td>
+<td><code>Color</code></td>
+<td>选中标签的文字/图标颜色</td>
+</tr>
+<tr>
+<td><code>unselectedLabelColor</code></td>
+<td><code>Color</code></td>
+<td>未选中标签的文字/图标颜色</td>
+</tr>
+<tr>
+<td><code>labelPadding</code></td>
+<td><code>EdgeInsets</code></td>
+<td>每个标签的内边距</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '标签文字样式',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const LabelStyleDemo(),
+    );
+  }
+}
+
+class LabelStyleDemo extends StatelessWidget {
+  const LabelStyleDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('标签文字样式'),
+          bottom: TabBar(
+            // 选中标签：加粗、大号
+            labelStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            // 未选中标签：正常大小
+            unselectedLabelStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+            ),
+            // 选中颜色
+            labelColor: Colors.deepOrange,
+            // 未选中颜色
+            unselectedLabelColor: Colors.grey.shade600,
+            // 每个标签的内边距
+            labelPadding: const EdgeInsets.symmetric(horizontal: 20),
+            tabs: const [
+              Tab(text: '关注'),
+              Tab(text: '推荐'),
+              Tab(text: '热榜'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            Center(child: Text('关注的内容')),
+            Center(child: Text('推荐的内容')),
+            Center(child: Text('热榜的内容')),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="24-可滚动标签栏与对齐方式">2.4 可滚动标签栏与对齐方式</h3>
+<p>当标签数量较多时，TabBar 默认会将所有标签平均分布在可用空间内，这可能导致标签文字过于拥挤。此时可以使用 <code>isScrollable</code> 属性让标签栏支持水平滚动。</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>isScrollable</code></td>
+<td><code>bool</code></td>
+<td>是否可滚动（默认 <code>false</code>，标签平均分布）</td>
+</tr>
+<tr>
+<td><code>tabAlignment</code></td>
+<td><code>TabAlignment</code></td>
+<td>标签的对齐方式（仅在 <code>isScrollable: true</code> 时有意义）</td>
+</tr>
+</tbody>
+</table>
+<p><code>TabAlignment</code> 的可选值：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TabAlignment.fill</code></td>
+<td>标签均匀填满可用空间（默认值，不可滚动时）</td>
+</tr>
+<tr>
+<td><code>TabAlignment.center</code></td>
+<td>标签居中排列</td>
+</tr>
+<tr>
+<td><code>TabAlignment.start</code></td>
+<td>标签靠左排列</td>
+</tr>
+<tr>
+<td><code>TabAlignment.startOffset</code></td>
+<td>标签靠左排列但带有一段起始偏移</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '可滚动标签栏',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const ScrollableTabBarDemo(),
+    );
+  }
+}
+
+class ScrollableTabBarDemo extends StatelessWidget {
+  const ScrollableTabBarDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 模拟大量标签
+    final tabs = [
+      '推荐', '热门', '科技', '体育', '娱乐', '财经',
+      '教育', '健康', '旅游', '美食', '时尚', '游戏',
+    ];
+
+    return DefaultTabController(
+      length: tabs.length,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('可滚动标签栏'),
+          bottom: TabBar(
+            // 启用滚动
+            isScrollable: true,
+            // 标签靠左排列
+            tabAlignment: TabAlignment.start,
+            tabs: tabs.map((t) =&gt; Tab(text: t)).toList(),
+          ),
+        ),
+        body: TabBarView(
+          children: tabs.map((t) {
+            return Center(
+              child: Text('$t 频道', style: const TextStyle(fontSize: 24)),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>isScrollable: false</code>（默认）时，所有标签会平均分配整个 TabBar 的宽度。如果标签文字长度差异很大，短文字标签可能看起来有大量空白。</li>
+<li><code>isScrollable: true</code> 时，每个标签只占用自身需要的宽度，多余的标签可以通过水平滑动查看。</li>
+<li>Material 3 中 <code>isScrollable: true</code> 的默认对齐方式是 <code>TabAlignment.startOffset</code>。如果你希望靠左没有偏移，显式设置 <code>tabAlignment: TabAlignment.start</code>。</li>
+</ul>
+</blockquote>
+<h3 id="25-分割线颜色">2.5 分割线颜色</h3>
+<p><code>dividerColor</code> 属性控制 TabBar 底部分割线的颜色。在 Material 3 主题下，TabBar 默认会显示一条底部分割线。</p>
+<pre><code class="language-dart">TabBar(
+  // 设置分割线颜色
+  dividerColor: Colors.grey.shade300,
+  // 如果不想显示分割线，设为透明
+  // dividerColor: Colors.transparent,
+  tabs: const [
+    Tab(text: '标签1'),
+    Tab(text: '标签2'),
+    Tab(text: '标签3'),
+  ],
+)
+</code></pre>
+<h3 id="26-tabbar-不在-appbar-中的用法">2.6 TabBar 不在 AppBar 中的用法</h3>
+<p><code>TabBar</code> 不一定必须放在 <code>AppBar.bottom</code> 中，它可以放在页面的任何位置。这在某些设计中非常有用，比如内容区域中间有一组标签切换。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'TabBar 独立使用',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const TabBarOutsideAppBarDemo(),
+    );
+  }
+}
+
+class TabBarOutsideAppBarDemo extends StatelessWidget {
+  const TabBarOutsideAppBarDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(title: const Text('TabBar 独立使用')),
+        body: Column(
+          children: [
+            // 顶部的固定内容
+            Container(
+              padding: const EdgeInsets.all(16),
+              color: Colors.blue.shade50,
+              width: double.infinity,
+              child: const Text(
+                '这里是页面顶部的固定内容区域',
+                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            // TabBar 放在 body 中间
+            const TabBar(
+              labelColor: Colors.blue,
+              unselectedLabelColor: Colors.grey,
+              tabs: [
+                Tab(text: '全部'),
+                Tab(text: '进行中'),
+                Tab(text: '已完成'),
+              ],
+            ),
+            // TabBarView 需要用 Expanded 包裹，因为它内部使用 PageView，需要确定的高度
+            const Expanded(
+              child: TabBarView(
+                children: [
+                  Center(child: Text('全部任务列表')),
+                  Center(child: Text('进行中的任务')),
+                  Center(child: Text('已完成的任务')),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：当 <code>TabBarView</code> 不在 <code>Scaffold.body</code> 中直接使用，而是嵌套在 <code>Column</code> 等布局组件中时，必须给它一个确定的高度约束。最常见的做法是用 <code>Expanded</code> 包裹，让它占满剩余空间。否则 <code>TabBarView</code> 内部的 <code>PageView</code> 会因为没有高度约束而报错。</p>
+</blockquote>
+<hr />
+<h2 id="3-tabbarview标签页内容联动">3. TabBarView：标签页内容联动</h2>
+<p><code>TabBarView</code> 是与 <code>TabBar</code> 配对使用的页面内容容器。它本质上是一个内置了手势识别的 <code>PageView</code>，能够通过左右滑动切换页面内容，并与 <code>TabBar</code> 的选中状态自动保持同步。</p>
+<h3 id="31-核心属性">3.1 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>controller</code></td>
+<td><code>TabController?</code></td>
+<td>标签控制器（不传则使用 DefaultTabController）</td>
+</tr>
+<tr>
+<td><code>children</code></td>
+<td><code>List&lt;Widget&gt;</code></td>
+<td>每个标签对应的页面内容</td>
+</tr>
+<tr>
+<td><code>physics</code></td>
+<td><code>ScrollPhysics?</code></td>
+<td>滑动物理效果</td>
+</tr>
+<tr>
+<td><code>dragStartBehavior</code></td>
+<td><code>DragStartBehavior</code></td>
+<td>拖拽开始行为</td>
+</tr>
+<tr>
+<td><code>viewportFraction</code></td>
+<td><code>double</code></td>
+<td>每个页面占据视口的比例（默认 1.0）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-同步滚动原理">3.2 同步滚动原理</h3>
+<p><code>TabBar</code> 和 <code>TabBarView</code> 之间的联动是通过共享同一个 <code>TabController</code> 实现的：</p>
+<ol>
+<li><strong>用户点击 TabBar 中的标签</strong> → TabController 的 <code>index</code> 被更新 → TabBarView 监听到变化后滑动到对应页面</li>
+<li><strong>用户在 TabBarView 中左右滑动</strong> → TabBarView 更新 TabController 的 <code>index</code> → TabBar 监听到变化后移动指示器</li>
+</ol>
+<p>这种双向绑定让标签栏和内容区域始终保持同步。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'TabBarView 同步联动',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.teal,
+        useMaterial3: true,
+      ),
+      home: const TabBarViewSyncDemo(),
+    );
+  }
+}
+
+class TabBarViewSyncDemo extends StatefulWidget {
+  const TabBarViewSyncDemo({super.key});
+
+  @override
+  State&lt;TabBarViewSyncDemo&gt; createState() =&gt; _TabBarViewSyncDemoState();
+}
+
+class _TabBarViewSyncDemoState extends State&lt;TabBarViewSyncDemo&gt;
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      // 输出当前标签索引和动画值（0.0 ~ 2.0 之间的浮点数）
+      debugPrint(
+        '当前索引: ${_tabController.index}, '
+        '动画值: ${_tabController.animation?.value.toStringAsFixed(2)}',
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('同步联动演示'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(icon: Icon(Icons.directions_car), text: '汽车'),
+            Tab(icon: Icon(Icons.directions_transit), text: '公交'),
+            Tab(icon: Icon(Icons.directions_bike), text: '骑行'),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          _TransportPage(
+            title: '汽车路线',
+            icon: Icons.directions_car,
+            color: Colors.blue,
+          ),
+          _TransportPage(
+            title: '公交路线',
+            icon: Icons.directions_transit,
+            color: Colors.green,
+          ),
+          _TransportPage(
+            title: '骑行路线',
+            icon: Icons.directions_bike,
+            color: Colors.orange,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TransportPage extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Color color;
+
+  const _TransportPage({
+    required this.title,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 80, color: color),
+          const SizedBox(height: 16),
+          Text(
+            title,
+            style: TextStyle(fontSize: 24, color: color),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="33-禁用滑动切换">3.3 禁用滑动切换</h3>
+<p>某些场景下（如页面内容本身有水平滚动，或者希望用户只能通过点击标签来切换），可以禁用 TabBarView 的滑动手势：</p>
+<pre><code class="language-dart">TabBarView(
+  controller: _tabController,
+  // 使用 NeverScrollableScrollPhysics 禁用手势滑动
+  physics: const NeverScrollableScrollPhysics(),
+  children: const [
+    Center(child: Text('页面 1')),
+    Center(child: Text('页面 2')),
+    Center(child: Text('页面 3')),
+  ],
+)
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li><code>TabBar</code> 和 <code>TabBarView</code> 的子项数量必须与 <code>TabController.length</code> 完全一致，否则会触发断言错误。在开发过程中如果遇到 &quot;controller's length&quot; 相关的报错，首先检查这三者的数量是否匹配。</li>
+<li>如果某个标签页的内容非常复杂（如含有长列表），建议将每个标签页提取为独立的 Widget，而非在 <code>children</code> 列表中内联构建，以保持代码可读性。</li>
+<li><code>TabBarView</code> 默认在切换页面时会销毁不可见的页面。如果需要保持页面状态，请参考本课后面的&quot;KeepAlive&quot;章节。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="4-pageview可滑动页面与-pagecontroller">4. PageView：可滑动页面与 PageController</h2>
+<p><code>PageView</code> 是一个可以左右（或上下）滑动切换的页面容器，<code>TabBarView</code> 的底层就是基于它实现的。当你不需要 TabBar 标签栏，只需要一个可滑动的页面容器时，直接使用 <code>PageView</code> 是更好的选择。</p>
+<h3 id="41-pageview-基础用法">4.1 PageView 基础用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'PageView 基础',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.purple,
+        useMaterial3: true,
+      ),
+      home: const PageViewBasicDemo(),
+    );
+  }
+}
+
+class PageViewBasicDemo extends StatelessWidget {
+  const PageViewBasicDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('PageView 基础')),
+      body: PageView(
+        // 默认水平滑动，可通过 scrollDirection 改为垂直
+        // scrollDirection: Axis.vertical,
+        children: [
+          Container(
+            color: Colors.red.shade100,
+            child: const Center(
+              child: Text('第 1 页', style: TextStyle(fontSize: 32)),
+            ),
+          ),
+          Container(
+            color: Colors.green.shade100,
+            child: const Center(
+              child: Text('第 2 页', style: TextStyle(fontSize: 32)),
+            ),
+          ),
+          Container(
+            color: Colors.blue.shade100,
+            child: const Center(
+              child: Text('第 3 页', style: TextStyle(fontSize: 32)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="42-pagecontroller-详解">4.2 PageController 详解</h3>
+<p><code>PageController</code> 是控制 <code>PageView</code> 行为的核心对象，它提供了页面跳转、初始页面、视口比例等功能。</p>
+<table>
+<thead>
+<tr>
+<th>属性/方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>initialPage</code></td>
+<td>初始显示的页面索引（默认 0）</td>
+</tr>
+<tr>
+<td><code>viewportFraction</code></td>
+<td>每个页面占视口宽度的比例（默认 1.0，设为小于 1 可实现卡片轮播效果）</td>
+</tr>
+<tr>
+<td><code>keepPage</code></td>
+<td>是否保存页面位置用于恢复（默认 true）</td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td>当前页面索引（double 类型，滑动过程中会有小数值）</td>
+</tr>
+<tr>
+<td><code>jumpToPage(int)</code></td>
+<td>无动画跳转到指定页面</td>
+</tr>
+<tr>
+<td><code>animateToPage(int, ...)</code></td>
+<td>带动画跳转到指定页面</td>
+</tr>
+<tr>
+<td><code>nextPage(...)</code></td>
+<td>跳转到下一页</td>
+</tr>
+<tr>
+<td><code>previousPage(...)</code></td>
+<td>跳转到上一页</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'PageController 示例',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.purple,
+        useMaterial3: true,
+      ),
+      home: const PageControllerDemo(),
+    );
+  }
+}
+
+class PageControllerDemo extends StatefulWidget {
+  const PageControllerDemo({super.key});
+
+  @override
+  State&lt;PageControllerDemo&gt; createState() =&gt; _PageControllerDemoState();
+}
+
+class _PageControllerDemoState extends State&lt;PageControllerDemo&gt; {
+  late final PageController _pageController;
+  int _currentPage = 0;
+
+  final List&lt;Map&lt;String, dynamic&gt;&gt; _pages = [
+    {'title': '欢迎使用', 'color': Colors.blue, 'icon': Icons.waving_hand},
+    {'title': '发现功能', 'color': Colors.green, 'icon': Icons.explore},
+    {'title': '个性设置', 'color': Colors.orange, 'icon': Icons.settings},
+    {'title': '开始体验', 'color': Colors.purple, 'icon': Icons.rocket_launch},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(
+      initialPage: 0,
+      // viewportFraction 小于 1 可以让相邻页面露出一部分，实现卡片轮播效果
+      // viewportFraction: 0.85,
+    );
+
+    // 监听页面滚动
+    _pageController.addListener(() {
+      // page 属性是 double 类型，滑动过程中会有小数值
+      // 比如从第 0 页滑到第 1 页的中间位置时，page 约为 0.5
+      final page = _pageController.page;
+      if (page != null) {
+        final newPage = page.round();
+        if (newPage != _currentPage) {
+          setState(() =&gt; _currentPage = newPage);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('引导页示例')),
+      body: Column(
+        children: [
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              children: _pages.map((page) {
+                return Container(
+                  color: (page['color'] as Color).withValues(alpha: 0.15),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          page['icon'] as IconData,
+                          size: 80,
+                          color: page['color'] as Color,
+                        ),
+                        const SizedBox(height: 24),
+                        Text(
+                          page['title'] as String,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: page['color'] as Color,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          // 页面指示器（小圆点）
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(_pages.length, (index) {
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: _currentPage == index ? 24 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color: _currentPage == index
+                        ? _pages[index]['color'] as Color
+                        : Colors.grey.shade300,
+                  ),
+                );
+              }),
+            ),
+          ),
+          // 导航按钮
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // 上一页按钮
+                TextButton(
+                  onPressed: _currentPage &gt; 0
+                      ? () {
+                          _pageController.previousPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+                      : null,
+                  child: const Text('上一页'),
+                ),
+                // 下一页 / 完成按钮
+                FilledButton(
+                  onPressed: () {
+                    if (_currentPage &lt; _pages.length - 1) {
+                      _pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('引导完成！')),
+                      );
+                    }
+                  },
+                  child: Text(
+                    _currentPage &lt; _pages.length - 1 ? '下一页' : '开始使用',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="43-physics-控制滑动行为">4.3 physics 控制滑动行为</h3>
+<p><code>PageView</code> 的 <code>physics</code> 属性可以控制页面的滑动物理效果：</p>
+<table>
+<thead>
+<tr>
+<th>ScrollPhysics</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PageScrollPhysics()</code>（默认）</td>
+<td>页面吸附效果，松手后自动对齐到最近的整页</td>
+</tr>
+<tr>
+<td><code>BouncingScrollPhysics()</code></td>
+<td>iOS 风格弹性边界效果</td>
+</tr>
+<tr>
+<td><code>ClampingScrollPhysics()</code></td>
+<td>Android 风格，到达边界时停止</td>
+</tr>
+<tr>
+<td><code>NeverScrollableScrollPhysics()</code></td>
+<td>禁止手势滑动，只能通过 PageController 代码控制</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'PageView Physics',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.purple,
+        useMaterial3: true,
+      ),
+      home: const PageViewPhysicsDemo(),
+    );
+  }
+}
+
+class PageViewPhysicsDemo extends StatelessWidget {
+  const PageViewPhysicsDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Physics 效果对比')),
+      body: Column(
+        children: [
+          // 上半部分：默认 PageScrollPhysics（自动吸附）
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text('默认效果（吸附整页）',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          SizedBox(
+            height: 200,
+            child: PageView(
+              children: _buildPages(['A', 'B', 'C']),
+            ),
+          ),
+          const Divider(),
+          // 下半部分：BouncingScrollPhysics（弹性边界）
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text('弹性边界效果',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          SizedBox(
+            height: 200,
+            child: PageView(
+              // 弹性效果在到达首尾页时产生弹性回弹
+              physics: const BouncingScrollPhysics(),
+              children: _buildPages(['D', 'E', 'F']),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static List&lt;Widget&gt; _buildPages(List&lt;String&gt; labels) {
+    final colors = [Colors.red, Colors.green, Colors.blue];
+    return List.generate(labels.length, (i) {
+      return Container(
+        margin: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: colors[i].shade100,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Center(
+          child: Text(
+            '页面 ${labels[i]}',
+            style: TextStyle(fontSize: 24, color: colors[i].shade700),
+          ),
+        ),
+      );
+    });
+  }
+}
+</code></pre>
+<h3 id="44-viewportfraction-实现卡片轮播">4.4 viewportFraction 实现卡片轮播</h3>
+<p>将 <code>PageController</code> 的 <code>viewportFraction</code> 设为小于 1 的值，可以让相邻页面露出一部分，形成常见的卡片轮播效果：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '卡片轮播',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.purple,
+        useMaterial3: true,
+      ),
+      home: const CarouselDemo(),
+    );
+  }
+}
+
+class CarouselDemo extends StatefulWidget {
+  const CarouselDemo({super.key});
+
+  @override
+  State&lt;CarouselDemo&gt; createState() =&gt; _CarouselDemoState();
+}
+
+class _CarouselDemoState extends State&lt;CarouselDemo&gt; {
+  // viewportFraction 为 0.85，每张卡片只占视口 85% 宽度
+  // 左右两侧会露出相邻卡片的边缘
+  final PageController _controller = PageController(viewportFraction: 0.85);
+
+  final List&lt;Color&gt; _colors = [
+    Colors.red,
+    Colors.blue,
+    Colors.green,
+    Colors.orange,
+    Colors.purple,
+  ];
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('卡片轮播效果')),
+      body: Center(
+        child: SizedBox(
+          height: 250,
+          child: PageView.builder(
+            controller: _controller,
+            itemCount: _colors.length,
+            itemBuilder: (context, index) {
+              return AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  // 根据当前滚动位置计算缩放比例
+                  double value = 1.0;
+                  if (_controller.position.haveDimensions) {
+                    value = (_controller.page ?? 0) - index;
+                    value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
+                  }
+                  return Center(
+                    child: SizedBox(
+                      height: Curves.easeOut.transform(value) * 250,
+                      child: child,
+                    ),
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: _colors[index].shade200,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _colors[index].withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      '卡片 ${index + 1}',
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>PageController</code> 和 <code>ScrollController</code> 类似，使用完毕后必须在 <code>dispose()</code> 中销毁。</li>
+<li><code>PageController.page</code> 属性在 PageView 尚未完成布局时可能为 <code>null</code>，使用时应做空值检查。</li>
+<li><code>jumpToPage()</code> 是立即跳转（无动画），<code>animateToPage()</code> 是带动画的跳转。在引导页场景中，通常使用 <code>animateToPage()</code> 以获得更好的用户体验。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="5-pageviewbuilder懒加载大量页面">5. PageView.builder：懒加载大量页面</h2>
+<h3 id="51-为什么需要-builder">5.1 为什么需要 builder</h3>
+<p><code>PageView</code> 的默认构造函数会一次性创建所有子页面的 Widget，当页面数量很多时，这会造成不必要的内存占用和性能开销。<code>PageView.builder</code> 采用&quot;按需构建&quot;的策略，只有当页面即将显示时才会创建对应的 Widget，这与 <code>ListView.builder</code> 的设计思想一致。</p>
+<table>
+<thead>
+<tr>
+<th>构造方式</th>
+<th>页面创建时机</th>
+<th>适合场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PageView(children: [...])</code></td>
+<td>一次性创建所有子 Widget</td>
+<td>页面数量少（3~5 个）</td>
+</tr>
+<tr>
+<td><code>PageView.builder(itemBuilder: ...)</code></td>
+<td>按需创建，仅构建可见页面及邻近页面</td>
+<td>页面数量多或不确定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-基础用法">5.2 基础用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'PageView.builder',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        useMaterial3: true,
+      ),
+      home: const PageViewBuilderDemo(),
+    );
+  }
+}
+
+class PageViewBuilderDemo extends StatelessWidget {
+  const PageViewBuilderDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('PageView.builder 懒加载')),
+      body: PageView.builder(
+        // itemCount 指定总页面数量
+        // 如果不设置 itemCount，则页面可以无限滚动
+        itemCount: 100,
+        itemBuilder: (context, index) {
+          debugPrint('构建页面: $index'); // 观察哪些页面被实际构建
+          return Container(
+            color: Colors.primaries[index % Colors.primaries.length].shade100,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '第 ${index + 1} 页',
+                    style: const TextStyle(fontSize: 32),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '共 100 页',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<p>运行上面的代码并观察控制台输出，你会发现 <code>debugPrint</code> 只在页面即将显示时被调用，而非一开始就构建所有 100 个页面。</p>
+<h3 id="53-无限滚动的-pageview">5.3 无限滚动的 PageView</h3>
+<p>如果不设置 <code>itemCount</code>，<code>PageView.builder</code> 会变成一个可以无限滚动的页面容器。这在某些场景（如无限轮播图）中非常有用：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '无限轮播',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        useMaterial3: true,
+      ),
+      home: const InfinitePageViewDemo(),
+    );
+  }
+}
+
+class InfinitePageViewDemo extends StatelessWidget {
+  const InfinitePageViewDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 实际的图片/内容数据
+    final items = ['风景', '美食', '城市', '动物', '科技'];
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('无限轮播')),
+      body: Center(
+        child: SizedBox(
+          height: 300,
+          child: PageView.builder(
+            // 不设置 itemCount，实现无限滚动
+            itemBuilder: (context, index) {
+              // 通过取模运算循环使用数据
+              final realIndex = index % items.length;
+              return Container(
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors
+                      .primaries[realIndex % Colors.primaries.length].shade200,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Center(
+                  child: Text(
+                    items[realIndex],
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>当页面数量超过 5 个时，优先使用 <code>PageView.builder</code> 而非默认构造函数。</li>
+<li>无限滚动的 <code>PageView</code>（不设 <code>itemCount</code>）要注意 index 会不断增长，用 <code>index % dataLength</code> 取模来映射实际数据。</li>
+<li>如果每个页面需要加载网络数据，在 <code>itemBuilder</code> 中结合 <code>FutureBuilder</code> 或状态管理方案来实现按需加载。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="6-keepalive-与-automatickeepaliveclientmixin">6. KeepAlive 与 AutomaticKeepAliveClientMixin</h2>
+<h3 id="61-问题页面状态丢失">6.1 问题：页面状态丢失</h3>
+<p>默认情况下，<code>TabBarView</code> 和 <code>PageView</code> 为了节省内存，会在页面不可见时销毁对应的 Widget（调用 <code>dispose()</code>），当页面再次可见时重新创建（调用 <code>initState()</code> 和 <code>build()</code>）。</p>
+<p>这意味着用户在一个标签页中的操作状态（如滚动位置、输入的文字、选中的选项等）会在切换到其他标签后丢失。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '状态丢失演示',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.red,
+        useMaterial3: true,
+      ),
+      home: const StateLossDemo(),
+    );
+  }
+}
+
+class StateLossDemo extends StatelessWidget {
+  const StateLossDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('状态丢失演示'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: '标签 A'),
+              Tab(text: '标签 B'),
+              Tab(text: '标签 C'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            _CounterPage(name: 'A'),
+            _CounterPage(name: 'B'),
+            _CounterPage(name: 'C'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// 没有使用 KeepAlive 的计数器页面
+class _CounterPage extends StatefulWidget {
+  final String name;
+  const _CounterPage({required this.name});
+
+  @override
+  State&lt;_CounterPage&gt; createState() =&gt; _CounterPageState();
+}
+
+class _CounterPageState extends State&lt;_CounterPage&gt; {
+  int _count = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    debugPrint('${widget.name} - initState（页面被创建）');
+  }
+
+  @override
+  void dispose() {
+    debugPrint('${widget.name} - dispose（页面被销毁）');
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('标签 ${widget.name}', style: const TextStyle(fontSize: 24)),
+          const SizedBox(height: 16),
+          Text('计数: $_count', style: const TextStyle(fontSize: 48)),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () =&gt; setState(() =&gt; _count++),
+            child: const Text('点击 +1'),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            '增加计数后切换标签，再切回来观察计数是否保留',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<p>运行这个示例：在标签 A 中点击几次增加计数，然后切换到标签 C，再切回标签 A，你会发现计数器被重置为 0，控制台也会打印 <code>dispose</code> 和 <code>initState</code> 的日志。</p>
+<h3 id="62-解决方案automatickeepaliveclientmixin">6.2 解决方案：AutomaticKeepAliveClientMixin</h3>
+<p><code>AutomaticKeepAliveClientMixin</code> 是 Flutter 提供的一个 Mixin，用于告诉父级滚动容器（如 <code>TabBarView</code>、<code>PageView</code>、<code>ListView</code>）：&quot;请不要销毁我，即使我不在屏幕上&quot;。</p>
+<p>使用步骤：</p>
+<ol>
+<li>在 State 类上混入 <code>AutomaticKeepAliveClientMixin</code></li>
+<li>重写 <code>wantKeepAlive</code> 属性，返回 <code>true</code></li>
+<li>在 <code>build</code> 方法开头调用 <code>super.build(context)</code></li>
+</ol>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'KeepAlive 演示',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.green,
+        useMaterial3: true,
+      ),
+      home: const KeepAliveDemo(),
+    );
+  }
+}
+
+class KeepAliveDemo extends StatelessWidget {
+  const KeepAliveDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('KeepAlive 演示'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: '标签 A'),
+              Tab(text: '标签 B'),
+              Tab(text: '标签 C'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            _KeepAliveCounterPage(name: 'A'),
+            _KeepAliveCounterPage(name: 'B'),
+            _KeepAliveCounterPage(name: 'C'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _KeepAliveCounterPage extends StatefulWidget {
+  final String name;
+  const _KeepAliveCounterPage({required this.name});
+
+  @override
+  State&lt;_KeepAliveCounterPage&gt; createState() =&gt; _KeepAliveCounterPageState();
+}
+
+// 第一步：混入 AutomaticKeepAliveClientMixin
+class _KeepAliveCounterPageState extends State&lt;_KeepAliveCounterPage&gt;
+    with AutomaticKeepAliveClientMixin {
+  int _count = 0;
+
+  // 第二步：重写 wantKeepAlive，返回 true 表示希望保持存活
+  @override
+  bool get wantKeepAlive =&gt; true;
+
+  @override
+  void initState() {
+    super.initState();
+    debugPrint('${widget.name} - initState（仅创建一次）');
+  }
+
+  @override
+  void dispose() {
+    debugPrint('${widget.name} - dispose（只在整个 TabBarView 被销毁时调用）');
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // 第三步：必须调用 super.build(context)
+    // 这一步很容易遗漏，但它是触发 KeepAlive 机制的关键
+    super.build(context);
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('标签 ${widget.name}', style: const TextStyle(fontSize: 24)),
+          const SizedBox(height: 8),
+          const Text(
+            '(使用了 KeepAlive)',
+            style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          Text('计数: $_count', style: const TextStyle(fontSize: 48)),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () =&gt; setState(() =&gt; _count++),
+            child: const Text('点击 +1'),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            '增加计数后切换标签，再切回来——计数会被保留！',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<p>现在再运行：在标签 A 中增加计数，切换到标签 C，再切回标签 A，计数值会被保留。控制台也不会打印 <code>dispose</code> 日志（除非整个页面被销毁）。</p>
+<h3 id="63-wantkeepalive-的动态控制">6.3 wantKeepAlive 的动态控制</h3>
+<p><code>wantKeepAlive</code> 不一定总是返回 <code>true</code>。你可以根据业务逻辑动态决定是否需要保持存活。当 <code>wantKeepAlive</code> 的返回值发生变化时，需要调用 <code>updateKeepAlive()</code> 方法来通知框架。</p>
+<pre><code class="language-dart">class _SmartKeepAlivePageState extends State&lt;SmartKeepAlivePage&gt;
+    with AutomaticKeepAliveClientMixin {
+  bool _hasUnsavedData = false;
+
+  // 只在有未保存的数据时才保持存活
+  @override
+  bool get wantKeepAlive =&gt; _hasUnsavedData;
+
+  void _onDataChanged() {
+    setState(() {
+      _hasUnsavedData = true;
+      // 当 wantKeepAlive 返回值改变时，必须调用 updateKeepAlive()
+      updateKeepAlive();
+    });
+  }
+
+  void _onDataSaved() {
+    setState(() {
+      _hasUnsavedData = false;
+      updateKeepAlive(); // 数据已保存，允许被销毁以释放内存
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return const Placeholder(); // 实际界面内容
+  }
+}
+</code></pre>
+<h3 id="64-keepalive-的工作原理">6.4 KeepAlive 的工作原理</h3>
+<p>理解 <code>AutomaticKeepAliveClientMixin</code> 的内部机制有助于在合适的场景中正确使用它：</p>
+<ol>
+<li>当 <code>wantKeepAlive</code> 返回 <code>true</code> 时，Mixin 会在 Widget 树中插入一个 <code>KeepAlive</code> 父组件（这是 <code>ParentDataWidget</code>）</li>
+<li><code>KeepAlive</code> 通知其父级 <code>SliverMultiBoxAdaptorElement</code>（如 <code>PageView</code>/<code>TabBarView</code> 内部使用的）保留该子组件的 <code>Element</code> 和 <code>State</code>，即使它离开了可见区域</li>
+<li><code>super.build(context)</code> 是触发这个通知的关键调用，遗漏它会导致 KeepAlive 不生效</li>
+</ol>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>不要对所有页面都无脑使用 KeepAlive。保持存活意味着页面占用的内存不会被释放，如果有大量页面（如几十个 Tab），全部 KeepAlive 会显著增加内存占用。</li>
+<li>推荐只对&quot;用户有交互状态需要保留的页面&quot;使用 KeepAlive，如：有输入内容的表单页、有滚动位置的长列表页、有已加载数据的网络请求页。</li>
+<li>对于纯展示性的页面（无用户交互状态），让它自然销毁和重建是更好的选择。</li>
+<li><code>super.build(context)</code> 这行代码绝对不能遗漏，否则 KeepAlive 机制不会生效。这是使用这个 Mixin 最容易犯的错误。</li>
+<li>如果使用了 <code>AutomaticKeepAliveClientMixin</code>，IDE（如 VS Code / Android Studio）可能会提示 &quot;<code>build</code> 的返回值未使用&quot;的警告，这是正常的，可以忽略。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="7-综合实战新闻应用标签页">7. 综合实战：新闻应用标签页</h2>
+<p>将本课所学的知识整合，构建一个模拟新闻应用的标签页界面：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const NewsApp());
+
+class NewsApp extends StatelessWidget {
+  const NewsApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '新闻 Tab 应用',
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const NewsHomePage(),
+    );
+  }
+}
+
+class NewsHomePage extends StatefulWidget {
+  const NewsHomePage({super.key});
+
+  @override
+  State&lt;NewsHomePage&gt; createState() =&gt; _NewsHomePageState();
+}
+
+class _NewsHomePageState extends State&lt;NewsHomePage&gt;
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  final List&lt;String&gt; _categories = [
+    '推荐', '热点', '科技', '体育', '娱乐', '财经', '教育', '健康',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+      length: _categories.length,
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('每日新闻'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {},
+          ),
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabAlignment: TabAlignment.start,
+          labelStyle: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+          unselectedLabelStyle: const TextStyle(fontSize: 14),
+          indicatorSize: TabBarIndicatorSize.label,
+          indicatorWeight: 3,
+          dividerColor: Colors.transparent,
+          tabs: _categories.map((c) =&gt; Tab(text: c)).toList(),
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: _categories.map((category) {
+          return _NewsCategoryPage(category: category);
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// 每个分类的新闻列表页面，使用 KeepAlive 保持状态
+class _NewsCategoryPage extends StatefulWidget {
+  final String category;
+  const _NewsCategoryPage({required this.category});
+
+  @override
+  State&lt;_NewsCategoryPage&gt; createState() =&gt; _NewsCategoryPageState();
+}
+
+class _NewsCategoryPageState extends State&lt;_NewsCategoryPage&gt;
+    with AutomaticKeepAliveClientMixin {
+  // 保持页面状态，避免切换标签时重新加载
+  @override
+  bool get wantKeepAlive =&gt; true;
+
+  // 模拟新闻数据
+  late final List&lt;Map&lt;String, String&gt;&gt; _news;
+
+  @override
+  void initState() {
+    super.initState();
+    // 模拟不同分类的新闻数据
+    _news = List.generate(20, (index) {
+      return {
+        'title': '${widget.category}新闻标题 ${index + 1}',
+        'summary': '这是关于${widget.category}的第 ${index + 1} 条新闻摘要内容，'
+            '包含了详细的描述信息。',
+        'time': '${(index + 1) * 5} 分钟前',
+      };
+    });
+    debugPrint('${widget.category} 分类 - 数据加载完成');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context); // KeepAlive 必须调用
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(12),
+      itemCount: _news.length,
+      separatorBuilder: (_, __) =&gt; const Divider(height: 1),
+      itemBuilder: (context, index) {
+        final item = _news[index];
+        return ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 8,
+            horizontal: 4,
+          ),
+          title: Text(
+            item['title']!,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item['summary']!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  item['time']!,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          trailing: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              width: 80,
+              height: 60,
+              color: Colors.primaries[index % Colors.primaries.length].shade100,
+              child: const Icon(Icons.image, color: Colors.grey),
+            ),
+          ),
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('点击了: ${item['title']}')),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="8-本课小结">8. 本课小结</h2>
+<p>本课学习了 Flutter 中 Tab 导航与页面切换的完整知识体系：</p>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>核心内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DefaultTabController</strong></td>
+<td>便捷的标签控制器，适合简单场景，自动管理生命周期</td>
+</tr>
+<tr>
+<td><strong>TabController</strong></td>
+<td>手动创建的标签控制器，需要 TickerProviderStateMixin，适合需要精细控制的场景</td>
+</tr>
+<tr>
+<td><strong>TabBar</strong></td>
+<td>标签栏组件，支持丰富的样式定制（指示器、文字样式、颜色、可滚动、对齐方式等）</td>
+</tr>
+<tr>
+<td><strong>TabBarView</strong></td>
+<td>标签页内容容器，与 TabBar 共享 TabController 实现双向联动</td>
+</tr>
+<tr>
+<td><strong>PageView</strong></td>
+<td>可滑动页面容器，通过 PageController 控制页面行为，physics 控制滑动效果</td>
+</tr>
+<tr>
+<td><strong>PageView.builder</strong></td>
+<td>按需构建的 PageView，适合大量页面的懒加载</td>
+</tr>
+<tr>
+<td><strong>AutomaticKeepAliveClientMixin</strong></td>
+<td>保持页面状态不被销毁的 Mixin，需要重写 wantKeepAlive 并调用 super.build</td>
+</tr>
+</tbody>
+</table>
+<p><strong>关键原则</strong>：</p>
+<ol>
+<li>TabBar + TabBarView 必须共享同一个 TabController，且三者的数量（length / tabs / children）必须一致</li>
+<li>TabController 需要 TickerProviderStateMixin 提供动画驱动</li>
+<li>PageView.builder 用于大量页面的懒加载，避免一次性创建所有页面</li>
+<li>KeepAlive 应有选择地使用，不要对所有页面都开启，以平衡用户体验与内存占用</li>
+<li>别忘了在 <code>dispose()</code> 中清理 TabController 和 PageController</li>
+</ol>
+<hr />
+<h2 id="9-练习题">9. 练习题</h2>
+<h3 id="练习-1基础练习--简单标签页应用">练习 1：基础练习 — 简单标签页应用</h3>
+<p>使用 <code>DefaultTabController</code> 创建一个 3 个标签的应用，要求：</p>
+<ul>
+<li>三个标签分别是&quot;聊天&quot;、&quot;联系人&quot;、&quot;动态&quot;</li>
+<li>每个标签带有对应的图标（<code>Icons.chat</code>、<code>Icons.contacts</code>、<code>Icons.dynamic_feed</code>）</li>
+<li>自定义指示器样式：指示器颜色为绿色，宽度与文字标签同宽，厚度为 3</li>
+<li>选中标签文字加粗，未选中标签文字为灰色</li>
+</ul>
+<h3 id="练习-2中级练习--带状态保持的标签页">练习 2：中级练习 — 带状态保持的标签页</h3>
+<p>使用手动 <code>TabController</code> 创建一个 4 个标签的应用（推荐、视频、直播、专栏），要求：</p>
+<ul>
+<li>使用 <code>isScrollable: true</code> 和 <code>tabAlignment: TabAlignment.start</code></li>
+<li>每个标签页包含一个带有 <code>TextField</code> 的表单和一个计数器</li>
+<li>使用 <code>AutomaticKeepAliveClientMixin</code> 保持所有标签页的状态</li>
+<li>在标签切换时在控制台打印日志（使用 <code>addListener</code>）</li>
+<li>通过一个 <code>FloatingActionButton</code> 可以编程式地跳转到第一个标签</li>
+</ul>
+<h3 id="练习-3中级练习--引导页">练习 3：中级练习 — 引导页</h3>
+<p>使用 <code>PageView</code> 和 <code>PageController</code> 实现一个 App 引导页，要求：</p>
+<ul>
+<li>包含 4 个引导页面，每页有图标、标题和描述文字</li>
+<li>底部有页面指示器（小圆点），当前页面对应的圆点高亮且更大</li>
+<li>有&quot;跳过&quot;按钮（跳转到最后一页）和&quot;下一步&quot;/&quot;完成&quot;按钮</li>
+<li>到达最后一页后，&quot;下一步&quot;按钮变为&quot;开始使用&quot;</li>
+<li>使用 <code>viewportFraction: 0.9</code> 让页面带有卡片间距效果</li>
+</ul>
+<h3 id="练习-4进阶练习--新闻客户端综合页面">练习 4：进阶练习 — 新闻客户端综合页面</h3>
+<p>构建一个完整的新闻客户端页面，要求：</p>
+<ul>
+<li>顶部使用可滚动的 <code>TabBar</code> 显示至少 8 个新闻分类</li>
+<li>每个分类标签页中使用 <code>ListView.builder</code> 显示新闻列表（模拟 20 条数据）</li>
+<li>使用 <code>AutomaticKeepAliveClientMixin</code> 保持各分类的滚动位置</li>
+<li>顶部新闻列表的第一项使用 <code>PageView.builder</code> 实现自动轮播的头条新闻（提示：使用 <code>Timer.periodic</code> 配合 <code>PageController.animateToPage</code> 实现自动翻页）</li>
+<li>支持下拉刷新（<code>RefreshIndicator</code>），刷新时模拟 1 秒延迟</li>
+<li>自定义 TabBar 样式：选中标签加粗放大、使用自定义圆角指示器</li>
+</ul>
+<hr />
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://api.flutter.dev/flutter/material/TabBar-class.html">TabBar 官方文档</a></li>
+<li><a href="https://api.flutter.dev/flutter/material/TabBarView-class.html">TabBarView 官方文档</a></li>
+<li><a href="https://api.flutter.dev/flutter/material/TabController-class.html">TabController 官方文档</a></li>
+<li><a href="https://api.flutter.dev/flutter/material/DefaultTabController-class.html">DefaultTabController 官方文档</a></li>
+<li><a href="https://api.flutter.dev/flutter/widgets/PageView-class.html">PageView 官方文档</a></li>
+<li><a href="https://api.flutter.dev/flutter/widgets/PageController-class.html">PageController 官方文档</a></li>
+<li><a href="https://api.flutter.dev/flutter/widgets/AutomaticKeepAliveClientMixin-mixin.html">AutomaticKeepAliveClientMixin 官方文档</a></li>
+</ul>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

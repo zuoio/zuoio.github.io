@@ -1,0 +1,2441 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第18课-手势与交互组件">第18课 手势与交互组件</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter 常用组件系统学习<br />
+<strong>适用人群</strong>：有 Dart 语言基础，了解 Flutter 基本概念的开发者<br />
+<strong>课程目标</strong>：全面掌握 Flutter 手势体系，理解从原始指针事件到高级手势识别的完整链路，熟练运用各类交互组件构建丰富的用户体验</p>
+</blockquote>
+<hr />
+<h2 id="1-flutter-手势体系概览">1. Flutter 手势体系概览</h2>
+<p>在 Flutter 中，用户的每一次触摸、滑动、缩放都需要经过一套完整的事件处理流水线。理解这条链路是掌握手势交互的前提。</p>
+<p><strong>事件处理流水线</strong>（从底到高）：</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>核心类</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>原始指针层</strong></td>
+<td><code>Listener</code> / <code>RawGestureDetector</code></td>
+<td>直接接收操作系统传来的触摸坐标、按下/抬起等原始事件</td>
+</tr>
+<tr>
+<td><strong>手势识别层</strong></td>
+<td><code>GestureDetector</code></td>
+<td>将原始指针事件组合识别为语义化手势（点击、拖动、缩放等）</td>
+</tr>
+<tr>
+<td><strong>Material 反馈层</strong></td>
+<td><code>InkWell</code> / <code>InkResponse</code></td>
+<td>在手势基础上叠加 Material Design 的水波纹视觉反馈</td>
+</tr>
+</tbody>
+</table>
+<p>Flutter 采用**手势竞技场（GestureArena）**机制来解决同一指针事件被多个手势识别器争抢的问题——这是 Flutter 手势系统最精妙也最容易踩坑的部分，我们将在最后一节深入讨论。</p>
+<hr />
+<h2 id="2-gesturedetector手势识别的核心组件">2. GestureDetector：手势识别的核心组件</h2>
+<p><code>GestureDetector</code> 是 Flutter 中最常用的手势识别组件。它本身不产生任何视觉效果，而是在内部创建多个 <code>GestureRecognizer</code>，将子组件的指针事件翻译为语义化的手势回调。</p>
+<h3 id="21-点击手势">2.1 点击手势</h3>
+<p>点击是最基础的手势，包含完整的按下→抬起生命周期。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: TapDemoPage()));
+
+class TapDemoPage extends StatefulWidget {
+  const TapDemoPage({super.key});
+
+  @override
+  State&lt;TapDemoPage&gt; createState() =&gt; _TapDemoPageState();
+}
+
+class _TapDemoPageState extends State&lt;TapDemoPage&gt; {
+  String _info = '请点击下方区域';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('点击手势演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(_info, style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 24),
+            GestureDetector(
+              // 手指按下（还未抬起）
+              onTapDown: (TapDownDetails details) {
+                setState(() {
+                  _info = '按下位置: ${details.localPosition}';
+                });
+              },
+              // 手指抬起，完成一次点击
+              onTapUp: (TapUpDetails details) {
+                setState(() {
+                  _info = '抬起位置: ${details.localPosition}';
+                });
+              },
+              // 完整的点击事件（onTapDown + onTapUp 之后触发）
+              onTap: () {
+                setState(() {
+                  _info = '单击完成！';
+                });
+              },
+              // 点击被取消（如手指滑出范围）
+              onTapCancel: () {
+                setState(() {
+                  _info = '点击被取消';
+                });
+              },
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade100,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                alignment: Alignment.center,
+                child: const Text('点击我', style: TextStyle(fontSize: 20)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>点击手势回调触发顺序</strong>：<code>onTapDown</code> → <code>onTapUp</code> → <code>onTap</code>。如果手指在按下后滑出了组件区域，则触发 <code>onTapCancel</code>，而不会触发 <code>onTapUp</code> 和 <code>onTap</code>。</p>
+<h3 id="22-双击手势">2.2 双击手势</h3>
+<pre><code class="language-dart">GestureDetector(
+  onDoubleTap: () {
+    setState(() {
+      _info = '双击触发！';
+    });
+  },
+  child: Container(
+    width: 200,
+    height: 200,
+    color: Colors.green.shade100,
+    alignment: Alignment.center,
+    child: const Text('双击我'),
+  ),
+)
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：当同时注册了 <code>onTap</code> 和 <code>onDoubleTap</code> 时，第一次点击后 Flutter 会等待约 200ms 来判断是否为双击。这意味着 <code>onTap</code> 的响应会有延迟。如果你的场景不需要双击，就不要注册 <code>onDoubleTap</code>，以获得更快的单击响应。</p>
+</blockquote>
+<h3 id="23-长按手势">2.3 长按手势</h3>
+<p>长按手势提供了完整的生命周期：开始、移动、结束。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: LongPressDemoPage()));
+
+class LongPressDemoPage extends StatefulWidget {
+  const LongPressDemoPage({super.key});
+
+  @override
+  State&lt;LongPressDemoPage&gt; createState() =&gt; _LongPressDemoPageState();
+}
+
+class _LongPressDemoPageState extends State&lt;LongPressDemoPage&gt; {
+  String _info = '长按下方区域试试';
+  Color _boxColor = Colors.orange.shade100;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('长按手势演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(_info, style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 24),
+            GestureDetector(
+              // 触发长按（默认500ms后触发）
+              onLongPress: () {
+                setState(() {
+                  _info = '长按触发！';
+                  _boxColor = Colors.red.shade100;
+                });
+              },
+              // 长按开始（可获取按下位置）
+              onLongPressStart: (LongPressStartDetails details) {
+                setState(() {
+                  _info = '长按开始: ${details.localPosition}';
+                });
+              },
+              // 长按期间手指移动
+              onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) {
+                setState(() {
+                  _info = '长按移动: ${details.localPosition}';
+                });
+              },
+              // 长按结束
+              onLongPressEnd: (LongPressEndDetails details) {
+                setState(() {
+                  _info = '长按结束: ${details.localPosition}';
+                  _boxColor = Colors.orange.shade100;
+                });
+              },
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: _boxColor,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                alignment: Alignment.center,
+                child: const Text('长按我', style: TextStyle(fontSize: 20)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="24-拖动手势">2.4 拖动手势</h3>
+<p>拖动是构建可交互 UI 的重要手势。Flutter 提供三种拖动回调：</p>
+<table>
+<thead>
+<tr>
+<th>回调</th>
+<th>方向限制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>onPanXxx</code></td>
+<td>任意方向拖动（水平 + 垂直）</td>
+</tr>
+<tr>
+<td><code>onHorizontalDragXxx</code></td>
+<td>仅水平方向</td>
+</tr>
+<tr>
+<td><code>onVerticalDragXxx</code></td>
+<td>仅垂直方向</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意事项</strong>：<code>onPanXxx</code> 与 <code>onHorizontalDragXxx</code> / <code>onVerticalDragXxx</code> 互斥，不能同时注册。原因是它们使用的手势识别器会在竞技场中冲突。</p>
+</blockquote>
+<h4 id="拖动画布上移动组件--完整示例">拖动画布上移动组件 —— 完整示例</h4>
+<p>这是一个经典的可拖动色块示例，在画布上自由拖动多个组件：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: DragCanvasPage()));
+
+class DragCanvasPage extends StatefulWidget {
+  const DragCanvasPage({super.key});
+
+  @override
+  State&lt;DragCanvasPage&gt; createState() =&gt; _DragCanvasPageState();
+}
+
+/// 画布上的可拖动块数据
+class DraggableBlock {
+  Offset position;
+  final Color color;
+  final String label;
+
+  DraggableBlock({
+    required this.position,
+    required this.color,
+    required this.label,
+  });
+}
+
+class _DragCanvasPageState extends State&lt;DragCanvasPage&gt; {
+  final List&lt;DraggableBlock&gt; _blocks = [
+    DraggableBlock(position: const Offset(50, 100), color: Colors.red, label: 'A'),
+    DraggableBlock(position: const Offset(200, 200), color: Colors.blue, label: 'B'),
+    DraggableBlock(position: const Offset(100, 350), color: Colors.green, label: 'C'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('拖动画布示例')),
+      body: Stack(
+        children: [
+          // 背景网格提示
+          Positioned.fill(
+            child: CustomPaint(painter: _GridPainter()),
+          ),
+          // 为每个色块生成可拖动组件
+          for (int i = 0; i &lt; _blocks.length; i++)
+            Positioned(
+              left: _blocks[i].position.dx,
+              top: _blocks[i].position.dy,
+              child: GestureDetector(
+                onPanDown: (_) {
+                  // 将当前拖动的块移到最上层（列表末尾）
+                  setState(() {
+                    final block = _blocks.removeAt(i);
+                    _blocks.add(block);
+                  });
+                },
+                onPanUpdate: (DragUpdateDetails details) {
+                  setState(() {
+                    // 最后一个元素就是当前拖动的块
+                    _blocks.last.position += details.delta;
+                  });
+                },
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: _blocks[i].color.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(2, 4),
+                      ),
+                    ],
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    _blocks[i].label,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 绘制背景网格
+class _GridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey.shade200
+      ..strokeWidth = 0.5;
+
+    // 绘制竖线
+    for (double x = 0; x &lt; size.width; x += 20) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    // 绘制横线
+    for (double y = 0; y &lt; size.height; y += 20) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =&gt; false;
+}
+</code></pre>
+<h4 id="水平--垂直方向限制拖动">水平 / 垂直方向限制拖动</h4>
+<pre><code class="language-dart">GestureDetector(
+  // 仅水平方向拖动
+  onHorizontalDragUpdate: (DragUpdateDetails details) {
+    setState(() {
+      _offsetX += details.delta.dx;
+    });
+  },
+  // 仅垂直方向拖动
+  onVerticalDragUpdate: (DragUpdateDetails details) {
+    setState(() {
+      _offsetY += details.delta.dy;
+    });
+  },
+  child: Transform.translate(
+    offset: Offset(_offsetX, _offsetY),
+    child: const FlutterLogo(size: 80),
+  ),
+)
+</code></pre>
+<h3 id="25-缩放手势">2.5 缩放手势</h3>
+<p>缩放手势（scale）用于检测双指捏合/张开操作，常见于图片查看器。实际上 scale 手势也能同时检测旋转和平移。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: ScaleGesturePage()));
+
+class ScaleGesturePage extends StatefulWidget {
+  const ScaleGesturePage({super.key});
+
+  @override
+  State&lt;ScaleGesturePage&gt; createState() =&gt; _ScaleGesturePageState();
+}
+
+class _ScaleGesturePageState extends State&lt;ScaleGesturePage&gt; {
+  double _scale = 1.0;
+  double _previousScale = 1.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('缩放手势演示')),
+      body: Center(
+        child: GestureDetector(
+          onScaleStart: (ScaleStartDetails details) {
+            _previousScale = _scale;
+          },
+          onScaleUpdate: (ScaleUpdateDetails details) {
+            setState(() {
+              // 在上一次缩放基础上叠加新的缩放值
+              _scale = (_previousScale * details.scale).clamp(0.5, 4.0);
+            });
+          },
+          onScaleEnd: (ScaleEndDetails details) {
+            // 缩放结束，可在此做动画回弹等逻辑
+          },
+          child: Transform.scale(
+            scale: _scale,
+            child: Image.network(
+              'https://flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png',
+              width: 250,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：<code>onScaleXxx</code> 与 <code>onPanXxx</code> 互斥。如果你同时需要平移和缩放，请使用 <code>onScaleXxx</code> —— 它的 <code>ScaleUpdateDetails</code> 同时提供了 <code>scale</code>（缩放比）、<code>rotation</code>（旋转角度）和 <code>focalPointDelta</code>（焦点偏移/平移量）。</p>
+</blockquote>
+<hr />
+<h2 id="3-inkwell-与-inkresponse带水波纹的触摸反馈">3. InkWell 与 InkResponse：带水波纹的触摸反馈</h2>
+<p>在 Material Design 中，用户触摸控件时应当有水波纹（ripple）反馈。<code>InkWell</code> 和 <code>InkResponse</code> 就是为此而生的组件。</p>
+<h3 id="31-inkwell">3.1 InkWell</h3>
+<p><code>InkWell</code> 产生<strong>矩形</strong>范围的水波纹效果，是最常用的带反馈触摸组件。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: InkWellDemoPage()));
+
+class InkWellDemoPage extends StatelessWidget {
+  const InkWellDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('InkWell 演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 基础用法
+            InkWell(
+              onTap: () =&gt; debugPrint('点击'),
+              onLongPress: () =&gt; debugPrint('长按'),
+              // 水波纹颜色
+              splashColor: Colors.blue.withOpacity(0.3),
+              // 按下时的高亮色
+              highlightColor: Colors.blue.withOpacity(0.1),
+              // 圆角（让水波纹也跟着圆角裁剪）
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Text('带圆角水波纹', style: TextStyle(fontSize: 16)),
+              ),
+            ),
+            const SizedBox(height: 32),
+            // 使用 customBorder 自定义形状
+            InkWell(
+              onTap: () {},
+              splashColor: Colors.purple.withOpacity(0.3),
+              customBorder: const StadiumBorder(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                decoration: ShapeDecoration(
+                  shape: const StadiumBorder(),
+                  color: Colors.purple.shade50,
+                ),
+                child: const Text('体育场形状水波纹'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="32-inkresponse">3.2 InkResponse</h3>
+<p><code>InkResponse</code> 是 <code>InkWell</code> 的父类，提供更灵活的水波纹形状控制。与 <code>InkWell</code> 的主要区别：</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>InkWell</th>
+<th>InkResponse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>水波纹形状</td>
+<td>默认矩形（可设置 borderRadius）</td>
+<td>默认从触摸点向外扩散圆形</td>
+</tr>
+<tr>
+<td>裁剪行为</td>
+<td>裁剪到组件矩形边界内</td>
+<td>水波纹可以超出组件边界</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>列表项、卡片等矩形区域</td>
+<td>图标按钮、圆形头像等非矩形区域</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">InkResponse(
+  onTap: () =&gt; debugPrint('InkResponse 点击'),
+  // 是否将水波纹裁剪在组件范围内
+  containedInkWell: false,
+  // 高亮形状
+  highlightShape: BoxShape.circle,
+  // 水波纹半径
+  radius: 40,
+  splashColor: Colors.amber.withOpacity(0.4),
+  child: const Padding(
+    padding: EdgeInsets.all(16),
+    child: Icon(Icons.favorite, size: 32, color: Colors.red),
+  ),
+)
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>如果你的触摸区域是矩形或圆角矩形，优先使用 <code>InkWell</code></li>
+<li>如果你需要圆形水波纹或水波纹超出组件范围的效果，使用 <code>InkResponse</code></li>
+<li><code>InkWell</code> / <code>InkResponse</code> 需要 <code>Material</code> 祖先才能正确显示水波纹。如果在没有 <code>Material</code> 祖先的地方使用，水波纹不会显示。<code>Scaffold</code> 的 <code>body</code> 自带 <code>Material</code>，通常不需要额外包裹。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="4-listener原始指针事件监听">4. Listener：原始指针事件监听</h2>
+<p><code>Listener</code> 直接监听操作系统传来的原始指针（pointer）事件，不经过手势识别器处理，也<strong>不参与手势竞技场竞争</strong>。</p>
+<h3 id="41-listener-与-gesturedetector-的区别">4.1 Listener 与 GestureDetector 的区别</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Listener</th>
+<th>GestureDetector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>事件类型</td>
+<td>原始指针事件（PointerEvent）</td>
+<td>语义化手势（tap、drag、scale 等）</td>
+</tr>
+<tr>
+<td>竞技场参与</td>
+<td><strong>不参与</strong>，总能收到事件</td>
+<td>参与竞技场，可能输给其他手势识别器</td>
+</tr>
+<tr>
+<td>手势识别</td>
+<td>不做任何手势识别</td>
+<td>内置各种 GestureRecognizer</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>需要不被竞技场干扰的原始事件</td>
+<td>常规的手势交互</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-基础用法">4.2 基础用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: ListenerDemoPage()));
+
+class ListenerDemoPage extends StatefulWidget {
+  const ListenerDemoPage({super.key});
+
+  @override
+  State&lt;ListenerDemoPage&gt; createState() =&gt; _ListenerDemoPageState();
+}
+
+class _ListenerDemoPageState extends State&lt;ListenerDemoPage&gt; {
+  String _eventInfo = '触摸下方区域';
+  Offset _pointerPosition = Offset.zero;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Listener 演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(_eventInfo, style: const TextStyle(fontSize: 14)),
+            const SizedBox(height: 8),
+            Text('坐标: $_pointerPosition', style: const TextStyle(fontSize: 14)),
+            const SizedBox(height: 24),
+            Listener(
+              // 指针按下
+              onPointerDown: (PointerDownEvent event) {
+                setState(() {
+                  _eventInfo = '指针按下 (按钮: ${event.buttons})';
+                  _pointerPosition = event.localPosition;
+                });
+              },
+              // 指针移动
+              onPointerMove: (PointerMoveEvent event) {
+                setState(() {
+                  _eventInfo = '指针移动 (压力: ${event.pressure.toStringAsFixed(2)})';
+                  _pointerPosition = event.localPosition;
+                });
+              },
+              // 指针抬起
+              onPointerUp: (PointerUpEvent event) {
+                setState(() {
+                  _eventInfo = '指针抬起';
+                  _pointerPosition = event.localPosition;
+                });
+              },
+              // 指针取消（如系统弹窗中断）
+              onPointerCancel: (PointerCancelEvent event) {
+                setState(() {
+                  _eventInfo = '指针取消';
+                });
+              },
+              child: Container(
+                width: 300,
+                height: 300,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                alignment: Alignment.center,
+                child: const Text('触摸追踪区域', style: TextStyle(fontSize: 16)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：当你需要不受手势竞技场影响地获取触摸坐标（如自定义绘制中追踪手指轨迹），使用 <code>Listener</code> 比 <code>GestureDetector</code> 更可靠。</p>
+</blockquote>
+<hr />
+<h2 id="5-absorbpointer-与-ignorepointer手势拦截与穿透">5. AbsorbPointer 与 IgnorePointer：手势拦截与穿透</h2>
+<p>这两个组件用于控制子树是否能响应手势事件，常用于实现组件禁用、加载遮罩等场景。</p>
+<h3 id="51-absorbpointer--吸收指针事件">5.1 AbsorbPointer —— 吸收指针事件</h3>
+<p><code>AbsorbPointer</code> 像一堵墙：<strong>阻止子组件接收事件，但自身仍然参与命中测试</strong>（即自身仍是&quot;可触摸的&quot;，事件传播到此就被&quot;吸收&quot;了）。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: AbsorbIgnoreDemoPage()));
+
+class AbsorbIgnoreDemoPage extends StatefulWidget {
+  const AbsorbIgnoreDemoPage({super.key});
+
+  @override
+  State&lt;AbsorbIgnoreDemoPage&gt; createState() =&gt; _AbsorbIgnoreDemoPageState();
+}
+
+class _AbsorbIgnoreDemoPageState extends State&lt;AbsorbIgnoreDemoPage&gt; {
+  bool _absorbing = false;
+  bool _ignoring = false;
+  int _tapCount = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('AbsorbPointer 与 IgnorePointer')),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            // 控制面板
+            SwitchListTile(
+              title: const Text('AbsorbPointer（吸收事件）'),
+              value: _absorbing,
+              onChanged: (v) =&gt; setState(() =&gt; _absorbing = v),
+            ),
+            SwitchListTile(
+              title: const Text('IgnorePointer（忽略事件）'),
+              value: _ignoring,
+              onChanged: (v) =&gt; setState(() =&gt; _ignoring = v),
+            ),
+            const SizedBox(height: 24),
+            Text('按钮点击次数: $_tapCount', style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 16),
+
+            // AbsorbPointer 示例
+            const Text('AbsorbPointer 包裹的按钮：'),
+            const SizedBox(height: 8),
+            AbsorbPointer(
+              absorbing: _absorbing,
+              child: ElevatedButton(
+                onPressed: () =&gt; setState(() =&gt; _tapCount++),
+                child: const Text('点击我（Absorb）'),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // IgnorePointer 示例
+            const Text('IgnorePointer 包裹的按钮：'),
+            const SizedBox(height: 8),
+            IgnorePointer(
+              ignoring: _ignoring,
+              child: ElevatedButton(
+                onPressed: () =&gt; setState(() =&gt; _tapCount++),
+                child: const Text('点击我（Ignore）'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="52-两者的关键区别">5.2 两者的关键区别</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>AbsorbPointer</th>
+<th>IgnorePointer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>子组件是否收到事件</td>
+<td>❌ 不收到</td>
+<td>❌ 不收到</td>
+</tr>
+<tr>
+<td>自身是否参与命中测试</td>
+<td>✅ 参与（事件到此为止）</td>
+<td>❌ 不参与（事件穿透到下层）</td>
+</tr>
+<tr>
+<td>典型用途</td>
+<td>禁用某区域，但阻止事件穿透到下方</td>
+<td>让事件穿透到层叠布局中的下层组件</td>
+</tr>
+</tbody>
+</table>
+<p><strong>形象比喻</strong>：</p>
+<ul>
+<li><code>AbsorbPointer</code> = 一块<strong>不透明的玻璃</strong>：你点不到它后面的东西，点击会被玻璃挡住</li>
+<li><code>IgnorePointer</code> = 一块<strong>透明的玻璃</strong>：不仅你点不到它包裹的内容，点击还会直接穿透到它后面的组件</li>
+</ul>
+<pre><code class="language-dart">// 经典场景：加载遮罩 —— 用 AbsorbPointer 阻止加载中的误操作
+Stack(
+  children: [
+    // 底层：可交互的表单
+    MyForm(),
+    // 顶层：加载遮罩（吸收所有触摸事件）
+    if (_isLoading)
+      AbsorbPointer(
+        child: Container(
+          color: Colors.black26,
+          alignment: Alignment.center,
+          child: const CircularProgressIndicator(),
+        ),
+      ),
+  ],
+)
+</code></pre>
+<hr />
+<h2 id="6-dismissible滑动删除">6. Dismissible：滑动删除</h2>
+<p><code>Dismissible</code> 是实现列表项侧滑删除的标准组件，包含完整的滑动动画和回调。</p>
+<h3 id="61-完整的滑动删除列表示例">6.1 完整的滑动删除列表示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: DismissibleDemoPage()));
+
+class DismissibleDemoPage extends StatefulWidget {
+  const DismissibleDemoPage({super.key});
+
+  @override
+  State&lt;DismissibleDemoPage&gt; createState() =&gt; _DismissibleDemoPageState();
+}
+
+class _DismissibleDemoPageState extends State&lt;DismissibleDemoPage&gt; {
+  final List&lt;String&gt; _items = List.generate(20, (i) =&gt; '列表项 ${i + 1}');
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('滑动删除示例'),
+        actions: [
+          // 重置按钮
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _items
+                  ..clear()
+                  ..addAll(List.generate(20, (i) =&gt; '列表项 ${i + 1}'));
+              });
+            },
+            icon: const Icon(Icons.refresh),
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        itemCount: _items.length,
+        itemBuilder: (context, index) {
+          final item = _items[index];
+          return Dismissible(
+            // key 是必须的，用于唯一标识每个 Dismissible
+            key: ValueKey(item),
+            // 滑动方向（默认双向）
+            direction: DismissDirection.horizontal,
+            // 向右滑时的背景（startToEnd）
+            background: Container(
+              color: Colors.green,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 24),
+              child: const Icon(Icons.archive, color: Colors.white),
+            ),
+            // 向左滑时的背景（endToStart）
+            secondaryBackground: Container(
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 24),
+              child: const Icon(Icons.delete, color: Colors.white),
+            ),
+            // 确认是否删除（返回 false 则取消删除）
+            confirmDismiss: (direction) async {
+              if (direction == DismissDirection.endToStart) {
+                // 向左滑 → 弹出确认对话框
+                return await showDialog&lt;bool&gt;(
+                  context: context,
+                  builder: (context) =&gt; AlertDialog(
+                    title: const Text('确认删除'),
+                    content: Text('确定要删除 &quot;$item&quot; 吗？'),
+                    actions: [
+                      TextButton(
+                        onPressed: () =&gt; Navigator.pop(context, false),
+                        child: const Text('取消'),
+                      ),
+                      TextButton(
+                        onPressed: () =&gt; Navigator.pop(context, true),
+                        child: const Text('删除'),
+                      ),
+                    ],
+                  ),
+                ) ?? false;
+              }
+              // 向右滑 → 直接归档
+              return true;
+            },
+            // 删除完成后的回调
+            onDismissed: (direction) {
+              setState(() {
+                _items.removeAt(index);
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    direction == DismissDirection.endToStart
+                        ? '&quot;$item&quot; 已删除'
+                        : '&quot;$item&quot; 已归档',
+                  ),
+                  action: SnackBarAction(
+                    label: '撤销',
+                    onPressed: () {
+                      setState(() {
+                        _items.insert(index, item);
+                      });
+                    },
+                  ),
+                ),
+              );
+            },
+            child: ListTile(
+              leading: CircleAvatar(child: Text('${index + 1}')),
+              title: Text(item),
+              subtitle: const Text('左滑删除，右滑归档'),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>key</code> 参数是<strong>必须</strong>的，Dismissible 靠它来追踪每个列表项。建议使用 <code>ValueKey</code> 并传入唯一标识（如 id）。</li>
+<li>在 <code>onDismissed</code> 中一定要从数据源移除对应项，否则会出现 &quot;A dismissed Dismissible widget is still part of the tree&quot; 错误。</li>
+<li>使用 <code>confirmDismiss</code> 可以在滑动完成前询问用户确认，返回 <code>false</code> 则自动回弹。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="7-draggable-与-dragtarget拖拽交互">7. Draggable 与 DragTarget：拖拽交互</h2>
+<p><code>Draggable</code> 和 <code>DragTarget</code> 是一对配合使用的拖拽组件。<code>Draggable</code> 生成可拖动的元素，<code>DragTarget</code> 定义接收拖放的目标区域。它们通过泛型 <code>T</code> 传递数据。</p>
+<h3 id="71-基础拖放示例">7.1 基础拖放示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: DraggableDemoPage()));
+
+class DraggableDemoPage extends StatefulWidget {
+  const DraggableDemoPage({super.key});
+
+  @override
+  State&lt;DraggableDemoPage&gt; createState() =&gt; _DraggableDemoPageState();
+}
+
+class _DraggableDemoPageState extends State&lt;DraggableDemoPage&gt; {
+  Color _targetColor = Colors.grey.shade300;
+  String _targetText = '将色块拖到这里';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Draggable 与 DragTarget')),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          // 可拖动的色块行
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildDraggableColor(Colors.red, '红色'),
+              _buildDraggableColor(Colors.green, '绿色'),
+              _buildDraggableColor(Colors.blue, '蓝色'),
+            ],
+          ),
+          // 拖放目标区域
+          DragTarget&lt;MapEntry&lt;Color, String&gt;&gt;(
+            builder: (context, candidateData, rejectedData) {
+              // candidateData 包含当前悬停在目标区域上方的数据
+              final isHovering = candidateData.isNotEmpty;
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: _targetColor,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isHovering ? Colors.amber : Colors.grey,
+                    width: isHovering ? 3 : 1,
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  _targetText,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: _targetColor.computeLuminance() &gt; 0.5
+                        ? Colors.black
+                        : Colors.white,
+                  ),
+                ),
+              );
+            },
+            // 判断是否接受拖入的数据
+            onWillAcceptWithDetails: (details) {
+              return true; // 接受所有颜色
+            },
+            // 数据放入目标后触发
+            onAcceptWithDetails: (details) {
+              setState(() {
+                _targetColor = details.data.key;
+                _targetText = '已接收: ${details.data.value}';
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDraggableColor(Color color, String label) {
+    return Draggable&lt;MapEntry&lt;Color, String&gt;&gt;(
+      // 拖动时传递的数据
+      data: MapEntry(color, label),
+      // 拖动时跟随手指的反馈组件
+      feedback: Material(
+        elevation: 8,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          alignment: Alignment.center,
+          child: Text(label, style: const TextStyle(color: Colors.white)),
+        ),
+      ),
+      // 拖动期间原位置显示的占位组件
+      childWhenDragging: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color, style: BorderStyle.solid),
+        ),
+      ),
+      // 拖动开始
+      onDragStarted: () =&gt; debugPrint('开始拖动 $label'),
+      // 拖动结束（无论是否放到目标上）
+      onDragEnd: (DraggableDetails details) {
+        debugPrint('拖动结束 $label，是否被接受: ${details.wasAccepted}');
+      },
+      // 正常状态下显示的子组件
+      child: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        alignment: Alignment.center,
+        child: Text(label, style: const TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="72-draggable-核心属性">7.2 Draggable 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data</code></td>
+<td><code>T</code></td>
+<td>拖动时携带的数据（泛型）</td>
+</tr>
+<tr>
+<td><code>child</code></td>
+<td><code>Widget</code></td>
+<td>正常状态显示的组件</td>
+</tr>
+<tr>
+<td><code>feedback</code></td>
+<td><code>Widget</code></td>
+<td>拖动中跟随手指的组件</td>
+</tr>
+<tr>
+<td><code>childWhenDragging</code></td>
+<td><code>Widget?</code></td>
+<td>拖动期间原位置显示的组件（为 null 则仍显示 child）</td>
+</tr>
+<tr>
+<td><code>onDragStarted</code></td>
+<td><code>VoidCallback?</code></td>
+<td>拖动开始回调</td>
+</tr>
+<tr>
+<td><code>onDragEnd</code></td>
+<td><code>Function(DraggableDetails)?</code></td>
+<td>拖动结束回调</td>
+</tr>
+<tr>
+<td><code>onDragCompleted</code></td>
+<td><code>VoidCallback?</code></td>
+<td>数据被 DragTarget 接受时触发</td>
+</tr>
+<tr>
+<td><code>onDraggableCanceled</code></td>
+<td><code>Function(Velocity, Offset)?</code></td>
+<td>拖动取消（未被接受）时触发</td>
+</tr>
+</tbody>
+</table>
+<h3 id="73-dragtarget-核心属性">7.3 DragTarget 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>builder</code></td>
+<td><code>Function(context, candidateData, rejectedData)</code></td>
+<td>构建目标区域 UI，<code>candidateData</code> 为悬停数据</td>
+</tr>
+<tr>
+<td><code>onWillAcceptWithDetails</code></td>
+<td><code>Function(DragTargetDetails&lt;T&gt;)?</code></td>
+<td>判断是否接受数据（返回 bool）</td>
+</tr>
+<tr>
+<td><code>onAcceptWithDetails</code></td>
+<td><code>Function(DragTargetDetails&lt;T&gt;)?</code></td>
+<td>数据被放入并接受时触发</td>
+</tr>
+<tr>
+<td><code>onLeave</code></td>
+<td><code>Function(T?)?</code></td>
+<td>拖动元素离开目标区域时触发</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-longpressdraggable长按拖拽">8. LongPressDraggable：长按拖拽</h2>
+<p><code>LongPressDraggable</code> 继承自 <code>Draggable</code>，唯一区别是：需要<strong>长按</strong>后才能开始拖动，而非直接拖动。</p>
+<h3 id="81-与-draggable-的区别">8.1 与 Draggable 的区别</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Draggable</th>
+<th>LongPressDraggable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>触发方式</td>
+<td>直接拖动</td>
+<td>长按后才能拖动</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>专门用于拖放的元素</td>
+<td>列表重排序等场景（不影响正常滚动）</td>
+</tr>
+<tr>
+<td>与滚动的关系</td>
+<td>可能与 <code>ListView</code> 滚动冲突</td>
+<td>长按触发避免了滚动冲突</td>
+</tr>
+</tbody>
+</table>
+<h3 id="82-示例长按拖拽排序">8.2 示例：长按拖拽排序</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: LongPressDraggablePage()));
+
+class LongPressDraggablePage extends StatefulWidget {
+  const LongPressDraggablePage({super.key});
+
+  @override
+  State&lt;LongPressDraggablePage&gt; createState() =&gt; _LongPressDraggablePageState();
+}
+
+class _LongPressDraggablePageState extends State&lt;LongPressDraggablePage&gt; {
+  final List&lt;String&gt; _items = ['苹果', '香蕉', '橙子', '葡萄', '西瓜'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('长按拖拽排序')),
+      body: ListView.builder(
+        itemCount: _items.length,
+        itemBuilder: (context, index) {
+          final item = _items[index];
+          return DragTarget&lt;int&gt;(
+            onWillAcceptWithDetails: (details) =&gt; details.data != index,
+            onAcceptWithDetails: (details) {
+              setState(() {
+                final draggedItem = _items.removeAt(details.data);
+                _items.insert(index, draggedItem);
+              });
+            },
+            builder: (context, candidateData, rejectedData) {
+              return LongPressDraggable&lt;int&gt;(
+                data: index,
+                // 长按延迟时间
+                delay: const Duration(milliseconds: 300),
+                feedback: Material(
+                  elevation: 8,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: const EdgeInsets.all(16),
+                    color: Colors.blue.shade50,
+                    child: Text(item, style: const TextStyle(fontSize: 18)),
+                  ),
+                ),
+                childWhenDragging: Container(
+                  color: Colors.grey.shade200,
+                  height: 56,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: candidateData.isNotEmpty
+                        ? Colors.blue.shade50
+                        : Colors.white,
+                    border: const Border(
+                      bottom: BorderSide(color: Colors.grey, width: 0.5),
+                    ),
+                  ),
+                  child: ListTile(
+                    leading: const Icon(Icons.drag_handle),
+                    title: Text(item),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：在列表中使用拖拽排序时，优先考虑 <code>LongPressDraggable</code> 而非 <code>Draggable</code>，因为直接拖动会与列表的滚动手势冲突。另外，Flutter 内置的 <code>ReorderableListView</code> 已经封装了长按拖拽排序的完整逻辑，简单场景可以直接使用。</p>
+</blockquote>
+<hr />
+<h2 id="9-interactiveviewer双指缩放与平移">9. InteractiveViewer：双指缩放与平移</h2>
+<p><code>InteractiveViewer</code> 是 Flutter 提供的开箱即用的缩放和平移组件，非常适合图片查看器、画布、地图等需要自由浏览的场景。</p>
+<h3 id="91-基础用法">9.1 基础用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: InteractiveViewerPage()));
+
+class InteractiveViewerPage extends StatelessWidget {
+  const InteractiveViewerPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('InteractiveViewer 演示')),
+      body: Center(
+        child: InteractiveViewer(
+          // 子组件超出边界时的可拖动边距
+          boundaryMargin: const EdgeInsets.all(80),
+          // 最小缩放比例
+          minScale: 0.5,
+          // 最大缩放比例
+          maxScale: 4.0,
+          // 是否启用平移
+          panEnabled: true,
+          // 是否启用缩放
+          scaleEnabled: true,
+          child: Image.network(
+            'https://flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png',
+            width: 300,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="92-使用-transformationcontroller-编程控制">9.2 使用 TransformationController 编程控制</h3>
+<p><code>TransformationController</code> 允许你以编程方式获取和设置当前的变换矩阵，实现&quot;重置缩放&quot;、&quot;缩放到指定位置&quot;等功能。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: InteractiveViewerControllerPage()));
+
+class InteractiveViewerControllerPage extends StatefulWidget {
+  const InteractiveViewerControllerPage({super.key});
+
+  @override
+  State&lt;InteractiveViewerControllerPage&gt; createState() =&gt;
+      _InteractiveViewerControllerPageState();
+}
+
+class _InteractiveViewerControllerPageState
+    extends State&lt;InteractiveViewerControllerPage&gt;
+    with SingleTickerProviderStateMixin {
+  final TransformationController _controller = TransformationController();
+  late AnimationController _animationController;
+  Animation&lt;Matrix4&gt;? _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  /// 带动画的重置缩放
+  void _resetTransform() {
+    _animation = Matrix4Tween(
+      begin: _controller.value,
+      end: Matrix4.identity(),
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
+    ));
+
+    _animation!.addListener(() {
+      _controller.value = _animation!.value;
+    });
+
+    _animationController
+      ..reset()
+      ..forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('TransformationController')),
+      body: InteractiveViewer(
+        transformationController: _controller,
+        boundaryMargin: const EdgeInsets.all(100),
+        minScale: 0.5,
+        maxScale: 5.0,
+        child: Container(
+          width: 400,
+          height: 400,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.blue, width: 2),
+          ),
+          child: GridView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+            ),
+            itemCount: 16,
+            itemBuilder: (context, index) {
+              return Container(
+                margin: const EdgeInsets.all(4),
+                color: Colors.primaries[index % Colors.primaries.length],
+                alignment: Alignment.center,
+                child: Text(
+                  '${index + 1}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _resetTransform,
+        child: const Icon(Icons.refresh),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="93-interactiveviewer-核心属性">9.3 InteractiveViewer 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>boundaryMargin</code></td>
+<td><code>EdgeInsets</code></td>
+<td><code>EdgeInsets.zero</code></td>
+<td>内容超出可视区域时允许的平移边距</td>
+</tr>
+<tr>
+<td><code>minScale</code></td>
+<td><code>double</code></td>
+<td><code>0.8</code></td>
+<td>最小缩放比</td>
+</tr>
+<tr>
+<td><code>maxScale</code></td>
+<td><code>double</code></td>
+<td><code>2.5</code></td>
+<td>最大缩放比</td>
+</tr>
+<tr>
+<td><code>panEnabled</code></td>
+<td><code>bool</code></td>
+<td><code>true</code></td>
+<td>是否启用平移</td>
+</tr>
+<tr>
+<td><code>scaleEnabled</code></td>
+<td><code>bool</code></td>
+<td><code>true</code></td>
+<td>是否启用缩放</td>
+</tr>
+<tr>
+<td><code>transformationController</code></td>
+<td><code>TransformationController?</code></td>
+<td><code>null</code></td>
+<td>编程控制变换矩阵</td>
+</tr>
+<tr>
+<td><code>constrained</code></td>
+<td><code>bool</code></td>
+<td><code>true</code></td>
+<td>是否约束子组件尺寸（设为 false 时子组件可超出视口）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意事项</strong>：如果子组件本身需要接收手势（如包含按钮），<code>InteractiveViewer</code> 的缩放/平移手势可能与之冲突。此时可以通过 <code>panEnabled</code> / <code>scaleEnabled</code> 动态控制，或者将可交互子组件包裹在 <code>GestureDetector</code> 中并合理使用 <code>HitTestBehavior</code>。</p>
+</blockquote>
+<hr />
+<h2 id="10-手势冲突与手势竞技场机制gesturearena">10. 手势冲突与手势竞技场机制（GestureArena）</h2>
+<p>这是 Flutter 手势系统中最重要也最容易被忽视的部分。当多个手势识别器同时监听同一区域时，Flutter 用**手势竞技场（GestureArena）**来决定&quot;谁赢&quot;。</p>
+<h3 id="101-什么是手势竞技场">10.1 什么是手势竞技场</h3>
+<p>想象一个拳击擂台赛：</p>
+<ol>
+<li><strong>报名</strong>：当用户手指按下（pointer down）时，命中区域内所有注册了手势识别器的组件都会将各自的识别器&quot;报名&quot;到竞技场</li>
+<li><strong>比赛</strong>：随着后续指针事件（移动、抬起）的到来，各识别器根据自己的规则判断&quot;这是不是我要识别的手势&quot;</li>
+<li><strong>宣布胜者</strong>：
+<ul>
+<li>某个识别器确信当前事件匹配自己的手势 → <strong>宣布胜出（win）</strong></li>
+<li>某个识别器确信不匹配 → <strong>主动退出（reject）</strong></li>
+<li>只剩最后一个识别器 → <strong>自动胜出</strong></li>
+</ul>
+</li>
+<li><strong>结果</strong>：胜出的识别器接管后续所有事件，其他识别器被清除</li>
+</ol>
+<h3 id="102-常见冲突场景">10.2 常见冲突场景</h3>
+<h4 id="场景1外层-gesturedetector-与内层-gesturedetector-的-ontap-冲突">场景1：外层 GestureDetector 与内层 GestureDetector 的 onTap 冲突</h4>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: GestureConflictPage()));
+
+class GestureConflictPage extends StatefulWidget {
+  const GestureConflictPage({super.key});
+
+  @override
+  State&lt;GestureConflictPage&gt; createState() =&gt; _GestureConflictPageState();
+}
+
+class _GestureConflictPageState extends State&lt;GestureConflictPage&gt; {
+  String _log = '';
+
+  void _addLog(String msg) {
+    setState(() {
+      _log = '$msg\n$_log';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('手势冲突演示')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // 外层 GestureDetector
+            GestureDetector(
+              onTap: () =&gt; _addLog('外层 onTap'),
+              child: Container(
+                color: Colors.amber.shade50,
+                padding: const EdgeInsets.all(40),
+                child: GestureDetector(
+                  // 内层 GestureDetector
+                  onTap: () =&gt; _addLog('内层 onTap'),
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    color: Colors.amber.shade200,
+                    alignment: Alignment.center,
+                    child: const Text('点击我'),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Divider(),
+            const Text('事件日志（新事件在上）：',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(_log),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>点击内层容器时，你会发现<strong>只有内层的 <code>onTap</code> 被触发</strong>。这是因为在竞技场中，内层的 <code>TapGestureRecognizer</code> 和外层的 <code>TapGestureRecognizer</code> 同时参赛，而内层先&quot;报名&quot;（命中测试从叶子节点开始），最终内层胜出。</p>
+<h4 id="场景2ontap-与-onverticaldrag-冲突">场景2：onTap 与 onVerticalDrag 冲突</h4>
+<p>当 <code>GestureDetector</code> 同时注册 <code>onTap</code> 和 <code>onVerticalDragXxx</code> 时，Flutter 的竞技场需要等更多事件来判断——用户到底是想点击还是想拖动：</p>
+<ul>
+<li>如果手指移动距离超过阈值 → 拖动识别器胜出</li>
+<li>如果手指在小范围内抬起 → 点击识别器胜出</li>
+</ul>
+<h3 id="103-手势消歧规则">10.3 手势消歧规则</h3>
+<p>Flutter 手势竞技场的核心消歧规则：</p>
+<ol>
+<li><strong>最具体者胜出</strong>：在嵌套组件中，子组件的手势识别器优先于父组件</li>
+<li><strong>先确认者胜出</strong>：谁先有把握确认当前手势匹配，谁就胜出</li>
+<li><strong>最后存活者胜出</strong>：其他识别器都 reject 后，最后一个自动 win</li>
+<li><strong>同类互斥</strong>：同一指针上不能有两个相同类型的手势同时胜出</li>
+</ol>
+<h3 id="104-使用-rawgesturedetector-解决冲突">10.4 使用 RawGestureDetector 解决冲突</h3>
+<p>当默认的竞技场机制不满足需求时，可以使用 <code>RawGestureDetector</code> 直接控制手势识别器的行为。</p>
+<pre><code class="language-dart">import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MaterialApp(home: RawGestureDemoPage()));
+
+class RawGestureDemoPage extends StatefulWidget {
+  const RawGestureDemoPage({super.key});
+
+  @override
+  State&lt;RawGestureDemoPage&gt; createState() =&gt; _RawGestureDemoPageState();
+}
+
+class _RawGestureDemoPageState extends State&lt;RawGestureDemoPage&gt; {
+  String _outerLog = '';
+  String _innerLog = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('RawGestureDetector 示例')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // 外层使用 RawGestureDetector 自定义竞技场策略
+            RawGestureDetector(
+              gestures: &lt;Type, GestureRecognizerFactory&gt;{
+                // 自定义一个&quot;总是胜出&quot;的 Tap 识别器
+                _AlwaysWinTapRecognizer:
+                    GestureRecognizerFactoryWithHandlers&lt;_AlwaysWinTapRecognizer&gt;(
+                  () =&gt; _AlwaysWinTapRecognizer(),
+                  (_AlwaysWinTapRecognizer recognizer) {
+                    recognizer.onTap = () {
+                      setState(() =&gt; _outerLog = '外层被点击（始终胜出）');
+                    };
+                  },
+                ),
+              },
+              child: Container(
+                color: Colors.blue.shade50,
+                padding: const EdgeInsets.all(40),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() =&gt; _innerLog = '内层被点击');
+                  },
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    color: Colors.blue.shade200,
+                    alignment: Alignment.center,
+                    child: const Text('点击内层'),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text('外层日志: $_outerLog'),
+            Text('内层日志: $_innerLog'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 自定义 TapGestureRecognizer：在竞技场中始终主动胜出
+class _AlwaysWinTapRecognizer extends TapGestureRecognizer {
+  @override
+  void rejectGesture(int pointer) {
+    // 拒绝被拒绝 —— 即使竞技场想让我退出，我也强行接受
+    acceptGesture(pointer);
+  }
+}
+</code></pre>
+<h3 id="105-实用技巧让父子手势同时响应">10.5 实用技巧：让父子手势同时响应</h3>
+<p>默认情况下父子的相同手势只有一个能胜出。如果你需要父子都响应，可以使用上面的 <code>RawGestureDetector</code> 技巧，或者使用 <code>Listener</code> 作为其中一方（因为 <code>Listener</code> 不参与竞技场）：</p>
+<pre><code class="language-dart">// 方案：外层用 Listener 监听原始指针事件（不参与竞技场）
+Listener(
+  onPointerDown: (event) {
+    debugPrint('外层感知到按下');
+  },
+  child: GestureDetector(
+    onTap: () {
+      debugPrint('内层正常识别点击');
+    },
+    child: Container(
+      width: 200,
+      height: 200,
+      color: Colors.teal.shade100,
+      alignment: Alignment.center,
+      child: const Text('两层都能响应'),
+    ),
+  ),
+)
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li>大多数场景不需要手动干预竞技场，Flutter 的默认规则能很好地工作</li>
+<li>如果遇到手势冲突，先检查是否注册了互斥的手势组合（如 <code>onPan</code> + <code>onHorizontalDrag</code>）</li>
+<li>需要&quot;穿透&quot;手势时，考虑用 <code>Listener</code> 替代外层的 <code>GestureDetector</code></li>
+<li>只有在真正需要自定义竞技场策略时才使用 <code>RawGestureDetector</code></li>
+<li>调试手势问题时，可以用 <code>debugPrintGestureArenaDiagnostics = true</code> 打印竞技场详细日志</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="11-本课小结">11. 本课小结</h2>
+<p>本课系统讲解了 Flutter 手势与交互体系的九大知识点：</p>
+<ol>
+<li>
+<p><strong>GestureDetector</strong>：最核心的手势识别组件，支持点击、双击、长按、拖动、缩放五大类手势。通过 <code>onPanUpdate</code> + <code>Positioned</code> / <code>Transform.translate</code> 可以实现画布自由拖动。</p>
+</li>
+<li>
+<p><strong>InkWell 与 InkResponse</strong>：在手势基础上叠加 Material Design 水波纹反馈。<code>InkWell</code> 适合矩形区域，<code>InkResponse</code> 适合自定义形状。需要 <code>Material</code> 祖先才能正常工作。</p>
+</li>
+<li>
+<p><strong>Listener</strong>：直接监听原始指针事件，不参与手势竞技场。适用于需要&quot;总是能收到事件&quot;的场景，如自定义绘制的触摸追踪。</p>
+</li>
+<li>
+<p><strong>AbsorbPointer 与 IgnorePointer</strong>：前者吸收事件（子组件无法接收，事件不穿透），后者忽略事件（子组件无法接收，事件穿透到下层）。常用于加载遮罩和组件禁用。</p>
+</li>
+<li>
+<p><strong>Dismissible</strong>：标准的滑动删除组件，<code>key</code> 是必须参数。<code>confirmDismiss</code> 可在删除前弹出确认，<code>onDismissed</code> 中必须从数据源移除对应项。</p>
+</li>
+<li>
+<p><strong>Draggable 与 DragTarget</strong>：通过泛型传递数据的拖放交互组合。<code>feedback</code> 定义拖动时的视觉效果，<code>DragTarget</code> 的 <code>onAcceptWithDetails</code> 处理放入逻辑。</p>
+</li>
+<li>
+<p><strong>LongPressDraggable</strong>：长按后才可拖动的变体，解决了直接拖动与列表滚动冲突的问题。</p>
+</li>
+<li>
+<p><strong>InteractiveViewer</strong>：开箱即用的缩放平移组件，通过 <code>TransformationController</code> 可以编程控制变换状态。</p>
+</li>
+<li>
+<p><strong>手势竞技场（GestureArena）</strong>：Flutter 解决手势冲突的核心机制。理解&quot;报名→比赛→胜出/淘汰&quot;的流程，是排查手势问题的关键。<code>RawGestureDetector</code> 允许自定义竞技场策略。</p>
+</li>
+</ol>
+<p><strong>核心原则</strong>：Flutter 的手势处理遵循&quot;<strong>指针事件向上冒泡，手势识别通过竞技场消歧</strong>&quot;的设计。组件层级越深（越靠近叶子节点），在竞技场中优先级越高。</p>
+<hr />
+<h2 id="课后练习">课后练习</h2>
+<h3 id="练习1触摸绘板基础">练习1：触摸绘板（基础）</h3>
+<p>使用 <code>Listener</code> 或 <code>GestureDetector</code> 实现一个简易的手指绘画板：</p>
+<ul>
+<li>手指按下开始新路径，移动时记录坐标点</li>
+<li>使用 <code>CustomPaint</code> 绘制路径</li>
+<li>提供&quot;清除&quot;按钮清空所有路径</li>
+<li>支持选择不同颜色和线宽</li>
+</ul>
+<h3 id="练习2可拖拽看板中级">练习2：可拖拽看板（中级）</h3>
+<p>实现一个类似 Trello 的简易看板：</p>
+<ul>
+<li>三列：&quot;待办&quot;、&quot;进行中&quot;、&quot;已完成&quot;</li>
+<li>每列包含若干卡片，卡片可以通过 <code>LongPressDraggable</code> 长按拖拽</li>
+<li>使用 <code>DragTarget</code> 让卡片可以在列之间移动</li>
+<li>拖动时原位置显示虚线占位框，跟随手指的卡片带阴影效果</li>
+</ul>
+<h3 id="练习3图片查看器中级">练习3：图片查看器（中级）</h3>
+<p>使用 <code>InteractiveViewer</code> 实现一个图片查看器：</p>
+<ul>
+<li>支持双指缩放与平移</li>
+<li>双击时使用 <code>TransformationController</code> 配合动画放大到 2x 或重置到 1x</li>
+<li>显示当前缩放比例</li>
+<li>缩放到边界时添加弹性回弹效果</li>
+</ul>
+<h3 id="练习4手势冲突排查进阶">练习4：手势冲突排查（进阶）</h3>
+<p>构建一个嵌套的组件结构：</p>
+<ul>
+<li>最外层：<code>GestureDetector</code>（监听 <code>onTap</code>）</li>
+<li>中间层：<code>GestureDetector</code>（监听 <code>onVerticalDragUpdate</code>）</li>
+<li>最内层：<code>GestureDetector</code>（监听 <code>onTap</code>）</li>
+</ul>
+<p>打开 <code>debugPrintGestureArenaDiagnostics = true</code>，分别执行以下操作并分析竞技场日志：</p>
+<ol>
+<li>快速点击最内层</li>
+<li>在中间层区域垂直拖动</li>
+<li>在最内层区域先按住不动，再缓慢向下拖动</li>
+</ol>
+<p>解释每种情况下哪个识别器胜出，以及为什么。</p>
+<h3 id="练习5综合思考题">练习5：综合思考题</h3>
+<p>回答以下问题：</p>
+<ol>
+<li>为什么在 <code>ListView</code> 中使用 <code>Draggable</code> 会导致无法正常滚动？如何解决？</li>
+<li><code>AbsorbPointer</code> 套在 <code>InkWell</code> 外面时，点击是否还会触发水波纹效果？为什么？</li>
+<li>如果一个 <code>GestureDetector</code> 同时注册了 <code>onTap</code>、<code>onDoubleTap</code> 和 <code>onLongPress</code>，按下后 Flutter 需要等待多久才能确定这是一个单击？描述完整的判断流程。</li>
+</ol>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：<a href="lesson19_decoration_clip.md">第19课 装饰与裁剪变换组件</a> —— 深入学习 ClipRRect、Transform、Opacity、BackdropFilter 等组件，掌握视觉效果的丰富表达手法。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

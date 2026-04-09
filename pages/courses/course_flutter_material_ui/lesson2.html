@@ -1,0 +1,2788 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第02课-颜色系统---colorscheme-深入">第02课 颜色系统 - ColorScheme 深入</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter Material Design 系统学习<br />
+<strong>前置条件</strong>：已完成《Flutter 常用组件系统学习》课程，掌握 ThemeData 基础用法<br />
+<strong>课程目标</strong>：全面掌握 Material 3 颜色角色体系、配色生成策略、动态取色与颜色协调机制，能为应用构建专业、一致的颜色系统</p>
+</blockquote>
+<hr />
+<h2 id="1-material-3-颜色角色体系">1. Material 3 颜色角色体系</h2>
+<p>Material 3 的颜色系统是整个 Material Design 中<strong>最复杂也最关键</strong>的部分。它不再是简单的 <code>primaryColor</code> + <code>accentColor</code>，而是定义了一套完整的**颜色角色（Color Roles）**体系——每种颜色都有明确的语义和使用场景。</p>
+<h3 id="11-颜色角色总览">1.1 颜色角色总览</h3>
+<p>在 Flutter 中，所有颜色角色都汇集在 <code>ColorScheme</code> 类中。Material 3 定义了 <strong>29 个颜色角色</strong>，可分为以下几组：</p>
+<table>
+<thead>
+<tr>
+<th>分组</th>
+<th>颜色角色</th>
+<th>用途概述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Primary</strong></td>
+<td>primary / onPrimary / primaryContainer / onPrimaryContainer</td>
+<td>主品牌色，用于关键 UI 元素</td>
+</tr>
+<tr>
+<td><strong>Secondary</strong></td>
+<td>secondary / onSecondary / secondaryContainer / onSecondaryContainer</td>
+<td>辅助色，用于次要 UI 元素</td>
+</tr>
+<tr>
+<td><strong>Tertiary</strong></td>
+<td>tertiary / onTertiary / tertiaryContainer / onTertiaryContainer</td>
+<td>第三色，用于平衡与装饰</td>
+</tr>
+<tr>
+<td><strong>Error</strong></td>
+<td>error / onError / errorContainer / onErrorContainer</td>
+<td>错误状态色</td>
+</tr>
+<tr>
+<td><strong>Surface</strong></td>
+<td>surface / onSurface / surfaceDim / surfaceBright / surfaceContainerLowest ~ surfaceContainerHighest</td>
+<td>表面色，构成应用的基底层级</td>
+</tr>
+<tr>
+<td><strong>Outline</strong></td>
+<td>outline / outlineVariant</td>
+<td>边框与分割线色</td>
+</tr>
+<tr>
+<td><strong>Inverse</strong></td>
+<td>inverseSurface / onInverseSurface / inversePrimary</td>
+<td>反转色，用于 SnackBar 等反色场景</td>
+</tr>
+<tr>
+<td><strong>其他</strong></td>
+<td>scrim / shadow</td>
+<td>遮罩与阴影色</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-primary-系列">1.2 Primary 系列</h3>
+<p><strong>Primary</strong> 是应用的主品牌色，用于最引人注目、最重要的 UI 元素。</p>
+<table>
+<thead>
+<tr>
+<th>颜色角色</th>
+<th>说明</th>
+<th>典型使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>primary</code></td>
+<td>主色</td>
+<td>FAB、重要按钮背景、选中状态指示器、活跃导航项图标</td>
+</tr>
+<tr>
+<td><code>onPrimary</code></td>
+<td>主色上的内容色（文字/图标）</td>
+<td>FAB 上的图标、FilledButton 上的文字</td>
+</tr>
+<tr>
+<td><code>primaryContainer</code></td>
+<td>主色容器（较浅/较柔和的主色调）</td>
+<td>选中的 FilterChip 背景、卡片中的高亮区域、ToggleButton 选中态</td>
+</tr>
+<tr>
+<td><code>onPrimaryContainer</code></td>
+<td>主色容器上的内容色</td>
+<td>primaryContainer 背景上的文字和图标</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class PrimaryColorDemo extends StatelessWidget {
+  const PrimaryColorDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // primary 用于最重要的操作按钮
+        FilledButton(
+          onPressed: () {},
+          style: FilledButton.styleFrom(
+            backgroundColor: cs.primary,       // 按钮背景
+            foregroundColor: cs.onPrimary,      // 按钮文字/图标
+          ),
+          child: const Text('主要操作'),
+        ),
+        const SizedBox(height: 16),
+
+        // primaryContainer 用于较柔和的强调区域
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: cs.primaryContainer,             // 容器背景
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.info, color: cs.onPrimaryContainer),
+              const SizedBox(width: 8),
+              Text(
+                '这是一条重要提示',
+                style: TextStyle(color: cs.onPrimaryContainer), // 容器上的文字
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="13-secondary-系列">1.3 Secondary 系列</h3>
+<p><strong>Secondary</strong> 用于次要 UI 元素，为界面提供更多的色彩层次，但不与主品牌色竞争注意力。</p>
+<table>
+<thead>
+<tr>
+<th>颜色角色</th>
+<th>说明</th>
+<th>典型使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>secondary</code></td>
+<td>辅助色</td>
+<td>OutlinedButton 选中态、底部导航栏未选中项</td>
+</tr>
+<tr>
+<td><code>onSecondary</code></td>
+<td>辅助色上的内容色</td>
+<td>secondary 背景上的文字和图标</td>
+</tr>
+<tr>
+<td><code>secondaryContainer</code></td>
+<td>辅助色容器</td>
+<td>NavigationBar 选中指示器、NavigationDrawer 选中项背景</td>
+</tr>
+<tr>
+<td><code>onSecondaryContainer</code></td>
+<td>辅助色容器上的内容色</td>
+<td>secondaryContainer 上的文字和图标</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">class SecondaryColorDemo extends StatelessWidget {
+  const SecondaryColorDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Column(
+      children: [
+        // secondary 用于次要操作
+        FilledButton.tonal(
+          onPressed: () {},
+          style: FilledButton.styleFrom(
+            backgroundColor: cs.secondaryContainer,
+            foregroundColor: cs.onSecondaryContainer,
+          ),
+          child: const Text('次要操作'),
+        ),
+        const SizedBox(height: 16),
+
+        // secondaryContainer 常用于导航项选中背景
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          decoration: BoxDecoration(
+            color: cs.secondaryContainer,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.home, color: cs.onSecondaryContainer),
+              const SizedBox(width: 8),
+              Text('首页', style: TextStyle(color: cs.onSecondaryContainer)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="14-tertiary-系列">1.4 Tertiary 系列</h3>
+<p><strong>Tertiary</strong>（第三色）用于在 Primary 和 Secondary 之外提供额外的色彩平衡，常用于装饰性或补充性的 UI 元素。</p>
+<table>
+<thead>
+<tr>
+<th>颜色角色</th>
+<th>说明</th>
+<th>典型使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tertiary</code></td>
+<td>第三色</td>
+<td>额外的强调元素、标签装饰</td>
+</tr>
+<tr>
+<td><code>onTertiary</code></td>
+<td>第三色上的内容色</td>
+<td>tertiary 背景上的文字和图标</td>
+</tr>
+<tr>
+<td><code>tertiaryContainer</code></td>
+<td>第三色容器</td>
+<td>输入框选中态容器、补充信息区域</td>
+</tr>
+<tr>
+<td><code>onTertiaryContainer</code></td>
+<td>第三色容器上的内容色</td>
+<td>tertiaryContainer 上的文字</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">class TertiaryColorDemo extends StatelessWidget {
+  const TertiaryColorDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Row(
+      children: [
+        // 用 tertiary 系列创建一个装饰性标签
+        Chip(
+          avatar: CircleAvatar(
+            backgroundColor: cs.tertiary,
+            child: Icon(Icons.star, size: 16, color: cs.onTertiary),
+          ),
+          label: const Text('精选'),
+          backgroundColor: cs.tertiaryContainer,
+          labelStyle: TextStyle(color: cs.onTertiaryContainer),
+        ),
+        const SizedBox(width: 12),
+
+        // 用 tertiaryContainer 创建一个补充信息区域
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: cs.tertiaryContainer,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            '额外提示信息',
+            style: TextStyle(color: cs.onTertiaryContainer),
+          ),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="15-error-系列">1.5 Error 系列</h3>
+<p><strong>Error</strong> 系列专用于表达错误、危险、需要用户注意的状态。</p>
+<table>
+<thead>
+<tr>
+<th>颜色角色</th>
+<th>说明</th>
+<th>典型使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>error</code></td>
+<td>错误色</td>
+<td>输入框错误边框、错误文字、删除按钮</td>
+</tr>
+<tr>
+<td><code>onError</code></td>
+<td>错误色上的内容色</td>
+<td>error 背景上的文字和图标</td>
+</tr>
+<tr>
+<td><code>errorContainer</code></td>
+<td>错误容器色（较柔和的错误色）</td>
+<td>错误提示横幅背景、错误状态卡片</td>
+</tr>
+<tr>
+<td><code>onErrorContainer</code></td>
+<td>错误容器上的内容色</td>
+<td>errorContainer 上的文字和图标</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">class ErrorColorDemo extends StatelessWidget {
+  const ErrorColorDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Column(
+      children: [
+        // error 用于醒目的错误操作
+        FilledButton(
+          onPressed: () {},
+          style: FilledButton.styleFrom(
+            backgroundColor: cs.error,
+            foregroundColor: cs.onError,
+          ),
+          child: const Text('删除账户'),
+        ),
+        const SizedBox(height: 16),
+
+        // errorContainer 用于柔和的错误提示
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: cs.errorContainer,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.error_outline, color: cs.onErrorContainer),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '密码长度不足 8 位，请重新输入',
+                  style: TextStyle(color: cs.onErrorContainer),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="16-surface-系列">1.6 Surface 系列</h3>
+<p><strong>Surface</strong> 是 Material 3 颜色系统中<strong>数量最多、最细致</strong>的一组。它构成了应用的&quot;基底&quot;——页面背景、卡片、对话框、抽屉等所有容器的底色都由 Surface 系列控制。</p>
+<p>Material 3 引入了 <strong>Surface Container</strong> 梯度系统，用不同明度的 surface 来表达 UI 层级（替代传统的阴影）。</p>
+<table>
+<thead>
+<tr>
+<th>颜色角色</th>
+<th>明度层级</th>
+<th>典型使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>surfaceDim</code></td>
+<td>最暗</td>
+<td>用于需要压暗的背景区域</td>
+</tr>
+<tr>
+<td><code>surface</code></td>
+<td>基准</td>
+<td>应用主背景（Scaffold 默认背景）</td>
+</tr>
+<tr>
+<td><code>surfaceBright</code></td>
+<td>较亮</td>
+<td>需要突出的背景区域</td>
+</tr>
+<tr>
+<td><code>surfaceContainerLowest</code></td>
+<td>容器最浅</td>
+<td>最底层容器，如全屏背景</td>
+</tr>
+<tr>
+<td><code>surfaceContainerLow</code></td>
+<td>容器浅</td>
+<td>较低层级容器，如侧边栏背景</td>
+</tr>
+<tr>
+<td><code>surfaceContainer</code></td>
+<td>容器基准</td>
+<td>中等层级容器，如 Card 背景</td>
+</tr>
+<tr>
+<td><code>surfaceContainerHigh</code></td>
+<td>容器深</td>
+<td>较高层级容器，如 NavigationDrawer</td>
+</tr>
+<tr>
+<td><code>surfaceContainerHighest</code></td>
+<td>容器最深</td>
+<td>最高层级容器，如 Dialog、BottomSheet</td>
+</tr>
+<tr>
+<td><code>onSurface</code></td>
+<td>—</td>
+<td>所有 surface 上的主要内容色（正文文字）</td>
+</tr>
+<tr>
+<td><code>onSurfaceVariant</code></td>
+<td>—</td>
+<td>surface 上的次要内容色（说明文字、次要图标）</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">class SurfaceColorDemo extends StatelessWidget {
+  const SurfaceColorDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    // 展示 Surface Container 的梯度层级
+    final surfaceLevels = &lt;MapEntry&lt;String, Color&gt;&gt;[
+      MapEntry('surfaceContainerLowest', cs.surfaceContainerLowest),
+      MapEntry('surfaceContainerLow', cs.surfaceContainerLow),
+      MapEntry('surfaceContainer', cs.surfaceContainer),
+      MapEntry('surfaceContainerHigh', cs.surfaceContainerHigh),
+      MapEntry('surfaceContainerHighest', cs.surfaceContainerHighest),
+    ];
+
+    return Container(
+      color: cs.surface, // 最底层背景
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            '表面色彩层级演示',
+            style: TextStyle(
+              color: cs.onSurface,            // 主要文字用 onSurface
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            '从浅到深，表达不同的 UI 层级',
+            style: TextStyle(
+              color: cs.onSurfaceVariant,     // 说明文字用 onSurfaceVariant
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 16),
+          // 依次展示不同层级的 Surface Container
+          for (final entry in surfaceLevels)
+            Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: entry.value,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                entry.key,
+                style: TextStyle(color: cs.onSurface),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：在 Material 3 中，不要再使用 <code>ThemeData.backgroundColor</code> 或 <code>ThemeData.canvasColor</code> 等已废弃的属性。统一通过 <code>ColorScheme.surface</code> 系列来控制背景色。</p>
+</blockquote>
+<h3 id="17-outline-系列">1.7 Outline 系列</h3>
+<table>
+<thead>
+<tr>
+<th>颜色角色</th>
+<th>说明</th>
+<th>典型使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>outline</code></td>
+<td>边框色</td>
+<td>输入框边框、OutlinedButton 边框、Card 边框</td>
+</tr>
+<tr>
+<td><code>outlineVariant</code></td>
+<td>柔和边框色</td>
+<td>Divider 分割线、装饰性边框</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">class OutlineColorDemo extends StatelessWidget {
+  const OutlineColorDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Column(
+      children: [
+        // outline 用于功能性边框
+        OutlinedButton(
+          onPressed: () {},
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(color: cs.outline),
+          ),
+          child: const Text('边框按钮'),
+        ),
+        const SizedBox(height: 16),
+
+        // outlineVariant 用于装饰性分割线
+        Divider(color: cs.outlineVariant),
+        const SizedBox(height: 16),
+
+        // outline 用于输入框
+        TextField(
+          decoration: InputDecoration(
+            labelText: '用户名',
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: cs.outline),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: cs.primary, width: 2),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="18-inverse-系列">1.8 Inverse 系列</h3>
+<p><strong>Inverse</strong> 系列用于需要与当前主题<strong>反色</strong>的场景，最典型的是 SnackBar —— 在亮色主题中，SnackBar 使用深色背景。</p>
+<table>
+<thead>
+<tr>
+<th>颜色角色</th>
+<th>说明</th>
+<th>典型使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>inverseSurface</code></td>
+<td>反转表面色</td>
+<td>SnackBar 背景</td>
+</tr>
+<tr>
+<td><code>onInverseSurface</code></td>
+<td>反转表面上的内容色</td>
+<td>SnackBar 上的文字</td>
+</tr>
+<tr>
+<td><code>inversePrimary</code></td>
+<td>反转主色</td>
+<td>SnackBar 上的操作按钮色</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">class InverseColorDemo extends StatelessWidget {
+  const InverseColorDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return ElevatedButton(
+      onPressed: () {
+        // SnackBar 是 Inverse 系列的典型应用场景
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: cs.inverseSurface,
+            content: Text(
+              '文件已删除',
+              style: TextStyle(color: cs.onInverseSurface),
+            ),
+            action: SnackBarAction(
+              label: '撤销',
+              textColor: cs.inversePrimary,
+              onPressed: () {},
+            ),
+          ),
+        );
+      },
+      child: const Text('显示 SnackBar'),
+    );
+  }
+}
+</code></pre>
+<h3 id="19-scrim-与-shadow">1.9 Scrim 与 Shadow</h3>
+<table>
+<thead>
+<tr>
+<th>颜色角色</th>
+<th>说明</th>
+<th>典型使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scrim</code></td>
+<td>遮罩色</td>
+<td>模态对话框后面的半透明遮罩</td>
+</tr>
+<tr>
+<td><code>shadow</code></td>
+<td>阴影色</td>
+<td>组件的投影颜色</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">class ScrimShadowDemo extends StatelessWidget {
+  const ScrimShadowDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Stack(
+      children: [
+        // 模拟一个带阴影的卡片
+        Container(
+          width: 200,
+          height: 120,
+          decoration: BoxDecoration(
+            color: cs.surfaceContainer,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: cs.shadow.withValues(alpha: 0.3), // 使用 shadow 颜色
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text('带阴影的卡片', style: TextStyle(color: cs.onSurface)),
+          ),
+        ),
+
+        // scrim 用于遮罩层（这里仅示意，实际由系统组件自动处理）
+        // showDialog 等组件会自动使用 scrim 作为遮罩色
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="110-颜色角色搭配规范">1.10 颜色角色搭配规范</h3>
+<p>理解每个颜色角色的含义只是第一步，更重要的是知道<strong>什么场景用什么颜色</strong>。以下是 Material 3 的搭配指南：</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐颜色</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最重要的操作按钮（CTA）</td>
+<td><code>primary</code> + <code>onPrimary</code></td>
+<td>品牌色最突出，吸引用户注意</td>
+</tr>
+<tr>
+<td>次要操作按钮</td>
+<td><code>secondaryContainer</code> + <code>onSecondaryContainer</code></td>
+<td>视觉降级，不与主操作竞争</td>
+</tr>
+<tr>
+<td>文字按钮 / 链接</td>
+<td><code>primary</code></td>
+<td>品牌色暗示可交互</td>
+</tr>
+<tr>
+<td>页面背景</td>
+<td><code>surface</code></td>
+<td>最中性的底色</td>
+</tr>
+<tr>
+<td>卡片背景</td>
+<td><code>surfaceContainerLow</code> 或 <code>surfaceContainer</code></td>
+<td>略深于页面背景以区分层级</td>
+</tr>
+<tr>
+<td>对话框背景</td>
+<td><code>surfaceContainerHigh</code></td>
+<td>更高层级，更深的底色</td>
+</tr>
+<tr>
+<td>底部弹出面板背景</td>
+<td><code>surfaceContainerLow</code></td>
+<td>标准层级</td>
+</tr>
+<tr>
+<td>导航栏背景</td>
+<td><code>surfaceContainer</code></td>
+<td>中等层级</td>
+</tr>
+<tr>
+<td>正文文字</td>
+<td><code>onSurface</code></td>
+<td>保证在 surface 上的可读性</td>
+</tr>
+<tr>
+<td>说明 / 次要文字</td>
+<td><code>onSurfaceVariant</code></td>
+<td>降低层级但仍可读</td>
+</tr>
+<tr>
+<td>禁用文字</td>
+<td><code>onSurface</code> @ 38% 透明度</td>
+<td>Material 规范标准</td>
+</tr>
+<tr>
+<td>输入框边框（未获焦）</td>
+<td><code>outline</code></td>
+<td>标准边框色</td>
+</tr>
+<tr>
+<td>输入框边框（获焦）</td>
+<td><code>primary</code></td>
+<td>强调当前焦点</td>
+</tr>
+<tr>
+<td>分割线</td>
+<td><code>outlineVariant</code></td>
+<td>柔和不抢眼</td>
+</tr>
+<tr>
+<td>错误提示</td>
+<td><code>error</code></td>
+<td>醒目的错误标识</td>
+</tr>
+<tr>
+<td>柔和错误提示背景</td>
+<td><code>errorContainer</code> + <code>onErrorContainer</code></td>
+<td>不过分刺眼的错误区域</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li>永远使用 <code>on*</code> 颜色作为对应背景上的前景色，如 <code>primary</code> 背景上用 <code>onPrimary</code>，不要手动指定黑色或白色</li>
+<li>不要硬编码颜色值（如 <code>Colors.blue</code>），始终从 <code>Theme.of(context).colorScheme</code> 取色</li>
+<li>使用 <code>surfaceContainer</code> 梯度来表达层级关系，而不是堆叠阴影</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="2-colorschemefromseed--从种子颜色生成配色方案">2. ColorScheme.fromSeed —— 从种子颜色生成配色方案</h2>
+<p>手动为 29 个颜色角色逐一指定颜色是不现实的。Material 3 提供了 <code>ColorScheme.fromSeed</code> 方法，只需提供一个<strong>种子颜色（Seed Color）</strong>，即可自动生成完整的、和谐的配色方案。</p>
+<h3 id="21-基本用法">2.1 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const SeedColorApp());
+}
+
+class SeedColorApp extends StatelessWidget {
+  const SeedColorApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Seed Color Demo',
+      // 仅需一个种子颜色，自动生成完整的亮色配色方案
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple, // 种子颜色
+        ),
+      ),
+      // 自动生成完整的暗色配色方案
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple, // 同一个种子颜色
+          brightness: Brightness.dark,   // 指定暗色模式
+        ),
+      ),
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('种子颜色演示')),
+      body: const Center(child: Text('所有组件自动获得和谐的配色')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="22-工作原理hct-色彩空间与-material_color_utilities">2.2 工作原理：HCT 色彩空间与 material_color_utilities</h3>
+<p><code>ColorScheme.fromSeed</code> 背后的核心是 Google 开发的 <code>material_color_utilities</code> Dart 库（Flutter SDK 已内置）。它使用 <strong>HCT 色彩空间</strong>（Hue-Chroma-Tone）来生成颜色：</p>
+<ul>
+<li><strong>Hue（色相）</strong>：颜色的基本类别（红、橙、黄、绿……），范围 0°-360°</li>
+<li><strong>Chroma（彩度）</strong>：颜色的鲜艳程度，0 为灰色</li>
+<li><strong>Tone（色调）</strong>：亮度等级，0 为纯黑，100 为纯白</li>
+</ul>
+<p>从种子颜色出发，算法会：</p>
+<ol>
+<li>提取种子颜色的 HCT 值</li>
+<li>生成 <strong>Tonal Palette（色调梯度）</strong>：固定色相和彩度，在不同 Tone 值上生成一系列颜色</li>
+<li>为 Primary、Secondary、Tertiary 等分别生成对应的 Tonal Palette</li>
+<li>从每个 Tonal Palette 中取出特定 Tone 值的颜色作为最终的颜色角色</li>
+</ol>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+// material_color_utilities 已被 Flutter SDK 内置，无需额外添加依赖
+import 'package:material_color_utilities/material_color_utilities.dart';
+
+class HctDemo extends StatelessWidget {
+  const HctDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 从一个颜色创建 HCT 对象
+    final hct = Hct.fromInt(Colors.deepPurple.value);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Hue（色相）: ${hct.hue.toStringAsFixed(1)}°'),
+        Text('Chroma（彩度）: ${hct.chroma.toStringAsFixed(1)}'),
+        Text('Tone（色调）: ${hct.tone.toStringAsFixed(1)}'),
+        const SizedBox(height: 16),
+
+        // 展示同一色相不同 Tone 的梯度
+        Text('Tone 梯度（色相固定为 ${hct.hue.toStringAsFixed(0)}°）：'),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            for (final tone in [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100])
+              Expanded(
+                child: Container(
+                  height: 40,
+                  color: Color(Hct.from(hct.hue, hct.chroma, tone.toDouble()).toInt()),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="23-自定义种子方案dynamicschemevariant">2.3 自定义种子方案：DynamicSchemeVariant</h3>
+<p><code>ColorScheme.fromSeed</code> 支持 <code>dynamicSchemeVariant</code> 参数，让你选择不同的配色风格：</p>
+<pre><code class="language-dart">class SchemeVariantDemo extends StatelessWidget {
+  const SchemeVariantDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const seed = Colors.blue;
+
+    // 不同的 DynamicSchemeVariant 会生成不同风格的配色方案
+    final variants = &lt;MapEntry&lt;String, DynamicSchemeVariant&gt;&gt;[
+      const MapEntry('tonalSpot（默认）', DynamicSchemeVariant.tonalSpot),
+      const MapEntry('fidelity（高保真）', DynamicSchemeVariant.fidelity),
+      const MapEntry('monochrome（单色）', DynamicSchemeVariant.monochrome),
+      const MapEntry('neutral（中性）', DynamicSchemeVariant.neutral),
+      const MapEntry('vibrant（鲜艳）', DynamicSchemeVariant.vibrant),
+      const MapEntry('expressive（表现力）', DynamicSchemeVariant.expressive),
+      const MapEntry('content（内容）', DynamicSchemeVariant.content),
+      const MapEntry('rainbow（彩虹）', DynamicSchemeVariant.rainbow),
+      const MapEntry('fruitSalad（水果沙拉）', DynamicSchemeVariant.fruitSalad),
+    ];
+
+    return ListView.builder(
+      itemCount: variants.length,
+      itemBuilder: (context, index) {
+        final entry = variants[index];
+        final scheme = ColorScheme.fromSeed(
+          seedColor: seed,
+          dynamicSchemeVariant: entry.value,
+        );
+
+        return ListTile(
+          title: Text(entry.key),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _colorCircle(scheme.primary),
+              _colorCircle(scheme.secondary),
+              _colorCircle(scheme.tertiary),
+              _colorCircle(scheme.primaryContainer),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _colorCircle(Color color) {
+    return Container(
+      width: 24,
+      height: 24,
+      margin: const EdgeInsets.symmetric(horizontal: 2),
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.black12),
+      ),
+    );
+  }
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>DynamicSchemeVariant</th>
+<th>风格特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tonalSpot</code></td>
+<td>默认，柔和的色调变化，适合大多数应用</td>
+</tr>
+<tr>
+<td><code>fidelity</code></td>
+<td>高保真，Secondary 和 Tertiary 更接近种子颜色</td>
+</tr>
+<tr>
+<td><code>monochrome</code></td>
+<td>单色，所有颜色角色都是灰色系</td>
+</tr>
+<tr>
+<td><code>neutral</code></td>
+<td>中性，色彩饱和度较低</td>
+</tr>
+<tr>
+<td><code>vibrant</code></td>
+<td>鲜艳，高饱和度</td>
+</tr>
+<tr>
+<td><code>expressive</code></td>
+<td>表现力强，色相跨度大</td>
+</tr>
+<tr>
+<td><code>content</code></td>
+<td>面向内容，颜色更贴近种子色</td>
+</tr>
+<tr>
+<td><code>rainbow</code></td>
+<td>彩虹，多色相分布</td>
+</tr>
+<tr>
+<td><code>fruitSalad</code></td>
+<td>水果沙拉，丰富的多色组合</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意事项</strong>：<code>DynamicSchemeVariant</code> 中部分值在较新的 Flutter 版本才可用。如遇编译错误，请确认你的 Flutter SDK 版本。</p>
+</blockquote>
+<hr />
+<h2 id="3-colorschemefromimageprovider--从图片提取主题色">3. ColorScheme.fromImageProvider —— 从图片提取主题色</h2>
+<p>Material 3 支持从图片中提取主色调来生成配色方案，这在内容驱动的应用中非常有用（如音乐播放器根据专辑封面变色）。</p>
+<h3 id="31-基本用法">3.1 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class ImageColorSchemeDemo extends StatefulWidget {
+  const ImageColorSchemeDemo({super.key});
+
+  @override
+  State&lt;ImageColorSchemeDemo&gt; createState() =&gt; _ImageColorSchemeDemoState();
+}
+
+class _ImageColorSchemeDemoState extends State&lt;ImageColorSchemeDemo&gt; {
+  ColorScheme? _imageScheme;
+  final _imageUrl = 'https://picsum.photos/400/300';
+
+  @override
+  void initState() {
+    super.initState();
+    _extractColorScheme();
+  }
+
+  Future&lt;void&gt; _extractColorScheme() async {
+    // 从网络图片提取配色方案
+    final scheme = await ColorScheme.fromImageProvider(
+      provider: NetworkImage(_imageUrl),
+      brightness: Brightness.light,
+    );
+    if (mounted) {
+      setState(() =&gt; _imageScheme = scheme);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = _imageScheme ?? Theme.of(context).colorScheme;
+
+    return Theme(
+      data: Theme.of(context).copyWith(colorScheme: scheme),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('图片提取主题色'),
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
+        ),
+        body: Column(
+          children: [
+            // 展示源图片
+            Image.network(_imageUrl, height: 200, fit: BoxFit.cover),
+            const SizedBox(height: 16),
+
+            if (_imageScheme == null)
+              const CircularProgressIndicator()
+            else ...[
+              // 展示从图片提取出的颜色角色
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _colorChip('Primary', scheme.primary),
+                  _colorChip('Secondary', scheme.secondary),
+                  _colorChip('Tertiary', scheme.tertiary),
+                  _colorChip('PrimaryContainer', scheme.primaryContainer),
+                  _colorChip('Surface', scheme.surface),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // 使用提取的配色方案渲染组件
+              FilledButton(onPressed: () {}, child: const Text('主操作')),
+              const SizedBox(height: 8),
+              FilledButton.tonal(onPressed: () {}, child: const Text('次要操作')),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _colorChip(String label, Color color) {
+    return Chip(
+      avatar: CircleAvatar(backgroundColor: color),
+      label: Text(label),
+    );
+  }
+}
+</code></pre>
+<h3 id="32-使用本地图片">3.2 使用本地图片</h3>
+<pre><code class="language-dart">// 从 asset 图片提取
+final scheme = await ColorScheme.fromImageProvider(
+  provider: const AssetImage('assets/images/album_cover.jpg'),
+  brightness: Brightness.light,
+);
+
+// 从文件图片提取
+final scheme = await ColorScheme.fromImageProvider(
+  provider: FileImage(File('/path/to/image.jpg')),
+  brightness: Brightness.dark, // 也可以生成暗色方案
+);
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li><code>fromImageProvider</code> 是异步操作，注意在 <code>mounted</code> 检查后再调用 <code>setState</code></li>
+<li>图片越大，提取耗时越长。建议使用缩略图或限制图片尺寸</li>
+<li>提取结果可以缓存，避免重复计算</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="4-dynamic-color动态取色">4. Dynamic Color（动态取色）</h2>
+<p>Android 12+ 引入了 <strong>Material You</strong> 动态取色功能——应用的配色方案可以自动跟随用户的壁纸颜色变化。Flutter 通过 <code>dynamic_color</code> 包来实现这一能力。</p>
+<h3 id="41-添加依赖">4.1 添加依赖</h3>
+<p>在 <code>pubspec.yaml</code> 中添加：</p>
+<pre><code class="language-yaml">dependencies:
+  dynamic_color: ^1.7.0
+</code></pre>
+<h3 id="42-dynamiccolorbuilder-基本用法">4.2 DynamicColorBuilder 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:dynamic_color/dynamic_color.dart';
+
+void main() {
+  runApp(const DynamicColorApp());
+}
+
+class DynamicColorApp extends StatelessWidget {
+  const DynamicColorApp({super.key});
+
+  // 当系统不支持动态取色时的降级种子颜色
+  static const _fallbackSeedColor = Colors.deepPurple;
+
+  @override
+  Widget build(BuildContext context) {
+    return DynamicColorBuilder(
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        // lightDynamic / darkDynamic：
+        // - 在支持动态取色的 Android 12+ 设备上，值为从系统壁纸提取的配色方案
+        // - 在不支持的设备（iOS、Web、旧 Android 等）上，值为 null
+
+        final lightScheme = lightDynamic ?? ColorScheme.fromSeed(
+          seedColor: _fallbackSeedColor,
+          brightness: Brightness.light,
+        );
+
+        final darkScheme = darkDynamic ?? ColorScheme.fromSeed(
+          seedColor: _fallbackSeedColor,
+          brightness: Brightness.dark,
+        );
+
+        return MaterialApp(
+          title: 'Dynamic Color Demo',
+          theme: ThemeData(colorScheme: lightScheme),
+          darkTheme: ThemeData(colorScheme: darkScheme),
+          home: const HomePage(),
+        );
+      },
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('动态取色演示')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.palette, size: 64),
+            const SizedBox(height: 16),
+            Text(
+              '当前配色来自系统壁纸',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '更换壁纸后重新打开应用即可看到变化',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="43-平台支持与降级策略">4.3 平台支持与降级策略</h3>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>是否支持动态取色</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Android 12+</td>
+<td>✅ 是</td>
+<td>自动读取系统壁纸主色调</td>
+</tr>
+<tr>
+<td>Android 12 以下</td>
+<td>❌ 否</td>
+<td><code>lightDynamic</code> / <code>darkDynamic</code> 为 null</td>
+</tr>
+<tr>
+<td>iOS</td>
+<td>❌ 否</td>
+<td>Apple 没有提供壁纸色 API</td>
+</tr>
+<tr>
+<td>Web</td>
+<td>❌ 否</td>
+<td>无系统级颜色接口</td>
+</tr>
+<tr>
+<td>Windows / macOS / Linux</td>
+<td>❌ 否（部分实验性支持）</td>
+<td>取决于平台版本与 Flutter 引擎</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li><strong>始终提供降级方案</strong>（fallback），不要假设动态取色一定可用</li>
+<li>降级方案使用 <code>ColorScheme.fromSeed</code>，保证一致的 Material 3 配色质量</li>
+<li>在 <code>DynamicColorBuilder</code> 的 <code>builder</code> 回调中判断 null 是标准模式</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="5-颜色协调color-harmonization">5. 颜色协调（Color Harmonization）</h2>
+<p>如果你的应用有<strong>固定的品牌色</strong>（比如公司 Logo 色），但又想融入动态主题，就需要&quot;颜色协调&quot;。颜色协调会微调品牌色的色相，使其与当前的动态主题更加和谐，同时仍然保持品牌色的可辨识度。</p>
+<h3 id="51-harmonizewith-用法">5.1 harmonizeWith 用法</h3>
+<p><code>dynamic_color</code> 包提供了 <code>Color.harmonizeWith()</code> 扩展方法：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:dynamic_color/dynamic_color.dart';
+
+class ColorHarmonizationDemo extends StatelessWidget {
+  const ColorHarmonizationDemo({super.key});
+
+  // 固定的品牌色，不随主题变化
+  static const brandRed = Color(0xFFE53935);
+  static const successGreen = Color(0xFF43A047);
+  static const warningOrange = Color(0xFFFFA726);
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    // 将品牌色协调到当前主题的 primary 色相上
+    final harmonizedRed = brandRed.harmonizeWith(cs.primary);
+    final harmonizedGreen = successGreen.harmonizeWith(cs.primary);
+    final harmonizedOrange = warningOrange.harmonizeWith(cs.primary);
+
+    return Column(
+      children: [
+        const Text('颜色协调对比'),
+        const SizedBox(height: 16),
+
+        // 对比原始色和协调后的色
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _colorPair('品牌红', brandRed, harmonizedRed),
+            _colorPair('成功绿', successGreen, harmonizedGreen),
+            _colorPair('警告橙', warningOrange, harmonizedOrange),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _colorPair(String label, Color original, Color harmonized) {
+    return Column(
+      children: [
+        Text(label),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Container(width: 40, height: 40, color: original),
+            const SizedBox(width: 4),
+            Container(width: 40, height: 40, color: harmonized),
+          ],
+        ),
+        const Text('原始 → 协调', style: TextStyle(fontSize: 10)),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="52-在-dynamiccolorbuilder-中整合品牌色">5.2 在 DynamicColorBuilder 中整合品牌色</h3>
+<p>一个完整的品牌色 + 动态取色整合方案：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:dynamic_color/dynamic_color.dart';
+
+class BrandColorApp extends StatelessWidget {
+  const BrandColorApp({super.key});
+
+  // 品牌自定义色
+  static const brandError = Color(0xFFB3261E);
+  static const brandSuccess = Color(0xFF198754);
+  static const brandWarning = Color(0xFFFFC107);
+
+  @override
+  Widget build(BuildContext context) {
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        ColorScheme lightScheme;
+        ColorScheme darkScheme;
+
+        if (lightDynamic != null &amp;&amp; darkDynamic != null) {
+          // 在动态配色基础上协调品牌色
+          lightScheme = lightDynamic.harmonized();
+          darkScheme = darkDynamic.harmonized();
+
+          // 如果需要覆盖 error 色为品牌错误色（并协调）
+          lightScheme = lightScheme.copyWith(
+            error: brandError.harmonizeWith(lightScheme.primary),
+          );
+          darkScheme = darkScheme.copyWith(
+            error: brandError.harmonizeWith(darkScheme.primary),
+          );
+        } else {
+          // 降级方案
+          lightScheme = ColorScheme.fromSeed(seedColor: Colors.indigo);
+          darkScheme = ColorScheme.fromSeed(
+            seedColor: Colors.indigo,
+            brightness: Brightness.dark,
+          );
+        }
+
+        return MaterialApp(
+          theme: ThemeData(colorScheme: lightScheme),
+          darkTheme: ThemeData(colorScheme: darkScheme),
+          home: const Scaffold(
+            body: Center(child: Text('品牌色 + 动态取色')),
+          ),
+        );
+      },
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>.harmonizeWith()</code> 只会微调色相（最多旋转约 15°），不会改变颜色的亮度和饱和度</li>
+<li><code>.harmonized()</code> 是 <code>ColorScheme</code> 的扩展方法，会对整个配色方案中的自定义颜色进行协调</li>
+<li>协调后的颜色在视觉上仍然可以辨识为原来的颜色，只是与主题更加融洽</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="6-surface-tint-与-elevation-overlay">6. Surface Tint 与 Elevation Overlay</h2>
+<h3 id="61-material-3-中-elevation-的变化">6.1 Material 3 中 Elevation 的变化</h3>
+<p>在 Material 2 中，Elevation（高度）通过<strong>阴影</strong>来表达——阴影越深，组件层级越高。</p>
+<p>在 Material 3 中，Elevation 采用了全新的视觉模型：</p>
+<ul>
+<li><strong>Surface Tint（表面色调叠加）</strong>：通过在 surface 上叠加主色的色调来表达层级。Elevation 越高，叠加的色调越明显</li>
+<li>阴影仍然存在，但被弱化，主要辅助层级感知</li>
+</ul>
+<p>这意味着在 M3 中，一个 <code>elevation: 3</code> 的 Card 不仅有一点阴影，还会在背景色上叠加一层淡淡的 <code>primary</code> 色调。</p>
+<h3 id="62-surface-tint-演示">6.2 Surface Tint 演示</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class SurfaceTintDemo extends StatelessWidget {
+  const SurfaceTintDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Surface Tint 演示')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Elevation 层级对比',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '注意观察：Elevation 越高，卡片颜色越偏向 Primary 色调',
+              style: TextStyle(color: cs.onSurfaceVariant),
+            ),
+            const SizedBox(height: 16),
+
+            // Material 3 的 6 个标准 Elevation 层级
+            for (final elevation in [0.0, 1.0, 2.0, 3.0, 4.0, 5.0])
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Card(
+                  elevation: elevation,
+                  // surfaceTintColor 默认使用 colorScheme.surfaceTint
+                  // 如果设为 Colors.transparent 则回到纯阴影模式
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Elevation ${elevation.toInt()}',
+                          style: TextStyle(
+                            color: cs.onSurface,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          '${elevation.toInt()}dp',
+                          style: TextStyle(color: cs.onSurfaceVariant),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="63-手动控制-surface-tint">6.3 手动控制 Surface Tint</h3>
+<pre><code class="language-dart">class ManualSurfaceTintDemo extends StatelessWidget {
+  const ManualSurfaceTintDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Column(
+      children: [
+        // 默认行为：Surface Tint 自动叠加
+        Card(
+          elevation: 3,
+          child: const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('默认：带 Surface Tint 的 Elevation'),
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // 禁用 Surface Tint，回到 M2 风格的纯阴影
+        Card(
+          elevation: 3,
+          surfaceTintColor: Colors.transparent,
+          child: const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('禁用 Surface Tint：纯阴影效果'),
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // 使用 Material 组件直接感受 Surface Tint 与 Elevation
+        Material(
+          elevation: 4,
+          surfaceTintColor: cs.surfaceTint,
+          borderRadius: BorderRadius.circular(12),
+          child: const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('Material Widget + Surface Tint'),
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // 使用 ElevationOverlay 手动计算叠加色（适用于自定义绘制场景）
+        Builder(
+          builder: (context) {
+            final overlayColor = ElevationOverlay.applySurfaceTint(
+              cs.surface,       // 基础色
+              cs.surfaceTint,   // 色调色
+              3.0,              // elevation 值
+            );
+            return Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: overlayColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                '手动计算的 Elevation 3 叠加色',
+                style: TextStyle(color: cs.onSurface),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="64-elevation-层级与-surface-container-的关系">6.4 Elevation 层级与 Surface Container 的关系</h3>
+<p>Material 3 中 <code>surfaceContainer</code> 系列颜色本质上就是预设的 Elevation 层级颜色：</p>
+<table>
+<thead>
+<tr>
+<th>Surface Container</th>
+<th>对应 Elevation 层级</th>
+<th>典型组件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>surfaceContainerLowest</code></td>
+<td>Elevation 0（最底层）</td>
+<td>大面积背景</td>
+</tr>
+<tr>
+<td><code>surfaceContainerLow</code></td>
+<td>Elevation 1</td>
+<td>侧边栏</td>
+</tr>
+<tr>
+<td><code>surfaceContainer</code></td>
+<td>Elevation 2</td>
+<td>导航栏、搜索栏</td>
+</tr>
+<tr>
+<td><code>surfaceContainerHigh</code></td>
+<td>Elevation 3</td>
+<td>对话框、菜单</td>
+</tr>
+<tr>
+<td><code>surfaceContainerHighest</code></td>
+<td>Elevation 4-5</td>
+<td>最高层级容器</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li>优先使用 <code>surfaceContainer</code> 系列颜色而非手动设置 <code>elevation</code> + <code>surfaceTintColor</code></li>
+<li>如果你的设计规范要求传统阴影效果，可以将 <code>surfaceTintColor</code> 设为 <code>Colors.transparent</code></li>
+<li>在 <code>ThemeData</code> 层面可以全局设置 <code>Card</code>、<code>Dialog</code> 等组件的 <code>surfaceTintColor</code></li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="7-实战构建-colorscheme-viewer颜色角色展示面板">7. 实战：构建 ColorScheme Viewer（颜色角色展示面板）</h2>
+<p>下面是一个完整的可运行应用，以网格形式展示当前主题的所有颜色角色，并支持切换种子颜色和亮/暗模式。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ColorSchemeViewerApp());
+}
+
+class ColorSchemeViewerApp extends StatefulWidget {
+  const ColorSchemeViewerApp({super.key});
+
+  @override
+  State&lt;ColorSchemeViewerApp&gt; createState() =&gt; _ColorSchemeViewerAppState();
+}
+
+class _ColorSchemeViewerAppState extends State&lt;ColorSchemeViewerApp&gt; {
+  // 可选的种子颜色列表
+  static const _seedColors = &lt;Color&gt;[
+    Colors.deepPurple,
+    Colors.blue,
+    Colors.teal,
+    Colors.green,
+    Colors.orange,
+    Colors.red,
+    Colors.pink,
+    Colors.indigo,
+  ];
+
+  Color _selectedSeed = Colors.deepPurple;
+  bool _isDark = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = ColorScheme.fromSeed(
+      seedColor: _selectedSeed,
+      brightness: _isDark ? Brightness.dark : Brightness.light,
+    );
+
+    return MaterialApp(
+      title: 'ColorScheme Viewer',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(colorScheme: scheme),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('ColorScheme Viewer'),
+          actions: [
+            // 亮/暗模式切换
+            IconButton(
+              icon: Icon(_isDark ? Icons.light_mode : Icons.dark_mode),
+              onPressed: () =&gt; setState(() =&gt; _isDark = !_isDark),
+              tooltip: _isDark ? '切换到亮色模式' : '切换到暗色模式',
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            // 种子颜色选择器
+            _buildSeedColorPicker(scheme),
+            const Divider(height: 1),
+            // 颜色角色网格
+            Expanded(
+              child: _ColorRoleGrid(scheme: scheme),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSeedColorPicker(ColorScheme scheme) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      color: scheme.surfaceContainerLow,
+      child: Row(
+        children: [
+          Text(
+            '种子颜色：',
+            style: TextStyle(
+              color: scheme.onSurface,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: _seedColors.map((color) {
+                  final isSelected = color == _selectedSeed;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: GestureDetector(
+                      onTap: () =&gt; setState(() =&gt; _selectedSeed = color),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          border: isSelected
+                              ? Border.all(color: scheme.onSurface, width: 3)
+                              : null,
+                        ),
+                        child: isSelected
+                            ? Icon(Icons.check, size: 18, color: _contrastColor(color))
+                            : null,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _contrastColor(Color color) {
+    return ThemeData.estimateBrightnessForColor(color) == Brightness.dark
+        ? Colors.white
+        : Colors.black;
+  }
+}
+
+/// 颜色角色网格组件
+class _ColorRoleGrid extends StatelessWidget {
+  final ColorScheme scheme;
+
+  const _ColorRoleGrid({required this.scheme});
+
+  @override
+  Widget build(BuildContext context) {
+    final roles = _buildColorRoles();
+
+    return GridView.builder(
+      padding: const EdgeInsets.all(12),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 2.5,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+      ),
+      itemCount: roles.length,
+      itemBuilder: (context, index) {
+        final role = roles[index];
+        return _ColorRoleTile(
+          name: role.name,
+          color: role.color,
+          onColor: role.onColor,
+        );
+      },
+    );
+  }
+
+  List&lt;_ColorRole&gt; _buildColorRoles() {
+    return [
+      // Primary 系列
+      _ColorRole('primary', scheme.primary, scheme.onPrimary),
+      _ColorRole('onPrimary', scheme.onPrimary, scheme.primary),
+      _ColorRole('primaryContainer', scheme.primaryContainer, scheme.onPrimaryContainer),
+      _ColorRole('onPrimaryContainer', scheme.onPrimaryContainer, scheme.primaryContainer),
+
+      // Secondary 系列
+      _ColorRole('secondary', scheme.secondary, scheme.onSecondary),
+      _ColorRole('onSecondary', scheme.onSecondary, scheme.secondary),
+      _ColorRole('secondaryContainer', scheme.secondaryContainer, scheme.onSecondaryContainer),
+      _ColorRole('onSecondaryContainer', scheme.onSecondaryContainer, scheme.secondaryContainer),
+
+      // Tertiary 系列
+      _ColorRole('tertiary', scheme.tertiary, scheme.onTertiary),
+      _ColorRole('onTertiary', scheme.onTertiary, scheme.tertiary),
+      _ColorRole('tertiaryContainer', scheme.tertiaryContainer, scheme.onTertiaryContainer),
+      _ColorRole('onTertiaryContainer', scheme.onTertiaryContainer, scheme.tertiaryContainer),
+
+      // Error 系列
+      _ColorRole('error', scheme.error, scheme.onError),
+      _ColorRole('onError', scheme.onError, scheme.error),
+      _ColorRole('errorContainer', scheme.errorContainer, scheme.onErrorContainer),
+      _ColorRole('onErrorContainer', scheme.onErrorContainer, scheme.errorContainer),
+
+      // Surface 系列
+      _ColorRole('surface', scheme.surface, scheme.onSurface),
+      _ColorRole('onSurface', scheme.onSurface, scheme.surface),
+      _ColorRole('surfaceDim', scheme.surfaceDim, scheme.onSurface),
+      _ColorRole('surfaceBright', scheme.surfaceBright, scheme.onSurface),
+      _ColorRole('surfaceContainerLowest', scheme.surfaceContainerLowest, scheme.onSurface),
+      _ColorRole('surfaceContainerLow', scheme.surfaceContainerLow, scheme.onSurface),
+      _ColorRole('surfaceContainer', scheme.surfaceContainer, scheme.onSurface),
+      _ColorRole('surfaceContainerHigh', scheme.surfaceContainerHigh, scheme.onSurface),
+      _ColorRole('surfaceContainerHighest', scheme.surfaceContainerHighest, scheme.onSurface),
+
+      // Outline 系列
+      _ColorRole('outline', scheme.outline, scheme.surface),
+      _ColorRole('outlineVariant', scheme.outlineVariant, scheme.onSurface),
+
+      // Inverse 系列
+      _ColorRole('inverseSurface', scheme.inverseSurface, scheme.onInverseSurface),
+      _ColorRole('onInverseSurface', scheme.onInverseSurface, scheme.inverseSurface),
+      _ColorRole('inversePrimary', scheme.inversePrimary, scheme.inverseSurface),
+
+      // 其他
+      _ColorRole('scrim', scheme.scrim, Colors.white),
+      _ColorRole('shadow', scheme.shadow, Colors.white),
+    ];
+  }
+}
+
+/// 单个颜色角色的展示卡片
+class _ColorRoleTile extends StatelessWidget {
+  final String name;
+  final Color color;
+  final Color onColor;
+
+  const _ColorRoleTile({
+    required this.name,
+    required this.color,
+    required this.onColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Colors.black.withValues(alpha: 0.12),
+          width: 0.5,
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            name,
+            style: TextStyle(
+              color: onColor,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}',
+            style: TextStyle(
+              color: onColor.withValues(alpha: 0.8),
+              fontSize: 10,
+              fontFamily: 'monospace',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 颜色角色数据类
+class _ColorRole {
+  final String name;
+  final Color color;
+  final Color onColor;
+
+  const _ColorRole(this.name, this.color, this.onColor);
+}
+</code></pre>
+<p>运行效果说明：</p>
+<ul>
+<li>顶部有一排可选的种子颜色圆点，点击即可切换</li>
+<li>AppBar 右侧有亮/暗模式切换按钮</li>
+<li>主体区域以 2 列网格展示所有 29 个颜色角色，每个色块显示名称和十六进制色值</li>
+<li>色块上的文字自动使用对应的 <code>on*</code> 颜色，保证可读性</li>
+</ul>
+<hr />
+<h2 id="8-进阶运行时切换-colorscheme">8. 进阶：运行时切换 ColorScheme</h2>
+<p>在实际应用中，你可能需要让用户在 App 内选择主题色。以下是一个完整的运行时主题切换方案：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ThemeSwitcherApp());
+}
+
+class ThemeSwitcherApp extends StatefulWidget {
+  const ThemeSwitcherApp({super.key});
+
+  @override
+  State&lt;ThemeSwitcherApp&gt; createState() =&gt; _ThemeSwitcherAppState();
+}
+
+class _ThemeSwitcherAppState extends State&lt;ThemeSwitcherApp&gt; {
+  Color _seedColor = Colors.blue;
+  ThemeMode _themeMode = ThemeMode.system;
+
+  void _updateSeedColor(Color color) {
+    setState(() =&gt; _seedColor = color);
+  }
+
+  void _updateThemeMode(ThemeMode mode) {
+    setState(() =&gt; _themeMode = mode);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '主题切换演示',
+      debugShowCheckedModeBanner: false,
+      themeMode: _themeMode,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: _seedColor),
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: _seedColor,
+          brightness: Brightness.dark,
+        ),
+      ),
+      home: ThemeSettingsPage(
+        currentSeed: _seedColor,
+        currentMode: _themeMode,
+        onSeedChanged: _updateSeedColor,
+        onModeChanged: _updateThemeMode,
+      ),
+    );
+  }
+}
+
+class ThemeSettingsPage extends StatelessWidget {
+  final Color currentSeed;
+  final ThemeMode currentMode;
+  final ValueChanged&lt;Color&gt; onSeedChanged;
+  final ValueChanged&lt;ThemeMode&gt; onModeChanged;
+
+  const ThemeSettingsPage({
+    super.key,
+    required this.currentSeed,
+    required this.currentMode,
+    required this.onSeedChanged,
+    required this.onModeChanged,
+  });
+
+  static const _colors = [
+    ('蓝色', Colors.blue),
+    ('紫色', Colors.deepPurple),
+    ('青色', Colors.teal),
+    ('绿色', Colors.green),
+    ('橙色', Colors.orange),
+    ('红色', Colors.red),
+    ('粉色', Colors.pink),
+    ('靛蓝', Colors.indigo),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('主题设置')),
+      body: ListView(
+        children: [
+          // 主题模式选择
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text('主题模式', style: Theme.of(context).textTheme.titleMedium),
+          ),
+          SegmentedButton&lt;ThemeMode&gt;(
+            segments: const [
+              ButtonSegment(value: ThemeMode.light, label: Text('亮色'), icon: Icon(Icons.light_mode)),
+              ButtonSegment(value: ThemeMode.system, label: Text('跟随系统'), icon: Icon(Icons.settings)),
+              ButtonSegment(value: ThemeMode.dark, label: Text('暗色'), icon: Icon(Icons.dark_mode)),
+            ],
+            selected: {currentMode},
+            onSelectionChanged: (modes) =&gt; onModeChanged(modes.first),
+          ),
+          const Divider(height: 32),
+
+          // 种子颜色选择
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text('主题色', style: Theme.of(context).textTheme.titleMedium),
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: _colors.map((entry) {
+                final (label, color) = entry;
+                final isSelected = color == currentSeed;
+                return ChoiceChip(
+                  label: Text(label),
+                  selected: isSelected,
+                  avatar: CircleAvatar(backgroundColor: color),
+                  onSelected: (_) =&gt; onSeedChanged(color),
+                );
+              }).toList(),
+            ),
+          ),
+          const Divider(height: 32),
+
+          // 预览区域
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text('预览', style: Theme.of(context).textTheme.titleMedium),
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('示例卡片', style: Theme.of(context).textTheme.titleSmall),
+                    const SizedBox(height: 8),
+                    Text('这是卡片内的正文内容', style: TextStyle(color: cs.onSurfaceVariant)),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        FilledButton(onPressed: () {}, child: const Text('确认')),
+                        const SizedBox(width: 8),
+                        OutlinedButton(onPressed: () {}, child: const Text('取消')),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.edit),
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="本课小结">本课小结</h2>
+<p>本课系统讲解了 Material 3 颜色系统的核心知识：</p>
+<ol>
+<li>
+<p><strong>颜色角色体系</strong>：Material 3 定义了 29 个颜色角色，分为 Primary、Secondary、Tertiary、Error、Surface、Outline、Inverse 和 Scrim/Shadow 八组。每个角色都有明确的语义和推荐使用场景。核心原则是始终使用 <code>on*</code> 颜色作为对应背景上的前景色。</p>
+</li>
+<li>
+<p><strong>ColorScheme.fromSeed</strong>：只需一个种子颜色即可自动生成完整的配色方案。背后基于 HCT 色彩空间和 <code>material_color_utilities</code> 库。通过 <code>DynamicSchemeVariant</code> 参数可以选择不同的配色风格。</p>
+</li>
+<li>
+<p><strong>ColorScheme.fromImageProvider</strong>：可以从图片中异步提取主色调来生成配色方案，适用于内容驱动的 UI 场景。</p>
+</li>
+<li>
+<p><strong>Dynamic Color</strong>：通过 <code>dynamic_color</code> 包的 <code>DynamicColorBuilder</code> 读取 Android 12+ 系统壁纸色，实现 Material You 动态取色。始终提供降级方案以支持不支持动态取色的平台。</p>
+</li>
+<li>
+<p><strong>颜色协调</strong>：使用 <code>harmonizeWith()</code> 方法让品牌自定义色融入动态主题，在保持品牌辨识度的同时获得主题一致性。</p>
+</li>
+<li>
+<p><strong>Surface Tint 与 Elevation</strong>：Material 3 中 Elevation 不再仅靠阴影，而是通过 Surface Tint 色调叠加来表达层级。<code>surfaceContainer</code> 系列提供了预设的层级颜色。</p>
+</li>
+</ol>
+<hr />
+<h2 id="课后练习">课后练习</h2>
+<h3 id="练习1颜色角色辨识基础">练习1：颜色角色辨识（基础）</h3>
+<p>不运行代码，仅根据本课学到的知识，回答以下问题：</p>
+<ol>
+<li><code>NavigationBar</code> 的选中指示器背景应该使用哪个颜色角色？</li>
+<li>表单验证失败时，错误提示横幅的背景色和文字色分别应该用哪两个颜色角色？</li>
+<li>一个对话框的背景色应该使用 <code>surfaceContainer</code> 系列中的哪个层级？为什么？</li>
+</ol>
+<h3 id="练习2多种子颜色方案对比中级">练习2：多种子颜色方案对比（中级）</h3>
+<p>使用 <code>ColorScheme.fromSeed</code> 分别以红色、蓝色和绿色作为种子颜色，生成亮色和暗色配色方案（共 6 套）。以 Tab 页形式展示每套方案的 Primary、Secondary、Tertiary 系列颜色。要求用户可以左右滑动切换。</p>
+<h3 id="练习3音乐播放器主题色中级">练习3：音乐播放器主题色（中级）</h3>
+<p>构建一个模拟音乐播放器界面：</p>
+<ul>
+<li>准备 3 张不同风格的专辑封面图片</li>
+<li>使用 <code>ColorScheme.fromImageProvider</code> 从当前播放的专辑封面提取配色方案</li>
+<li>切换歌曲时，整个播放器界面的配色平滑过渡到新的配色方案</li>
+<li>提示：可以结合 <code>AnimatedTheme</code> 实现平滑的颜色过渡</li>
+</ul>
+<h3 id="练习4品牌色融合方案进阶">练习4：品牌色融合方案（进阶）</h3>
+<p>假设你的应用有以下固定品牌色：</p>
+<ul>
+<li>品牌主色：<code>#1DA1F2</code>（类似 Twitter 蓝）</li>
+<li>成功色：<code>#28A745</code></li>
+<li>警告色：<code>#FFC107</code></li>
+<li>错误色：<code>#DC3545</code></li>
+</ul>
+<p>使用 <code>DynamicColorBuilder</code> + <code>harmonizeWith</code> 实现：</p>
+<ol>
+<li>在支持动态取色的设备上，将品牌色协调到壁纸主题中</li>
+<li>在不支持的设备上，以品牌主色作为种子颜色降级</li>
+<li>在设置页面中展示原始品牌色与协调后品牌色的对比</li>
+</ol>
+<h3 id="练习5综合思考题">练习5：综合思考题</h3>
+<ol>
+<li>为什么 Material 3 要用 Surface Container 梯度代替纯阴影来表达层级？在暗色模式下这样做有什么优势？</li>
+<li><code>ColorScheme.fromSeed</code> 的 <code>dynamicSchemeVariant</code> 设为 <code>monochrome</code> 后，primary 和 secondary 的色相还会不同吗？为什么？</li>
+<li>如果你的应用同时需要支持 Material 2 和 Material 3 主题（让用户可以切换），你会如何组织 <code>ColorScheme</code> 的代码？给出你的设计思路。</li>
+</ol>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：<a href="lesson03_text_theme.md">第03课 排版系统 - TextTheme 与字体</a> —— 深入学习 Material 3 的 Type Scale 规范、五大文本类别、Google Fonts 集成与品牌字体排版方案。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2295 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第10章-高级索引与查询优化">第10章 高级索引与查询优化</h1>
+<blockquote>
+<p>第06章介绍了索引的基本概念和常用类型。本章将深入探讨 MongoDB 提供的高级索引类型——文本索引、地理空间索引、通配符索引，以及索引设计的核心策略 ESR 规则和慢查询分析调优方法。掌握这些内容，你将能够为复杂业务场景设计高效的索引策略。</p>
+</blockquote>
+<hr />
+<h2 id="101-文本索引与全文搜索">10.1 文本索引与全文搜索</h2>
+<p>文本索引（Text Index）允许你对字符串字段进行全文搜索，类似于 Elasticsearch 的基本功能。适用于搜索文章内容、商品描述、用户评论等场景。</p>
+<h3 id="1011-创建文本索引">10.1.1 创建文本索引</h3>
+<p><strong>单字段文本索引：</strong></p>
+<pre><code class="language-javascript">// 对文章的 content 字段创建文本索引
+db.articles.createIndex({ content: &quot;text&quot; })
+</code></pre>
+<p><strong>多字段文本索引：</strong></p>
+<pre><code class="language-javascript">// 同时对 title 和 content 创建文本索引
+db.articles.createIndex({ title: &quot;text&quot;, content: &quot;text&quot; })
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：一个集合只能有<strong>一个</strong>文本索引，但这个索引可以包含多个字段。</p>
+</blockquote>
+<h3 id="1012-权重配置">10.1.2 权重配置</h3>
+<p>可以为不同字段设置不同的权重，影响搜索结果的相关性评分：</p>
+<pre><code class="language-javascript">db.articles.createIndex(
+    { title: &quot;text&quot;, content: &quot;text&quot;, tags: &quot;text&quot; },
+    {
+        weights: {
+            title: 10,    // 标题匹配权重最高
+            tags: 5,      // 标签匹配权重次之
+            content: 1    // 内容匹配权重最低（默认值）
+        },
+        name: &quot;article_text_index&quot;
+    }
+)
+</code></pre>
+<h3 id="1013-text-查询操作符">10.1.3 $text 查询操作符</h3>
+<p><strong>基本文本搜索：</strong></p>
+<pre><code class="language-javascript">// 准备测试数据
+db.articles.insertMany([
+    {
+        title: &quot;MongoDB 入门教程&quot;,
+        content: &quot;MongoDB 是一个基于文档的 NoSQL 数据库，支持丰富的查询语言&quot;,
+        tags: [&quot;mongodb&quot;, &quot;nosql&quot;, &quot;数据库&quot;],
+        author: &quot;张三&quot;,
+        createdAt: new Date(&quot;2025-01-15&quot;)
+    },
+    {
+        title: &quot;Spring Boot 集成 MongoDB 实战&quot;,
+        content: &quot;本文介绍如何在 Spring Boot 项目中使用 MongoDB 进行数据操作&quot;,
+        tags: [&quot;spring-boot&quot;, &quot;mongodb&quot;, &quot;java&quot;],
+        author: &quot;李四&quot;,
+        createdAt: new Date(&quot;2025-02-20&quot;)
+    },
+    {
+        title: &quot;Redis 缓存最佳实践&quot;,
+        content: &quot;Redis 作为高性能缓存数据库，在互联网项目中广泛使用&quot;,
+        tags: [&quot;redis&quot;, &quot;缓存&quot;, &quot;nosql&quot;],
+        author: &quot;王五&quot;,
+        createdAt: new Date(&quot;2025-03-10&quot;)
+    },
+    {
+        title: &quot;MySQL 索引优化指南&quot;,
+        content: &quot;数据库索引是提升查询性能的关键，本文深入分析 MySQL 的索引机制&quot;,
+        tags: [&quot;mysql&quot;, &quot;索引&quot;, &quot;数据库&quot;],
+        author: &quot;赵六&quot;,
+        createdAt: new Date(&quot;2025-03-15&quot;)
+    }
+])
+
+// 搜索包含 &quot;MongoDB&quot; 的文章
+db.articles.find({ $text: { $search: &quot;MongoDB&quot; } })
+
+// 搜索包含 &quot;MongoDB&quot; 或 &quot;数据库&quot; 的文章（空格分隔表示 OR）
+db.articles.find({ $text: { $search: &quot;MongoDB 数据库&quot; } })
+
+// 搜索包含 &quot;Spring Boot&quot; 短语的文章（双引号表示精确短语）
+db.articles.find({ $text: { $search: &quot;\&quot;Spring Boot\&quot;&quot; } })
+
+// 排除某个词：搜索包含 &quot;数据库&quot; 但不包含 &quot;Redis&quot; 的文章
+db.articles.find({ $text: { $search: &quot;数据库 -Redis&quot; } })
+</code></pre>
+<h3 id="1014-meta-textscore-排序">10.1.4 $meta: &quot;textScore&quot; 排序</h3>
+<p>文本搜索会为每个匹配结果计算一个相关性分数，可以用来排序：</p>
+<pre><code class="language-javascript">// 按相关性分数排序，分数越高越靠前
+db.articles.find(
+    { $text: { $search: &quot;MongoDB 数据库&quot; } },
+    { score: { $meta: &quot;textScore&quot; } }
+).sort({ score: { $meta: &quot;textScore&quot; } })
+
+// 返回结果会包含 score 字段：
+// { title: &quot;MongoDB 入门教程&quot;, ..., score: 2.5 }
+// { title: &quot;Spring Boot 集成 MongoDB 实战&quot;, ..., score: 1.8 }
+// { title: &quot;MySQL 索引优化指南&quot;, ..., score: 0.75 }
+</code></pre>
+<h3 id="1015-语言配置">10.1.5 语言配置</h3>
+<p>MongoDB 的文本索引支持多种语言的分词和停用词过滤：</p>
+<pre><code class="language-javascript">// 指定语言
+db.articles.createIndex(
+    { content: &quot;text&quot; },
+    { default_language: &quot;english&quot; }  // 默认英文分词
+)
+
+// 对于中文，可以使用 &quot;none&quot; 禁用语言特定的分词（按空格分词）
+db.articles.createIndex(
+    { title: &quot;text&quot;, content: &quot;text&quot; },
+    { default_language: &quot;none&quot; }  // 不使用特定语言的分词器
+)
+
+// 也可以在文档中指定语言字段
+db.articles.createIndex(
+    { content: &quot;text&quot; },
+    { language_override: &quot;lang&quot; }  // 使用文档中的 lang 字段指定语言
+)
+</code></pre>
+<blockquote>
+<p><strong>中文全文搜索的局限</strong>：MongoDB 原生文本索引对中文的支持有限（按空格分词），如果需要高级中文分词能力，建议使用 MongoDB Atlas Search 或配合 Elasticsearch。</p>
+</blockquote>
+<h3 id="1016-完整的-java-代码示例">10.1.6 完整的 Java 代码示例</h3>
+<p><strong>使用 TextCriteria 进行全文搜索：</strong></p>
+<pre><code class="language-java">import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.query.TextQuery;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ArticleSearchService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public ArticleSearchService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 基本全文搜索
+     */
+    public List&lt;Article&gt; searchByText(String keyword) {
+        TextCriteria textCriteria = TextCriteria.forDefaultLanguage()
+                .matching(keyword);
+
+        Query query = TextQuery.queryText(textCriteria)
+                .sortByScore();  // 按相关性分数排序
+
+        return mongoTemplate.find(query, Article.class);
+    }
+
+    /**
+     * 全文搜索 + 额外过滤条件
+     */
+    public List&lt;Article&gt; searchByTextWithFilter(String keyword, String author) {
+        TextCriteria textCriteria = TextCriteria.forDefaultLanguage()
+                .matching(keyword);
+
+        Query query = TextQuery.queryText(textCriteria)
+                .sortByScore()
+                .addCriteria(Criteria.where(&quot;author&quot;).is(author));
+
+        return mongoTemplate.find(query, Article.class);
+    }
+
+    /**
+     * 短语搜索
+     */
+    public List&lt;Article&gt; searchByPhrase(String phrase) {
+        TextCriteria textCriteria = TextCriteria.forDefaultLanguage()
+                .matchingPhrase(phrase);  // 精确短语匹配
+
+        Query query = TextQuery.queryText(textCriteria)
+                .sortByScore();
+
+        return mongoTemplate.find(query, Article.class);
+    }
+
+    /**
+     * 搜索并包含相关性分数
+     */
+    public List&lt;Article&gt; searchWithScore(String keyword) {
+        TextCriteria textCriteria = TextCriteria.forDefaultLanguage()
+                .matching(keyword);
+
+        Query query = TextQuery.queryText(textCriteria)
+                .sortByScore()
+                .includeScore();  // 将 textScore 映射到实体的 score 字段
+
+        return mongoTemplate.find(query, Article.class);
+    }
+}
+</code></pre>
+<p><strong>实体类（包含 textScore）：</strong></p>
+<pre><code class="language-java">import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.TextIndexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.TextScore;
+
+import java.time.Instant;
+import java.util.List;
+
+@Document(collection = &quot;articles&quot;)
+public class Article {
+
+    @Id
+    private String id;
+
+    @TextIndexed(weight = 10)
+    private String title;
+
+    @TextIndexed
+    private String content;
+
+    @TextIndexed(weight = 5)
+    private List&lt;String&gt; tags;
+
+    private String author;
+    private Instant createdAt;
+
+    @TextScore
+    private Float score;  // 用于接收全文搜索的相关性分数
+
+    // getters / setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+    public List&lt;String&gt; getTags() { return tags; }
+    public void setTags(List&lt;String&gt; tags) { this.tags = tags; }
+    public String getAuthor() { return author; }
+    public void setAuthor(String author) { this.author = author; }
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+    public Float getScore() { return score; }
+    public void setScore(Float score) { this.score = score; }
+}
+</code></pre>
+<p><strong>Controller 层：</strong></p>
+<pre><code class="language-java">import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/articles&quot;)
+public class ArticleSearchController {
+
+    private final ArticleSearchService searchService;
+
+    public ArticleSearchController(ArticleSearchService searchService) {
+        this.searchService = searchService;
+    }
+
+    @GetMapping(&quot;/search&quot;)
+    public List&lt;Article&gt; search(@RequestParam String keyword) {
+        return searchService.searchByText(keyword);
+    }
+
+    @GetMapping(&quot;/search/advanced&quot;)
+    public List&lt;Article&gt; advancedSearch(
+            @RequestParam String keyword,
+            @RequestParam(required = false) String author) {
+        if (author != null) {
+            return searchService.searchByTextWithFilter(keyword, author);
+        }
+        return searchService.searchByText(keyword);
+    }
+}
+</code></pre>
+<hr />
+<h2 id="102-地理空间索引2dsphere与位置查询">10.2 地理空间索引（2dsphere）与位置查询</h2>
+<p>地理空间索引是 MongoDB 的一大特色功能，非常适合&quot;查找附近的XXX&quot;这类基于位置的查询场景。</p>
+<h3 id="1021-geojson-数据格式">10.2.1 GeoJSON 数据格式</h3>
+<p>MongoDB 使用 GeoJSON 标准格式存储地理空间数据：</p>
+<p><strong>Point（点）：</strong></p>
+<pre><code class="language-javascript">{
+    type: &quot;Point&quot;,
+    coordinates: [116.397428, 39.90923]  // [经度, 纬度]
+}
+</code></pre>
+<p><strong>LineString（线）：</strong></p>
+<pre><code class="language-javascript">{
+    type: &quot;LineString&quot;,
+    coordinates: [
+        [116.397428, 39.90923],
+        [116.407428, 39.91923],
+        [116.417428, 39.92923]
+    ]
+}
+</code></pre>
+<p><strong>Polygon（多边形）：</strong></p>
+<pre><code class="language-javascript">{
+    type: &quot;Polygon&quot;,
+    coordinates: [[
+        [116.38, 39.90],
+        [116.42, 39.90],
+        [116.42, 39.93],
+        [116.38, 39.93],
+        [116.38, 39.90]   // 首尾点相同，闭合多边形
+    ]]
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：GeoJSON 中坐标的顺序是 <strong>[经度, 纬度]</strong>（longitude, latitude），而不是我们日常说的&quot;纬度, 经度&quot;。</p>
+</blockquote>
+<h3 id="1022-创建-2dsphere-索引">10.2.2 创建 2dsphere 索引</h3>
+<pre><code class="language-javascript">// 对 location 字段创建地理空间索引
+db.restaurants.createIndex({ location: &quot;2dsphere&quot; })
+
+// 复合索引：地理空间 + 其他字段
+db.restaurants.createIndex({ location: &quot;2dsphere&quot;, cuisine: 1, rating: -1 })
+</code></pre>
+<h3 id="1023-准备测试数据">10.2.3 准备测试数据</h3>
+<pre><code class="language-javascript">db.restaurants.drop();
+db.restaurants.insertMany([
+    {
+        name: &quot;北京烤鸭总店&quot;,
+        cuisine: &quot;中餐&quot;,
+        rating: 4.8,
+        priceLevel: 3,
+        location: { type: &quot;Point&quot;, coordinates: [116.403963, 39.915119] },
+        address: &quot;北京市东城区前门大街&quot;
+    },
+    {
+        name: &quot;全聚德&quot;,
+        cuisine: &quot;中餐&quot;,
+        rating: 4.5,
+        priceLevel: 3,
+        location: { type: &quot;Point&quot;, coordinates: [116.397128, 39.911528] },
+        address: &quot;北京市西城区前门西大街&quot;
+    },
+    {
+        name: &quot;星巴克国贸店&quot;,
+        cuisine: &quot;咖啡&quot;,
+        rating: 4.2,
+        priceLevel: 2,
+        location: { type: &quot;Point&quot;, coordinates: [116.460494, 39.908714] },
+        address: &quot;北京市朝阳区国贸CBD&quot;
+    },
+    {
+        name: &quot;麦当劳王府井店&quot;,
+        cuisine: &quot;快餐&quot;,
+        rating: 4.0,
+        priceLevel: 1,
+        location: { type: &quot;Point&quot;, coordinates: [116.410508, 39.914230] },
+        address: &quot;北京市东城区王府井大街&quot;
+    },
+    {
+        name: &quot;海底捞三里屯店&quot;,
+        cuisine: &quot;火锅&quot;,
+        rating: 4.6,
+        priceLevel: 3,
+        location: { type: &quot;Point&quot;, coordinates: [116.454170, 39.933389] },
+        address: &quot;北京市朝阳区三里屯&quot;
+    },
+    {
+        name: &quot;蓝蛙西单店&quot;,
+        cuisine: &quot;西餐&quot;,
+        rating: 4.3,
+        priceLevel: 2,
+        location: { type: &quot;Point&quot;, coordinates: [116.375534, 39.912648] },
+        address: &quot;北京市西城区西单北大街&quot;
+    }
+]);
+
+// 创建地理空间索引
+db.restaurants.createIndex({ location: &quot;2dsphere&quot; });
+</code></pre>
+<h3 id="1024-near--nearsphere查找附近的点">10.2.4 $near / $nearSphere：查找附近的点</h3>
+<pre><code class="language-javascript">// 查找距离天安门（116.397477, 39.908692）2公里内的餐厅
+// 按距离从近到远排序
+db.restaurants.find({
+    location: {
+        $near: {
+            $geometry: {
+                type: &quot;Point&quot;,
+                coordinates: [116.397477, 39.908692]
+            },
+            $maxDistance: 2000,  // 最大距离，单位：米
+            $minDistance: 0      // 最小距离，单位：米
+        }
+    }
+}).pretty()
+
+// $nearSphere 与 $near 功能类似，使用球面几何计算
+// 对于大范围查询，$nearSphere 更精确
+db.restaurants.find({
+    location: {
+        $nearSphere: {
+            $geometry: {
+                type: &quot;Point&quot;,
+                coordinates: [116.397477, 39.908692]
+            },
+            $maxDistance: 2000
+        }
+    }
+})
+</code></pre>
+<h3 id="1025-geowithin查找区域内的点">10.2.5 $geoWithin：查找区域内的点</h3>
+<pre><code class="language-javascript">// 查找某个矩形区域内的餐厅（如地图可视范围）
+db.restaurants.find({
+    location: {
+        $geoWithin: {
+            $geometry: {
+                type: &quot;Polygon&quot;,
+                coordinates: [[
+                    [116.38, 39.90],
+                    [116.42, 39.90],
+                    [116.42, 39.93],
+                    [116.38, 39.93],
+                    [116.38, 39.90]
+                ]]
+            }
+        }
+    }
+})
+
+// 使用 $centerSphere 查找圆形区域（半径用弧度表示）
+// 地球半径约 6378.1 公里，3公里 / 6378.1 ≈ 0.00047
+db.restaurants.find({
+    location: {
+        $geoWithin: {
+            $centerSphere: [
+                [116.397477, 39.908692],  // 圆心
+                3 / 6378.1                 // 3公里转弧度
+            ]
+        }
+    }
+})
+</code></pre>
+<h3 id="1026-geointersects查找相交的几何图形">10.2.6 $geoIntersects：查找相交的几何图形</h3>
+<pre><code class="language-javascript">// 查找与给定区域相交的线路（如公交线路经过某区域）
+db.routes.find({
+    path: {
+        $geoIntersects: {
+            $geometry: {
+                type: &quot;Polygon&quot;,
+                coordinates: [[
+                    [116.38, 39.90],
+                    [116.42, 39.90],
+                    [116.42, 39.93],
+                    [116.38, 39.93],
+                    [116.38, 39.90]
+                ]]
+            }
+        }
+    }
+})
+</code></pre>
+<h3 id="1027-距离计算使用聚合管道">10.2.7 距离计算：使用聚合管道</h3>
+<p>使用 <code>$geoNear</code> 聚合阶段可以获取精确的距离值：</p>
+<pre><code class="language-javascript">// 查找天安门附近5公里内的餐厅，并返回距离
+db.restaurants.aggregate([
+    {
+        $geoNear: {
+            near: { type: &quot;Point&quot;, coordinates: [116.397477, 39.908692] },
+            distanceField: &quot;distance&quot;,          // 将距离值存入此字段（单位：米）
+            maxDistance: 5000,                   // 最大距离5公里
+            spherical: true,                     // 使用球面计算
+            query: { rating: { $gte: 4.0 } }   // 附加过滤条件
+        }
+    },
+    {
+        $project: {
+            name: 1,
+            cuisine: 1,
+            rating: 1,
+            address: 1,
+            distanceInKm: {
+                $round: [{ $divide: [&quot;$distance&quot;, 1000] }, 2]  // 转为公里，保留2位小数
+            }
+        }
+    },
+    { $sort: { distanceInKm: 1 } }
+])
+
+// 返回结果示例：
+// { name: &quot;全聚德&quot;, cuisine: &quot;中餐&quot;, rating: 4.5, distanceInKm: 0.35 }
+// { name: &quot;北京烤鸭总店&quot;, cuisine: &quot;中餐&quot;, rating: 4.8, distanceInKm: 0.82 }
+// { name: &quot;麦当劳王府井店&quot;, cuisine: &quot;快餐&quot;, rating: 4.0, distanceInKm: 1.55 }
+// ...
+</code></pre>
+<h3 id="1028-在-spring-boot-中使用-nearquery-和-georesults">10.2.8 在 Spring Boot 中使用 NearQuery 和 GeoResults</h3>
+<p><strong>实体类：</strong></p>
+<pre><code class="language-java">import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = &quot;restaurants&quot;)
+public class Restaurant {
+
+    @Id
+    private String id;
+    private String name;
+    private String cuisine;
+    private double rating;
+    private int priceLevel;
+
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
+    private GeoJsonPoint location;
+
+    private String address;
+
+    // getters / setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getCuisine() { return cuisine; }
+    public void setCuisine(String cuisine) { this.cuisine = cuisine; }
+    public double getRating() { return rating; }
+    public void setRating(double rating) { this.rating = rating; }
+    public int getPriceLevel() { return priceLevel; }
+    public void setPriceLevel(int priceLevel) { this.priceLevel = priceLevel; }
+    public GeoJsonPoint getLocation() { return location; }
+    public void setLocation(GeoJsonPoint location) { this.location = location; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+}
+</code></pre>
+<p><strong>Service 层：</strong></p>
+<pre><code class="language-java">import org.springframework.data.geo.*;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.NearQuery;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class RestaurantService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public RestaurantService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 查找附近的餐厅（使用 NearQuery）
+     *
+     * @param longitude 经度
+     * @param latitude  纬度
+     * @param maxDistanceKm 最大距离（公里）
+     * @return 按距离排序的餐厅列表（包含距离信息）
+     */
+    public GeoResults&lt;Restaurant&gt; findNearbyRestaurants(
+            double longitude, double latitude, double maxDistanceKm) {
+
+        Point point = new Point(longitude, latitude);
+
+        NearQuery nearQuery = NearQuery.near(point)
+                .maxDistance(new Distance(maxDistanceKm, Metrics.KILOMETERS))
+                .spherical(true);
+
+        return mongoTemplate.geoNear(nearQuery, Restaurant.class);
+    }
+
+    /**
+     * 查找附近的特定类型餐厅
+     */
+    public GeoResults&lt;Restaurant&gt; findNearbyByCuisine(
+            double longitude, double latitude, double maxDistanceKm, String cuisine) {
+
+        Point point = new Point(longitude, latitude);
+
+        NearQuery nearQuery = NearQuery.near(point)
+                .maxDistance(new Distance(maxDistanceKm, Metrics.KILOMETERS))
+                .spherical(true)
+                .query(Query.query(Criteria.where(&quot;cuisine&quot;).is(cuisine)));
+
+        return mongoTemplate.geoNear(nearQuery, Restaurant.class);
+    }
+
+    /**
+     * 查找附近高评分餐厅（带分页）
+     */
+    public GeoResults&lt;Restaurant&gt; findNearbyHighRated(
+            double longitude, double latitude, double maxDistanceKm,
+            double minRating, int page, int size) {
+
+        Point point = new Point(longitude, latitude);
+
+        NearQuery nearQuery = NearQuery.near(point)
+                .maxDistance(new Distance(maxDistanceKm, Metrics.KILOMETERS))
+                .spherical(true)
+                .query(Query.query(Criteria.where(&quot;rating&quot;).gte(minRating)))
+                .skip((long) page * size)
+                .limit(size);
+
+        return mongoTemplate.geoNear(nearQuery, Restaurant.class);
+    }
+
+    /**
+     * 查找多边形区域内的餐厅
+     */
+    public List&lt;Restaurant&gt; findWithinArea(List&lt;Point&gt; polygonPoints) {
+        GeoJsonPolygon polygon = new GeoJsonPolygon(polygonPoints);
+
+        Query query = Query.query(
+                Criteria.where(&quot;location&quot;).within(polygon)
+        );
+
+        return mongoTemplate.find(query, Restaurant.class);
+    }
+}
+</code></pre>
+<p><strong>Controller 层：</strong></p>
+<pre><code class="language-java">import org.springframework.data.geo.GeoResult;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping(&quot;/api/restaurants&quot;)
+public class RestaurantController {
+
+    private final RestaurantService restaurantService;
+
+    public RestaurantController(RestaurantService restaurantService) {
+        this.restaurantService = restaurantService;
+    }
+
+    @GetMapping(&quot;/nearby&quot;)
+    public List&lt;NearbyRestaurantDTO&gt; findNearby(
+            @RequestParam double longitude,
+            @RequestParam double latitude,
+            @RequestParam(defaultValue = &quot;3&quot;) double maxDistanceKm,
+            @RequestParam(required = false) String cuisine) {
+
+        GeoResults&lt;Restaurant&gt; results;
+        if (cuisine != null) {
+            results = restaurantService.findNearbyByCuisine(
+                    longitude, latitude, maxDistanceKm, cuisine);
+        } else {
+            results = restaurantService.findNearbyRestaurants(
+                    longitude, latitude, maxDistanceKm);
+        }
+
+        return results.getContent().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    private NearbyRestaurantDTO toDTO(GeoResult&lt;Restaurant&gt; geoResult) {
+        Restaurant restaurant = geoResult.getContent();
+        double distanceKm = geoResult.getDistance().in(Metrics.KILOMETERS).getValue();
+
+        NearbyRestaurantDTO dto = new NearbyRestaurantDTO();
+        dto.setId(restaurant.getId());
+        dto.setName(restaurant.getName());
+        dto.setCuisine(restaurant.getCuisine());
+        dto.setRating(restaurant.getRating());
+        dto.setAddress(restaurant.getAddress());
+        dto.setDistanceKm(Math.round(distanceKm * 100.0) / 100.0);
+        return dto;
+    }
+}
+</code></pre>
+<p><strong>DTO 类：</strong></p>
+<pre><code class="language-java">public class NearbyRestaurantDTO {
+    private String id;
+    private String name;
+    private String cuisine;
+    private double rating;
+    private String address;
+    private double distanceKm;
+
+    // getters / setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getCuisine() { return cuisine; }
+    public void setCuisine(String cuisine) { this.cuisine = cuisine; }
+    public double getRating() { return rating; }
+    public void setRating(double rating) { this.rating = rating; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+    public double getDistanceKm() { return distanceKm; }
+    public void setDistanceKm(double distanceKm) { this.distanceKm = distanceKm; }
+}
+</code></pre>
+<p><strong>使用 MongoRepository 的方式：</strong></p>
+<pre><code class="language-java">import org.springframework.data.geo.*;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.List;
+
+public interface RestaurantRepository extends MongoRepository&lt;Restaurant, String&gt; {
+
+    // 查找指定点附近、指定距离内的餐厅
+    GeoResults&lt;Restaurant&gt; findByLocationNear(Point point, Distance maxDistance);
+
+    // 查找指定区域内的餐厅
+    List&lt;Restaurant&gt; findByLocationWithin(GeoJsonPolygon polygon);
+
+    // 查找附近特定类型的餐厅
+    GeoResults&lt;Restaurant&gt; findByCuisineAndLocationNear(String cuisine, Point point, Distance maxDistance);
+}
+</code></pre>
+<hr />
+<h2 id="103-通配符索引wildcard-index">10.3 通配符索引（Wildcard Index）</h2>
+<p>通配符索引（Wildcard Index）是 MongoDB 4.2 引入的特性，允许你为文档中动态或不可预测的字段创建索引。</p>
+<h3 id="1031-什么时候使用通配符索引">10.3.1 什么时候使用通配符索引</h3>
+<p>通配符索引适用于以下场景：</p>
+<ul>
+<li><strong>文档结构不固定</strong>：不同文档可能有不同的字段</li>
+<li><strong>字段名不可预知</strong>：如用户自定义的属性（metadata、tags 等）</li>
+<li><strong>嵌套文档结构多变</strong>：查询可能涉及任意嵌套路径</li>
+</ul>
+<p><strong>典型场景：物联网设备数据</strong></p>
+<pre><code class="language-javascript">// 不同设备上报的数据字段不同
+{ deviceId: &quot;D001&quot;, type: &quot;温度传感器&quot;, data: { temperature: 25.5, humidity: 60 } }
+{ deviceId: &quot;D002&quot;, type: &quot;GPS追踪器&quot;,  data: { latitude: 39.9, longitude: 116.4, speed: 30 } }
+{ deviceId: &quot;D003&quot;, type: &quot;空气监测器&quot;, data: { pm25: 35, co2: 400, temperature: 22 } }
+</code></pre>
+<p>如果要为 <code>data</code> 下的所有可能字段创建索引，提前无法确定字段名，此时通配符索引就很合适。</p>
+<h3 id="1032-创建通配符索引">10.3.2 创建通配符索引</h3>
+<p><strong>全字段通配符索引：</strong></p>
+<pre><code class="language-javascript">// 为集合中所有字段创建通配符索引
+db.deviceData.createIndex({ &quot;$**&quot;: 1 })
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：全字段通配符索引会为文档中的每个字段（包括嵌套字段）建立索引，可能会导致索引体积非常大、写入性能下降。</p>
+</blockquote>
+<p><strong>指定路径的通配符索引：</strong></p>
+<pre><code class="language-javascript">// 仅为 data 子文档中的所有字段创建通配符索引
+db.deviceData.createIndex({ &quot;data.$**&quot;: 1 })
+</code></pre>
+<p><strong>使用 wildcardProjection 限定范围：</strong></p>
+<pre><code class="language-javascript">// 只对 data.temperature 和 data.humidity 创建索引
+db.deviceData.createIndex(
+    { &quot;$**&quot;: 1 },
+    {
+        wildcardProjection: {
+            &quot;data.temperature&quot;: 1,
+            &quot;data.humidity&quot;: 1
+        }
+    }
+)
+
+// 排除某些字段
+db.deviceData.createIndex(
+    { &quot;$**&quot;: 1 },
+    {
+        wildcardProjection: {
+            &quot;data.rawPayload&quot;: 0  // 排除 rawPayload 字段
+        }
+    }
+)
+</code></pre>
+<h3 id="1033-使用示例">10.3.3 使用示例</h3>
+<pre><code class="language-javascript">// 准备数据
+db.products.drop();
+db.products.insertMany([
+    {
+        name: &quot;iPhone 15&quot;,
+        category: &quot;手机&quot;,
+        attributes: {
+            brand: &quot;Apple&quot;,
+            color: &quot;黑色&quot;,
+            storage: &quot;256GB&quot;,
+            screenSize: 6.1,
+            processor: &quot;A16&quot;
+        }
+    },
+    {
+        name: &quot;MacBook Pro 16&quot;,
+        category: &quot;笔记本&quot;,
+        attributes: {
+            brand: &quot;Apple&quot;,
+            color: &quot;银色&quot;,
+            ram: &quot;32GB&quot;,
+            storage: &quot;1TB&quot;,
+            screenSize: 16.2,
+            processor: &quot;M3 Max&quot;
+        }
+    },
+    {
+        name: &quot;AirPods Pro&quot;,
+        category: &quot;耳机&quot;,
+        attributes: {
+            brand: &quot;Apple&quot;,
+            color: &quot;白色&quot;,
+            noiseCancelling: true,
+            batteryLife: &quot;6小时&quot;,
+            connectivity: &quot;蓝牙5.3&quot;
+        }
+    }
+]);
+
+// 对 attributes 下的所有字段创建通配符索引
+db.products.createIndex({ &quot;attributes.$**&quot;: 1 });
+
+// 按任意属性查询
+db.products.find({ &quot;attributes.brand&quot;: &quot;Apple&quot; });
+db.products.find({ &quot;attributes.noiseCancelling&quot;: true });
+db.products.find({ &quot;attributes.screenSize&quot;: { $gte: 6.0 } });
+db.products.find({ &quot;attributes.ram&quot;: &quot;32GB&quot; });
+
+// 验证索引使用情况
+db.products.find({ &quot;attributes.brand&quot;: &quot;Apple&quot; }).explain(&quot;executionStats&quot;);
+// winningPlan.inputStage.indexName 应该是通配符索引
+</code></pre>
+<h3 id="1034-限制和注意事项">10.3.4 限制和注意事项</h3>
+<table>
+<thead>
+<tr>
+<th>限制</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>不支持复合查询</strong></td>
+<td>通配符索引不能同时优化多个字段的查询条件</td>
+</tr>
+<tr>
+<td><strong>不支持排序</strong></td>
+<td>除非排序字段是查询中精确匹配的字段</td>
+</tr>
+<tr>
+<td><strong>不索引 _id 字段</strong></td>
+<td><code>$**</code> 不会为 <code>_id</code> 字段创建冗余索引</td>
+</tr>
+<tr>
+<td><strong>不索引数组元素的多键组合</strong></td>
+<td>不能用于跨数组元素的查询</td>
+</tr>
+<tr>
+<td><strong>写入开销大</strong></td>
+<td>每个字段都要维护索引，写入性能影响明显</td>
+</tr>
+<tr>
+<td><strong>不能用于 TTL、文本、地理空间</strong></td>
+<td>通配符索引只支持普通的升序/降序索引</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-javascript">// ❌ 通配符索引不能优化的查询
+db.products.find({
+    &quot;attributes.brand&quot;: &quot;Apple&quot;,
+    &quot;attributes.color&quot;: &quot;黑色&quot;    // 不能同时使用通配符索引优化两个条件
+})
+
+// ✅ 如果经常需要按 brand + color 查询，应该创建精确的复合索引
+db.products.createIndex({ &quot;attributes.brand&quot;: 1, &quot;attributes.color&quot;: 1 })
+</code></pre>
+<h3 id="1035-java-代码示例">10.3.5 Java 代码示例</h3>
+<pre><code class="language-java">import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.IndexOperations;
+import org.springframework.data.mongodb.core.index.IndexDefinition;
+import org.springframework.data.mongodb.core.index.WildcardIndex;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+
+@Service
+public class ProductService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public ProductService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 通过代码创建通配符索引
+     */
+    public void createWildcardIndex() {
+        IndexOperations indexOps = mongoTemplate.indexOps(&quot;products&quot;);
+        IndexDefinition wildcardIndex = new WildcardIndex(&quot;attributes&quot;);
+        indexOps.ensureIndex(wildcardIndex);
+    }
+
+    /**
+     * 按动态属性查询商品
+     */
+    public List&lt;Product&gt; findByAttribute(String attributeName, Object attributeValue) {
+        Query query = Query.query(
+                Criteria.where(&quot;attributes.&quot; + attributeName).is(attributeValue)
+        );
+        return mongoTemplate.find(query, Product.class);
+    }
+
+    /**
+     * 按多个动态属性查询
+     */
+    public List&lt;Product&gt; findByAttributes(Map&lt;String, Object&gt; attributes) {
+        Criteria criteria = new Criteria();
+        for (Map.Entry&lt;String, Object&gt; entry : attributes.entrySet()) {
+            criteria = criteria.and(&quot;attributes.&quot; + entry.getKey()).is(entry.getValue());
+        }
+        return mongoTemplate.find(Query.query(criteria), Product.class);
+    }
+}
+</code></pre>
+<hr />
+<h2 id="104-索引策略esr-规则equality-sort-range">10.4 索引策略：ESR 规则（Equality, Sort, Range）</h2>
+<p>ESR 规则是设计复合索引时最重要的指导原则，它决定了索引中字段的排列顺序。</p>
+<h3 id="1041-esr-规则详解">10.4.1 ESR 规则详解</h3>
+<p>复合索引中字段的排列顺序应遵循以下规则：</p>
+<pre><code>索引字段顺序：Equality 字段（最前）→ Sort 字段（中间）→ Range 字段（最后）
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>含义</th>
+<th>常见操作符</th>
+<th>放置位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>E</strong>quality（等值）</td>
+<td>精确匹配的字段</td>
+<td><code>$eq</code>、<code>is</code></td>
+<td>最前面</td>
+</tr>
+<tr>
+<td><strong>S</strong>ort（排序）</td>
+<td>排序使用的字段</td>
+<td><code>sort()</code></td>
+<td>中间</td>
+</tr>
+<tr>
+<td><strong>R</strong>ange（范围）</td>
+<td>范围查询的字段</td>
+<td><code>$gt</code>、<code>$lt</code>、<code>$gte</code>、<code>$lte</code>、<code>$in</code>、<code>$ne</code></td>
+<td>最后面</td>
+</tr>
+</tbody>
+</table>
+<p><strong>为什么这个顺序最优？</strong></p>
+<ul>
+<li><strong>Equality 放最前</strong>：等值条件能最快地缩小扫描范围，直接定位到 B-Tree 的特定分支</li>
+<li><strong>Sort 放中间</strong>：排序字段紧跟等值字段，可以利用索引的有序性避免内存排序（<code>SORT_KEY_GENERATOR</code>）</li>
+<li><strong>Range 放最后</strong>：范围条件匹配的是一段连续的索引范围，放在最后不影响等值定位和排序</li>
+</ul>
+<h3 id="1042-案例一电商订单查询">10.4.2 案例一：电商订单查询</h3>
+<p><strong>场景</strong>：查询某个用户的订单，按创建时间降序排列，筛选金额大于100的订单。</p>
+<pre><code class="language-javascript">// 查询语句
+db.orders.find({
+    userId: &quot;U001&quot;,                    // Equality
+    totalAmount: { $gt: 100 }          // Range
+}).sort({ createdAt: -1 })             // Sort
+</code></pre>
+<p><strong>ESR 分析：</strong></p>
+<ul>
+<li>E：<code>userId</code>（等值匹配）</li>
+<li>S：<code>createdAt</code>（排序字段）</li>
+<li>R：<code>totalAmount</code>（范围查询）</li>
+</ul>
+<p><strong>最佳索引：</strong></p>
+<pre><code class="language-javascript">// ✅ 遵循 ESR 规则
+db.orders.createIndex({ userId: 1, createdAt: -1, totalAmount: 1 })
+</code></pre>
+<p><strong>验证：</strong></p>
+<pre><code class="language-javascript">// 准备测试数据（10万条）
+for (let i = 0; i &lt; 100000; i++) {
+    db.orders.insertOne({
+        userId: &quot;U&quot; + String(Math.floor(Math.random() * 1000)).padStart(4, &quot;0&quot;),
+        totalAmount: Math.floor(Math.random() * 1000),
+        status: [&quot;PENDING&quot;, &quot;PAID&quot;, &quot;SHIPPED&quot;, &quot;COMPLETED&quot;][Math.floor(Math.random() * 4)],
+        createdAt: new Date(2025, 0, 1 + Math.floor(Math.random() * 365))
+    });
+}
+
+// 使用 ESR 索引
+db.orders.createIndex({ userId: 1, createdAt: -1, totalAmount: 1 });
+
+db.orders.find({
+    userId: &quot;U0001&quot;,
+    totalAmount: { $gt: 100 }
+}).sort({ createdAt: -1 }).explain(&quot;executionStats&quot;);
+// totalDocsExamined 约等于 nReturned
+// 不需要 SORT_KEY_GENERATOR（内存排序）
+</code></pre>
+<h3 id="1043-案例二文章列表页">10.4.3 案例二：文章列表页</h3>
+<p><strong>场景</strong>：按状态筛选已发布的文章，按发布时间降序，筛选某个时间范围内的文章。</p>
+<pre><code class="language-javascript">// 查询语句
+db.articles.find({
+    status: &quot;published&quot;,                                    // Equality
+    publishedAt: {
+        $gte: ISODate(&quot;2025-01-01&quot;),                       // Range
+        $lte: ISODate(&quot;2025-06-30&quot;)                        // Range
+    }
+}).sort({ publishedAt: -1 })                               // Sort
+</code></pre>
+<p><strong>ESR 分析：</strong></p>
+<ul>
+<li>E：<code>status</code>（等值匹配）</li>
+<li>S：<code>publishedAt</code>（排序字段）</li>
+<li>R：<code>publishedAt</code>（范围查询）</li>
+</ul>
+<p>此处 Sort 和 Range 使用的是同一个字段 <code>publishedAt</code>，此时将 <code>publishedAt</code> 放在 <code>status</code> 之后即可：</p>
+<pre><code class="language-javascript">// ✅ publishedAt 同时满足排序和范围
+db.articles.createIndex({ status: 1, publishedAt: -1 })
+</code></pre>
+<h3 id="1044-案例三用户搜索">10.4.4 案例三：用户搜索</h3>
+<p><strong>场景</strong>：搜索特定城市中年龄在20-30之间的活跃用户，按注册时间排序。</p>
+<pre><code class="language-javascript">db.users.find({
+    city: &quot;北京&quot;,                      // Equality
+    isActive: true,                    // Equality
+    age: { $gte: 20, $lte: 30 }       // Range
+}).sort({ registeredAt: -1 })          // Sort
+</code></pre>
+<p><strong>ESR 分析：</strong></p>
+<ul>
+<li>E：<code>city</code>，<code>isActive</code>（两个等值条件，顺序不影响，按选择性高的放前面）</li>
+<li>S：<code>registeredAt</code>（排序字段）</li>
+<li>R：<code>age</code>（范围查询）</li>
+</ul>
+<pre><code class="language-javascript">// ✅ ESR 索引
+db.users.createIndex({ city: 1, isActive: 1, registeredAt: -1, age: 1 })
+
+// 也可以（如果 isActive 的选择性更低）
+db.users.createIndex({ isActive: 1, city: 1, registeredAt: -1, age: 1 })
+</code></pre>
+<blockquote>
+<p><strong>提示</strong>：多个 Equality 字段的内部顺序理论上不影响性能，但通常建议把<strong>选择性高</strong>的字段放前面（即不同值更多的字段）。比如 <code>city</code> 可能有几百个取值，而 <code>isActive</code> 只有 true/false 两个值，所以 <code>city</code> 放前面更好。</p>
+</blockquote>
+<h3 id="1045-反面案例不遵循-esr-的性能对比">10.4.5 反面案例：不遵循 ESR 的性能对比</h3>
+<p>以案例一的订单查询为例：</p>
+<pre><code class="language-javascript">db.orders.find({
+    userId: &quot;U0001&quot;,
+    totalAmount: { $gt: 100 }
+}).sort({ createdAt: -1 })
+</code></pre>
+<p><strong>对比不同索引顺序的性能：</strong></p>
+<pre><code class="language-javascript">// ❌ 索引1：Range 放在 Sort 前面（RSE 而非 ESR）
+db.orders.createIndex({ totalAmount: 1, createdAt: -1, userId: 1 });
+
+// explain 结果：
+// - stage: SORT（内存排序！）
+// - totalDocsExamined: 很大（扫描大量不属于 U0001 的文档）
+// - executionTimeMillis: 较高
+
+// ❌ 索引2：Sort 放在 Equality 前面（SER 顺序）
+db.orders.createIndex({ createdAt: -1, userId: 1, totalAmount: 1 });
+
+// explain 结果：
+// - 虽然避免了内存排序，但扫描的文档数远多于 ESR 索引
+// - totalDocsExamined: 较大
+
+// ❌ 索引3：Range 在中间（ERS 而非 ESR）
+db.orders.createIndex({ userId: 1, totalAmount: 1, createdAt: -1 });
+
+// explain 结果：
+// - stage: SORT（内存排序！）
+// - 虽然 userId 定位很快，但 totalAmount 范围查询后 createdAt 不再有序
+
+// ✅ 索引4：ESR 顺序
+db.orders.createIndex({ userId: 1, createdAt: -1, totalAmount: 1 });
+
+// explain 结果：
+// - 无 SORT stage（利用索引排序）
+// - totalDocsExamined ≈ nReturned（最少的文档扫描）
+// - executionTimeMillis: 最低
+</code></pre>
+<p><strong>性能对比总结：</strong></p>
+<table>
+<thead>
+<tr>
+<th>索引顺序</th>
+<th>内存排序</th>
+<th>文档扫描数</th>
+<th>相对耗时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{ totalAmount, createdAt, userId }</code> (RSE)</td>
+<td>是</td>
+<td>很多</td>
+<td>最慢</td>
+</tr>
+<tr>
+<td><code>{ createdAt, userId, totalAmount }</code> (SER)</td>
+<td>否</td>
+<td>较多</td>
+<td>较慢</td>
+</tr>
+<tr>
+<td><code>{ userId, totalAmount, createdAt }</code> (ERS)</td>
+<td>是</td>
+<td>较少</td>
+<td>中等</td>
+</tr>
+<tr>
+<td><code>{ userId, createdAt, totalAmount }</code> (<strong>ESR</strong>)</td>
+<td><strong>否</strong></td>
+<td><strong>最少</strong></td>
+<td><strong>最快</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="105-慢查询日志分析与性能调优">10.5 慢查询日志分析与性能调优</h2>
+<h3 id="1051-开启-profiler">10.5.1 开启 Profiler</h3>
+<p>MongoDB 的 Database Profiler 可以记录超过指定阈值的慢查询：</p>
+<pre><code class="language-javascript">// 查看当前 profiling 级别
+db.getProfilingStatus()
+
+// 级别说明：
+// 0 - 关闭（默认）
+// 1 - 只记录慢查询（超过 slowms 阈值）
+// 2 - 记录所有操作
+
+// 开启 profiler，记录超过 100ms 的查询
+db.setProfilingLevel(1, { slowms: 100 })
+
+// 记录所有操作（调试时使用，生产环境不建议）
+db.setProfilingLevel(2)
+
+// 关闭 profiler
+db.setProfilingLevel(0)
+</code></pre>
+<h3 id="1052-systemprofile-集合">10.5.2 system.profile 集合</h3>
+<p>慢查询日志记录在 <code>system.profile</code> 集合中：</p>
+<pre><code class="language-javascript">// 查看最近的5条慢查询
+db.system.profile.find().sort({ ts: -1 }).limit(5).pretty()
+
+// 查看最耗时的查询
+db.system.profile.find().sort({ millis: -1 }).limit(5).pretty()
+
+// 查看特定集合的慢查询
+db.system.profile.find({ ns: &quot;mydb.orders&quot; }).sort({ ts: -1 }).limit(10)
+
+// 查看全表扫描的查询（没有使用索引）
+db.system.profile.find({
+    &quot;planSummary&quot;: &quot;COLLSCAN&quot;
+}).sort({ ts: -1 })
+
+// 查看超过1秒的查询
+db.system.profile.find({
+    millis: { $gt: 1000 }
+}).sort({ millis: -1 })
+</code></pre>
+<p><strong>profile 文档的关键字段：</strong></p>
+<pre><code class="language-javascript">{
+    &quot;op&quot;: &quot;query&quot;,                           // 操作类型
+    &quot;ns&quot;: &quot;mydb.orders&quot;,                     // 命名空间（数据库.集合）
+    &quot;command&quot;: {                              // 执行的命令
+        &quot;find&quot;: &quot;orders&quot;,
+        &quot;filter&quot;: { &quot;userId&quot;: &quot;U0001&quot; },
+        &quot;sort&quot;: { &quot;createdAt&quot;: -1 }
+    },
+    &quot;keysExamined&quot;: 150,                     // 扫描的索引键数
+    &quot;docsExamined&quot;: 150,                     // 扫描的文档数
+    &quot;nreturned&quot;: 50,                         // 返回的文档数
+    &quot;millis&quot;: 250,                           // 执行时间（毫秒）
+    &quot;planSummary&quot;: &quot;IXSCAN { userId: 1 }&quot;,  // 执行计划摘要
+    &quot;ts&quot;: ISODate(&quot;2025-03-15T10:30:00Z&quot;)   // 时间戳
+}
+</code></pre>
+<h3 id="1053-慢查询分析流程">10.5.3 慢查询分析流程</h3>
+<p>按照以下流程系统地分析和优化慢查询：</p>
+<pre><code>1. 发现慢查询
+   ↓  （通过 profiler、监控告警、应用日志）
+2. 使用 explain() 分析执行计划
+   ↓  （查看 queryPlanner 和 executionStats）
+3. 识别问题根因
+   ↓  （COLLSCAN？内存排序？大量文档扫描？）
+4. 制定优化方案
+   ↓  （创建索引？修改查询？调整数据模型？）
+5. 实施并验证
+   ↓  （创建索引后重新 explain()，对比性能指标）
+6. 持续监控
+</code></pre>
+<p><strong>使用 explain() 的三个级别：</strong></p>
+<pre><code class="language-javascript">// 级别1：queryPlanner - 只看查询计划（不执行查询）
+db.orders.find({ userId: &quot;U0001&quot; }).explain(&quot;queryPlanner&quot;)
+
+// 级别2：executionStats - 执行查询并统计信息（最常用）
+db.orders.find({ userId: &quot;U0001&quot; }).explain(&quot;executionStats&quot;)
+
+// 级别3：allPlansExecution - 所有候选计划的执行信息
+db.orders.find({ userId: &quot;U0001&quot; }).explain(&quot;allPlansExecution&quot;)
+</code></pre>
+<p><strong>explain 结果的关键指标：</strong></p>
+<pre><code class="language-javascript">{
+    &quot;executionStats&quot;: {
+        &quot;executionSuccess&quot;: true,
+        &quot;nReturned&quot;: 50,              // ① 返回文档数
+        &quot;executionTimeMillis&quot;: 5,     // ② 执行时间
+        &quot;totalKeysExamined&quot;: 50,      // ③ 索引键扫描数
+        &quot;totalDocsExamined&quot;: 50,      // ④ 文档扫描数
+        &quot;executionStages&quot;: {
+            &quot;stage&quot;: &quot;FETCH&quot;,         // ⑤ 执行阶段
+            &quot;inputStage&quot;: {
+                &quot;stage&quot;: &quot;IXSCAN&quot;,    // 使用了索引扫描
+                &quot;indexName&quot;: &quot;userId_1_createdAt_-1&quot;
+            }
+        }
+    }
+}
+</code></pre>
+<p><strong>性能评估原则：</strong></p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>理想状态</th>
+<th>问题信号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>totalDocsExamined</code> / <code>nReturned</code></td>
+<td>接近 1:1</td>
+<td>比值 &gt;&gt; 1，说明扫描了大量无用文档</td>
+</tr>
+<tr>
+<td><code>totalKeysExamined</code> / <code>nReturned</code></td>
+<td>接近 1:1</td>
+<td>比值 &gt;&gt; 1，说明索引选择性不够</td>
+</tr>
+<tr>
+<td><code>executionStages.stage</code></td>
+<td><code>IXSCAN</code></td>
+<td><code>COLLSCAN</code>（全集合扫描）</td>
+</tr>
+<tr>
+<td>是否有 <code>SORT</code> 阶段</td>
+<td>无</td>
+<td>有 <code>SORT</code> 说明无法利用索引排序，需要内存排序</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1054-常见性能问题及解决方案">10.5.4 常见性能问题及解决方案</h3>
+<h4 id="问题一全集合扫描collscan">问题一：全集合扫描（COLLSCAN）</h4>
+<pre><code class="language-javascript">// 问题查询
+db.orders.find({ status: &quot;PAID&quot;, totalAmount: { $gt: 500 } })
+// explain 显示：stage: &quot;COLLSCAN&quot;
+
+// 解决方案：创建合适的索引
+db.orders.createIndex({ status: 1, totalAmount: 1 })
+</code></pre>
+<h4 id="问题二内存排序sort-阶段">问题二：内存排序（SORT 阶段）</h4>
+<pre><code class="language-javascript">// 问题查询
+db.orders.find({ userId: &quot;U0001&quot; }).sort({ createdAt: -1 })
+// 现有索引：{ userId: 1 }
+// explain 显示有 SORT_KEY_GENERATOR 阶段
+
+// 解决方案：在索引中包含排序字段
+db.orders.createIndex({ userId: 1, createdAt: -1 })
+</code></pre>
+<h4 id="问题三索引选择性低">问题三：索引选择性低</h4>
+<pre><code class="language-javascript">// 问题：isActive 只有 true/false 两个值，选择性很低
+db.users.find({ isActive: true }).sort({ createdAt: -1 }).limit(20)
+// 即使有 { isActive: 1, createdAt: -1 } 索引，仍然要扫描大量文档
+
+// 解决方案：结合业务添加更有选择性的条件
+db.users.find({ isActive: true, city: &quot;北京&quot; })
+    .sort({ createdAt: -1 }).limit(20)
+db.users.createIndex({ isActive: 1, city: 1, createdAt: -1 })
+</code></pre>
+<h4 id="问题四返回不必要的字段">问题四：返回不必要的字段</h4>
+<pre><code class="language-javascript">// 问题：只需要 name 和 price，却返回了整个文档（包括大型 description 字段）
+db.products.find({ category: &quot;电子产品&quot; })
+
+// 解决方案：使用 projection 只返回需要的字段
+db.products.find(
+    { category: &quot;电子产品&quot; },
+    { name: 1, price: 1, _id: 0 }
+)
+</code></pre>
+<h3 id="1055-索引覆盖查询covered-query">10.5.5 索引覆盖查询（Covered Query）</h3>
+<p>如果一个查询只需要索引中包含的字段，MongoDB 可以直接从索引返回结果，完全不需要访问文档。这被称为<strong>覆盖查询</strong>。</p>
+<pre><code class="language-javascript">// 创建索引
+db.orders.createIndex({ userId: 1, status: 1, totalAmount: 1 })
+
+// ✅ 覆盖查询：查询条件和返回字段都在索引中
+db.orders.find(
+    { userId: &quot;U0001&quot;, status: &quot;PAID&quot; },
+    { totalAmount: 1, _id: 0 }           // _id: 0 是关键，_id 不在索引中
+)
+
+// explain 结果中会看到：
+// totalDocsExamined: 0  ← 零文档扫描！
+// 因为所有需要的数据都在索引中
+
+// ❌ 非覆盖查询：返回了不在索引中的字段
+db.orders.find(
+    { userId: &quot;U0001&quot;, status: &quot;PAID&quot; },
+    { totalAmount: 1, createdAt: 1, _id: 0 }  // createdAt 不在索引中
+)
+// totalDocsExamined &gt; 0（需要回表查文档）
+</code></pre>
+<p><strong>覆盖查询的条件：</strong></p>
+<ol>
+<li>查询的所有字段都在索引中</li>
+<li>返回的所有字段都在索引中</li>
+<li>没有返回 <code>_id</code>（除非 <code>_id</code> 在索引中），或显式排除 <code>_id: 0</code></li>
+</ol>
+<p><strong>Java 示例：</strong></p>
+<pre><code class="language-java">public List&lt;BigDecimal&gt; getOrderAmounts(String userId, String status) {
+    Query query = Query.query(
+        Criteria.where(&quot;userId&quot;).is(userId)
+                .and(&quot;status&quot;).is(status)
+    );
+    query.fields().include(&quot;totalAmount&quot;).exclude(&quot;id&quot;);
+
+    List&lt;Order&gt; orders = mongoTemplate.find(query, Order.class);
+    return orders.stream()
+            .map(Order::getTotalAmount)
+            .collect(Collectors.toList());
+}
+</code></pre>
+<h3 id="1056-索引交叉index-intersection">10.5.6 索引交叉（Index Intersection）</h3>
+<p>MongoDB 可以在某些情况下使用多个单字段索引的交叉来满足查询，而不需要一个复合索引：</p>
+<pre><code class="language-javascript">// 假设有两个单字段索引
+db.orders.createIndex({ userId: 1 });
+db.orders.createIndex({ status: 1 });
+
+// MongoDB 可能会使用索引交叉来处理这个查询
+db.orders.find({ userId: &quot;U0001&quot;, status: &quot;PAID&quot; })
+</code></pre>
+<p><strong>但是，索引交叉通常性能不如复合索引：</strong></p>
+<pre><code class="language-javascript">// ✅ 更好的方案：使用复合索引
+db.orders.createIndex({ userId: 1, status: 1 })
+
+// 复合索引 vs 索引交叉的性能对比
+db.orders.find({ userId: &quot;U0001&quot;, status: &quot;PAID&quot; }).explain(&quot;executionStats&quot;)
+// 复合索引：totalKeysExamined ≈ nReturned
+// 索引交叉：totalKeysExamined &gt;&gt; nReturned（需要合并两个索引的结果）
+</code></pre>
+<blockquote>
+<p><strong>建议</strong>：不要依赖索引交叉。如果一个查询频繁使用多个字段的条件，应该创建相应的复合索引。索引交叉只是一种&quot;备选机制&quot;，不是优化手段。</p>
+</blockquote>
+<h3 id="1057-完整的性能调优案例">10.5.7 完整的性能调优案例</h3>
+<p><strong>场景</strong>：一个电商平台的订单列表页，用户反馈查询速度很慢。</p>
+<p><strong>步骤一：收集慢查询信息</strong></p>
+<pre><code class="language-javascript">// 开启 profiler
+db.setProfilingLevel(1, { slowms: 50 });
+
+// 等待一段时间后查看慢查询
+db.system.profile.find({
+    ns: &quot;shop.orders&quot;
+}).sort({ millis: -1 }).limit(5).pretty();
+</code></pre>
+<p>发现以下查询频繁出现且耗时严重：</p>
+<pre><code class="language-javascript">// 慢查询：按用户ID + 状态筛选 + 时间范围 + 时间排序
+db.orders.find({
+    userId: &quot;U0001&quot;,
+    status: { $in: [&quot;PAID&quot;, &quot;SHIPPED&quot;] },
+    createdAt: { $gte: ISODate(&quot;2025-01-01&quot;), $lte: ISODate(&quot;2025-03-31&quot;) }
+}).sort({ createdAt: -1 }).limit(20)
+</code></pre>
+<p><strong>步骤二：分析当前执行计划</strong></p>
+<pre><code class="language-javascript">db.orders.find({
+    userId: &quot;U0001&quot;,
+    status: { $in: [&quot;PAID&quot;, &quot;SHIPPED&quot;] },
+    createdAt: { $gte: ISODate(&quot;2025-01-01&quot;), $lte: ISODate(&quot;2025-03-31&quot;) }
+}).sort({ createdAt: -1 }).limit(20).explain(&quot;executionStats&quot;)
+
+// 结果：
+// {
+//     &quot;executionStats&quot;: {
+//         &quot;nReturned&quot;: 20,
+//         &quot;executionTimeMillis&quot;: 850,
+//         &quot;totalKeysExamined&quot;: 0,
+//         &quot;totalDocsExamined&quot;: 150000,    ← 全集合扫描！
+//         &quot;executionStages&quot;: {
+//             &quot;stage&quot;: &quot;SORT&quot;,            ← 内存排序！
+//             &quot;inputStage&quot;: {
+//                 &quot;stage&quot;: &quot;COLLSCAN&quot;     ← 全集合扫描
+//             }
+//         }
+//     }
+// }
+</code></pre>
+<p><strong>问题诊断</strong>：全集合扫描 + 内存排序，没有可用的索引。</p>
+<p><strong>步骤三：设计索引</strong></p>
+<p>使用 ESR 规则分析：</p>
+<ul>
+<li><strong>E</strong>quality：<code>userId</code>（精确匹配）</li>
+<li><strong>S</strong>ort：<code>createdAt</code>（排序字段）</li>
+<li><strong>R</strong>ange：<code>status</code>（$in 是范围查询）、<code>createdAt</code>（日期范围）</li>
+</ul>
+<p>注意 <code>createdAt</code> 同时用于排序和范围查询。<code>status</code> 使用了 <code>$in</code>，虽然看似是几个离散值，但在索引中 <code>$in</code> 被视为范围查询。</p>
+<pre><code class="language-javascript">// 方案一：userId + createdAt + status（ESR）
+db.orders.createIndex({ userId: 1, createdAt: -1, status: 1 })
+</code></pre>
+<p><strong>步骤四：验证优化效果</strong></p>
+<pre><code class="language-javascript">db.orders.find({
+    userId: &quot;U0001&quot;,
+    status: { $in: [&quot;PAID&quot;, &quot;SHIPPED&quot;] },
+    createdAt: { $gte: ISODate(&quot;2025-01-01&quot;), $lte: ISODate(&quot;2025-03-31&quot;) }
+}).sort({ createdAt: -1 }).limit(20).explain(&quot;executionStats&quot;)
+
+// 优化后的结果：
+// {
+//     &quot;executionStats&quot;: {
+//         &quot;nReturned&quot;: 20,
+//         &quot;executionTimeMillis&quot;: 2,         ← 从 850ms 降到 2ms！
+//         &quot;totalKeysExamined&quot;: 45,          ← 只扫描了少量索引键
+//         &quot;totalDocsExamined&quot;: 20,          ← 精准匹配
+//         &quot;executionStages&quot;: {
+//             &quot;stage&quot;: &quot;LIMIT&quot;,
+//             &quot;inputStage&quot;: {
+//                 &quot;stage&quot;: &quot;FETCH&quot;,
+//                 &quot;inputStage&quot;: {
+//                     &quot;stage&quot;: &quot;IXSCAN&quot;,   ← 使用索引扫描
+//                     &quot;indexName&quot;: &quot;userId_1_createdAt_-1_status_1&quot;
+//                 }
+//             }
+//         }
+//     }
+// }
+</code></pre>
+<p><strong>步骤五：对比优化前后</strong></p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>优化前</th>
+<th>优化后</th>
+<th>提升</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>执行时间</td>
+<td>850ms</td>
+<td>2ms</td>
+<td><strong>425 倍</strong></td>
+</tr>
+<tr>
+<td>索引键扫描</td>
+<td>0</td>
+<td>45</td>
+<td>有索引可用</td>
+</tr>
+<tr>
+<td>文档扫描</td>
+<td>150,000</td>
+<td>20</td>
+<td><strong>7,500 倍</strong></td>
+</tr>
+<tr>
+<td>执行计划</td>
+<td>COLLSCAN + SORT</td>
+<td>IXSCAN</td>
+<td>消除全扫描和内存排序</td>
+</tr>
+</tbody>
+</table>
+<p><strong>步骤六：在 Java 中实现优化后的查询</strong></p>
+<pre><code class="language-java">@Service
+public class OrderQueryService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public OrderQueryService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 分页查询用户订单（已优化索引）
+     */
+    public List&lt;Order&gt; findUserOrders(
+            String userId, List&lt;String&gt; statuses,
+            Instant startDate, Instant endDate,
+            int page, int size) {
+
+        Criteria criteria = Criteria.where(&quot;userId&quot;).is(userId);
+
+        if (statuses != null &amp;&amp; !statuses.isEmpty()) {
+            criteria = criteria.and(&quot;status&quot;).in(statuses);
+        }
+
+        if (startDate != null &amp;&amp; endDate != null) {
+            criteria = criteria.and(&quot;createdAt&quot;).gte(startDate).lte(endDate);
+        }
+
+        Query query = Query.query(criteria)
+                .with(Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;))
+                .skip((long) page * size)
+                .limit(size);
+
+        return mongoTemplate.find(query, Order.class);
+    }
+
+    /**
+     * 程序化创建索引（ESR 顺序）
+     */
+    public void createOptimizedIndexes() {
+        IndexOperations indexOps = mongoTemplate.indexOps(Order.class);
+
+        indexOps.ensureIndex(
+            new Index()
+                .on(&quot;userId&quot;, Sort.Direction.ASC)
+                .on(&quot;createdAt&quot;, Sort.Direction.DESC)
+                .on(&quot;status&quot;, Sort.Direction.ASC)
+                .named(&quot;idx_user_orders_esr&quot;)
+        );
+    }
+}
+</code></pre>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>关键要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文本索引</td>
+<td>一个集合只能有一个；支持权重配置和 <code>$text</code> 查询</td>
+</tr>
+<tr>
+<td>地理空间索引</td>
+<td>使用 GeoJSON 格式；<code>$near</code>、<code>$geoWithin</code>、<code>$geoNear</code></td>
+</tr>
+<tr>
+<td>通配符索引</td>
+<td>适用于动态字段；不支持复合查询和排序优化</td>
+</tr>
+<tr>
+<td>ESR 规则</td>
+<td>Equality 最前 → Sort 中间 → Range 最后</td>
+</tr>
+<tr>
+<td>慢查询分析</td>
+<td>profiler + <code>explain()</code> + 性能指标对比</td>
+</tr>
+<tr>
+<td>覆盖查询</td>
+<td>查询和返回字段都在索引中，零文档扫描</td>
+</tr>
+<tr>
+<td>索引交叉</td>
+<td>不如复合索引高效，不应作为优化策略</td>
+</tr>
+</tbody>
+</table>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

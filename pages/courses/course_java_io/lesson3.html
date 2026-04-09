@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第三章java-bio-详解从阻塞说起">第三章：Java BIO 详解——从阻塞说起</h1>
+<blockquote>
+<p><strong>学习目标</strong>：深入理解 BIO 的工作方式和瓶颈所在。通过代码实战感受&quot;阻塞&quot;到底意味着什么。</p>
+</blockquote>
+<hr />
+<h2 id="前置知识回顾">前置知识回顾</h2>
+<p>上一章我们学了 Unix 的五种 IO 模型。Java BIO 对应的就是第一种——<strong>阻塞式 IO</strong>。</p>
+<ul>
+<li>阶段一（等待数据）：阻塞</li>
+<li>阶段二（复制数据）：阻塞</li>
+<li>整个过程线程完全挂起，直到操作完成</li>
+</ul>
+<hr />
+<h2 id="31-什么是-bio">3.1 什么是 BIO</h2>
+<p>BIO = <strong>B</strong>locking <strong>IO</strong>，Java 中最传统的网络编程方式。</p>
+<p>核心流程如下：</p>
+<pre><code>服务器启动
+    │
+    ▼
+ServerSocket.accept()  ←── 阻塞！等待客户端连接
+    │
+    ▼ 收到连接
+InputStream.read()     ←── 阻塞！等待客户端发送数据
+    │
+    ▼ 收到数据
+处理业务逻辑
+    │
+    ▼
+OutputStream.write()   ←── 发送响应
+    │
+    ▼
+回到 accept() 等下一个连接
+</code></pre>
+<p>关键点：<code>accept()</code> 和 <code>read()</code> <strong>都是阻塞的系统调用</strong>，线程会一直等待。</p>
+<p>看一下 JDK 源码中 <code>ServerSocket.accept()</code> 的注释：</p>
+<blockquote>
+<p>Listens for a connection to be made to this socket and accepts it. <strong>The method blocks until a connection is made.</strong></p>
+</blockquote>
+<p>翻译：监听连接，<strong>该方法会阻塞直到有连接到来</strong>。</p>
+<hr />
+<h2 id="32-bio-的通信模型">3.2 BIO 的通信模型</h2>
+<h3 id="模型一单线程-bio">模型一：单线程 BIO</h3>
+<p>最简单的模型——服务器只有一个线程，同一时间只能服务一个客户端。</p>
+<pre><code>客户端A ──请求──→ ┌────────────┐
+                  │  服务器线程  │ ←── 正在处理 A 的请求
+客户端B ──请求──→ │  (单线程)   │ ←── B 只能等待
+客户端C ──请求──→ │            │ ←── C 只能等待
+                  └────────────┘
+</code></pre>
+<p><strong>问题</strong>：当服务器在处理客户端 A 的请求时，客户端 B 和 C 只能干等。处理完 A 才能处理 B。这在高并发场景下完全不可接受。</p>
+<h3 id="模型二多线程-bio伪异步">模型二：多线程 BIO（伪异步）</h3>
+<p>自然的改进思路——每个连接分配一个线程：</p>
+<pre><code>客户端A ──请求──→ ┌────────────┐   ┌──────────┐
+                  │            │──→│ 线程1处理A │
+客户端B ──请求──→ │  主线程     │   └──────────┘
+                  │  (accept)  │   ┌──────────┐
+客户端C ──请求──→ │            │──→│ 线程2处理B │
+                  └────────────┘   └──────────┘
+                                   ┌──────────┐
+                               ──→ │ 线程3处理C │
+                                   └──────────┘
+</code></pre>
+<p><strong>改进了什么</strong>：多个客户端可以同时被服务。</p>
+<p><strong>但仍有问题</strong>：</p>
+<ol>
+<li><strong>线程是昂贵资源</strong>：每个线程默认占用 128K~1M 的栈空间，1 万个连接就要 1 万个线程</li>
+<li><strong>线程切换有开销</strong>：线程越多，CPU 花在上下文切换上的时间越多</li>
+<li><strong>线程数有上限</strong>：Linux 系统的线程数有限（<code>cat /proc/sys/kernel/threads-max</code> 可查看）</li>
+<li><strong>即使用线程池</strong>：线程池大小固定，超出的请求只能排队等待（<code>BlockingQueue</code> 积压）</li>
+<li><strong>accept 仍然是串行的</strong>：主线程接受连接还是一个一个来的</li>
+</ol>
+<h3 id="bio-的根本问题">BIO 的根本问题</h3>
+<p>问题的根源<strong>不在于是否使用多线程</strong>，而在于 <code>accept()</code> 和 <code>read()</code> 这两个操作本身就是阻塞的。</p>
+<ul>
+<li><code>accept()</code>：底层使用的是操作系统的阻塞式同步 IO，如果没有新连接到来，线程就挂起</li>
+<li><code>read()</code>：如果客户端还没有发送数据，线程也挂起</li>
+</ul>
+<p>多线程只是把&quot;处理过程&quot;并行化了，但 <strong>接受连接的环节仍然是串行的</strong>。</p>
+<hr />
+<h2 id="33-bio-代码实战">3.3 BIO 代码实战</h2>
+<h3 id="单线程-bio-服务器">单线程 BIO 服务器</h3>
+<pre><code class="language-java">public class BioServer {
+    public static void main(String[] args) throws IOException {
+        ServerSocket serverSocket = new ServerSocket(8080);
+        System.out.println(&quot;服务器启动，监听 8080 端口...&quot;);
+        
+        while (true) {
+            // 阻塞点1：等待客户端连接
+            Socket socket = serverSocket.accept();
+            System.out.println(&quot;收到连接：&quot; + socket.getPort());
+            
+            // 阻塞点2：等待客户端发送数据
+            InputStream in = socket.getInputStream();
+            byte[] buffer = new byte[1024];
+            int len = in.read(buffer);  // 阻塞！
+            
+            String message = new String(buffer, 0, len);
+            System.out.println(&quot;收到消息：&quot; + message);
+            
+            // 发送响应
+            OutputStream out = socket.getOutputStream();
+            out.write(&quot;已收到你的消息&quot;.getBytes());
+            
+            socket.close();
+        }
+    }
+}
+</code></pre>
+<p><strong>测试结果</strong>：如果同时有 20 个客户端发请求，它们只能逐个被处理。假设每个请求处理 1 秒，第 20 个客户端要等 20 秒才能得到响应。</p>
+<h3 id="多线程-bio-服务器">多线程 BIO 服务器</h3>
+<pre><code class="language-java">public class BioServerMultiThread {
+    public static void main(String[] args) throws IOException {
+        ServerSocket serverSocket = new ServerSocket(8080);
+        System.out.println(&quot;服务器启动，监听 8080 端口...&quot;);
+        
+        while (true) {
+            // 主线程仍然在这里阻塞等待连接
+            Socket socket = serverSocket.accept();
+            
+            // 把业务处理交给新线程
+            new Thread(() -&gt; handleClient(socket)).start();
+        }
+    }
+    
+    private static void handleClient(Socket socket) {
+        try (InputStream in = socket.getInputStream();
+             OutputStream out = socket.getOutputStream()) {
+             
+            byte[] buffer = new byte[1024];
+            int len = in.read(buffer);  // 在子线程中阻塞
+            
+            String message = new String(buffer, 0, len);
+            System.out.println(&quot;[&quot; + Thread.currentThread().getName() + &quot;] 收到：&quot; + message);
+            
+            // 模拟业务处理耗时
+            Thread.sleep(1000);
+            
+            out.write(&quot;已处理你的消息&quot;.getBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try { socket.close(); } catch (IOException e) { }
+        }
+    }
+}
+</code></pre>
+<p><strong>改进</strong>：多个客户端的请求可以并行处理了。</p>
+<p><strong>但是</strong>：</p>
+<ul>
+<li>每个连接创建一个线程，如果有 10000 个并发连接，就要创建 10000 个线程</li>
+<li>如果是长连接，线程一直不释放</li>
+</ul>
+<h3 id="线程池版-bio-服务器">线程池版 BIO 服务器</h3>
+<pre><code class="language-java">public class BioServerThreadPool {
+    public static void main(String[] args) throws IOException {
+        // 最多 50 个线程，超出的排队
+        ExecutorService threadPool = Executors.newFixedThreadPool(50);
+        ServerSocket serverSocket = new ServerSocket(8080);
+        
+        while (true) {
+            Socket socket = serverSocket.accept();
+            threadPool.execute(() -&gt; handleClient(socket));
+        }
+    }
+    
+    private static void handleClient(Socket socket) {
+        // 和上面相同...
+    }
+}
+</code></pre>
+<p><strong>改进</strong>：控制了线程数量，不会无限创建线程。</p>
+<p><strong>但是</strong>：线程池大小是固定的（比如 50），如果 50 个线程都在处理长连接，第 51 个客户端只能排队等。而且这 50 个线程大部分时间可能都在阻塞等待 <code>read()</code>，造成了严重的资源浪费。</p>
+<hr />
+<h2 id="34-bio-的性能瓶颈分析">3.4 BIO 的性能瓶颈分析</h2>
+<h3 id="为什么-bio-在高并发下不行">为什么 BIO 在高并发下不行？</h3>
+<pre><code>┌──────────────────────────────────────────────────────┐
+│                   BIO 服务器                          │
+│                                                      │
+│  线程1: [████ 等待read ████ 处理 ██ 响应]              │
+│  线程2: [██████████ 等待read ██████████ 处理 ██]      │
+│  线程3: [████ 等待read ████████████ 处理 ████]        │
+│  ...                                                 │
+│  线程N: [████████████████ 等待read ████ 处理 ██]      │
+│                                                      │
+│  观察：大部分时间线程都在等待，真正干活的时间很短          │
+└──────────────────────────────────────────────────────┘
+</code></pre>
+<p><strong>核心矛盾</strong>：</p>
+<ul>
+<li>每个连接需要一个线程</li>
+<li>每个线程大部分时间都在阻塞等待（IO 操作远慢于 CPU）</li>
+<li>线程是操作系统的稀缺资源</li>
+<li>线程切换有成本</li>
+</ul>
+<p><strong>结论</strong>：BIO 模型下，线程数 ≈ 连接数。当连接数达到成千上万时，线程资源会被耗尽。</p>
+<h3 id="c10k-问题">C10K 问题</h3>
+<p>这就是著名的 <strong>C10K 问题</strong>（如何在单机上支持 1 万个并发连接）。BIO 模型根本无法解决这个问题，因为你不可能创建 1 万个线程。</p>
+<p>解决 C10K 问题的关键是：<strong>用少量线程管理大量连接</strong>——这正是 NIO 的核心思想。</p>
+<hr />
+<h2 id="35-bio-的适用场景">3.5 BIO 的适用场景</h2>
+<p>BIO 不是完全没有用武之地：</p>
+<ul>
+<li><strong>连接数少</strong>（几十到几百个）</li>
+<li><strong>每个连接的数据交互频繁、处理时间短</strong></li>
+<li><strong>开发简单性优先于性能</strong></li>
+<li><strong>内部系统通信</strong>，如管理后台</li>
+</ul>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>面试考察频率</th>
+<th>关键记忆</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BIO 的定义</td>
+<td>⭐⭐⭐⭐</td>
+<td>Blocking IO，accept 和 read 都阻塞</td>
+</tr>
+<tr>
+<td>单线程 vs 多线程 BIO</td>
+<td>⭐⭐⭐</td>
+<td>多线程改善了处理并发，但根本问题没解决</td>
+</tr>
+<tr>
+<td>BIO 的瓶颈</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>一连接一线程，线程资源有限，大部分在等待</td>
+</tr>
+<tr>
+<td>C10K 问题</td>
+<td>⭐⭐⭐</td>
+<td>单机支持 1 万并发，BIO 无法解决</td>
+</tr>
+<tr>
+<td>BIO 适用场景</td>
+<td>⭐⭐⭐</td>
+<td>连接数少、简单的内部通信</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>下一章预告</strong>：BIO 的瓶颈在于&quot;一连接一线程&quot;。那有没有办法让一个线程管理多个连接？有！这就是 NIO（Non-blocking IO）—— 通过 Channel、Buffer、Selector 三大组件实现 IO 多路复用。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

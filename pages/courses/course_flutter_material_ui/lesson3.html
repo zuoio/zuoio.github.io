@@ -1,0 +1,2772 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第03课-排版系统---texttheme-与字体">第03课 排版系统 - TextTheme 与字体</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter Material Design 系统学习<br />
+<strong>前置条件</strong>：已掌握 Text / TextStyle 的基本用法（组件课程第02课）<br />
+<strong>课程目标</strong>：全面掌握 Material 3 排版体系，学会为应用配置专业的品牌字体方案</p>
+</blockquote>
+<hr />
+<h2 id="1-material-3-type-scale-完整体系">1. Material 3 Type Scale 完整体系</h2>
+<p>排版（Typography）是 Material Design 3 的三大核心支柱之一（Color、Typography、Shape）。一套统一的排版系统能让应用在视觉上保持一致性和专业感。</p>
+<p>Material 3 定义了 <strong>5 大类别、每类 3 个级别</strong>，共 <strong>15 种文本样式</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>定位</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Display</strong></td>
+<td>最大的展示文本</td>
+<td>欢迎页、启动页的醒目大标题，营销页面的核心口号</td>
+</tr>
+<tr>
+<td><strong>Headline</strong></td>
+<td>页面级标题</td>
+<td>页面顶部标题，重要内容区域标题</td>
+</tr>
+<tr>
+<td><strong>Title</strong></td>
+<td>组件级标题</td>
+<td>卡片标题、对话框标题、AppBar 标题、列表分组标题</td>
+</tr>
+<tr>
+<td><strong>Body</strong></td>
+<td>正文内容</td>
+<td>段落文本、列表项描述、表单说明</td>
+</tr>
+<tr>
+<td><strong>Label</strong></td>
+<td>小型辅助文本</td>
+<td>按钮文字、标签页标签、Chip 文字、输入框标签、底部导航文字</td>
+</tr>
+</tbody>
+</table>
+<p>每个类别有 <strong>Large</strong>、<strong>Medium</strong>、<strong>Small</strong> 三个级别，提供层次分明的视觉层级。</p>
+<h3 id="11-默认参数一览表">1.1 默认参数一览表</h3>
+<p>以下是 Material 3 中 15 种 TextStyle 的默认参数（基于 Roboto 字体）：</p>
+<table>
+<thead>
+<tr>
+<th>样式名称</th>
+<th>字体大小 (fontSize)</th>
+<th>字重 (fontWeight)</th>
+<th>行高 (height)</th>
+<th>字间距 (letterSpacing)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>displayLarge</code></td>
+<td>57</td>
+<td>W400 (Regular)</td>
+<td>1.12 (64px)</td>
+<td>-0.25</td>
+</tr>
+<tr>
+<td><code>displayMedium</code></td>
+<td>45</td>
+<td>W400 (Regular)</td>
+<td>1.16 (52px)</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>displaySmall</code></td>
+<td>36</td>
+<td>W400 (Regular)</td>
+<td>1.22 (44px)</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>headlineLarge</code></td>
+<td>32</td>
+<td>W400 (Regular)</td>
+<td>1.25 (40px)</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>headlineMedium</code></td>
+<td>28</td>
+<td>W400 (Regular)</td>
+<td>1.29 (36px)</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>headlineSmall</code></td>
+<td>24</td>
+<td>W400 (Regular)</td>
+<td>1.33 (32px)</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>titleLarge</code></td>
+<td>22</td>
+<td>W400 (Regular)</td>
+<td>1.27 (28px)</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>titleMedium</code></td>
+<td>16</td>
+<td>W500 (Medium)</td>
+<td>1.50 (24px)</td>
+<td>0.15</td>
+</tr>
+<tr>
+<td><code>titleSmall</code></td>
+<td>14</td>
+<td>W500 (Medium)</td>
+<td>1.43 (20px)</td>
+<td>0.1</td>
+</tr>
+<tr>
+<td><code>bodyLarge</code></td>
+<td>16</td>
+<td>W400 (Regular)</td>
+<td>1.50 (24px)</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td><code>bodyMedium</code></td>
+<td>14</td>
+<td>W400 (Regular)</td>
+<td>1.43 (20px)</td>
+<td>0.25</td>
+</tr>
+<tr>
+<td><code>bodySmall</code></td>
+<td>12</td>
+<td>W400 (Regular)</td>
+<td>1.33 (16px)</td>
+<td>0.4</td>
+</tr>
+<tr>
+<td><code>labelLarge</code></td>
+<td>14</td>
+<td>W500 (Medium)</td>
+<td>1.43 (20px)</td>
+<td>0.1</td>
+</tr>
+<tr>
+<td><code>labelMedium</code></td>
+<td>12</td>
+<td>W500 (Medium)</td>
+<td>1.33 (16px)</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td><code>labelSmall</code></td>
+<td>11</td>
+<td>W500 (Medium)</td>
+<td>1.45 (16px)</td>
+<td>0.5</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意事项</strong>：<code>height</code> 在 Flutter 中是一个倍数值，实际行高 = fontSize × height。例如 <code>displayLarge</code> 的行高为 57 × 1.12 ≈ 64px。</p>
+</blockquote>
+<h3 id="12-在代码中使用-texttheme">1.2 在代码中使用 TextTheme</h3>
+<p>Flutter 通过 <code>Theme.of(context).textTheme</code> 访问当前主题的所有文本样式：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const TypeScaleApp());
+}
+
+class TypeScaleApp extends StatelessWidget {
+  const TypeScaleApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Type Scale 演示',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+      ),
+      home: const TypeScalePage(),
+    );
+  }
+}
+
+class TypeScalePage extends StatelessWidget {
+  const TypeScalePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 获取当前主题的 TextTheme
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Material 3 Type Scale')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Display 类 —— 最大的展示文本
+            Text('Display Large', style: textTheme.displayLarge),
+            const SizedBox(height: 8),
+            Text('Display Medium', style: textTheme.displayMedium),
+            const SizedBox(height: 8),
+            Text('Display Small', style: textTheme.displaySmall),
+            const Divider(height: 32),
+
+            // Headline 类 —— 页面级标题
+            Text('Headline Large', style: textTheme.headlineLarge),
+            const SizedBox(height: 8),
+            Text('Headline Medium', style: textTheme.headlineMedium),
+            const SizedBox(height: 8),
+            Text('Headline Small', style: textTheme.headlineSmall),
+            const Divider(height: 32),
+
+            // Title 类 —— 组件级标题
+            Text('Title Large', style: textTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text('Title Medium', style: textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Text('Title Small', style: textTheme.titleSmall),
+            const Divider(height: 32),
+
+            // Body 类 —— 正文内容
+            Text('Body Large', style: textTheme.bodyLarge),
+            const SizedBox(height: 8),
+            Text('Body Medium（默认正文样式）', style: textTheme.bodyMedium),
+            const SizedBox(height: 8),
+            Text('Body Small', style: textTheme.bodySmall),
+            const Divider(height: 32),
+
+            // Label 类 —— 小型辅助文本
+            Text('Label Large', style: textTheme.labelLarge),
+            const SizedBox(height: 8),
+            Text('Label Medium', style: textTheme.labelMedium),
+            const SizedBox(height: 8),
+            Text('Label Small', style: textTheme.labelSmall),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="13-各级别详细说明与使用建议">1.3 各级别详细说明与使用建议</h3>
+<h4 id="display--展示文本">Display —— 展示文本</h4>
+<p>Display 是整套排版系统中最大的文本，用于需要强烈视觉冲击力的场景。</p>
+<pre><code class="language-dart">class DisplayExample extends StatelessWidget {
+  const DisplayExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // displayLarge (57px)：欢迎页、启动页的超大标题
+        Text('欢迎回来', style: textTheme.displayLarge),
+
+        // displayMedium (45px)：营销页面的核心口号
+        Text('发现你的灵感', style: textTheme.displayMedium),
+
+        // displaySmall (36px)：功能介绍页的大标题
+        Text('全新体验', style: textTheme.displaySmall),
+      ],
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：Display 文本应该简短有力，通常不超过一行。在小屏设备上可考虑降级使用（例如 displayLarge 降为 displayMedium）。</p>
+</blockquote>
+<h4 id="headline--页面标题">Headline —— 页面标题</h4>
+<p>Headline 适合作为页面或重要区域的标题，比 Display 更通用。</p>
+<pre><code class="language-dart">class HeadlineExample extends StatelessWidget {
+  const HeadlineExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // headlineLarge (32px)：页面主标题
+                  Text('个人中心', style: textTheme.headlineLarge),
+                  const SizedBox(height: 24),
+
+                  // headlineMedium (28px)：页面区域标题
+                  Text('最近活动', style: textTheme.headlineMedium),
+                  const SizedBox(height: 24),
+
+                  // headlineSmall (24px)：子区域标题
+                  Text('推荐内容', style: textTheme.headlineSmall),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h4 id="title--组件标题">Title —— 组件标题</h4>
+<p>Title 用于更小范围的标题，如卡片、对话框、列表分组。</p>
+<pre><code class="language-dart">class TitleExample extends StatelessWidget {
+  const TitleExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      children: [
+        // titleLarge (22px)：AppBar 标题、对话框标题
+        AppBar(title: Text('设置', style: textTheme.titleLarge)),
+
+        // titleMedium (16px, Medium)：卡片标题、列表项标题
+        Card(
+          child: ListTile(
+            title: Text('用户名', style: textTheme.titleMedium),
+            subtitle: Text('点击修改', style: textTheme.bodySmall),
+          ),
+        ),
+
+        // titleSmall (14px, Medium)：小卡片标题、次要标题
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Text('订单详情', style: textTheme.titleSmall),
+          ),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h4 id="body--正文">Body —— 正文</h4>
+<p>Body 是应用中使用最广泛的样式，承载主要的阅读内容。</p>
+<pre><code class="language-dart">class BodyExample extends StatelessWidget {
+  const BodyExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // bodyLarge (16px)：重要正文段落
+          Text(
+            'Flutter 是 Google 推出的跨平台 UI 框架，'
+            '使用 Dart 语言开发，支持 iOS、Android、Web、桌面等多个平台。',
+            style: textTheme.bodyLarge,
+          ),
+          const SizedBox(height: 12),
+
+          // bodyMedium (14px)：默认正文样式，最常用
+          Text(
+            '本课程将系统讲解 Material Design 3 的排版体系，'
+            '帮助你为应用建立专业一致的视觉风格。',
+            style: textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 12),
+
+          // bodySmall (12px)：辅助说明、次要信息
+          Text(
+            '最后更新：2025年1月 · 阅读时间：约15分钟',
+            style: textTheme.bodySmall,
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h4 id="label--标签">Label —— 标签</h4>
+<p>Label 是最小的文本样式，用于按钮、标签、表单元素等交互组件。</p>
+<pre><code class="language-dart">class LabelExample extends StatelessWidget {
+  const LabelExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // labelLarge (14px, Medium)：按钮文字
+          FilledButton(
+            onPressed: () {},
+            child: Text('提交订单', style: textTheme.labelLarge),
+          ),
+          const SizedBox(height: 12),
+
+          // labelMedium (12px, Medium)：标签、底部导航文字
+          Chip(label: Text('Flutter', style: textTheme.labelMedium)),
+          const SizedBox(height: 12),
+
+          // labelSmall (11px, Medium)：最小的辅助标签
+          Text('必填', style: textTheme.labelSmall?.copyWith(
+            color: Theme.of(context).colorScheme.error,
+          )),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：Material 组件（如 <code>ElevatedButton</code>、<code>Chip</code>）已经内置了正确的 Label 样式，通常不需要手动指定。只有自定义组件才需要显式使用 <code>labelLarge</code> 等样式。</p>
+</blockquote>
+<hr />
+<h2 id="2-texttheme-自定义">2. TextTheme 自定义</h2>
+<h3 id="21-通过-themedata-覆盖默认样式">2.1 通过 ThemeData 覆盖默认样式</h3>
+<p>在 <code>ThemeData</code> 中通过 <code>textTheme</code> 参数可以自定义所有 15 种文本样式：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const CustomTextThemeApp());
+}
+
+class CustomTextThemeApp extends StatelessWidget {
+  const CustomTextThemeApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '自定义 TextTheme',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.indigo,
+        // 自定义 TextTheme
+        textTheme: const TextTheme(
+          // 只覆盖需要修改的样式，其余保持默认
+          displayLarge: TextStyle(
+            fontSize: 60,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -1.5,
+            height: 1.1,
+          ),
+          headlineMedium: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.5,
+          ),
+          bodyLarge: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w400,
+            height: 1.6, // 增加行高，提升可读性
+            letterSpacing: 0.3,
+          ),
+          bodyMedium: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            height: 1.55,
+            letterSpacing: 0.2,
+          ),
+          labelLarge: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+      home: const CustomTextThemePage(),
+    );
+  }
+}
+
+class CustomTextThemePage extends StatelessWidget {
+  const CustomTextThemePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('自定义排版')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('品牌标题', style: textTheme.displayLarge),
+            const SizedBox(height: 16),
+            Text('区域标题', style: textTheme.headlineMedium),
+            const SizedBox(height: 16),
+            Text(
+              '这是一段正文内容，使用了自定义的 bodyLarge 样式，'
+              '行高设置为 1.6 倍以提升段落文本的可读性。',
+              style: textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () {},
+              child: const Text('立即体验'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="22-使用-copywith-局部覆盖">2.2 使用 copyWith 局部覆盖</h3>
+<p>当只需要修改少数几个样式时，使用 <code>copyWith</code> 更简洁：</p>
+<pre><code class="language-dart">ThemeData buildTheme() {
+  // 获取默认的 Material 3 主题
+  final baseTheme = ThemeData(
+    useMaterial3: true,
+    colorSchemeSeed: Colors.teal,
+  );
+
+  return baseTheme.copyWith(
+    textTheme: baseTheme.textTheme.copyWith(
+      // 只修改标题字重，其余所有属性保持不变
+      displayLarge: baseTheme.textTheme.displayLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+      ),
+      headlineLarge: baseTheme.textTheme.headlineLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+      ),
+      // 修改正文行高
+      bodyLarge: baseTheme.textTheme.bodyLarge?.copyWith(
+        height: 1.65,
+      ),
+      bodyMedium: baseTheme.textTheme.bodyMedium?.copyWith(
+        height: 1.6,
+      ),
+    ),
+  );
+}
+</code></pre>
+<h3 id="23-apply-方法批量调整">2.3 apply 方法批量调整</h3>
+<p><code>TextTheme.apply()</code> 可以对整个 TextTheme 的所有样式进行统一的缩放或调整：</p>
+<pre><code class="language-dart">ThemeData buildScaledTheme(BuildContext context) {
+  final baseTheme = ThemeData(
+    useMaterial3: true,
+    colorSchemeSeed: Colors.purple,
+  );
+
+  return baseTheme.copyWith(
+    textTheme: baseTheme.textTheme.apply(
+      // 所有字号乘以 1.1（整体放大 10%）
+      fontSizeFactor: 1.1,
+      // 所有字号再加 0（不额外增减）
+      fontSizeDelta: 0,
+      // 统一设置字体族
+      fontFamily: 'NotoSansSC',
+      // 统一设置文本颜色
+      bodyColor: Colors.grey[800],
+      displayColor: Colors.grey[900],
+    ),
+  );
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：<code>apply</code> 中的 <code>bodyColor</code> 会应用到 Body 和 Label 级别的样式，<code>displayColor</code> 会应用到 Display、Headline 和 Title 级别的样式。</p>
+</blockquote>
+<hr />
+<h2 id="3-google-fonts-集成">3. Google Fonts 集成</h2>
+<h3 id="31-安装-google_fonts-包">3.1 安装 google_fonts 包</h3>
+<p>在 <code>pubspec.yaml</code> 中添加依赖：</p>
+<pre><code class="language-yaml">dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.2.1
+</code></pre>
+<p>然后执行安装：</p>
+<pre><code class="language-bash">flutter pub get
+</code></pre>
+<h3 id="32-基本使用方式">3.2 基本使用方式</h3>
+<p><code>google_fonts</code> 包提供了两种核心用法：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+void main() {
+  runApp(const GoogleFontsApp());
+}
+
+class GoogleFontsApp extends StatelessWidget {
+  const GoogleFontsApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Google Fonts 演示',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+      ),
+      home: const GoogleFontsPage(),
+    );
+  }
+}
+
+class GoogleFontsPage extends StatelessWidget {
+  const GoogleFontsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Google Fonts')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // === 方式一：用于单个 Text 组件 ===
+            // 使用命名构造函数（推荐，有代码提示）
+            Text(
+              'Poppins Bold Title',
+              style: GoogleFonts.poppins(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            Text(
+              'Roboto Mono Code Style',
+              style: GoogleFonts.robotoMono(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // 使用 getFont（动态指定字体名称）
+            Text(
+              'Lato Regular Text',
+              style: GoogleFonts.getFont(
+                'Lato',
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // === 方式二：生成完整的 TextTheme ===
+            // 详见 3.3 节
+            Text(
+              '下一节展示如何将 Google Fonts 应用到整个 TextTheme',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="33-将-google-fonts-应用到完整-texttheme">3.3 将 Google Fonts 应用到完整 TextTheme</h3>
+<p>这是最推荐的做法——将 Google Fonts 集成到 <code>ThemeData</code> 中，让所有 Material 组件自动使用：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+void main() {
+  runApp(const BrandFontApp());
+}
+
+class BrandFontApp extends StatelessWidget {
+  const BrandFontApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '品牌字体方案',
+      theme: _buildTheme(),
+      home: const BrandFontPage(),
+    );
+  }
+
+  ThemeData _buildTheme() {
+    final baseTheme = ThemeData(
+      useMaterial3: true,
+      colorSchemeSeed: Colors.deepPurple,
+    );
+
+    return baseTheme.copyWith(
+      // 方法一：将整个 TextTheme 替换为 Google Fonts
+      textTheme: GoogleFonts.notoSansScTextTheme(baseTheme.textTheme),
+
+      // 方法二：分别设置（更灵活，可混合字体）
+      // textTheme: GoogleFonts.poppinsTextTheme(baseTheme.textTheme).copyWith(
+      //   bodyLarge: GoogleFonts.notoSansSc(
+      //     textStyle: baseTheme.textTheme.bodyLarge,
+      //   ),
+      //   bodyMedium: GoogleFonts.notoSansSc(
+      //     textStyle: baseTheme.textTheme.bodyMedium,
+      //   ),
+      // ),
+    );
+  }
+}
+
+class BrandFontPage extends StatelessWidget {
+  const BrandFontPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('品牌字体')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('使用 Noto Sans SC', style: textTheme.headlineMedium),
+            const SizedBox(height: 12),
+            Text(
+              '所有 Material 组件现在都会使用 Noto Sans SC 字体，'
+              '包括 AppBar、按钮、输入框等。',
+              style: textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: () {},
+              child: const Text('按钮文字也会使用品牌字体'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="34-离线字体缓存">3.4 离线字体缓存</h3>
+<p>默认情况下，<code>google_fonts</code> 会在运行时从网络下载字体文件。为了确保离线可用和更快的加载速度，建议将字体文件预置到项目中：</p>
+<p><strong>步骤一</strong>：将 <code>.ttf</code> 字体文件放入 <code>assets/fonts/</code> 目录：</p>
+<pre><code>your_app/
+  assets/
+    fonts/
+      NotoSansSC-Regular.ttf
+      NotoSansSC-Medium.ttf
+      NotoSansSC-Bold.ttf
+      Poppins-Regular.ttf
+      Poppins-Medium.ttf
+      Poppins-Bold.ttf
+</code></pre>
+<p><strong>步骤二</strong>：在 <code>pubspec.yaml</code> 中注册字体资产：</p>
+<pre><code class="language-yaml">flutter:
+  assets:
+    - assets/fonts/
+</code></pre>
+<p><strong>步骤三</strong>：禁用网络下载（可选，推荐在生产环境中禁用）：</p>
+<pre><code class="language-dart">import 'package:google_fonts/google_fonts.dart';
+
+void main() {
+  // 禁止从网络下载字体，只使用本地预置的字体文件
+  GoogleFonts.config.allowRuntimeFetching = false;
+
+  runApp(const MyApp());
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>google_fonts</code> 包会<strong>优先</strong>查找 <code>assets/fonts/</code> 目录中的字体文件，找不到才会从网络下载。</li>
+<li>字体文件名必须与 Google Fonts 上的原始文件名一致，否则无法正确匹配。</li>
+<li>中文字体文件通常较大（Noto Sans SC 约 8~10MB），要注意对应用体积的影响。</li>
+</ol>
+</blockquote>
+<h3 id="35-中文字体注意事项">3.5 中文字体注意事项</h3>
+<p>中文字体在 Flutter 中的使用有以下特殊之处：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class ChineseFontDemo extends StatelessWidget {
+  const ChineseFontDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 推荐的中文字体
+            Text(
+              '思源黑体（Noto Sans SC）',
+              style: GoogleFonts.notoSansSc(fontSize: 20),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '思源宋体（Noto Serif SC）',
+              style: GoogleFonts.notoSerifSc(fontSize: 20),
+            ),
+            const SizedBox(height: 8),
+
+            // 中文字体行高需要特别关注
+            Text(
+              '中文排版建议使用 1.6~1.8 的行高倍数，'
+              '因为中文字符比西文更紧凑，需要更大的行间距来提升可读性。'
+              '尤其是在长段落中，合适的行高对用户阅读体验至关重要。',
+              style: GoogleFonts.notoSansSc(
+                fontSize: 16,
+                height: 1.7, // 中文推荐行高
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li><strong>推荐的中文字体</strong>：Noto Sans SC（思源黑体）适合正文和 UI 文本；Noto Serif SC（思源宋体）适合需要衬线效果的内容型应用。</li>
+<li><strong>行高设置</strong>：中文正文建议 height 设为 1.6<del>1.8，比英文 1.4</del>1.5 的默认行高更大。</li>
+<li><strong>字间距</strong>：中文通常不需要额外的 letterSpacing，设为 0 即可。</li>
+<li><strong>字体大小</strong>：中文最小可辨认字号约为 12px，正文建议至少 14px。</li>
+<li><strong>字体文件体积</strong>：中文字体包含数万个字形，文件远大于西文字体。生产环境中应预置到项目而非运行时下载。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="4-可变字体variable-fonts">4. 可变字体（Variable Fonts）</h2>
+<h3 id="41-什么是可变字体">4.1 什么是可变字体</h3>
+<p>传统字体的每个字重（Regular、Bold 等）是一个独立的文件。可变字体将所有变体打包在一个文件中，通过<strong>轴（Axis）</strong> 实现平滑的属性过渡。</p>
+<p>常见的可变字体轴：</p>
+<table>
+<thead>
+<tr>
+<th>轴标签</th>
+<th>名称</th>
+<th>描述</th>
+<th>取值范围（典型）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>wght</code></td>
+<td>Weight</td>
+<td>字重</td>
+<td>100 ~ 900</td>
+</tr>
+<tr>
+<td><code>wdth</code></td>
+<td>Width</td>
+<td>字宽</td>
+<td>75 ~ 125</td>
+</tr>
+<tr>
+<td><code>ital</code></td>
+<td>Italic</td>
+<td>斜体</td>
+<td>0 或 1</td>
+</tr>
+<tr>
+<td><code>slnt</code></td>
+<td>Slant</td>
+<td>倾斜角度</td>
+<td>-90 ~ 90</td>
+</tr>
+<tr>
+<td><code>opsz</code></td>
+<td>Optical Size</td>
+<td>光学尺寸</td>
+<td>因字体而异</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-在-flutter-中使用可变字体">4.2 在 Flutter 中使用可变字体</h3>
+<p>Flutter 通过 <code>FontVariation</code> 类支持可变字体：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const VariableFontApp());
+}
+
+class VariableFontApp extends StatelessWidget {
+  const VariableFontApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '可变字体演示',
+      theme: ThemeData(useMaterial3: true),
+      home: const VariableFontPage(),
+    );
+  }
+}
+
+class VariableFontPage extends StatefulWidget {
+  const VariableFontPage({super.key});
+
+  @override
+  State&lt;VariableFontPage&gt; createState() =&gt; _VariableFontPageState();
+}
+
+class _VariableFontPageState extends State&lt;VariableFontPage&gt; {
+  double _weight = 400;
+  double _width = 100;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('可变字体')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Variable Font',
+              style: TextStyle(
+                fontFamily: 'RobotoFlex', // 需要在 pubspec.yaml 中注册
+                fontSize: 40,
+                fontVariations: [
+                  FontVariation('wght', _weight), // 字重轴
+                  FontVariation('wdth', _width),  // 字宽轴
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // 字重滑块
+            Text('字重 (wght): ${_weight.round()}'),
+            Slider(
+              value: _weight,
+              min: 100,
+              max: 900,
+              divisions: 16,
+              label: _weight.round().toString(),
+              onChanged: (value) =&gt; setState(() =&gt; _weight = value),
+            ),
+            const SizedBox(height: 16),
+
+            // 字宽滑块
+            Text('字宽 (wdth): ${_width.round()}'),
+            Slider(
+              value: _width,
+              min: 75,
+              max: 125,
+              divisions: 10,
+              label: _width.round().toString(),
+              onChanged: (value) =&gt; setState(() =&gt; _width = value),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="43-注册可变字体">4.3 注册可变字体</h3>
+<p>在 <code>pubspec.yaml</code> 中注册可变字体文件：</p>
+<pre><code class="language-yaml">flutter:
+  fonts:
+    - family: RobotoFlex
+      fonts:
+        - asset: assets/fonts/RobotoFlex-VariableFont.ttf
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：可变字体只需注册一个文件，不需要像传统字体那样为每个字重注册单独的文件。</p>
+</blockquote>
+<h3 id="44-可变字体动画">4.4 可变字体动画</h3>
+<p>可变字体的一个强大优势是可以对字体属性做平滑动画：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class AnimatedVariableFontDemo extends StatefulWidget {
+  const AnimatedVariableFontDemo({super.key});
+
+  @override
+  State&lt;AnimatedVariableFontDemo&gt; createState() =&gt;
+      _AnimatedVariableFontDemoState();
+}
+
+class _AnimatedVariableFontDemoState extends State&lt;AnimatedVariableFontDemo&gt;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation&lt;double&gt; _weightAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _weightAnimation = Tween&lt;double&gt;(begin: 100, end: 900).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('可变字体动画')),
+      body: Center(
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Text(
+              'Weight Animation',
+              style: TextStyle(
+                fontFamily: 'RobotoFlex',
+                fontSize: 36,
+                fontVariations: [
+                  FontVariation('wght', _weightAnimation.value),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：可变字体比多个静态字体文件更节省空间，且支持平滑过渡。推荐在需要精细控制字重或做字体动画的场景中使用。</p>
+</blockquote>
+<hr />
+<h2 id="5-文本无障碍accessibility">5. 文本无障碍（Accessibility）</h2>
+<p>确保文本在不同用户偏好下都能良好显示，是排版系统设计的重要一环。</p>
+<h3 id="51-textscaler--文本缩放">5.1 TextScaler —— 文本缩放</h3>
+<p>从 Flutter 3.16 开始，<code>textScaleFactor</code>（double）被 <code>textScaler</code>（TextScaler）取代，提供更灵活的非线性缩放能力。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const AccessibilityApp());
+}
+
+class AccessibilityApp extends StatelessWidget {
+  const AccessibilityApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '文本无障碍',
+      theme: ThemeData(useMaterial3: true),
+      home: const TextScalerPage(),
+    );
+  }
+}
+
+class TextScalerPage extends StatefulWidget {
+  const TextScalerPage({super.key});
+
+  @override
+  State&lt;TextScalerPage&gt; createState() =&gt; _TextScalerPageState();
+}
+
+class _TextScalerPageState extends State&lt;TextScalerPage&gt; {
+  double _scaleFactor = 1.0;
+
+  @override
+  Widget build(BuildContext context) {
+    // 获取系统文本缩放设置
+    final systemTextScaler = MediaQuery.textScalerOf(context);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('文本缩放')),
+      body: MediaQuery(
+        // 用自定义的 TextScaler 覆盖子树
+        data: MediaQuery.of(context).copyWith(
+          textScaler: TextScaler.linear(_scaleFactor),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 显示当前缩放信息
+              Text(
+                '系统缩放: ${systemTextScaler.scale(1.0).toStringAsFixed(2)}x\n'
+                '当前预览: ${_scaleFactor.toStringAsFixed(2)}x',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 16),
+
+              // 缩放滑块（不受子树 MediaQuery 影响）
+              MediaQuery(
+                data: MediaQuery.of(context),
+                child: Slider(
+                  value: _scaleFactor,
+                  min: 0.5,
+                  max: 3.0,
+                  divisions: 25,
+                  label: '${_scaleFactor.toStringAsFixed(2)}x',
+                  onChanged: (v) =&gt; setState(() =&gt; _scaleFactor = v),
+                ),
+              ),
+              const Divider(),
+
+              // 以下文本受自定义 TextScaler 影响
+              Text(
+                '标题文本',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '这段正文文本会随着缩放滑块的变化而改变大小。'
+                '在无障碍测试中，需要确保文本在 1.0x 到 2.0x 范围内都不会溢出或重叠。',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () {},
+                child: const Text('按钮文字'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="52-使用-mediaquerytextscalerof">5.2 使用 MediaQuery.textScalerOf</h3>
+<p>在需要根据文本缩放比例调整布局的场景中，使用 <code>MediaQuery.textScalerOf(context)</code> 获取当前的 <code>TextScaler</code>：</p>
+<pre><code class="language-dart">class AdaptiveTextLayout extends StatelessWidget {
+  const AdaptiveTextLayout({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textScaler = MediaQuery.textScalerOf(context);
+    // 获取缩放后的实际字号
+    final scaledBodySize = textScaler.scale(14.0);
+
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 当字体放大到一定程度时，切换为垂直布局
+            if (scaledBodySize &gt; 24)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.info, size: 32),
+                  const SizedBox(height: 8),
+                  Text(
+                    '信息提示',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
+              )
+            else
+              Row(
+                children: [
+                  const Icon(Icons.info, size: 24),
+                  const SizedBox(width: 8),
+                  Text(
+                    '信息提示',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="53-防止文本溢出">5.3 防止文本溢出</h3>
+<p>在大字号设置下文本溢出是最常见的无障碍问题。以下是预防策略：</p>
+<pre><code class="language-dart">class OverflowPreventionDemo extends StatelessWidget {
+  const OverflowPreventionDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('防止溢出')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ❌ 错误：固定高度 + 单行，大字号会截断
+            SizedBox(
+              height: 30,
+              child: Text(
+                '这段文字在大字号下会被截断',
+                style: Theme.of(context).textTheme.bodyLarge,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // ✅ 正确：不设固定高度，让文本自然换行
+            Text(
+              '这段文字在大字号下会自动换行，不会被截断。'
+              '使用弹性布局让内容自适应。',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 24),
+
+            // ✅ 正确：用 Flexible/Expanded 处理 Row 内文本
+            Row(
+              children: [
+                const Icon(Icons.star),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '使用 Expanded 包裹文本，确保在空间不足时换行而非溢出',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+
+            // ✅ 正确：使用 maxLines + overflow 优雅截断
+            Text(
+              '使用 maxLines 限制最大行数，配合 overflow 属性在内容过多时显示省略号，'
+              '提供视觉线索告知用户内容被截断，同时保持布局稳定。',
+              style: Theme.of(context).textTheme.bodyMedium,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li>避免给文本容器设置<strong>固定高度</strong>，使用弹性布局让高度自适应。</li>
+<li>在 <code>Row</code> 中显示文本时，用 <code>Expanded</code> 或 <code>Flexible</code> 包裹 <code>Text</code> 组件。</li>
+<li>使用 <code>textScaler</code> 缩放到 <strong>2.0x</strong> 进行测试，确保所有页面都不会溢出。</li>
+<li>在 Semantics 组件中为装饰性文本提供 <code>excludeSemantics: true</code>，避免屏幕阅读器读取无意义内容。</li>
+<li>确保文本与背景色之间的对比度符合 WCAG 标准（普通文本 ≥ 4.5:1，大号文本 ≥ 3:1）。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="6-实战完整的品牌字体排版方案">6. 实战：完整的品牌字体排版方案</h2>
+<p>下面构建一个完整的品牌字体方案，混合使用英文标题字体（Poppins）和中文正文字体（Noto Sans SC）。</p>
+<h3 id="61-项目结构">6.1 项目结构</h3>
+<pre><code>lib/
+  theme/
+    app_typography.dart   # 排版配置
+    app_theme.dart        # 主题配置
+  main.dart
+assets/
+  fonts/
+    Poppins-Regular.ttf
+    Poppins-Medium.ttf
+    Poppins-SemiBold.ttf
+    Poppins-Bold.ttf
+    NotoSansSC-Regular.ttf
+    NotoSansSC-Medium.ttf
+    NotoSansSC-Bold.ttf
+</code></pre>
+<h3 id="62-排版配置app_typographydart">6.2 排版配置（app_typography.dart）</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+/// 应用排版系统
+/// 英文标题使用 Poppins，中文正文使用 Noto Sans SC
+class AppTypography {
+  AppTypography._();
+
+  /// 构建完整的 TextTheme
+  static TextTheme buildTextTheme({required Brightness brightness}) {
+    final baseColor = brightness == Brightness.light
+        ? const Color(0xFF1A1A1A)
+        : const Color(0xFFF5F5F5);
+
+    final secondaryColor = brightness == Brightness.light
+        ? const Color(0xFF666666)
+        : const Color(0xFFBBBBBB);
+
+    // Display 和 Headline 使用 Poppins（英文标题字体）
+    final displayLarge = GoogleFonts.poppins(
+      fontSize: 57,
+      fontWeight: FontWeight.w400,
+      height: 1.12,
+      letterSpacing: -0.25,
+      color: baseColor,
+    );
+
+    final displayMedium = GoogleFonts.poppins(
+      fontSize: 45,
+      fontWeight: FontWeight.w400,
+      height: 1.16,
+      color: baseColor,
+    );
+
+    final displaySmall = GoogleFonts.poppins(
+      fontSize: 36,
+      fontWeight: FontWeight.w400,
+      height: 1.22,
+      color: baseColor,
+    );
+
+    final headlineLarge = GoogleFonts.poppins(
+      fontSize: 32,
+      fontWeight: FontWeight.w600,
+      height: 1.25,
+      color: baseColor,
+    );
+
+    final headlineMedium = GoogleFonts.poppins(
+      fontSize: 28,
+      fontWeight: FontWeight.w600,
+      height: 1.29,
+      color: baseColor,
+    );
+
+    final headlineSmall = GoogleFonts.poppins(
+      fontSize: 24,
+      fontWeight: FontWeight.w600,
+      height: 1.33,
+      color: baseColor,
+    );
+
+    // Title 使用 Poppins（组件标题）
+    final titleLarge = GoogleFonts.poppins(
+      fontSize: 22,
+      fontWeight: FontWeight.w500,
+      height: 1.27,
+      color: baseColor,
+    );
+
+    final titleMedium = GoogleFonts.poppins(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      height: 1.50,
+      letterSpacing: 0.15,
+      color: baseColor,
+    );
+
+    final titleSmall = GoogleFonts.poppins(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      height: 1.43,
+      letterSpacing: 0.1,
+      color: baseColor,
+    );
+
+    // Body 使用 Noto Sans SC（中文正文字体）
+    final bodyLarge = GoogleFonts.notoSansSc(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      height: 1.65, // 中文行高适当加大
+      letterSpacing: 0.3,
+      color: baseColor,
+    );
+
+    final bodyMedium = GoogleFonts.notoSansSc(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      height: 1.6,
+      letterSpacing: 0.2,
+      color: baseColor,
+    );
+
+    final bodySmall = GoogleFonts.notoSansSc(
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      height: 1.5,
+      letterSpacing: 0.3,
+      color: secondaryColor,
+    );
+
+    // Label 使用 Noto Sans SC（中文标签字体）
+    final labelLarge = GoogleFonts.notoSansSc(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      height: 1.43,
+      letterSpacing: 0.1,
+      color: baseColor,
+    );
+
+    final labelMedium = GoogleFonts.notoSansSc(
+      fontSize: 12,
+      fontWeight: FontWeight.w500,
+      height: 1.33,
+      letterSpacing: 0.4,
+      color: baseColor,
+    );
+
+    final labelSmall = GoogleFonts.notoSansSc(
+      fontSize: 11,
+      fontWeight: FontWeight.w500,
+      height: 1.45,
+      letterSpacing: 0.4,
+      color: secondaryColor,
+    );
+
+    return TextTheme(
+      displayLarge: displayLarge,
+      displayMedium: displayMedium,
+      displaySmall: displaySmall,
+      headlineLarge: headlineLarge,
+      headlineMedium: headlineMedium,
+      headlineSmall: headlineSmall,
+      titleLarge: titleLarge,
+      titleMedium: titleMedium,
+      titleSmall: titleSmall,
+      bodyLarge: bodyLarge,
+      bodyMedium: bodyMedium,
+      bodySmall: bodySmall,
+      labelLarge: labelLarge,
+      labelMedium: labelMedium,
+      labelSmall: labelSmall,
+    );
+  }
+}
+</code></pre>
+<h3 id="63-主题配置app_themedart">6.3 主题配置（app_theme.dart）</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'app_typography.dart';
+
+class AppTheme {
+  AppTheme._();
+
+  static ThemeData light() {
+    final textTheme = AppTypography.buildTextTheme(
+      brightness: Brightness.light,
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      colorSchemeSeed: const Color(0xFF6750A4),
+      textTheme: textTheme,
+    );
+  }
+
+  static ThemeData dark() {
+    final textTheme = AppTypography.buildTextTheme(
+      brightness: Brightness.dark,
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorSchemeSeed: const Color(0xFF6750A4),
+      textTheme: textTheme,
+    );
+  }
+}
+</code></pre>
+<h3 id="64-完整的主页面展示maindart">6.4 完整的主页面展示（main.dart）</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'theme/app_theme.dart';
+
+void main() {
+  runApp(const BrandTypographyApp());
+}
+
+class BrandTypographyApp extends StatefulWidget {
+  const BrandTypographyApp({super.key});
+
+  @override
+  State&lt;BrandTypographyApp&gt; createState() =&gt; _BrandTypographyAppState();
+}
+
+class _BrandTypographyAppState extends State&lt;BrandTypographyApp&gt; {
+  ThemeMode _themeMode = ThemeMode.light;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '品牌排版方案',
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: _themeMode,
+      home: BrandTypographyShowcase(
+        onToggleTheme: () {
+          setState(() {
+            _themeMode = _themeMode == ThemeMode.light
+                ? ThemeMode.dark
+                : ThemeMode.light;
+          });
+        },
+      ),
+    );
+  }
+}
+
+class BrandTypographyShowcase extends StatelessWidget {
+  final VoidCallback onToggleTheme;
+
+  const BrandTypographyShowcase({
+    super.key,
+    required this.onToggleTheme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('品牌排版方案'),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.light
+                  ? Icons.dark_mode
+                  : Icons.light_mode,
+            ),
+            onPressed: onToggleTheme,
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // === Display 展示 ===
+            _buildSection(
+              context,
+              title: 'Display',
+              description: '展示文本 — Poppins 字体',
+              children: [
+                Text('Display Large', style: textTheme.displayLarge),
+                Text('Display Medium', style: textTheme.displayMedium),
+                Text('Display Small', style: textTheme.displaySmall),
+              ],
+            ),
+
+            // === Headline 展示 ===
+            _buildSection(
+              context,
+              title: 'Headline',
+              description: '页面标题 — Poppins SemiBold',
+              children: [
+                Text('Headline Large', style: textTheme.headlineLarge),
+                Text('Headline Medium', style: textTheme.headlineMedium),
+                Text('Headline Small', style: textTheme.headlineSmall),
+              ],
+            ),
+
+            // === Title 展示 ===
+            _buildSection(
+              context,
+              title: 'Title',
+              description: '组件标题 — Poppins Medium',
+              children: [
+                Text('Title Large', style: textTheme.titleLarge),
+                Text('Title Medium', style: textTheme.titleMedium),
+                Text('Title Small', style: textTheme.titleSmall),
+              ],
+            ),
+
+            // === Body 展示 ===
+            _buildSection(
+              context,
+              title: 'Body',
+              description: '正文内容 — Noto Sans SC',
+              children: [
+                Text('正文大号 Body Large — 用于重要段落正文',
+                    style: textTheme.bodyLarge),
+                Text('正文中号 Body Medium — 默认正文样式',
+                    style: textTheme.bodyMedium),
+                Text('正文小号 Body Small — 辅助说明文字',
+                    style: textTheme.bodySmall),
+              ],
+            ),
+
+            // === Label 展示 ===
+            _buildSection(
+              context,
+              title: 'Label',
+              description: '标签文本 — Noto Sans SC Medium',
+              children: [
+                Text('标签大号 Label Large', style: textTheme.labelLarge),
+                Text('标签中号 Label Medium', style: textTheme.labelMedium),
+                Text('标签小号 Label Small', style: textTheme.labelSmall),
+              ],
+            ),
+
+            const Divider(height: 48),
+
+            // === 实际应用示例 ===
+            Text('实际应用示例', style: textTheme.headlineMedium),
+            const SizedBox(height: 16),
+
+            // 模拟文章卡片
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Flutter 排版指南', style: textTheme.titleLarge),
+                    const SizedBox(height: 4),
+                    Text(
+                      '2025年1月 · 阅读 5 分钟',
+                      style: textTheme.labelMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      '好的排版能让应用看起来更专业、更有品牌感。'
+                      '本文将介绍如何在 Flutter 中建立一套完整的品牌排版体系，'
+                      '包括英文标题字体与中文正文字体的混合方案。',
+                      style: textTheme.bodyLarge,
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        FilledButton(
+                          onPressed: () {},
+                          child: const Text('阅读全文'),
+                        ),
+                        const SizedBox(width: 12),
+                        OutlinedButton(
+                          onPressed: () {},
+                          child: const Text('稍后再看'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 模拟设置列表
+            Card(
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.person),
+                    title: Text('个人资料', style: textTheme.titleMedium),
+                    subtitle: Text('编辑你的头像和昵称', style: textTheme.bodySmall),
+                    trailing: const Icon(Icons.chevron_right),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.palette),
+                    title: Text('主题设置', style: textTheme.titleMedium),
+                    subtitle: Text('切换亮色/暗色模式', style: textTheme.bodySmall),
+                    trailing: const Icon(Icons.chevron_right),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.text_fields),
+                    title: Text('字体大小', style: textTheme.titleMedium),
+                    subtitle: Text('调整全局文本缩放', style: textTheme.bodySmall),
+                    trailing: const Icon(Icons.chevron_right),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSection(
+    BuildContext context, {
+    required String title,
+    required String description,
+    required List&lt;Widget&gt; children,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '$title — $description',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: colorScheme.onPrimaryContainer,
+                  ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ...children.expand((child) =&gt; [child, const SizedBox(height: 4)]),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="65-pubspecyaml-字体配置">6.5 pubspec.yaml 字体配置</h3>
+<pre><code class="language-yaml">name: brand_typography_demo
+description: 品牌排版方案演示
+
+environment:
+  sdk: '&gt;=3.2.0 &lt;4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.2.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/fonts/
+
+  # 如果不使用 google_fonts 包，可以手动注册字体
+  # fonts:
+  #   - family: Poppins
+  #     fonts:
+  #       - asset: assets/fonts/Poppins-Regular.ttf
+  #       - asset: assets/fonts/Poppins-Medium.ttf
+  #         weight: 500
+  #       - asset: assets/fonts/Poppins-SemiBold.ttf
+  #         weight: 600
+  #       - asset: assets/fonts/Poppins-Bold.ttf
+  #         weight: 700
+  #   - family: NotoSansSC
+  #     fonts:
+  #       - asset: assets/fonts/NotoSansSC-Regular.ttf
+  #       - asset: assets/fonts/NotoSansSC-Medium.ttf
+  #         weight: 500
+  #       - asset: assets/fonts/NotoSansSC-Bold.ttf
+  #         weight: 700
+</code></pre>
+<hr />
+<h2 id="7-进阶技巧">7. 进阶技巧</h2>
+<h3 id="71-根据主题亮暗自动适配文本颜色">7.1 根据主题亮暗自动适配文本颜色</h3>
+<pre><code class="language-dart">class AdaptiveTextColorDemo extends StatelessWidget {
+  const AdaptiveTextColorDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      body: Container(
+        // 在彩色背景上显示文本
+        color: colorScheme.primary,
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ❌ 直接使用 textTheme 可能在彩色背景上看不清
+            // Text('标题', style: textTheme.headlineMedium),
+
+            // ✅ 使用 colorScheme.onPrimary 确保在 primary 背景上可读
+            Text(
+              '在 Primary 背景上的标题',
+              style: textTheme.headlineMedium?.copyWith(
+                color: colorScheme.onPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '在 Primary 背景上的正文',
+              style: textTheme.bodyLarge?.copyWith(
+                color: colorScheme.onPrimary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="72-创建可复用的文本样式工具方法">7.2 创建可复用的文本样式工具方法</h3>
+<pre><code class="language-dart">extension TextThemeExtensions on TextTheme {
+  /// 正文加粗样式
+  TextStyle? get bodyLargeBold =&gt; bodyLarge?.copyWith(
+        fontWeight: FontWeight.w700,
+      );
+
+  /// 带删除线的正文样式（用于折扣价等场景）
+  TextStyle? get bodyMediumStrikethrough =&gt; bodyMedium?.copyWith(
+        decoration: TextDecoration.lineThrough,
+        color: bodyMedium?.color?.withValues(alpha: 0.5),
+      );
+
+  /// 带下划线的链接样式
+  TextStyle? get bodyMediumLink =&gt; bodyMedium?.copyWith(
+        decoration: TextDecoration.underline,
+      );
+}
+
+// 使用示例
+class TextExtensionDemo extends StatelessWidget {
+  const TextExtensionDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('加粗正文', style: textTheme.bodyLargeBold),
+        Text('¥199', style: textTheme.bodyMediumStrikethrough),
+        Text('查看详情', style: textTheme.bodyMediumLink),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="73-调试排版的实用技巧">7.3 调试排版的实用技巧</h3>
+<pre><code class="language-dart">class TypographyDebugPage extends StatelessWidget {
+  const TypographyDebugPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    // 将所有 15 种样式放入 Map，方便遍历展示
+    final styles = &lt;String, TextStyle?&gt;{
+      'displayLarge': textTheme.displayLarge,
+      'displayMedium': textTheme.displayMedium,
+      'displaySmall': textTheme.displaySmall,
+      'headlineLarge': textTheme.headlineLarge,
+      'headlineMedium': textTheme.headlineMedium,
+      'headlineSmall': textTheme.headlineSmall,
+      'titleLarge': textTheme.titleLarge,
+      'titleMedium': textTheme.titleMedium,
+      'titleSmall': textTheme.titleSmall,
+      'bodyLarge': textTheme.bodyLarge,
+      'bodyMedium': textTheme.bodyMedium,
+      'bodySmall': textTheme.bodySmall,
+      'labelLarge': textTheme.labelLarge,
+      'labelMedium': textTheme.labelMedium,
+      'labelSmall': textTheme.labelSmall,
+    };
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('排版调试')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: styles.entries.map((entry) {
+          final style = entry.value;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 样式名称和参数
+                Text(
+                  '${entry.key} | '
+                  '${style?.fontSize}px | '
+                  'w${style?.fontWeight?.value ?? &quot;?&quot;} | '
+                  'h${style?.height?.toStringAsFixed(2) ?? &quot;?&quot;}',
+                  style: textTheme.labelSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+                const SizedBox(height: 4),
+                // 样式效果预览
+                Text(
+                  '中文排版预览 Typography Preview',
+                  style: style,
+                ),
+                const Divider(),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="8-本课小结">8. 本课小结</h2>
+<h3 id="核心概念回顾">核心概念回顾</h3>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type Scale</strong></td>
+<td>Material 3 定义了 5 类 × 3 级 = 15 种文本样式，覆盖从展示标题到小型标签的所有场景</td>
+</tr>
+<tr>
+<td><strong>Display</strong></td>
+<td>最大的展示文本（57/45/36px），用于欢迎页、营销页面</td>
+</tr>
+<tr>
+<td><strong>Headline</strong></td>
+<td>页面级标题（32/28/24px），用于页面标题和重要区域标题</td>
+</tr>
+<tr>
+<td><strong>Title</strong></td>
+<td>组件级标题（22/16/14px），用于卡片、对话框、AppBar 标题</td>
+</tr>
+<tr>
+<td><strong>Body</strong></td>
+<td>正文内容（16/14/12px），用于段落文本和描述信息</td>
+</tr>
+<tr>
+<td><strong>Label</strong></td>
+<td>小型辅助文本（14/12/11px），用于按钮、标签、导航文字</td>
+</tr>
+<tr>
+<td><strong>TextTheme 自定义</strong></td>
+<td>通过 ThemeData.textTheme 覆盖默认样式，支持 copyWith 和 apply</td>
+</tr>
+<tr>
+<td><strong>Google Fonts</strong></td>
+<td>通过 google_fonts 包集成 1000+ 字体，支持单独使用和全局 TextTheme 替换</td>
+</tr>
+<tr>
+<td><strong>可变字体</strong></td>
+<td>使用 FontVariation 实现精细的字重、字宽控制和平滑动画</td>
+</tr>
+<tr>
+<td><strong>文本无障碍</strong></td>
+<td>使用 TextScaler 替代 textScaleFactor，确保文本在放大后不溢出</td>
+</tr>
+</tbody>
+</table>
+<h3 id="关键-api-速查">关键 API 速查</h3>
+<pre><code class="language-dart">// 获取 TextTheme
+Theme.of(context).textTheme
+
+// Google Fonts 单个样式
+GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w600)
+
+// Google Fonts 完整 TextTheme
+GoogleFonts.notoSansScTextTheme(baseTextTheme)
+
+// 可变字体
+TextStyle(fontVariations: [FontVariation('wght', 600)])
+
+// 文本缩放
+MediaQuery.textScalerOf(context)
+TextScaler.linear(1.5)
+</code></pre>
+<hr />
+<h2 id="9-练习题">9. 练习题</h2>
+<h3 id="练习一type-scale-展示器基础">练习一：Type Scale 展示器（基础）</h3>
+<p>创建一个页面，以表格或列表形式展示全部 15 种 TextStyle，每行包括：</p>
+<ul>
+<li>样式名称</li>
+<li>字号 / 字重 / 行高参数</li>
+<li>预览文本</li>
+</ul>
+<p>要求：使用 <code>ListView.builder</code> 实现，数据从 <code>TextTheme</code> 中动态读取。</p>
+<h3 id="练习二google-fonts-字体预览器进阶">练习二：Google Fonts 字体预览器（进阶）</h3>
+<p>创建一个字体预览工具：</p>
+<ol>
+<li>提供一个 <code>TextField</code> 让用户输入预览文本</li>
+<li>使用 <code>DropdownMenu</code> 让用户选择不同的 Google Fonts 字体（至少 5 种）</li>
+<li>提供字号和字重的 <code>Slider</code> 控制</li>
+<li>实时展示选中字体的渲染效果</li>
+</ol>
+<h3 id="练习三品牌排版方案实战综合">练习三：品牌排版方案实战（综合）</h3>
+<p>为一个虚拟的&quot;在线读书&quot;应用配置完整的排版方案：</p>
+<ol>
+<li>选择一套英文 + 中文字体组合</li>
+<li>自定义所有 15 种 TextStyle</li>
+<li>创建一个包含以下元素的展示页面：
+<ul>
+<li>页面大标题（Display 或 Headline）</li>
+<li>书籍卡片（Title + Body + Label）</li>
+<li>文章阅读区域（Body，优化行高和间距以提升阅读体验）</li>
+<li>操作按钮组（Label）</li>
+</ul>
+</li>
+<li>支持亮色/暗色主题切换</li>
+<li>用 TextScaler 测试在 2.0x 缩放下页面无溢出</li>
+</ol>
+<h3 id="练习四可变字体交互器挑战">练习四：可变字体交互器（挑战）</h3>
+<ol>
+<li>下载一款支持多轴的可变字体（如 Roboto Flex）</li>
+<li>创建一个页面，包含多个 Slider 分别控制字重（wght）、字宽（wdth）、光学尺寸（opsz）等轴</li>
+<li>实时预览字体变化效果</li>
+<li>添加一个动画按钮，点击后字重在 100~900 之间平滑动画循环</li>
+</ol>
+<hr />
+<h2 id="参考资源">参考资源</h2>
+<ul>
+<li><a href="https://m3.material.io/styles/typography/overview">Material Design 3 Typography 规范</a></li>
+<li><a href="https://api.flutter.dev/flutter/material/TextTheme-class.html">Flutter TextTheme API</a></li>
+<li><a href="https://pub.dev/packages/google_fonts">google_fonts 包</a></li>
+<li><a href="https://fonts.google.com/">Google Fonts 字体库</a></li>
+<li><a href="https://docs.flutter.dev/cookbook/design/fonts">Flutter 可变字体指南</a></li>
+<li><a href="https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html">WCAG 文本对比度标准</a></li>
+</ul>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

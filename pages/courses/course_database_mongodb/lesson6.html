@@ -1,0 +1,2302 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第06章-索引基础">第06章 索引基础</h1>
+<blockquote>
+<p>索引是数据库性能优化的基石。在 MongoDB 中，合理的索引设计可以将查询速度从秒级提升到毫秒级。本章将系统讲解索引的原理、常用索引类型、在 Spring Boot 中创建索引的方式，以及如何使用 explain() 分析和优化查询性能。</p>
+</blockquote>
+<hr />
+<h2 id="61-索引的作用与原理简述">6.1 索引的作用与原理简述</h2>
+<h3 id="611-为什么需要索引">6.1.1 为什么需要索引</h3>
+<p>想象你有一本 500 页的技术书籍，要查找&quot;聚合管道&quot;这个词出现在哪些页面。你有两种方式：</p>
+<ol>
+<li><strong>逐页翻阅</strong>：从第 1 页开始，一页一页翻到第 500 页。虽然一定能找到，但效率极低。</li>
+<li><strong>查看目录/索引</strong>：翻到书末的索引页，直接找到&quot;聚合管道 → 第 127、203、315 页&quot;，然后精确跳转。</li>
+</ol>
+<p>MongoDB 中的索引就像书末的索引页。没有索引时，MongoDB 必须执行<strong>全集合扫描（Collection Scan，简称 COLLSCAN）</strong> —— 逐个检查集合中的每个文档来匹配查询条件。当集合包含数十万甚至数百万文档时，全集合扫描的代价极其高昂。</p>
+<p><strong>有索引 vs 无索引的性能对比：</strong></p>
+<p>假设 <code>users</code> 集合有 100 万条文档，查询 <code>email = &quot;zhangsan@example.com&quot;</code>：</p>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>无索引（COLLSCAN）</th>
+<th>有索引（IXSCAN）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>扫描方式</strong></td>
+<td>逐个扫描所有文档</td>
+<td>通过索引定位，直接跳转</td>
+</tr>
+<tr>
+<td><strong>扫描文档数</strong></td>
+<td>1,000,000</td>
+<td>1（精确匹配）</td>
+</tr>
+<tr>
+<td><strong>时间复杂度</strong></td>
+<td>O(n)</td>
+<td>O(log n)</td>
+</tr>
+<tr>
+<td><strong>查询耗时</strong></td>
+<td>数百毫秒甚至数秒</td>
+<td>通常 &lt; 1 毫秒</td>
+</tr>
+<tr>
+<td><strong>CPU &amp; I/O 开销</strong></td>
+<td>极高</td>
+<td>极低</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-javascript">// 在 mongosh 中验证：查看无索引时的查询计划
+db.users.find({ email: &quot;zhangsan@example.com&quot; }).explain(&quot;executionStats&quot;)
+
+// 关键输出（无索引）：
+// &quot;winningPlan&quot;: { &quot;stage&quot;: &quot;COLLSCAN&quot; }        ← 全集合扫描
+// &quot;totalDocsExamined&quot;: 1000000                   ← 扫描了全部100万文档
+// &quot;executionTimeMillis&quot;: 850                     ← 耗时850毫秒
+
+// 创建索引后：
+db.users.createIndex({ email: 1 })
+db.users.find({ email: &quot;zhangsan@example.com&quot; }).explain(&quot;executionStats&quot;)
+
+// 关键输出（有索引）：
+// &quot;winningPlan&quot;: { &quot;stage&quot;: &quot;FETCH&quot;, &quot;inputStage&quot;: { &quot;stage&quot;: &quot;IXSCAN&quot; } }  ← 索引扫描
+// &quot;totalDocsExamined&quot;: 1                         ← 只扫描了1个文档
+// &quot;totalKeysExamined&quot;: 1                         ← 只检查了1个索引键
+// &quot;executionTimeMillis&quot;: 0                       ← 几乎瞬间完成
+</code></pre>
+<h3 id="612-b-tree-索引结构简述">6.1.2 B-Tree 索引结构简述</h3>
+<p>MongoDB 默认使用 <strong>B-Tree（B树）</strong> 作为索引的底层数据结构（准确来说，WiredTiger 引擎使用的是 B+ Tree 的变体）。</p>
+<p><strong>B-Tree 的核心特点：</strong></p>
+<ol>
+<li><strong>平衡多路搜索树</strong>：所有叶子节点在同一层，保证查询路径长度一致</li>
+<li><strong>有序存储</strong>：索引键按照指定顺序排列，支持范围查询和排序</li>
+<li><strong>对数时间复杂度</strong>：查找任意一个键的时间复杂度为 O(log n)</li>
+</ol>
+<p><strong>索引结构示意图（简化）：</strong></p>
+<pre><code>假设对 age 字段建立升序索引，集合中有以下文档：
+
+文档数据:
+  doc1: {age: 18, name: &quot;小明&quot;}
+  doc2: {age: 22, name: &quot;小红&quot;}
+  doc3: {age: 25, name: &quot;张三&quot;}
+  doc4: {age: 30, name: &quot;李四&quot;}
+  doc5: {age: 35, name: &quot;王五&quot;}
+  doc6: {age: 40, name: &quot;赵六&quot;}
+
+索引 B-Tree 结构:
+                    [25, 35]
+                   /    |    \
+              [18,22]  [30]  [40]
+               ↓  ↓     ↓     ↓
+             doc1 doc2  doc4  doc6
+                  doc3  doc5
+
+查找 age=30 的过程:
+  根节点 [25, 35] → 25 &lt; 30 &lt; 35 → 走中间分支
+  到达 [30] → 找到！→ 指向 doc4
+  总共只需要 2 次比较，而非扫描 6 个文档
+</code></pre>
+<p><strong>B-Tree 索引支持的操作：</strong></p>
+<ul>
+<li><strong>精确匹配</strong>：<code>{ age: 25 }</code> → 直接定位</li>
+<li><strong>范围查询</strong>：<code>{ age: { $gt: 20, $lt: 35 } }</code> → 定位起点后顺序遍历</li>
+<li><strong>排序</strong>：索引本身有序，可以避免额外的内存排序</li>
+<li><strong>前缀匹配</strong>：对于复合索引 <code>{ a: 1, b: 1 }</code>，可以只用 <code>a</code> 字段查询</li>
+</ul>
+<h3 id="613-索引的代价">6.1.3 索引的代价</h3>
+<p>索引并非免费的，它有以下代价：</p>
+<table>
+<thead>
+<tr>
+<th>代价</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>存储空间</strong></td>
+<td>每个索引都需要额外的磁盘空间，索引数据量通常为原始数据的 10%~30%</td>
+</tr>
+<tr>
+<td><strong>写入性能</strong></td>
+<td>每次插入、更新、删除文档时，相关索引也需要同步更新</td>
+</tr>
+<tr>
+<td><strong>内存占用</strong></td>
+<td>索引数据需要尽量保持在内存中才能发挥最大效果</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：不要创建过多不必要的索引。每个集合建议索引数量不超过 10 个。只为频繁查询的字段创建索引。</p>
+</blockquote>
+<hr />
+<h2 id="62-单字段索引与复合索引">6.2 单字段索引与复合索引</h2>
+<h3 id="621-单字段索引">6.2.1 单字段索引</h3>
+<p>单字段索引是最基本的索引类型，对集合中的一个字段创建索引。</p>
+<p><strong>创建语法：</strong></p>
+<pre><code class="language-javascript">// 语法：db.collection.createIndex({ field: direction })
+// direction: 1 表示升序，-1 表示降序
+
+// 对 email 字段创建升序索引
+db.users.createIndex({ email: 1 })
+
+// 对 createdAt 字段创建降序索引
+db.users.createIndex({ createdAt: -1 })
+
+// 创建索引时指定名称（建议为索引起有意义的名称）
+db.users.createIndex(
+    { email: 1 },
+    { name: &quot;idx_users_email&quot; }
+)
+</code></pre>
+<p><strong>升序(1)和降序(-1)的区别：</strong></p>
+<p>对于单字段索引，升序和降序在查询时<strong>效果完全相同</strong> —— MongoDB 可以双向遍历索引。区别主要体现在<strong>复合索引的排序</strong>场景中。</p>
+<pre><code class="language-javascript">// 以下两个索引在单字段查询时效果一样
+db.users.createIndex({ age: 1 })   // 升序
+db.users.createIndex({ age: -1 })  // 降序
+
+// 无论用哪个索引，以下查询都能受益
+db.users.find({ age: { $gt: 25 } }).sort({ age: 1 })   // 升序排序 ✓
+db.users.find({ age: { $gt: 25 } }).sort({ age: -1 })  // 降序排序 ✓
+</code></pre>
+<p><strong>查看集合的所有索引：</strong></p>
+<pre><code class="language-javascript">db.users.getIndexes()
+
+// 输出示例：
+// [
+//   { &quot;v&quot;: 2, &quot;key&quot;: { &quot;_id&quot;: 1 }, &quot;name&quot;: &quot;_id_&quot; },              ← 默认索引
+//   { &quot;v&quot;: 2, &quot;key&quot;: { &quot;email&quot;: 1 }, &quot;name&quot;: &quot;idx_users_email&quot; }  ← 自定义索引
+// ]
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>_id</code> 字段的索引是 MongoDB <strong>自动创建</strong>的，不能删除。</p>
+</blockquote>
+<p><strong>删除索引：</strong></p>
+<pre><code class="language-javascript">// 根据索引名称删除
+db.users.dropIndex(&quot;idx_users_email&quot;)
+
+// 根据索引定义删除
+db.users.dropIndex({ email: 1 })
+
+// 删除除 _id 外的所有索引
+db.users.dropIndexes()
+</code></pre>
+<h3 id="622-复合索引">6.2.2 复合索引</h3>
+<p>复合索引（Compound Index）是对<strong>多个字段</strong>创建的索引。当查询条件涉及多个字段时，复合索引比多个单字段索引更高效。</p>
+<p><strong>创建复合索引：</strong></p>
+<pre><code class="language-javascript">// 对 status 和 createdAt 创建复合索引
+db.users.createIndex({ status: 1, createdAt: -1 })
+
+// 对 status、age、createdAt 三个字段创建复合索引
+db.users.createIndex(
+    { status: 1, age: 1, createdAt: -1 },
+    { name: &quot;idx_users_status_age_createdAt&quot; }
+)
+</code></pre>
+<h3 id="623-字段顺序的重要性">6.2.3 字段顺序的重要性</h3>
+<p>复合索引中<strong>字段的顺序至关重要</strong>，它决定了索引的使用效率和适用范围。</p>
+<pre><code class="language-javascript">// 创建复合索引：{ status: 1, age: 1, createdAt: -1 }
+
+// 可以理解为索引按照以下方式组织数据：
+//
+//   status    age    createdAt          文档
+//   ─────────────────────────────────────────
+//   ACTIVE    18     2024-03-15         → doc1
+//   ACTIVE    22     2024-03-10         → doc2
+//   ACTIVE    25     2024-03-01         → doc3
+//   ACTIVE    30     2024-02-15         → doc4
+//   INACTIVE  20     2024-03-12         → doc5
+//   INACTIVE  35     2024-01-20         → doc6
+//
+// 先按 status 排序，status 相同的按 age 排序，age 相同的按 createdAt 降序排序
+</code></pre>
+<h3 id="624-前缀匹配原则">6.2.4 前缀匹配原则</h3>
+<p>复合索引遵循<strong>前缀匹配原则（Prefix Rule）</strong>：MongoDB 可以使用复合索引来支持对索引字段<strong>前缀</strong>的查询。</p>
+<p>对于复合索引 <code>{ a: 1, b: 1, c: 1 }</code>，其可用的前缀有：</p>
+<ul>
+<li><code>{ a: 1 }</code></li>
+<li><code>{ a: 1, b: 1 }</code></li>
+<li><code>{ a: 1, b: 1, c: 1 }</code></li>
+</ul>
+<pre><code class="language-javascript">// 假设索引：{ status: 1, age: 1, createdAt: -1 }
+
+// ✅ 可以使用索引的查询（匹配前缀）
+db.users.find({ status: &quot;ACTIVE&quot; })                          // 前缀: status
+db.users.find({ status: &quot;ACTIVE&quot;, age: 25 })                 // 前缀: status + age
+db.users.find({ status: &quot;ACTIVE&quot;, age: { $gt: 20 }, createdAt: { $lt: new Date() } })
+                                                              // 完整索引
+
+// ❌ 无法使用索引的查询（不匹配前缀）
+db.users.find({ age: 25 })                                   // 跳过了 status
+db.users.find({ createdAt: { $gt: new Date(&quot;2024-01-01&quot;) } }) // 跳过了 status 和 age
+db.users.find({ age: 25, createdAt: { $lt: new Date() } })   // 跳过了 status
+</code></pre>
+<p><strong>前缀匹配示例汇总：</strong></p>
+<table>
+<thead>
+<tr>
+<th>索引定义</th>
+<th>查询条件</th>
+<th>是否命中索引</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{a:1, b:1, c:1}</code></td>
+<td><code>{a: &quot;x&quot;}</code></td>
+<td>✅ 命中</td>
+<td>匹配前缀 {a}</td>
+</tr>
+<tr>
+<td><code>{a:1, b:1, c:1}</code></td>
+<td><code>{a: &quot;x&quot;, b: &quot;y&quot;}</code></td>
+<td>✅ 命中</td>
+<td>匹配前缀 {a, b}</td>
+</tr>
+<tr>
+<td><code>{a:1, b:1, c:1}</code></td>
+<td><code>{a: &quot;x&quot;, b: &quot;y&quot;, c: &quot;z&quot;}</code></td>
+<td>✅ 命中</td>
+<td>完整匹配</td>
+</tr>
+<tr>
+<td><code>{a:1, b:1, c:1}</code></td>
+<td><code>{b: &quot;y&quot;}</code></td>
+<td>❌ 不命中</td>
+<td>跳过了 a</td>
+</tr>
+<tr>
+<td><code>{a:1, b:1, c:1}</code></td>
+<td><code>{c: &quot;z&quot;}</code></td>
+<td>❌ 不命中</td>
+<td>跳过了 a 和 b</td>
+</tr>
+<tr>
+<td><code>{a:1, b:1, c:1}</code></td>
+<td><code>{a: &quot;x&quot;, c: &quot;z&quot;}</code></td>
+<td>⚠️ 部分命中</td>
+<td>只能用 {a} 前缀，c 无法走索引</td>
+</tr>
+</tbody>
+</table>
+<h3 id="625-复合索引的排序方向">6.2.5 复合索引的排序方向</h3>
+<p>在复合索引中，字段的排序方向（升序/降序）会影响排序查询的效率：</p>
+<pre><code class="language-javascript">// 索引：{ status: 1, createdAt: -1 }
+
+// ✅ 能利用索引排序（方向匹配或完全相反）
+db.users.find({ status: &quot;ACTIVE&quot; }).sort({ status: 1, createdAt: -1 })   // 完全匹配
+db.users.find({ status: &quot;ACTIVE&quot; }).sort({ status: -1, createdAt: 1 })   // 完全相反也行
+
+// ❌ 无法利用索引排序（方向不一致）
+db.users.find({ status: &quot;ACTIVE&quot; }).sort({ status: 1, createdAt: 1 })    // 方向冲突
+db.users.find({ status: &quot;ACTIVE&quot; }).sort({ status: -1, createdAt: -1 })  // 方向冲突
+</code></pre>
+<blockquote>
+<p><strong>规则</strong>：复合索引的排序方向必须与查询的排序方向<strong>完全一致</strong>或<strong>完全相反</strong>，才能利用索引排序。</p>
+</blockquote>
+<h3 id="626-索引设计建议">6.2.6 索引设计建议</h3>
+<pre><code class="language-javascript">// 场景：管理后台的用户列表，支持按状态筛选，按创建时间倒序排列
+// 推荐索引：
+db.users.createIndex({ status: 1, createdAt: -1 })
+
+// 场景：根据用户名模糊搜索 + 状态筛选 + 时间范围
+// 推荐索引：（将等值查询字段放前面，范围查询字段放后面）
+db.users.createIndex({ status: 1, createdAt: -1, name: 1 })
+
+// 场景：商品列表，按分类筛选 + 价格范围 + 销量倒序
+db.products.createIndex({ category: 1, price: 1, sales: -1 })
+</code></pre>
+<hr />
+<h2 id="63-唯一索引与-ttl-索引">6.3 唯一索引与 TTL 索引</h2>
+<h3 id="631-唯一索引">6.3.1 唯一索引</h3>
+<p>唯一索引（Unique Index）确保索引字段的值在集合中是唯一的，类似于关系型数据库的 UNIQUE 约束。</p>
+<p><strong>创建唯一索引：</strong></p>
+<pre><code class="language-javascript">// 对 email 字段创建唯一索引
+db.users.createIndex(
+    { email: 1 },
+    { unique: true, name: &quot;idx_users_email_unique&quot; }
+)
+
+// 复合唯一索引：确保 userId + deviceId 组合唯一
+db.user_devices.createIndex(
+    { userId: 1, deviceId: 1 },
+    { unique: true }
+)
+</code></pre>
+<p><strong>唯一索引的行为：</strong></p>
+<pre><code class="language-javascript">// 插入第一条：成功
+db.users.insertOne({ email: &quot;zhangsan@example.com&quot;, name: &quot;张三&quot; })
+
+// 插入重复的 email：失败！
+db.users.insertOne({ email: &quot;zhangsan@example.com&quot;, name: &quot;李四&quot; })
+// 报错：E11000 duplicate key error collection: mydb.users
+//       index: idx_users_email_unique dup key: { email: &quot;zhangsan@example.com&quot; }
+
+// 注意：null 也算一个值，多个文档的 email 为 null 也会冲突
+db.users.insertOne({ name: &quot;王五&quot; })  // email 字段不存在，视为 null
+db.users.insertOne({ name: &quot;赵六&quot; })  // 报错！已经有一个文档的 email 为 null
+</code></pre>
+<p><strong>部分唯一索引（Partial Unique Index）：</strong></p>
+<p>有时候我们希望唯一约束只针对满足特定条件的文档。例如，只对已激活用户的 email 做唯一约束：</p>
+<pre><code class="language-javascript">// 部分唯一索引：只对 status 为 &quot;ACTIVE&quot; 的文档检查 email 唯一性
+db.users.createIndex(
+    { email: 1 },
+    {
+        unique: true,
+        partialFilterExpression: { status: &quot;ACTIVE&quot; },
+        name: &quot;idx_users_email_unique_active&quot;
+    }
+)
+
+// 以下操作合法：
+db.users.insertOne({ email: &quot;test@example.com&quot;, status: &quot;ACTIVE&quot; })  // ✅
+db.users.insertOne({ email: &quot;test@example.com&quot;, status: &quot;DELETED&quot; }) // ✅ status 不是 ACTIVE，不受约束
+
+// 以下操作非法：
+db.users.insertOne({ email: &quot;test@example.com&quot;, status: &quot;ACTIVE&quot; })  // ❌ 重复！
+</code></pre>
+<p><strong>稀疏唯一索引：</strong></p>
+<p>如果允许多个文档的索引字段为 null（即字段不存在），可以使用稀疏索引：</p>
+<pre><code class="language-javascript">// 稀疏索引：只为字段存在的文档建立索引
+db.users.createIndex(
+    { email: 1 },
+    { unique: true, sparse: true, name: &quot;idx_users_email_unique_sparse&quot; }
+)
+
+// 稀疏索引下，多个文档可以没有 email 字段
+db.users.insertOne({ name: &quot;王五&quot; })   // ✅ 没有 email 字段，稀疏索引忽略它
+db.users.insertOne({ name: &quot;赵六&quot; })   // ✅ 同样没有 email 字段，不冲突
+db.users.insertOne({ email: null })    // ❌ 注意：email: null 仍会被索引！
+</code></pre>
+<h3 id="632-ttl-索引">6.3.2 TTL 索引</h3>
+<p>TTL（Time-To-Live）索引是一种特殊的单字段索引，它可以让 MongoDB <strong>自动删除过期文档</strong>。TTL 索引只能建立在日期类型的字段上。</p>
+<p><strong>创建 TTL 索引：</strong></p>
+<pre><code class="language-javascript">// 文档在 expireAt 指定的时间点过期
+db.sessions.createIndex(
+    { expireAt: 1 },
+    { expireAfterSeconds: 0, name: &quot;idx_sessions_ttl&quot; }
+)
+
+// 插入文档时指定过期时间：30分钟后过期
+db.sessions.insertOne({
+    sessionId: &quot;sess_abc123&quot;,
+    userId: &quot;user001&quot;,
+    data: { cart: [&quot;item1&quot;, &quot;item2&quot;] },
+    expireAt: new Date(Date.now() + 30 * 60 * 1000)  // 当前时间 + 30分钟
+})
+
+// 也可以让文档在创建后固定时间过期
+// expireAfterSeconds: 3600 表示文档在 createdAt 之后 3600 秒（1小时）过期
+db.verificationCodes.createIndex(
+    { createdAt: 1 },
+    { expireAfterSeconds: 3600, name: &quot;idx_codes_ttl_1h&quot; }
+)
+
+db.verificationCodes.insertOne({
+    phone: &quot;13800138000&quot;,
+    code: &quot;123456&quot;,
+    createdAt: new Date()  // 该文档将在 1 小时后自动删除
+})
+</code></pre>
+<p><strong>TTL 索引的工作机制：</strong></p>
+<ul>
+<li>MongoDB 后台有一个<strong>专用的清理线程</strong>，每 60 秒运行一次</li>
+<li>它检查 TTL 索引中过期的文档并删除</li>
+<li>因此文档不会在精确的过期时间点被删除，可能有最多 60 秒的延迟</li>
+<li>TTL 索引只能建立在<strong>单字段</strong>上，且该字段必须是 <strong>Date 类型</strong></li>
+</ul>
+<p><strong>TTL 索引的应用场景：</strong></p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>过期策略</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>会话管理</strong></td>
+<td>30 分钟无操作后过期</td>
+<td>用户 Session 自动清理</td>
+</tr>
+<tr>
+<td><strong>验证码</strong></td>
+<td>5 分钟后过期</td>
+<td>短信/邮箱验证码自动失效</td>
+</tr>
+<tr>
+<td><strong>临时令牌</strong></td>
+<td>24 小时后过期</td>
+<td>密码重置链接、邀请链接</td>
+</tr>
+<tr>
+<td><strong>日志数据</strong></td>
+<td>30 天后过期</td>
+<td>自动清理旧日志，节省存储空间</td>
+</tr>
+<tr>
+<td><strong>缓存数据</strong></td>
+<td>自定义过期时间</td>
+<td>类似 Redis 的 TTL 功能</td>
+</tr>
+</tbody>
+</table>
+<p><strong>完整的验证码管理示例：</strong></p>
+<pre><code class="language-javascript">// 1. 创建验证码集合的 TTL 索引（5分钟过期）
+db.verificationCodes.createIndex(
+    { createdAt: 1 },
+    { expireAfterSeconds: 300 }  // 300秒 = 5分钟
+)
+
+// 2. 发送验证码时插入文档
+db.verificationCodes.insertOne({
+    phone: &quot;13800138000&quot;,
+    code: &quot;582943&quot;,
+    type: &quot;LOGIN&quot;,
+    createdAt: new Date(),
+    used: false
+})
+
+// 3. 验证时查询
+db.verificationCodes.findOne({
+    phone: &quot;13800138000&quot;,
+    code: &quot;582943&quot;,
+    used: false
+})
+// 如果文档还没过期，能查到；过期后自动被删除，查不到
+
+// 4. 验证成功后标记为已使用（防止重复使用）
+db.verificationCodes.updateOne(
+    { phone: &quot;13800138000&quot;, code: &quot;582943&quot; },
+    { $set: { used: true } }
+)
+</code></pre>
+<p><strong>修改 TTL 过期时间：</strong></p>
+<pre><code class="language-javascript">// 使用 collMod 命令修改 TTL 时间
+db.runCommand({
+    collMod: &quot;verificationCodes&quot;,
+    index: {
+        keyPattern: { createdAt: 1 },
+        expireAfterSeconds: 600  // 改为 10 分钟
+    }
+})
+</code></pre>
+<hr />
+<h2 id="64-在-spring-boot-中通过注解和代码创建索引">6.4 在 Spring Boot 中通过注解和代码创建索引</h2>
+<h3 id="641-indexed-注解--单字段索引">6.4.1 @Indexed 注解 —— 单字段索引</h3>
+<p><code>@Indexed</code> 是 Spring Data MongoDB 提供的注解，用于在实体类的字段上声明索引。</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Document(collection = &quot;users&quot;)
+public class User {
+
+    @Id
+    private String id;
+
+    private String name;
+
+    private Integer age;
+
+    @Indexed(unique = true)
+    private String email;
+
+    @Indexed
+    private String status;
+
+    private List&lt;String&gt; tags;
+
+    @Indexed(direction = org.springframework.data.mongodb.core.index.IndexDirection.DESCENDING)
+    @Field(&quot;created_at&quot;)
+    private LocalDateTime createdAt;
+
+    // 构造方法、getter、setter 省略
+}
+</code></pre>
+<p><strong>@Indexed 注解的常用属性：</strong></p>
+<pre><code class="language-java">import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.IndexDirection;
+
+public class IndexedExamples {
+
+    // 基本索引（升序）
+    @Indexed
+    private String username;
+
+    // 唯一索引
+    @Indexed(unique = true)
+    private String email;
+
+    // 降序索引
+    @Indexed(direction = IndexDirection.DESCENDING)
+    private LocalDateTime createdAt;
+
+    // 自定义索引名称
+    @Indexed(name = &quot;idx_phone&quot;)
+    private String phone;
+
+    // 稀疏索引
+    @Indexed(sparse = true)
+    private String nickname;
+
+    // TTL 索引：文档在该字段值之后 3600 秒过期
+    @Indexed(expireAfterSeconds = 3600)
+    private LocalDateTime expireAt;
+
+    // TTL 索引：验证码 5 分钟后过期
+    @Indexed(expireAfterSeconds = 300)
+    private LocalDateTime codeCreatedAt;
+
+    // 组合多个属性
+    @Indexed(unique = true, sparse = true, name = &quot;idx_wechat_unique&quot;)
+    private String wechatOpenId;
+}
+</code></pre>
+<p><strong>TTL 索引的实体类示例 —— 验证码：</strong></p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.LocalDateTime;
+
+@Document(collection = &quot;verification_codes&quot;)
+public class VerificationCode {
+
+    @Id
+    private String id;
+
+    @Indexed
+    private String phone;
+
+    private String code;
+
+    private String type;
+
+    private boolean used;
+
+    @Indexed(expireAfterSeconds = 300)
+    private LocalDateTime createdAt;
+
+    public VerificationCode() {}
+
+    public VerificationCode(String phone, String code, String type) {
+        this.phone = phone;
+        this.code = code;
+        this.type = type;
+        this.used = false;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // getter / setter 省略
+}
+</code></pre>
+<h3 id="642-compoundindex-注解--复合索引">6.4.2 @CompoundIndex 注解 —— 复合索引</h3>
+<p><code>@CompoundIndex</code> 用于在实体类级别声明复合索引，因为复合索引涉及多个字段，无法直接在单个字段上标注。</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Document(collection = &quot;articles&quot;)
+@CompoundIndexes({
+    @CompoundIndex(
+        name = &quot;idx_status_createdAt&quot;,
+        def = &quot;{'status': 1, 'created_at': -1}&quot;
+    ),
+    @CompoundIndex(
+        name = &quot;idx_category_status&quot;,
+        def = &quot;{'category': 1, 'status': 1}&quot;
+    ),
+    @CompoundIndex(
+        name = &quot;idx_author_createdAt&quot;,
+        def = &quot;{'authorId': 1, 'created_at': -1}&quot;
+    )
+})
+public class Article {
+
+    @Id
+    private String id;
+
+    private String title;
+
+    private String content;
+
+    private String authorId;
+
+    private String category;
+
+    private String status;
+
+    private List&lt;String&gt; tags;
+
+    private Integer viewCount;
+
+    @Field(&quot;created_at&quot;)
+    private LocalDateTime createdAt;
+
+    @Field(&quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+
+    // 构造方法、getter、setter 省略
+}
+</code></pre>
+<p><strong>复合索引的更多用法：</strong></p>
+<pre><code class="language-java">// 唯一复合索引
+@CompoundIndex(
+    name = &quot;idx_userId_deviceId_unique&quot;,
+    def = &quot;{'userId': 1, 'deviceId': 1}&quot;,
+    unique = true
+)
+
+// 带部分过滤的复合索引
+@CompoundIndex(
+    name = &quot;idx_email_unique_active&quot;,
+    def = &quot;{'email': 1}&quot;,
+    unique = true,
+    partialFilter = &quot;{'status': 'ACTIVE'}&quot;
+)
+</code></pre>
+<h3 id="643-textindexed-注解--文本索引">6.4.3 @TextIndexed 注解 —— 文本索引</h3>
+<p>文本索引用于支持全文搜索。MongoDB 的文本索引支持对字符串内容进行分词和搜索。</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.TextIndexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import java.time.LocalDateTime;
+
+@Document(collection = &quot;articles&quot;)
+public class Article {
+
+    @Id
+    private String id;
+
+    @TextIndexed(weight = 3)
+    private String title;
+
+    @TextIndexed(weight = 1)
+    private String content;
+
+    @TextIndexed(weight = 2)
+    private String summary;
+
+    private String category;
+
+    private String status;
+
+    @Field(&quot;created_at&quot;)
+    private LocalDateTime createdAt;
+
+    // 构造方法、getter、setter 省略
+}
+</code></pre>
+<blockquote>
+<p><strong>说明</strong>：<code>weight</code> 属性设置字段在全文搜索中的权重。上面的例子中 title 权重为 3，summary 权重为 2，content 权重为 1，意味着标题中的匹配会获得更高的相关性分数。</p>
+</blockquote>
+<p><strong>使用文本索引进行全文搜索：</strong></p>
+<pre><code class="language-java">import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.query.TextQuery;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class ArticleSearchService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public ArticleSearchService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    public List&lt;Article&gt; fullTextSearch(String keyword) {
+        TextCriteria textCriteria = TextCriteria.forDefaultLanguage()
+            .matching(keyword);
+
+        Query query = TextQuery.queryText(textCriteria)
+            .sortByScore();
+
+        return mongoTemplate.find(query, Article.class);
+    }
+
+    public List&lt;Article&gt; fullTextSearchWithFilter(String keyword, String category) {
+        TextCriteria textCriteria = TextCriteria.forDefaultLanguage()
+            .matching(keyword);
+
+        Query query = TextQuery.queryText(textCriteria)
+            .sortByScore();
+        query.addCriteria(Criteria.where(&quot;category&quot;).is(category));
+
+        return mongoTemplate.find(query, Article.class);
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：每个集合只能有<strong>一个</strong>文本索引。MongoDB 的内置文本搜索对中文的分词支持有限，生产环境如需高质量中文全文搜索，建议结合 Elasticsearch 或 MongoDB Atlas Search 使用。</p>
+</blockquote>
+<h3 id="644-使用-mongotemplate-编程式创建索引">6.4.4 使用 MongoTemplate 编程式创建索引</h3>
+<p>除了注解方式，还可以通过 <code>MongoTemplate</code> 的 <code>IndexOperations</code> 在代码中动态创建索引。这种方式在以下场景非常有用：</p>
+<ul>
+<li>需要根据配置动态创建索引</li>
+<li>索引定义较复杂，注解难以表达</li>
+<li>需要在应用启动时统一管理索引</li>
+</ul>
+<pre><code class="language-java">package com.example.mongo.config;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.Index;
+import org.springframework.data.mongodb.core.index.IndexOperations;
+import org.springframework.data.mongodb.core.index.IndexInfo;
+import org.springframework.stereotype.Component;
+import java.time.Duration;
+import java.util.List;
+
+@Component
+public class MongoIndexInitializer implements CommandLineRunner {
+
+    private final MongoTemplate mongoTemplate;
+
+    public MongoIndexInitializer(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    @Override
+    public void run(String... args) {
+        createUserIndexes();
+        createArticleIndexes();
+        createSessionIndexes();
+        System.out.println(&quot;MongoDB 索引初始化完成&quot;);
+    }
+
+    private void createUserIndexes() {
+        IndexOperations indexOps = mongoTemplate.indexOps(&quot;users&quot;);
+
+        // 单字段唯一索引
+        indexOps.ensureIndex(
+            new Index()
+                .on(&quot;email&quot;, Sort.Direction.ASC)
+                .unique()
+                .named(&quot;idx_users_email_unique&quot;)
+        );
+
+        // 单字段普通索引
+        indexOps.ensureIndex(
+            new Index()
+                .on(&quot;status&quot;, Sort.Direction.ASC)
+                .named(&quot;idx_users_status&quot;)
+        );
+
+        // 复合索引
+        indexOps.ensureIndex(
+            new Index()
+                .on(&quot;status&quot;, Sort.Direction.ASC)
+                .on(&quot;createdAt&quot;, Sort.Direction.DESC)
+                .named(&quot;idx_users_status_createdAt&quot;)
+        );
+
+        // 稀疏唯一索引
+        indexOps.ensureIndex(
+            new Index()
+                .on(&quot;phone&quot;, Sort.Direction.ASC)
+                .unique()
+                .sparse()
+                .named(&quot;idx_users_phone_unique_sparse&quot;)
+        );
+    }
+
+    private void createArticleIndexes() {
+        IndexOperations indexOps = mongoTemplate.indexOps(&quot;articles&quot;);
+
+        // 复合索引
+        indexOps.ensureIndex(
+            new Index()
+                .on(&quot;category&quot;, Sort.Direction.ASC)
+                .on(&quot;status&quot;, Sort.Direction.ASC)
+                .on(&quot;createdAt&quot;, Sort.Direction.DESC)
+                .named(&quot;idx_articles_category_status_createdAt&quot;)
+        );
+
+        // 作者索引
+        indexOps.ensureIndex(
+            new Index()
+                .on(&quot;authorId&quot;, Sort.Direction.ASC)
+                .on(&quot;createdAt&quot;, Sort.Direction.DESC)
+                .named(&quot;idx_articles_author_createdAt&quot;)
+        );
+    }
+
+    private void createSessionIndexes() {
+        IndexOperations indexOps = mongoTemplate.indexOps(&quot;sessions&quot;);
+
+        // TTL 索引：30分钟后过期
+        indexOps.ensureIndex(
+            new Index()
+                .on(&quot;createdAt&quot;, Sort.Direction.ASC)
+                .expire(Duration.ofMinutes(30))
+                .named(&quot;idx_sessions_ttl&quot;)
+        );
+
+        // 会话 ID 唯一索引
+        indexOps.ensureIndex(
+            new Index()
+                .on(&quot;sessionId&quot;, Sort.Direction.ASC)
+                .unique()
+                .named(&quot;idx_sessions_sessionId_unique&quot;)
+        );
+    }
+}
+</code></pre>
+<h3 id="645-使用-indexoperations-管理索引">6.4.5 使用 IndexOperations 管理索引</h3>
+<p><code>IndexOperations</code> 不仅能创建索引，还能查询和删除索引：</p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.IndexInfo;
+import org.springframework.data.mongodb.core.index.IndexOperations;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class IndexManagementService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public IndexManagementService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 获取指定集合的所有索引信息
+     */
+    public List&lt;IndexInfo&gt; getIndexes(String collectionName) {
+        IndexOperations indexOps = mongoTemplate.indexOps(collectionName);
+        return indexOps.getIndexInfo();
+    }
+
+    /**
+     * 打印集合的索引详情
+     */
+    public void printIndexes(String collectionName) {
+        List&lt;IndexInfo&gt; indexes = getIndexes(collectionName);
+        System.out.println(&quot;集合 [&quot; + collectionName + &quot;] 的索引列表：&quot;);
+        System.out.println(&quot;─&quot;.repeat(60));
+        for (IndexInfo index : indexes) {
+            System.out.println(&quot;名称: &quot; + index.getName());
+            System.out.println(&quot;字段: &quot; + index.getIndexFields());
+            System.out.println(&quot;唯一: &quot; + index.isUnique());
+            System.out.println(&quot;稀疏: &quot; + index.isSparse());
+            index.getExpireAfter().ifPresent(
+                duration -&gt; System.out.println(&quot;TTL:  &quot; + duration.getSeconds() + &quot; 秒&quot;)
+            );
+            System.out.println(&quot;─&quot;.repeat(60));
+        }
+    }
+
+    /**
+     * 删除指定索引
+     */
+    public void dropIndex(String collectionName, String indexName) {
+        IndexOperations indexOps = mongoTemplate.indexOps(collectionName);
+        indexOps.dropIndex(indexName);
+        System.out.println(&quot;已删除索引: &quot; + collectionName + &quot;.&quot; + indexName);
+    }
+
+    /**
+     * 删除集合中除 _id 外的所有索引
+     */
+    public void dropAllIndexes(String collectionName) {
+        IndexOperations indexOps = mongoTemplate.indexOps(collectionName);
+        indexOps.dropAllIndexes();
+        System.out.println(&quot;已删除集合 [&quot; + collectionName + &quot;] 的所有自定义索引&quot;);
+    }
+
+    /**
+     * 获取索引名称列表
+     */
+    public List&lt;String&gt; getIndexNames(String collectionName) {
+        return getIndexes(collectionName).stream()
+            .map(IndexInfo::getName)
+            .collect(Collectors.toList());
+    }
+}
+</code></pre>
+<p><strong>在 Controller 中暴露索引管理接口（仅供管理后台使用）：</strong></p>
+<pre><code class="language-java">package com.example.mongo.controller;
+
+import com.example.mongo.service.IndexManagementService;
+import org.springframework.data.mongodb.core.index.IndexInfo;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/admin/indexes&quot;)
+public class IndexController {
+
+    private final IndexManagementService indexService;
+
+    public IndexController(IndexManagementService indexService) {
+        this.indexService = indexService;
+    }
+
+    @GetMapping(&quot;/{collection}&quot;)
+    public ResponseEntity&lt;List&lt;IndexInfo&gt;&gt; getIndexes(@PathVariable String collection) {
+        return ResponseEntity.ok(indexService.getIndexes(collection));
+    }
+
+    @DeleteMapping(&quot;/{collection}/{indexName}&quot;)
+    public ResponseEntity&lt;String&gt; dropIndex(
+            @PathVariable String collection,
+            @PathVariable String indexName) {
+        indexService.dropIndex(collection, indexName);
+        return ResponseEntity.ok(&quot;索引已删除: &quot; + collection + &quot;.&quot; + indexName);
+    }
+}
+</code></pre>
+<h3 id="646-自动索引创建的配置">6.4.6 自动索引创建的配置</h3>
+<p>Spring Data MongoDB 默认会在应用启动时根据注解自动创建索引。可以通过配置控制此行为：</p>
+<pre><code class="language-yaml"># application.yml
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/mydb
+      auto-index-creation: true   # 默认为 true，设为 false 禁用自动创建
+</code></pre>
+<p>在生产环境中，建议将 <code>auto-index-creation</code> 设置为 <code>false</code>，改用编程式方式（如上面的 <code>MongoIndexInitializer</code>）管理索引，原因如下：</p>
+<ol>
+<li><strong>可控性</strong>：避免意外创建或修改索引影响线上性能</li>
+<li><strong>可审计</strong>：索引变更集中管理，便于 Code Review</li>
+<li><strong>性能影响</strong>：在大集合上创建索引可能耗时很长，自动创建可能导致应用启动缓慢</li>
+</ol>
+<pre><code class="language-java">// 也可以通过 Java 配置关闭自动索引创建
+package com.example.mongo.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
+
+@Configuration
+public class MongoConfig extends AbstractMongoClientConfiguration {
+
+    @Override
+    protected String getDatabaseName() {
+        return &quot;mydb&quot;;
+    }
+
+    @Override
+    protected boolean autoIndexCreation() {
+        return false;
+    }
+}
+</code></pre>
+<hr />
+<h2 id="65-使用-explain-分析查询性能">6.5 使用 explain() 分析查询性能</h2>
+<h3 id="651-explain-概述">6.5.1 explain() 概述</h3>
+<p><code>explain()</code> 是 MongoDB 提供的查询分析工具，它不执行实际查询（或在特定模式下执行），而是返回查询计划的详细信息。通过 <code>explain()</code> 可以了解 MongoDB 如何执行查询、是否使用了索引、扫描了多少文档等关键信息。</p>
+<h3 id="652-explain-的三种模式">6.5.2 explain() 的三种模式</h3>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>说明</th>
+<th>是否执行查询</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>queryPlanner</strong>（默认）</td>
+<td>显示查询优化器选择的执行计划</td>
+<td>❌ 不执行</td>
+</tr>
+<tr>
+<td><strong>executionStats</strong></td>
+<td>执行查询并返回详细的执行统计信息</td>
+<td>✅ 执行</td>
+</tr>
+<tr>
+<td><strong>allPlansExecution</strong></td>
+<td>执行查询并返回所有候选计划的执行信息</td>
+<td>✅ 执行所有计划</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-javascript">// queryPlanner 模式（默认）—— 只看执行计划，不实际执行
+db.users.find({ status: &quot;ACTIVE&quot; }).explain()
+db.users.find({ status: &quot;ACTIVE&quot; }).explain(&quot;queryPlanner&quot;)
+
+// executionStats 模式 —— 最常用，可以看到实际的执行统计
+db.users.find({ status: &quot;ACTIVE&quot; }).explain(&quot;executionStats&quot;)
+
+// allPlansExecution 模式 —— 看所有候选计划的执行情况
+db.users.find({ status: &quot;ACTIVE&quot; }).explain(&quot;allPlansExecution&quot;)
+</code></pre>
+<h3 id="653-关键指标解读">6.5.3 关键指标解读</h3>
+<p>以 <code>executionStats</code> 模式的输出为例，详细解读各个关键指标：</p>
+<pre><code class="language-javascript">db.users.find({ status: &quot;ACTIVE&quot;, age: { $gt: 25 } })
+    .sort({ createdAt: -1 })
+    .explain(&quot;executionStats&quot;)
+</code></pre>
+<p><strong>输出结构（关键字段）：</strong></p>
+<pre><code class="language-javascript">{
+  &quot;queryPlanner&quot;: {
+    &quot;winningPlan&quot;: {
+      &quot;stage&quot;: &quot;SORT&quot;,                    // 最外层操作阶段
+      &quot;sortPattern&quot;: { &quot;createdAt&quot;: -1 },
+      &quot;inputStage&quot;: {
+        &quot;stage&quot;: &quot;FETCH&quot;,                 // 获取完整文档
+        &quot;inputStage&quot;: {
+          &quot;stage&quot;: &quot;IXSCAN&quot;,             // 索引扫描 ← 关键！
+          &quot;keyPattern&quot;: { &quot;status&quot;: 1, &quot;age&quot;: 1 },
+          &quot;indexName&quot;: &quot;idx_status_age&quot;,
+          &quot;direction&quot;: &quot;forward&quot;
+        }
+      }
+    },
+    &quot;rejectedPlans&quot;: [ ... ]             // 被拒绝的候选计划
+  },
+  &quot;executionStats&quot;: {
+    &quot;executionSuccess&quot;: true,
+    &quot;nReturned&quot;: 150,                    // 最终返回的文档数
+    &quot;executionTimeMillis&quot;: 12,           // 总执行时间（毫秒）
+    &quot;totalKeysExamined&quot;: 420,            // 扫描的索引键数量
+    &quot;totalDocsExamined&quot;: 420,            // 扫描的文档数量
+    &quot;executionStages&quot;: {
+      &quot;stage&quot;: &quot;SORT&quot;,
+      &quot;nReturned&quot;: 150,
+      &quot;executionTimeMillisEstimate&quot;: 5,
+      &quot;memUsage&quot;: 102400,               // 内存使用（字节）
+      &quot;inputStage&quot;: {
+        &quot;stage&quot;: &quot;FETCH&quot;,
+        &quot;nReturned&quot;: 420,
+        &quot;docsExamined&quot;: 420,
+        &quot;inputStage&quot;: {
+          &quot;stage&quot;: &quot;IXSCAN&quot;,
+          &quot;nReturned&quot;: 420,
+          &quot;keysExamined&quot;: 420
+        }
+      }
+    }
+  }
+}
+</code></pre>
+<p><strong>关键指标速查表：</strong></p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>含义</th>
+<th>优化目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>winningPlan.stage</code></td>
+<td>查询执行的阶段类型</td>
+<td>期望看到 IXSCAN，避免 COLLSCAN</td>
+</tr>
+<tr>
+<td><code>nReturned</code></td>
+<td>最终返回的文档数</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>executionTimeMillis</code></td>
+<td>查询总执行时间（毫秒）</td>
+<td>越小越好</td>
+</tr>
+<tr>
+<td><code>totalKeysExamined</code></td>
+<td>扫描的索引键数量</td>
+<td>越接近 nReturned 越好</td>
+</tr>
+<tr>
+<td><code>totalDocsExamined</code></td>
+<td>扫描的文档数量</td>
+<td>越接近 nReturned 越好</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见的执行阶段（stage）类型：</strong></p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>含义</th>
+<th>是否期望</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>COLLSCAN</strong></td>
+<td>全集合扫描（无索引）</td>
+<td>❌ 性能杀手，需要优化</td>
+</tr>
+<tr>
+<td><strong>IXSCAN</strong></td>
+<td>索引扫描</td>
+<td>✅ 期望看到</td>
+</tr>
+<tr>
+<td><strong>FETCH</strong></td>
+<td>根据索引定位后获取完整文档</td>
+<td>✅ 正常阶段</td>
+</tr>
+<tr>
+<td><strong>SORT</strong></td>
+<td>内存中排序</td>
+<td>⚠️ 如果数据量大需注意</td>
+</tr>
+<tr>
+<td><strong>SORT_KEY_GENERATOR</strong></td>
+<td>生成排序键</td>
+<td>⚠️ 配合 SORT 出现</td>
+</tr>
+<tr>
+<td><strong>PROJECTION</strong></td>
+<td>字段投影</td>
+<td>✅ 正常阶段</td>
+</tr>
+<tr>
+<td><strong>LIMIT</strong></td>
+<td>限制返回数量</td>
+<td>✅ 正常阶段</td>
+</tr>
+<tr>
+<td><strong>SKIP</strong></td>
+<td>跳过文档</td>
+<td>✅ 正常阶段</td>
+</tr>
+<tr>
+<td><strong>COUNT_SCAN</strong></td>
+<td>使用索引进行计数</td>
+<td>✅ 高效计数</td>
+</tr>
+<tr>
+<td><strong>COVERED_QUERY</strong></td>
+<td>覆盖查询（无需 FETCH）</td>
+<td>✅ 最高效</td>
+</tr>
+</tbody>
+</table>
+<p><strong>性能判断经验法则：</strong></p>
+<pre><code>理想情况：
+  totalKeysExamined ≈ totalDocsExamined ≈ nReturned
+
+需要优化的情况：
+  1. totalDocsExamined &gt;&gt; nReturned  → 扫描了大量文档但返回很少，索引不够精确
+  2. totalKeysExamined &gt;&gt; nReturned  → 索引扫描范围过大
+  3. stage 出现 COLLSCAN            → 没有使用索引，需要创建索引
+  4. stage 出现 SORT 且数据量大      → 排序无法利用索引，考虑调整索引
+</code></pre>
+<h3 id="654-完整的索引优化案例">6.5.4 完整的索引优化案例</h3>
+<p>下面通过一个完整的案例，演示如何从 COLLSCAN 优化到 IXSCAN。</p>
+<p><strong>场景</strong>：文章列表页，需要查询指定分类下已发布的文章，按创建时间倒序排列。</p>
+<pre><code class="language-javascript">// 初始数据：articles 集合有 50 万条数据，目前没有自定义索引
+
+// 查询语句
+db.articles.find({
+    category: &quot;技术&quot;,
+    status: &quot;PUBLISHED&quot;
+}).sort({ created_at: -1 }).limit(20)
+</code></pre>
+<p><strong>第一步：分析当前查询性能</strong></p>
+<pre><code class="language-javascript">db.articles.find({
+    category: &quot;技术&quot;,
+    status: &quot;PUBLISHED&quot;
+}).sort({ created_at: -1 }).limit(20).explain(&quot;executionStats&quot;)
+
+// 结果（无索引）：
+// {
+//   &quot;queryPlanner&quot;: {
+//     &quot;winningPlan&quot;: {
+//       &quot;stage&quot;: &quot;SORT&quot;,
+//       &quot;inputStage&quot;: {
+//         &quot;stage&quot;: &quot;COLLSCAN&quot;           ← 全集合扫描！
+//       }
+//     }
+//   },
+//   &quot;executionStats&quot;: {
+//     &quot;nReturned&quot;: 20,
+//     &quot;executionTimeMillis&quot;: 1250,       ← 耗时 1.25 秒！
+//     &quot;totalKeysExamined&quot;: 0,            ← 没有使用索引
+//     &quot;totalDocsExamined&quot;: 500000        ← 扫描了全部 50万 文档
+//   }
+// }
+</code></pre>
+<p><strong>问题分析</strong>：</p>
+<ul>
+<li><code>COLLSCAN</code>：没有使用任何索引，进行了全集合扫描</li>
+<li>扫描了 50 万文档，但只返回 20 条</li>
+<li>内存中排序 50 万文档后再取前 20 条，极其低效</li>
+</ul>
+<p><strong>第二步：创建索引</strong></p>
+<pre><code class="language-javascript">// 根据查询分析，创建复合索引
+// 字段顺序：等值条件字段在前，排序字段在后
+db.articles.createIndex(
+    { category: 1, status: 1, created_at: -1 },
+    { name: &quot;idx_articles_category_status_createdAt&quot; }
+)
+</code></pre>
+<p><strong>第三步：验证优化效果</strong></p>
+<pre><code class="language-javascript">db.articles.find({
+    category: &quot;技术&quot;,
+    status: &quot;PUBLISHED&quot;
+}).sort({ created_at: -1 }).limit(20).explain(&quot;executionStats&quot;)
+
+// 结果（有索引）：
+// {
+//   &quot;queryPlanner&quot;: {
+//     &quot;winningPlan&quot;: {
+//       &quot;stage&quot;: &quot;LIMIT&quot;,
+//       &quot;inputStage&quot;: {
+//         &quot;stage&quot;: &quot;FETCH&quot;,
+//         &quot;inputStage&quot;: {
+//           &quot;stage&quot;: &quot;IXSCAN&quot;,           ← 使用了索引扫描！
+//           &quot;indexName&quot;: &quot;idx_articles_category_status_createdAt&quot;,
+//           &quot;keyPattern&quot;: { &quot;category&quot;: 1, &quot;status&quot;: 1, &quot;created_at&quot;: -1 }
+//         }
+//       }
+//     }
+//   },
+//   &quot;executionStats&quot;: {
+//     &quot;nReturned&quot;: 20,
+//     &quot;executionTimeMillis&quot;: 0,           ← 不到 1 毫秒！
+//     &quot;totalKeysExamined&quot;: 20,            ← 只扫描了 20 个索引键
+//     &quot;totalDocsExamined&quot;: 20             ← 只获取了 20 个文档
+//   }
+// }
+</code></pre>
+<p><strong>优化效果对比：</strong></p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>优化前（COLLSCAN）</th>
+<th>优化后（IXSCAN）</th>
+<th>提升倍数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>执行时间</td>
+<td>1250ms</td>
+<td>&lt; 1ms</td>
+<td><strong>1250x+</strong></td>
+</tr>
+<tr>
+<td>扫描文档数</td>
+<td>500,000</td>
+<td>20</td>
+<td><strong>25,000x</strong></td>
+</tr>
+<tr>
+<td>扫描索引键数</td>
+<td>0</td>
+<td>20</td>
+<td>—</td>
+</tr>
+<tr>
+<td>排序方式</td>
+<td>内存排序</td>
+<td>索引有序</td>
+<td>避免内存排序</td>
+</tr>
+</tbody>
+</table>
+<p><strong>为什么这个索引有效？</strong></p>
+<pre><code>索引 { category: 1, status: 1, created_at: -1 }
+
+查询过程：
+1. 通过索引快速定位 category = &quot;技术&quot; 的区间
+2. 在该区间内进一步定位 status = &quot;PUBLISHED&quot; 的子区间
+3. 该子区间内的数据已经按 created_at 降序排列 → 无需额外排序！
+4. 直接取前 20 条即可 → 只扫描 20 个索引键和 20 个文档
+</code></pre>
+<h3 id="655-在-java-代码中获取-explain-结果">6.5.5 在 Java 代码中获取 explain 结果</h3>
+<p>在 Spring Boot 中，可以通过 <code>MongoTemplate</code> 执行 explain 操作：</p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import org.bson.Document;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
+
+@Service
+public class QueryAnalysisService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public QueryAnalysisService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 分析查询的执行计划
+     */
+    public Document explainQuery(Query query, String collectionName) {
+        return mongoTemplate.getCollection(collectionName)
+            .find(query.getQueryObject())
+            .sort(query.getSortObject())
+            .explain();
+    }
+
+    /**
+     * 获取详细的执行统计（executionStats 模式）
+     */
+    public Document explainWithStats(Query query, String collectionName) {
+        return mongoTemplate.getCollection(collectionName)
+            .find(query.getQueryObject())
+            .sort(query.getSortObject())
+            .explain(com.mongodb.ExplainVerbosity.EXECUTION_STATS);
+    }
+
+    /**
+     * 分析并打印查询性能摘要
+     */
+    public void analyzeQuery(Query query, String collectionName) {
+        Document explanation = explainWithStats(query, collectionName);
+
+        Document executionStats = explanation.get(&quot;executionStats&quot;, Document.class);
+        Document queryPlanner = explanation.get(&quot;queryPlanner&quot;, Document.class);
+        Document winningPlan = queryPlanner.get(&quot;winningPlan&quot;, Document.class);
+
+        System.out.println(&quot;═&quot;.repeat(60));
+        System.out.println(&quot;查询性能分析报告&quot;);
+        System.out.println(&quot;═&quot;.repeat(60));
+        System.out.println(&quot;集合:           &quot; + collectionName);
+        System.out.println(&quot;查询条件:       &quot; + query.getQueryObject().toJson());
+        System.out.println(&quot;排序条件:       &quot; + query.getSortObject().toJson());
+        System.out.println(&quot;─&quot;.repeat(60));
+        System.out.println(&quot;执行计划:       &quot; + getStageChain(winningPlan));
+        System.out.println(&quot;返回文档数:     &quot; + executionStats.getInteger(&quot;nReturned&quot;));
+        System.out.println(&quot;扫描索引键数:   &quot; + executionStats.getInteger(&quot;totalKeysExamined&quot;));
+        System.out.println(&quot;扫描文档数:     &quot; + executionStats.getInteger(&quot;totalDocsExamined&quot;));
+        System.out.println(&quot;执行时间:       &quot; + executionStats.getInteger(&quot;executionTimeMillis&quot;) + &quot; ms&quot;);
+        System.out.println(&quot;═&quot;.repeat(60));
+
+        int nReturned = executionStats.getInteger(&quot;nReturned&quot;);
+        int docsExamined = executionStats.getInteger(&quot;totalDocsExamined&quot;);
+        if (docsExamined &gt; nReturned * 10 &amp;&amp; docsExamined &gt; 100) {
+            System.out.println(&quot;⚠ 警告: 扫描文档数远大于返回文档数，建议优化索引！&quot;);
+        }
+
+        String stage = getTopStage(winningPlan);
+        if (&quot;COLLSCAN&quot;.equals(stage)) {
+            System.out.println(&quot;⚠ 警告: 使用了全集合扫描(COLLSCAN)，强烈建议创建索引！&quot;);
+        }
+    }
+
+    private String getStageChain(Document plan) {
+        StringBuilder chain = new StringBuilder();
+        Document current = plan;
+        while (current != null) {
+            if (!chain.isEmpty()) {
+                chain.append(&quot; → &quot;);
+            }
+            chain.append(current.getString(&quot;stage&quot;));
+            current = current.get(&quot;inputStage&quot;, Document.class);
+        }
+        return chain.toString();
+    }
+
+    private String getTopStage(Document plan) {
+        Document current = plan;
+        Document last = current;
+        while (current != null) {
+            last = current;
+            current = current.get(&quot;inputStage&quot;, Document.class);
+        }
+        return last.getString(&quot;stage&quot;);
+    }
+}
+</code></pre>
+<p><strong>使用示例：</strong></p>
+<pre><code class="language-java">package com.example.mongo.controller;
+
+import com.example.mongo.service.QueryAnalysisService;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping(&quot;/api/admin/analyze&quot;)
+public class QueryAnalysisController {
+
+    private final QueryAnalysisService analysisService;
+
+    public QueryAnalysisController(QueryAnalysisService analysisService) {
+        this.analysisService = analysisService;
+    }
+
+    @GetMapping(&quot;/articles&quot;)
+    public String analyzeArticleQuery(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status) {
+
+        Query query = new Query();
+        if (category != null) {
+            query.addCriteria(Criteria.where(&quot;category&quot;).is(category));
+        }
+        if (status != null) {
+            query.addCriteria(Criteria.where(&quot;status&quot;).is(status));
+        }
+        query.with(Sort.by(Sort.Direction.DESC, &quot;created_at&quot;));
+        query.limit(20);
+
+        analysisService.analyzeQuery(query, &quot;articles&quot;);
+        return &quot;查询分析已打印到控制台&quot;;
+    }
+}
+</code></pre>
+<p><strong>控制台输出示例：</strong></p>
+<pre><code>════════════════════════════════════════════════════════════
+查询性能分析报告
+════════════════════════════════════════════════════════════
+集合:           articles
+查询条件:       {&quot;category&quot;: &quot;技术&quot;, &quot;status&quot;: &quot;PUBLISHED&quot;}
+排序条件:       {&quot;created_at&quot;: -1}
+────────────────────────────────────────────────────────────
+执行计划:       LIMIT → FETCH → IXSCAN
+返回文档数:     20
+扫描索引键数:   20
+扫描文档数:     20
+执行时间:       0 ms
+════════════════════════════════════════════════════════════
+</code></pre>
+<h3 id="656-explain-分析的最佳实践">6.5.6 explain 分析的最佳实践</h3>
+<ol>
+<li><strong>开发阶段</strong>：对所有核心查询都执行 explain 分析，确保使用了索引</li>
+<li><strong>上线前</strong>：用接近真实的数据量做性能测试，小数据量下即使 COLLSCAN 也很快</li>
+<li><strong>关注比率</strong>：<code>totalDocsExamined / nReturned</code> 比值越接近 1 越好</li>
+<li><strong>避免内存排序</strong>：如果看到 SORT stage 且数据量大，考虑调整索引让排序走索引</li>
+<li><strong>定期巡检</strong>：定期检查慢查询日志，对新出现的慢查询进行 explain 分析</li>
+</ol>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>核心内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>索引的作用</td>
+<td>避免全集合扫描，将 O(n) 查询优化为 O(log n)</td>
+</tr>
+<tr>
+<td>B-Tree 结构</td>
+<td>平衡多路搜索树，支持精确匹配、范围查询、排序</td>
+</tr>
+<tr>
+<td>单字段索引</td>
+<td>最基本的索引类型，<code>createIndex({ field: 1 })</code></td>
+</tr>
+<tr>
+<td>复合索引</td>
+<td>多字段索引，字段顺序影响使用效率，遵循前缀匹配原则</td>
+</tr>
+<tr>
+<td>唯一索引</td>
+<td>保证字段值唯一，支持部分唯一索引和稀疏唯一索引</td>
+</tr>
+<tr>
+<td>TTL 索引</td>
+<td>自动过期删除文档，适用于会话、验证码、临时数据</td>
+</tr>
+<tr>
+<td>@Indexed</td>
+<td>Spring Data 注解方式创建单字段索引</td>
+</tr>
+<tr>
+<td>@CompoundIndex</td>
+<td>Spring Data 注解方式创建复合索引</td>
+</tr>
+<tr>
+<td>@TextIndexed</td>
+<td>Spring Data 注解方式创建文本索引</td>
+</tr>
+<tr>
+<td>IndexOperations</td>
+<td>编程式创建和管理索引，适合生产环境</td>
+</tr>
+<tr>
+<td>explain()</td>
+<td>查询性能分析工具，关注 COLLSCAN vs IXSCAN、扫描文档数、执行时间</td>
+</tr>
+<tr>
+<td>索引优化</td>
+<td>等值条件字段在前，排序字段在后；避免过多索引；确保索引在内存中</td>
+</tr>
+</tbody>
+</table>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

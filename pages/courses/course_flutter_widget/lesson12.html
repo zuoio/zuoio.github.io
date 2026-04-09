@@ -1,0 +1,3019 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第12课-列表与滚动组件基础篇">第12课 列表与滚动组件（基础篇）</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter 常用组件系统学习<br />
+<strong>适用人群</strong>：有 Dart 语言基础，了解 Flutter 基本概念的开发者<br />
+<strong>课程目标</strong>：系统掌握 Flutter 中最常用的列表与滚动组件，理解 ListView 四种构造方式的性能差异，学会使用 ScrollController 实现滚动监听与编程式滚动</p>
+</blockquote>
+<hr />
+<h2 id="1-singlechildscrollview单子组件滚动">1. SingleChildScrollView：单子组件滚动</h2>
+<h3 id="11-基本概念">1.1 基本概念</h3>
+<p><code>SingleChildScrollView</code> 是 Flutter 中最简单的可滚动组件。顾名思义，它只能包含<strong>一个子组件</strong>，当子组件的尺寸超过可视区域时，提供滚动能力。</p>
+<p>它的定位类似于 Android 中的 <code>ScrollView</code> 或 Web 中设置了 <code>overflow: auto</code> 的容器。</p>
+<p><strong>核心特征</strong>：</p>
+<ul>
+<li>只接受一个 <code>child</code></li>
+<li>子组件会被<strong>一次性全部渲染</strong>，没有懒加载机制</li>
+<li>适合内容量较少但可能超出屏幕的场景（如表单页面、设置页面）</li>
+</ul>
+<h3 id="12-常用属性">1.2 常用属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scrollDirection</code></td>
+<td><code>Axis</code></td>
+<td>滚动方向，默认 <code>Axis.vertical</code>（垂直滚动），可设为 <code>Axis.horizontal</code>（水平滚动）</td>
+</tr>
+<tr>
+<td><code>reverse</code></td>
+<td><code>bool</code></td>
+<td>是否反转滚动方向，默认 <code>false</code>。设为 <code>true</code> 时，内容从底部开始排列</td>
+</tr>
+<tr>
+<td><code>padding</code></td>
+<td><code>EdgeInsetsGeometry?</code></td>
+<td>内容区域的内边距</td>
+</tr>
+<tr>
+<td><code>physics</code></td>
+<td><code>ScrollPhysics?</code></td>
+<td>滚动物理效果（如弹性效果、夹紧效果等），详见第6节</td>
+</tr>
+<tr>
+<td><code>controller</code></td>
+<td><code>ScrollController?</code></td>
+<td>滚动控制器，用于监听滚动事件和编程式滚动，详见第5节</td>
+</tr>
+<tr>
+<td><code>primary</code></td>
+<td><code>bool?</code></td>
+<td>是否使用 <code>PrimaryScrollController</code>。当为 <code>true</code> 时，不需要显式传 controller</td>
+</tr>
+<tr>
+<td><code>clipBehavior</code></td>
+<td><code>Clip</code></td>
+<td>内容裁剪行为，默认 <code>Clip.hardEdge</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="13-代码示例基本使用">1.3 代码示例：基本使用</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const SingleChildScrollViewDemoApp());
+}
+
+class SingleChildScrollViewDemoApp extends StatelessWidget {
+  const SingleChildScrollViewDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.blue, useMaterial3: true),
+      home: const SingleChildScrollViewDemoPage(),
+    );
+  }
+}
+
+class SingleChildScrollViewDemoPage extends StatelessWidget {
+  const SingleChildScrollViewDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('SingleChildScrollView 演示')),
+      body: SingleChildScrollView(
+        // 垂直滚动（默认值）
+        scrollDirection: Axis.vertical,
+        // 内容区域的内边距
+        padding: const EdgeInsets.all(16),
+        // iOS 风格的弹性滚动效果
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 模拟一个较长的表单页面
+            _buildSection('个人信息', Icons.person, Colors.blue),
+            const SizedBox(height: 16),
+            _buildSection('联系方式', Icons.phone, Colors.green),
+            const SizedBox(height: 16),
+            _buildSection('工作经历', Icons.work, Colors.orange),
+            const SizedBox(height: 16),
+            _buildSection('教育背景', Icons.school, Colors.purple),
+            const SizedBox(height: 16),
+            _buildSection('技能特长', Icons.star, Colors.red),
+            const SizedBox(height: 16),
+            _buildSection('自我评价', Icons.edit, Colors.teal),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('提交'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget _buildSection(String title, IconData icon, Color color) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: color),
+                const SizedBox(width: 8),
+                Text(title,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            // 模拟表单内容
+            Container(
+              height: 120,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: Text('$title 表单区域',
+                    style: TextStyle(color: color)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="14-水平滚动与-reverse-参数">1.4 水平滚动与 reverse 参数</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const HorizontalScrollDemoApp());
+}
+
+class HorizontalScrollDemoApp extends StatelessWidget {
+  const HorizontalScrollDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
+      home: Scaffold(
+        appBar: AppBar(title: const Text('水平滚动演示')),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('正常方向（从左往右）',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+            SizedBox(
+              height: 120,
+              child: SingleChildScrollView(
+                // 水平滚动
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: List.generate(10, (index) {
+                    return Container(
+                      width: 100,
+                      height: 100,
+                      margin: const EdgeInsets.only(right: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.primaries[index % Colors.primaries.length],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text('${index + 1}',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('反转方向（从右往左）',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+            SizedBox(
+              height: 120,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                // 反转：内容从右侧开始排列，初始位置在最右端
+                reverse: true,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: List.generate(10, (index) {
+                    return Container(
+                      width: 100,
+                      height: 100,
+                      margin: const EdgeInsets.only(right: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.primaries[index % Colors.primaries.length],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text('${index + 1}',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：<code>SingleChildScrollView</code> 会一次性渲染所有子组件内容，不具备懒加载能力。如果内容非常多（例如超过几百个列表项），应该使用 <code>ListView.builder</code> 代替，否则会导致严重的性能问题。<code>SingleChildScrollView</code> 适合内容量<strong>可预估且不大</strong>的场景，如表单页面、设置页面等。</p>
+</blockquote>
+<hr />
+<h2 id="2-listview四种构造方式总览">2. ListView：四种构造方式总览</h2>
+<p><code>ListView</code> 是 Flutter 中<strong>最常用</strong>的可滚动列表组件，几乎每个 Flutter 应用都会用到它。它提供了四种不同的构造方式，每种适用于不同的场景。</p>
+<h3 id="21-四种构造方式概览">2.1 四种构造方式概览</h3>
+<table>
+<thead>
+<tr>
+<th>构造方式</th>
+<th>子组件创建时机</th>
+<th>适用场景</th>
+<th>性能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ListView(children: [...])</code></td>
+<td><strong>一次性全部创建</strong></td>
+<td>子组件数量少且固定（&lt; 20 个）</td>
+<td>⭐⭐</td>
+</tr>
+<tr>
+<td><code>ListView.builder()</code></td>
+<td><strong>按需懒加载创建</strong></td>
+<td>长列表、动态列表、数据源数量大</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><code>ListView.separated()</code></td>
+<td><strong>按需懒加载创建 + 分割线</strong></td>
+<td>需要分割线的长列表</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><code>ListView.custom()</code></td>
+<td><strong>完全自定义</strong></td>
+<td>需要自定义子组件管理策略</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-性能差异的本质原因">2.2 性能差异的本质原因</h3>
+<p>理解四种构造方式性能差异的关键在于 <strong>Sliver 懒加载协议</strong>：</p>
+<ul>
+<li><strong>默认构造 <code>ListView(children: [])</code></strong>：内部使用 <code>SliverChildListDelegate</code>，在构建时会创建所有子 Widget。即使某个列表项在屏幕之外不可见，它的 Widget 也已经被创建了（虽然不一定会布局和绘制）。</li>
+<li><strong><code>ListView.builder()</code> 和 <code>ListView.separated()</code></strong>：内部使用 <code>SliverChildBuilderDelegate</code>，只有当列表项即将进入可视区域时，才会调用 <code>itemBuilder</code> 创建对应的 Widget。滚出可视区域的列表项会被销毁回收。</li>
+</ul>
+<p>这意味着，对于一个 10,000 条数据的列表：</p>
+<ul>
+<li>默认构造会在初始化时创建 10,000 个 Widget 对象 → 内存暴涨、构建缓慢</li>
+<li><code>ListView.builder</code> 只会创建可视区域内的约 10~20 个 Widget → 内存平稳、构建迅速</li>
+</ul>
+<hr />
+<h2 id="3-listview-默认构造">3. ListView 默认构造</h2>
+<h3 id="31-基本用法">3.1 基本用法</h3>
+<p>默认构造方式通过 <code>children</code> 参数直接传入子组件列表，与 <code>Column</code> + <code>SingleChildScrollView</code> 的组合效果类似，但 <code>ListView</code> 自带滚动功能。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ListViewDefaultDemoApp());
+}
+
+class ListViewDefaultDemoApp extends StatelessWidget {
+  const ListViewDefaultDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.green, useMaterial3: true),
+      home: const ListViewDefaultDemoPage(),
+    );
+  }
+}
+
+class ListViewDefaultDemoPage extends StatelessWidget {
+  const ListViewDefaultDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('ListView 默认构造')),
+      body: ListView(
+        // 列表内边距
+        padding: const EdgeInsets.all(16),
+        children: [
+          // 直接在 children 中列出所有子组件
+          _buildSettingItem(
+            icon: Icons.person,
+            title: '个人资料',
+            subtitle: '修改头像、昵称、签名',
+          ),
+          _buildSettingItem(
+            icon: Icons.notifications,
+            title: '消息通知',
+            subtitle: '推送设置、免打扰',
+          ),
+          _buildSettingItem(
+            icon: Icons.lock,
+            title: '隐私设置',
+            subtitle: '黑名单、朋友圈权限',
+          ),
+          _buildSettingItem(
+            icon: Icons.palette,
+            title: '主题外观',
+            subtitle: '深色模式、主题色',
+          ),
+          _buildSettingItem(
+            icon: Icons.language,
+            title: '语言',
+            subtitle: '简体中文',
+          ),
+          _buildSettingItem(
+            icon: Icons.storage,
+            title: '存储空间',
+            subtitle: '清理缓存、管理文件',
+          ),
+          _buildSettingItem(
+            icon: Icons.info,
+            title: '关于',
+            subtitle: '版本信息、用户协议',
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget _buildSettingItem({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: Icon(icon),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () {},
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="32-适用场景">3.2 适用场景</h3>
+<p>默认构造适合以下场景：</p>
+<ul>
+<li>列表项数量<strong>少且固定</strong>（通常不超过 20 个）</li>
+<li>列表项类型<strong>各不相同</strong>（如设置页面中混合了开关、按钮、文本等不同类型的组件）</li>
+<li>不需要动态生成列表项</li>
+</ul>
+<blockquote>
+<p><strong>最佳实践</strong>：如果你发现自己在默认构造的 <code>children</code> 中使用了 <code>List.generate()</code> 或 <code>.map().toList()</code> 来生成大量列表项，那说明你应该用 <code>ListView.builder</code> 替代。</p>
+</blockquote>
+<hr />
+<h2 id="4-listviewbuilder懒加载长列表">4. ListView.builder：懒加载长列表</h2>
+<h3 id="41-核心概念">4.1 核心概念</h3>
+<p><code>ListView.builder</code> 是开发中<strong>最常用</strong>的 ListView 构造方式。它实现了<strong>按需创建</strong>（懒加载）的机制：只有即将进入屏幕可视区域的列表项才会被创建，滚出屏幕的列表项会被回收销毁。</p>
+<h3 id="42-关键参数">4.2 关键参数</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>itemBuilder</code></td>
+<td><code>Widget Function(BuildContext, int)</code></td>
+<td><strong>必填</strong>。根据索引构建列表项的回调函数</td>
+</tr>
+<tr>
+<td><code>itemCount</code></td>
+<td><code>int?</code></td>
+<td>列表项总数。不传则为无限列表</td>
+</tr>
+<tr>
+<td><code>itemExtent</code></td>
+<td><code>double?</code></td>
+<td>每个列表项的固定高度（垂直列表）或宽度（水平列表）</td>
+</tr>
+<tr>
+<td><code>prototypeItem</code></td>
+<td><code>Widget?</code></td>
+<td>原型列表项，框架会测量它的尺寸，作为所有列表项的固定尺寸</td>
+</tr>
+<tr>
+<td><code>padding</code></td>
+<td><code>EdgeInsetsGeometry?</code></td>
+<td>列表内边距</td>
+</tr>
+<tr>
+<td><code>scrollDirection</code></td>
+<td><code>Axis</code></td>
+<td>滚动方向</td>
+</tr>
+<tr>
+<td><code>reverse</code></td>
+<td><code>bool</code></td>
+<td>是否反转</td>
+</tr>
+<tr>
+<td><code>shrinkWrap</code></td>
+<td><code>bool</code></td>
+<td>是否根据内容收缩尺寸，默认 <code>false</code></td>
+</tr>
+<tr>
+<td><code>physics</code></td>
+<td><code>ScrollPhysics?</code></td>
+<td>滚动物理效果</td>
+</tr>
+<tr>
+<td><code>controller</code></td>
+<td><code>ScrollController?</code></td>
+<td>滚动控制器</td>
+</tr>
+<tr>
+<td><code>cacheExtent</code></td>
+<td><code>double?</code></td>
+<td>预渲染区域的大小（像素），默认 250.0</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-基本用法">4.3 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ListViewBuilderDemoApp());
+}
+
+class ListViewBuilderDemoApp extends StatelessWidget {
+  const ListViewBuilderDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
+      home: const ListViewBuilderDemoPage(),
+    );
+  }
+}
+
+class ListViewBuilderDemoPage extends StatelessWidget {
+  const ListViewBuilderDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 模拟一个包含大量数据的列表
+    final List&lt;Map&lt;String, dynamic&gt;&gt; contacts = List.generate(1000, (index) {
+      return {
+        'name': '联系人 ${index + 1}',
+        'phone': '138${index.toString().padLeft(8, '0')}',
+        'avatar': Colors.primaries[index % Colors.primaries.length],
+      };
+    });
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ListView.builder 演示'),
+        // 显示列表项数量
+        actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Text('共 ${contacts.length} 条',
+                  style: const TextStyle(fontSize: 14)),
+            ),
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        // 列表项总数，告诉 ListView 何时停止调用 itemBuilder
+        itemCount: contacts.length,
+        // 按需构建列表项的回调
+        // context: 构建上下文
+        // index: 当前列表项的索引（从0开始）
+        itemBuilder: (context, index) {
+          final contact = contacts[index];
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundColor: contact['avatar'] as Color,
+              child: Text(
+                (contact['name'] as String).substring(4, 5),
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+            title: Text(contact['name'] as String),
+            subtitle: Text(contact['phone'] as String),
+            trailing: const Icon(Icons.message_outlined),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('点击了 ${contact['name']}'),
+                  behavior: SnackBarBehavior.floating,
+                  duration: const Duration(milliseconds: 500),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="44-itemextent-与-prototypeitem-性能优化">4.4 itemExtent 与 prototypeItem 性能优化</h3>
+<p>当所有列表项的高度一致时，通过 <code>itemExtent</code> 或 <code>prototypeItem</code> 指定固定高度，可以<strong>显著提升性能</strong>。</p>
+<p><strong>原因</strong>：如果不指定固定高度，ListView 需要对每个子组件进行布局计算以确定其高度，才能知道滚动范围。指定固定高度后，ListView 可以直接通过数学计算得到每个列表项的位置和总滚动范围，跳过布局计算。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ItemExtentDemoApp());
+}
+
+class ItemExtentDemoApp extends StatelessWidget {
+  const ItemExtentDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.teal, useMaterial3: true),
+      home: const ItemExtentDemoPage(),
+    );
+  }
+}
+
+class ItemExtentDemoPage extends StatelessWidget {
+  const ItemExtentDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('itemExtent 性能优化'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: '无固定高度'),
+              Tab(text: 'itemExtent'),
+              Tab(text: 'prototypeItem'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            // 方式1：不指定固定高度 —— 每个列表项需要单独布局计算
+            ListView.builder(
+              itemCount: 10000,
+              itemBuilder: (context, index) =&gt; _buildItem(index),
+            ),
+            // 方式2：使用 itemExtent 指定固定高度（像素值）
+            // 适合确切知道列表项高度的场景
+            ListView.builder(
+              itemCount: 10000,
+              itemExtent: 72.0, // 每个列表项固定高度 72 像素
+              itemBuilder: (context, index) =&gt; _buildItem(index),
+            ),
+            // 方式3：使用 prototypeItem 提供原型
+            // 框架会测量原型的高度，作为所有列表项的高度
+            // 适合不确定确切像素值但能提供一个&quot;样本&quot;的场景
+            ListView.builder(
+              itemCount: 10000,
+              prototypeItem: _buildItem(0), // 提供一个原型列表项
+              itemBuilder: (context, index) =&gt; _buildItem(index),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget _buildItem(int index) {
+    return ListTile(
+      leading: CircleAvatar(child: Text('${index + 1}')),
+      title: Text('列表项 ${index + 1}'),
+      subtitle: Text('这是第 ${index + 1} 个列表项的描述文字'),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li>当列表项高度一致时，<strong>优先使用 <code>itemExtent</code></strong>（已知像素值）或 <strong><code>prototypeItem</code></strong>（提供样本），尤其是长列表（超过 100 项）。</li>
+<li><code>itemExtent</code> 和 <code>prototypeItem</code> 不能同时使用，二者互斥。</li>
+<li>使用 <code>itemExtent</code> 后，<code>jumpTo</code> 和 <code>animateTo</code> 等滚动定位操作也会更精确、更快速。</li>
+</ol>
+</blockquote>
+<h3 id="45-无限列表不传-itemcount">4.5 无限列表（不传 itemCount）</h3>
+<p>当 <code>itemCount</code> 为 <code>null</code> 时，<code>ListView.builder</code> 会创建一个<strong>无限列表</strong>，itemBuilder 会被无限调用。常用于&quot;加载更多&quot;场景。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const InfiniteListDemoApp());
+}
+
+class InfiniteListDemoApp extends StatelessWidget {
+  const InfiniteListDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.orange, useMaterial3: true),
+      home: const InfiniteListDemoPage(),
+    );
+  }
+}
+
+class InfiniteListDemoPage extends StatefulWidget {
+  const InfiniteListDemoPage({super.key});
+
+  @override
+  State&lt;InfiniteListDemoPage&gt; createState() =&gt; _InfiniteListDemoPageState();
+}
+
+class _InfiniteListDemoPageState extends State&lt;InfiniteListDemoPage&gt; {
+  final List&lt;String&gt; _items = List.generate(20, (i) =&gt; '初始项 ${i + 1}');
+  bool _isLoading = false;
+
+  Future&lt;void&gt; _loadMore() async {
+    if (_isLoading) return;
+    setState(() =&gt; _isLoading = true);
+
+    // 模拟网络请求延迟
+    await Future.delayed(const Duration(seconds: 1));
+
+    setState(() {
+      final currentLength = _items.length;
+      _items.addAll(
+        List.generate(20, (i) =&gt; '加载项 ${currentLength + i + 1}'),
+      );
+      _isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('无限列表（已加载 ${_items.length} 项）')),
+      body: ListView.builder(
+        // itemCount 多加 1，用于显示底部的&quot;加载中&quot;指示器
+        itemCount: _items.length + 1,
+        itemBuilder: (context, index) {
+          // 最后一个位置显示加载指示器
+          if (index == _items.length) {
+            // 触发加载更多
+            _loadMore();
+            return const Padding(
+              padding: EdgeInsets.all(16),
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
+          return ListTile(
+            leading: CircleAvatar(child: Text('${index + 1}')),
+            title: Text(_items[index]),
+          );
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="5-listviewseparated带分割线的列表">5. ListView.separated：带分割线的列表</h2>
+<h3 id="51-核心概念">5.1 核心概念</h3>
+<p><code>ListView.separated</code> 在 <code>ListView.builder</code> 的基础上，额外提供了一个 <code>separatorBuilder</code> 参数，用于在相邻列表项之间插入分割组件。它同样具备懒加载能力。</p>
+<p><strong>与手动在 itemBuilder 中添加 Divider 相比的优势</strong>：</p>
+<ul>
+<li>分割线逻辑与列表项逻辑分离，代码更清晰</li>
+<li>可以轻松实现不同位置使用不同样式的分割线</li>
+<li>分割线不占用 <code>itemCount</code> 的索引</li>
+</ul>
+<h3 id="52-关键参数">5.2 关键参数</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>itemBuilder</code></td>
+<td><code>Widget Function(BuildContext, int)</code></td>
+<td>构建列表项的回调</td>
+</tr>
+<tr>
+<td><code>separatorBuilder</code></td>
+<td><code>Widget Function(BuildContext, int)</code></td>
+<td>构建分割线的回调，index 是分割线上方列表项的索引</td>
+</tr>
+<tr>
+<td><code>itemCount</code></td>
+<td><code>int</code></td>
+<td><strong>必填</strong>。列表项总数（不含分割线）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="53-代码示例">5.3 代码示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ListViewSeparatedDemoApp());
+}
+
+class ListViewSeparatedDemoApp extends StatelessWidget {
+  const ListViewSeparatedDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.deepPurple, useMaterial3: true),
+      home: const ListViewSeparatedDemoPage(),
+    );
+  }
+}
+
+class ListViewSeparatedDemoPage extends StatelessWidget {
+  const ListViewSeparatedDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // 模拟聊天列表数据
+    final List&lt;Map&lt;String, dynamic&gt;&gt; chats = [
+      {'name': '张三', 'msg': '今晚一起吃饭吗？', 'time': '12:30', 'unread': 2},
+      {'name': '李四', 'msg': '项目文档已经发你了', 'time': '11:20', 'unread': 0},
+      {'name': '王五', 'msg': '收到，谢谢！', 'time': '昨天', 'unread': 0},
+      {'name': '技术交流群', 'msg': '小明: Flutter 3.0 发布了', 'time': '昨天', 'unread': 99},
+      {'name': '赵六', 'msg': '[图片]', 'time': '周一', 'unread': 1},
+      {'name': '产品讨论组', 'msg': '需求评审明天下午2点', 'time': '周一', 'unread': 5},
+      {'name': '钱七', 'msg': '好的，我知道了', 'time': '周日', 'unread': 0},
+      {'name': '孙八', 'msg': '周末要不要打球？', 'time': '上周', 'unread': 0},
+    ];
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('ListView.separated 演示')),
+      body: ListView.separated(
+        // 列表项总数
+        itemCount: chats.length,
+        // 构建列表项
+        itemBuilder: (context, index) {
+          final chat = chats[index];
+          final int unread = chat['unread'] as int;
+          return ListTile(
+            leading: CircleAvatar(
+              backgroundColor:
+                  Colors.primaries[index % Colors.primaries.length],
+              child: Text(
+                (chat['name'] as String).substring(0, 1),
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+            title: Text(
+              chat['name'] as String,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+            subtitle: Text(
+              chat['msg'] as String,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(chat['time'] as String,
+                    style: TextStyle(
+                        fontSize: 12, color: Colors.grey[500])),
+                const SizedBox(height: 4),
+                if (unread &gt; 0)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      unread &gt; 99 ? '99+' : '$unread',
+                      style: const TextStyle(
+                          color: Colors.white, fontSize: 11),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+        // 构建分割线
+        separatorBuilder: (context, index) {
+          return const Divider(
+            height: 1,
+            indent: 72, // 左侧缩进，与头像右边对齐
+          );
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="54-灵活的分割线样式">5.4 灵活的分割线样式</h3>
+<p><code>separatorBuilder</code> 可以返回任意 Widget，不一定非得是 <code>Divider</code>。你可以根据索引位置返回不同样式的分割线，甚至插入广告、分组标题等。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const CustomSeparatorDemoApp());
+}
+
+class CustomSeparatorDemoApp extends StatelessWidget {
+  const CustomSeparatorDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.cyan, useMaterial3: true),
+      home: const CustomSeparatorDemoPage(),
+    );
+  }
+}
+
+class CustomSeparatorDemoPage extends StatelessWidget {
+  const CustomSeparatorDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final items = List.generate(30, (i) =&gt; '新闻标题 ${i + 1}');
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('自定义分割线')),
+      body: ListView.separated(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Container(
+                width: 60,
+                height: 60,
+                color: Colors.primaries[index % Colors.primaries.length]
+                    .withOpacity(0.3),
+                child: const Icon(Icons.image),
+              ),
+            ),
+            title: Text(items[index]),
+            subtitle: const Text('这是新闻摘要内容...'),
+          );
+        },
+        separatorBuilder: (context, index) {
+          // 每隔5个列表项插入一个&quot;广告位&quot;
+          if ((index + 1) % 5 == 0) {
+            return Container(
+              height: 60,
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              color: Colors.amber.withOpacity(0.1),
+              child: const Center(
+                child: Text('📢 广告位',
+                    style: TextStyle(color: Colors.amber, fontSize: 14)),
+              ),
+            );
+          }
+          // 其他位置使用普通分割线
+          return const Divider(height: 1);
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="6-listviewcustom完全自定义">6. ListView.custom：完全自定义</h2>
+<h3 id="61-核心概念">6.1 核心概念</h3>
+<p><code>ListView.custom</code> 接受一个 <code>SliverChildDelegate</code> 参数，让你完全控制子组件的创建、回收和复用策略。它是前三种构造方式的底层实现基础。</p>
+<p>在大多数场景下你不需要直接使用 <code>ListView.custom</code>，但了解它有助于理解 ListView 的工作原理。</p>
+<h3 id="62-代码示例">6.2 代码示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ListViewCustomDemoApp());
+}
+
+class ListViewCustomDemoApp extends StatelessWidget {
+  const ListViewCustomDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.pink, useMaterial3: true),
+      home: const ListViewCustomDemoPage(),
+    );
+  }
+}
+
+class ListViewCustomDemoPage extends StatelessWidget {
+  const ListViewCustomDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('ListView.custom 演示')),
+      body: ListView.custom(
+        // SliverChildBuilderDelegate 是 builder 模式的代理
+        childrenDelegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return ListTile(
+              key: ValueKey(index),
+              leading: CircleAvatar(
+                backgroundColor:
+                    Colors.primaries[index % Colors.primaries.length],
+                child: Text('${index + 1}',
+                    style: const TextStyle(color: Colors.white)),
+              ),
+              title: Text('自定义列表项 ${index + 1}'),
+              subtitle: const Text('通过 SliverChildBuilderDelegate 创建'),
+            );
+          },
+          childCount: 50,
+          // findChildIndexCallback 用于在列表项重新排序时高效查找
+          // 通过 Key 查找子组件的索引，避免全量重建
+          findChildIndexCallback: (Key key) {
+            final ValueKey&lt;int&gt; valueKey = key as ValueKey&lt;int&gt;;
+            return valueKey.value;
+          },
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="63-四种构造方式对比总结">6.3 四种构造方式对比总结</h3>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>默认构造</th>
+<th>builder</th>
+<th>separated</th>
+<th>custom</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>懒加载</td>
+<td>❌ 一次性创建</td>
+<td>✅ 按需创建</td>
+<td>✅ 按需创建</td>
+<td>✅ 取决于 Delegate</td>
+</tr>
+<tr>
+<td>分割线</td>
+<td>需手动添加</td>
+<td>需手动添加</td>
+<td>✅ 内置 separatorBuilder</td>
+<td>需手动处理</td>
+</tr>
+<tr>
+<td>itemCount</td>
+<td>非必填</td>
+<td>可选</td>
+<td><strong>必填</strong></td>
+<td>取决于 Delegate</td>
+</tr>
+<tr>
+<td>灵活度</td>
+<td>⭐⭐</td>
+<td>⭐⭐⭐</td>
+<td>⭐⭐⭐</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>推荐场景</td>
+<td>少量固定项</td>
+<td>长列表首选</td>
+<td>需要分割线的列表</td>
+<td>特殊子组件管理</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：在 95% 的场景中，你只需要使用 <code>ListView.builder</code> 和 <code>ListView.separated</code>。默认构造适合内容少的设置页面，<code>ListView.custom</code> 留到需要自定义 Delegate 时再用。</p>
+</blockquote>
+<hr />
+<h2 id="7-scrollcontroller滚动监听与编程式滚动">7. ScrollController：滚动监听与编程式滚动</h2>
+<h3 id="71-基本概念">7.1 基本概念</h3>
+<p><code>ScrollController</code> 是 Flutter 滚动体系的核心控制器，它提供两大能力：</p>
+<ol>
+<li><strong>滚动监听</strong>：通过 <code>addListener</code> 监听滚动位置变化</li>
+<li><strong>编程式滚动</strong>：通过 <code>animateTo</code>、<code>jumpTo</code> 等方法控制滚动位置</li>
+</ol>
+<h3 id="72-常用属性与方法">7.2 常用属性与方法</h3>
+<table>
+<thead>
+<tr>
+<th>属性/方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>offset</code></td>
+<td>当前滚动偏移量（像素）</td>
+</tr>
+<tr>
+<td><code>position</code></td>
+<td><code>ScrollPosition</code> 对象，包含更详细的滚动信息</td>
+</tr>
+<tr>
+<td><code>position.maxScrollExtent</code></td>
+<td>最大可滚动距离</td>
+</tr>
+<tr>
+<td><code>position.minScrollExtent</code></td>
+<td>最小可滚动距离（通常为 0）</td>
+</tr>
+<tr>
+<td><code>position.pixels</code></td>
+<td>等同于 <code>offset</code></td>
+</tr>
+<tr>
+<td><code>position.viewportDimension</code></td>
+<td>可视区域的尺寸</td>
+</tr>
+<tr>
+<td><code>addListener(callback)</code></td>
+<td>添加滚动监听回调</td>
+</tr>
+<tr>
+<td><code>removeListener(callback)</code></td>
+<td>移除滚动监听回调</td>
+</tr>
+<tr>
+<td><code>animateTo(offset, ...)</code></td>
+<td>动画滚动到指定位置</td>
+</tr>
+<tr>
+<td><code>jumpTo(offset)</code></td>
+<td>瞬间跳转到指定位置（无动画）</td>
+</tr>
+<tr>
+<td><code>dispose()</code></td>
+<td>释放资源，必须在 State.dispose 中调用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="73-实战回到顶部按钮--滚动监听">7.3 实战：回到顶部按钮 + 滚动监听</h3>
+<p>这是一个非常实用的示例，展示了 ScrollController 的典型用法：当用户向下滚动超过一定距离时，显示&quot;回到顶部&quot;按钮。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ScrollControllerDemoApp());
+}
+
+class ScrollControllerDemoApp extends StatelessWidget {
+  const ScrollControllerDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.blue, useMaterial3: true),
+      home: const ScrollControllerDemoPage(),
+    );
+  }
+}
+
+class ScrollControllerDemoPage extends StatefulWidget {
+  const ScrollControllerDemoPage({super.key});
+
+  @override
+  State&lt;ScrollControllerDemoPage&gt; createState() =&gt;
+      _ScrollControllerDemoPageState();
+}
+
+class _ScrollControllerDemoPageState extends State&lt;ScrollControllerDemoPage&gt; {
+  // 创建 ScrollController
+  final ScrollController _scrollController = ScrollController();
+
+  // 是否显示&quot;回到顶部&quot;按钮
+  bool _showBackToTop = false;
+  // 当前滚动位置信息（用于界面展示）
+  double _scrollOffset = 0;
+  double _maxScrollExtent = 0;
+  double _scrollPercent = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // 添加滚动监听
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final offset = _scrollController.offset;
+    final maxExtent = _scrollController.position.maxScrollExtent;
+
+    setState(() {
+      _scrollOffset = offset;
+      _maxScrollExtent = maxExtent;
+      _scrollPercent = maxExtent &gt; 0 ? (offset / maxExtent * 100) : 0;
+      // 滚动超过 300 像素时显示回到顶部按钮
+      _showBackToTop = offset &gt; 300;
+    });
+  }
+
+  // 动画滚动到顶部
+  void _scrollToTop() {
+    _scrollController.animateTo(
+      0, // 目标位置：顶部
+      duration: const Duration(milliseconds: 500), // 动画时长
+      curve: Curves.easeInOut, // 动画曲线
+    );
+  }
+
+  // 动画滚动到底部
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent, // 目标位置：底部
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  // 跳转到指定位置（无动画）
+  void _jumpToMiddle() {
+    _scrollController.jumpTo(
+      _scrollController.position.maxScrollExtent / 2,
+    );
+  }
+
+  @override
+  void dispose() {
+    // 必须释放 ScrollController，防止内存泄漏
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ScrollController 演示'),
+        actions: [
+          // 跳到中间按钮
+          IconButton(
+            onPressed: _jumpToMiddle,
+            icon: const Icon(Icons.vertical_align_center),
+            tooltip: '跳到中间',
+          ),
+          // 滚动到底部按钮
+          IconButton(
+            onPressed: _scrollToBottom,
+            icon: const Icon(Icons.vertical_align_bottom),
+            tooltip: '滚到底部',
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // 滚动状态信息面板
+          Container(
+            padding: const EdgeInsets.all(12),
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildInfoChip('偏移', '${_scrollOffset.toStringAsFixed(0)}px'),
+                _buildInfoChip('最大', '${_maxScrollExtent.toStringAsFixed(0)}px'),
+                _buildInfoChip('进度', '${_scrollPercent.toStringAsFixed(1)}%'),
+              ],
+            ),
+          ),
+          // 列表区域
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController, // 绑定控制器
+              itemCount: 100,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor:
+                        Colors.primaries[index % Colors.primaries.length],
+                    child: Text('${index + 1}',
+                        style: const TextStyle(color: Colors.white, fontSize: 12)),
+                  ),
+                  title: Text('列表项 ${index + 1}'),
+                  subtitle: Text('向下滚动查看更多内容 (index: $index)'),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      // 回到顶部的浮动按钮
+      floatingActionButton: _showBackToTop
+          ? FloatingActionButton(
+              onPressed: _scrollToTop,
+              tooltip: '回到顶部',
+              child: const Icon(Icons.arrow_upward),
+            )
+          : null,
+    );
+  }
+
+  Widget _buildInfoChip(String label, String value) {
+    return Column(
+      children: [
+        Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+        const SizedBox(height: 2),
+        Text(value,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="74-使用-notificationlistener-监听滚动">7.4 使用 NotificationListener 监听滚动</h3>
+<p>除了 <code>ScrollController.addListener</code>，还可以使用 <code>NotificationListener&lt;ScrollNotification&gt;</code> 来监听滚动事件。这种方式不需要创建 <code>ScrollController</code>，且能获取更丰富的滚动状态信息。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const NotificationListenerDemoApp());
+}
+
+class NotificationListenerDemoApp extends StatelessWidget {
+  const NotificationListenerDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.purple, useMaterial3: true),
+      home: const NotificationListenerDemoPage(),
+    );
+  }
+}
+
+class NotificationListenerDemoPage extends StatefulWidget {
+  const NotificationListenerDemoPage({super.key});
+
+  @override
+  State&lt;NotificationListenerDemoPage&gt; createState() =&gt;
+      _NotificationListenerDemoPageState();
+}
+
+class _NotificationListenerDemoPageState
+    extends State&lt;NotificationListenerDemoPage&gt; {
+  String _scrollStatus = '未开始滚动';
+  double _progress = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('NotificationListener 监听滚动')),
+      body: Column(
+        children: [
+          // 滚动状态显示
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            child: Column(
+              children: [
+                Text('状态: $_scrollStatus',
+                    style: const TextStyle(fontSize: 16)),
+                const SizedBox(height: 8),
+                LinearProgressIndicator(value: _progress),
+              ],
+            ),
+          ),
+          // 使用 NotificationListener 包裹可滚动组件
+          Expanded(
+            child: NotificationListener&lt;ScrollNotification&gt;(
+              onNotification: (ScrollNotification notification) {
+                // 滚动开始
+                if (notification is ScrollStartNotification) {
+                  setState(() =&gt; _scrollStatus = '开始滚动 ▶');
+                }
+                // 滚动中（持续触发）
+                else if (notification is ScrollUpdateNotification) {
+                  final metrics = notification.metrics;
+                  setState(() {
+                    _scrollStatus =
+                        '滚动中 ↕ offset: ${metrics.pixels.toStringAsFixed(0)}';
+                    _progress = metrics.maxScrollExtent &gt; 0
+                        ? metrics.pixels / metrics.maxScrollExtent
+                        : 0;
+                  });
+                }
+                // 滚动结束
+                else if (notification is ScrollEndNotification) {
+                  setState(() =&gt; _scrollStatus = '滚动结束 ■');
+                }
+                // 滚动到边界（过度滚动）
+                else if (notification is OverscrollNotification) {
+                  setState(
+                      () =&gt; _scrollStatus = '到达边界！ overscroll: ${notification.overscroll.toStringAsFixed(1)}');
+                }
+                // 返回 false 表示不拦截通知，继续向上冒泡
+                return false;
+              },
+              child: ListView.builder(
+                itemCount: 50,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: CircleAvatar(child: Text('${index + 1}')),
+                    title: Text('列表项 ${index + 1}'),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>ScrollController</code> 在使用完毕后<strong>必须调用 <code>dispose()</code></strong>，否则会导致内存泄漏。</li>
+<li>一个 <code>ScrollController</code> 只能同时绑定一个可滚动组件。如果需要控制多个列表，请创建多个 <code>ScrollController</code>。</li>
+<li>在 <code>addListener</code> 的回调中调用 <code>setState</code> 时要注意频率，每次滚动都会触发，可能导致过度重建。考虑使用 <code>NotificationListener</code> 代替，或者在 <code>addListener</code> 回调中只更新必要的状态。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="8-scrollphysics滚动物理效果">8. ScrollPhysics：滚动物理效果</h2>
+<h3 id="81-基本概念">8.1 基本概念</h3>
+<p><code>ScrollPhysics</code> 定义了可滚动组件的<strong>滚动行为</strong>，包括：到达边界时如何表现、滚动惯性如何衰减、是否允许滚动等。Flutter 提供了多种内置的 ScrollPhysics 实现。</p>
+<h3 id="82-内置-scrollphysics-类型">8.2 内置 ScrollPhysics 类型</h3>
+<table>
+<thead>
+<tr>
+<th>Physics 类型</th>
+<th>效果</th>
+<th>典型平台</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BouncingScrollPhysics</code></td>
+<td>到达边界时产生<strong>弹性回弹</strong>效果</td>
+<td>iOS 默认行为</td>
+</tr>
+<tr>
+<td><code>ClampingScrollPhysics</code></td>
+<td>到达边界时产生**发光（微光）**效果，不回弹</td>
+<td>Android 默认行为</td>
+</tr>
+<tr>
+<td><code>NeverScrollableScrollPhysics</code></td>
+<td><strong>完全禁止滚动</strong>，用户无法通过手势滚动</td>
+<td>嵌套滚动场景</td>
+</tr>
+<tr>
+<td><code>AlwaysScrollableScrollPhysics</code></td>
+<td>即使内容不足以填满视口也<strong>允许滚动</strong></td>
+<td>下拉刷新场景</td>
+</tr>
+<tr>
+<td><code>PageScrollPhysics</code></td>
+<td><strong>页面吸附</strong>效果，滚动结束后自动对齐到最近的页面</td>
+<td>PageView</td>
+</tr>
+<tr>
+<td><code>FixedExtentScrollPhysics</code></td>
+<td>固定尺寸项的吸附效果</td>
+<td>ListWheelScrollView</td>
+</tr>
+</tbody>
+</table>
+<h3 id="83-代码示例对比不同-physics">8.3 代码示例：对比不同 Physics</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ScrollPhysicsDemoApp());
+}
+
+class ScrollPhysicsDemoApp extends StatelessWidget {
+  const ScrollPhysicsDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.red, useMaterial3: true),
+      home: const ScrollPhysicsDemoPage(),
+    );
+  }
+}
+
+class ScrollPhysicsDemoPage extends StatelessWidget {
+  const ScrollPhysicsDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('ScrollPhysics 对比'),
+          bottom: const TabBar(
+            isScrollable: true,
+            tabs: [
+              Tab(text: 'Bouncing\n(iOS弹性)'),
+              Tab(text: 'Clamping\n(Android)'),
+              Tab(text: 'Never\n(禁止滚动)'),
+              Tab(text: 'Always\n(始终可滚)'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            // iOS 风格的弹性回弹
+            _buildList(
+              physics: const BouncingScrollPhysics(),
+              description: 'BouncingScrollPhysics：到达边界时会弹性回弹，iOS 默认行为',
+            ),
+            // Android 风格的边缘效果
+            _buildList(
+              physics: const ClampingScrollPhysics(),
+              description: 'ClampingScrollPhysics：到达边界时产生微光效果，不回弹，Android 默认行为',
+            ),
+            // 禁止滚动
+            _buildList(
+              physics: const NeverScrollableScrollPhysics(),
+              description: 'NeverScrollableScrollPhysics：完全禁止用户手势滚动，常用于嵌套滚动场景',
+            ),
+            // 始终允许滚动（即使内容不足）
+            _buildShortList(
+              physics: const AlwaysScrollableScrollPhysics(),
+              description: 'AlwaysScrollableScrollPhysics：即使内容不足以填满屏幕也允许滚动，常配合下拉刷新使用',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget _buildList({
+    required ScrollPhysics physics,
+    required String description,
+  }) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          color: Colors.grey[100],
+          width: double.infinity,
+          child: Text(description,
+              style: const TextStyle(fontSize: 13, color: Colors.grey)),
+        ),
+        Expanded(
+          child: ListView.builder(
+            physics: physics,
+            itemCount: 30,
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: CircleAvatar(child: Text('${index + 1}')),
+                title: Text('列表项 ${index + 1}'),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  static Widget _buildShortList({
+    required ScrollPhysics physics,
+    required String description,
+  }) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          color: Colors.grey[100],
+          width: double.infinity,
+          child: Text(description,
+              style: const TextStyle(fontSize: 13, color: Colors.grey)),
+        ),
+        Expanded(
+          child: ListView.builder(
+            physics: physics,
+            // 只有3个列表项，内容不足以填满屏幕
+            itemCount: 3,
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: CircleAvatar(child: Text('${index + 1}')),
+                title: Text('列表项 ${index + 1}'),
+                subtitle: const Text('内容很少，但仍然可以滚动'),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="84-neverscrollablescrollphysics-的实际应用">8.4 NeverScrollableScrollPhysics 的实际应用</h3>
+<p><code>NeverScrollableScrollPhysics</code> 在嵌套滚动场景中非常有用。当一个 <code>ListView</code> 嵌套在另一个可滚动组件内部时，内部 ListView 需要禁止自身滚动，将滚动控制权交给外层。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const NestedScrollDemoApp());
+}
+
+class NestedScrollDemoApp extends StatelessWidget {
+  const NestedScrollDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.amber, useMaterial3: true),
+      home: const NestedScrollDemoPage(),
+    );
+  }
+}
+
+class NestedScrollDemoPage extends StatelessWidget {
+  const NestedScrollDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('嵌套 ListView')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('顶部区域', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Container(
+              height: 150,
+              decoration: BoxDecoration(
+                color: Colors.blue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Center(child: Text('Banner 区域')),
+            ),
+            const SizedBox(height: 16),
+            const Text('嵌套列表', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            // 内层 ListView 禁止自身滚动，配合 shrinkWrap 使用
+            ListView.builder(
+              // 禁止内层 ListView 滚动
+              physics: const NeverScrollableScrollPhysics(),
+              // 让 ListView 根据内容高度自适应，而非占满父容器
+              shrinkWrap: true,
+              itemCount: 15,
+              itemBuilder: (context, index) {
+                return Card(
+                  child: ListTile(
+                    leading: CircleAvatar(child: Text('${index + 1}')),
+                    title: Text('嵌套列表项 ${index + 1}'),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            const Text('底部区域', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Container(
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Center(child: Text('页脚内容')),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：<code>shrinkWrap: true</code> 会让 ListView 一次性计算所有子组件的高度来确定自身高度，<strong>丧失懒加载优势</strong>。如果嵌套列表项很多（超过几十个），应该考虑使用 <code>CustomScrollView</code> + <code>SliverList</code> 代替，这将在下一课介绍。</p>
+</blockquote>
+<hr />
+<h2 id="9-refreshindicator下拉刷新">9. RefreshIndicator：下拉刷新</h2>
+<h3 id="91-基本概念">9.1 基本概念</h3>
+<p><code>RefreshIndicator</code> 是 Material Design 风格的下拉刷新组件。它包裹一个可滚动组件，当用户从列表顶部下拉时，显示一个旋转的进度指示器，触发数据刷新。</p>
+<p><strong>关键要求</strong>：</p>
+<ul>
+<li>子组件必须是一个可滚动组件（如 ListView、GridView、CustomScrollView）</li>
+<li><code>onRefresh</code> 回调必须返回一个 <code>Future</code>，RefreshIndicator 会在 Future 完成后自动隐藏指示器</li>
+<li>可滚动组件必须能够过度滚动（即不能使用 <code>NeverScrollableScrollPhysics</code>）</li>
+</ul>
+<h3 id="92-代码示例">9.2 代码示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'dart:math';
+
+void main() {
+  runApp(const RefreshIndicatorDemoApp());
+}
+
+class RefreshIndicatorDemoApp extends StatelessWidget {
+  const RefreshIndicatorDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.green, useMaterial3: true),
+      home: const RefreshIndicatorDemoPage(),
+    );
+  }
+}
+
+class RefreshIndicatorDemoPage extends StatefulWidget {
+  const RefreshIndicatorDemoPage({super.key});
+
+  @override
+  State&lt;RefreshIndicatorDemoPage&gt; createState() =&gt;
+      _RefreshIndicatorDemoPageState();
+}
+
+class _RefreshIndicatorDemoPageState extends State&lt;RefreshIndicatorDemoPage&gt; {
+  final Random _random = Random();
+  List&lt;Map&lt;String, dynamic&gt;&gt; _items = [];
+  int _refreshCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _generateItems();
+  }
+
+  void _generateItems() {
+    _items = List.generate(20, (index) {
+      return {
+        'title': '新闻 #${_random.nextInt(10000)}',
+        'views': _random.nextInt(9999),
+        'color': Colors.primaries[_random.nextInt(Colors.primaries.length)],
+      };
+    });
+  }
+
+  // onRefresh 必须返回 Future
+  Future&lt;void&gt; _onRefresh() async {
+    // 模拟网络请求延迟
+    await Future.delayed(const Duration(seconds: 2));
+
+    setState(() {
+      _refreshCount++;
+      _generateItems();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('下拉刷新'),
+        actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Text('已刷新 $_refreshCount 次'),
+            ),
+          ),
+        ],
+      ),
+      body: RefreshIndicator(
+        // 核心回调：必须返回 Future
+        onRefresh: _onRefresh,
+        // 指示器颜色
+        color: Colors.green,
+        // 指示器背景色
+        backgroundColor: Colors.white,
+        // 触发刷新所需的下拉距离
+        displacement: 40,
+        // 指示器到达顶部的边距
+        edgeOffset: 0,
+        // 描边宽度
+        strokeWidth: 3,
+        child: ListView.builder(
+          // AlwaysScrollableScrollPhysics 确保即使内容不足也能下拉
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: _items.length,
+          itemBuilder: (context, index) {
+            final item = _items[index];
+            return Card(
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: item['color'] as Color,
+                  child: const Icon(Icons.article, color: Colors.white),
+                ),
+                title: Text(item['title'] as String),
+                subtitle: Text('浏览量: ${item['views']}'),
+                trailing: const Icon(Icons.chevron_right),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li><code>onRefresh</code> 回调中应包含实际的数据刷新逻辑（如网络请求），并在数据到达后再 <code>setState</code>。</li>
+<li>配合 <code>AlwaysScrollableScrollPhysics</code> 使用，确保列表内容不足一屏时也能触发下拉刷新。</li>
+<li><code>onRefresh</code> 返回的 <code>Future</code> 完成后指示器才会自动收起，所以确保 Future 最终会完成（加上超时机制）。</li>
+<li>如果不希望使用 Material 风格的刷新指示器，可以使用第三方包如 <code>pull_to_refresh</code> 来自定义样式。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="10-scrollbar滚动条显示">10. Scrollbar：滚动条显示</h2>
+<h3 id="101-基本概念">10.1 基本概念</h3>
+<p><code>Scrollbar</code> 组件为可滚动子组件添加一个<strong>平台自适应的滚动条</strong>。在桌面端和 Web 上，滚动条默认始终可见且可交互（拖拽）；在移动端，滚动条通常只在滚动时短暂出现。</p>
+<h3 id="102-常用属性">10.2 常用属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>thumbVisibility</code></td>
+<td><code>bool?</code></td>
+<td>滚动条是否始终可见。<code>true</code> 为始终可见，<code>false</code>（默认）为自动隐藏</td>
+</tr>
+<tr>
+<td><code>thickness</code></td>
+<td><code>double?</code></td>
+<td>滚动条粗细（像素）</td>
+</tr>
+<tr>
+<td><code>radius</code></td>
+<td><code>Radius?</code></td>
+<td>滚动条圆角</td>
+</tr>
+<tr>
+<td><code>trackVisibility</code></td>
+<td><code>bool?</code></td>
+<td>滚动条轨道是否可见</td>
+</tr>
+<tr>
+<td><code>controller</code></td>
+<td><code>ScrollController?</code></td>
+<td>关联的滚动控制器（当子组件有多个可滚动区域时需要显式指定）</td>
+</tr>
+<tr>
+<td><code>interactive</code></td>
+<td><code>bool?</code></td>
+<td>是否可交互（拖拽滚动条）</td>
+</tr>
+<tr>
+<td><code>scrollbarOrientation</code></td>
+<td><code>ScrollbarOrientation?</code></td>
+<td>滚动条位置（左/右/上/下）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="103-代码示例">10.3 代码示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ScrollbarDemoApp());
+}
+
+class ScrollbarDemoApp extends StatelessWidget {
+  const ScrollbarDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(colorSchemeSeed: Colors.deepOrange, useMaterial3: true),
+      home: const ScrollbarDemoPage(),
+    );
+  }
+}
+
+class ScrollbarDemoPage extends StatefulWidget {
+  const ScrollbarDemoPage({super.key});
+
+  @override
+  State&lt;ScrollbarDemoPage&gt; createState() =&gt; _ScrollbarDemoPageState();
+}
+
+class _ScrollbarDemoPageState extends State&lt;ScrollbarDemoPage&gt; {
+  // Scrollbar 和 ListView 共用同一个 ScrollController
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Scrollbar 演示'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: '默认'),
+              Tab(text: '始终可见'),
+              Tab(text: '自定义样式'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            // 默认滚动条：滚动时短暂出现
+            Scrollbar(
+              child: ListView.builder(
+                itemCount: 50,
+                itemBuilder: (context, index) =&gt;
+                    _buildItem(index, '默认滚动条'),
+              ),
+            ),
+            // 始终可见 + 显示轨道
+            Scrollbar(
+              thumbVisibility: true, // 始终可见
+              trackVisibility: true, // 显示轨道
+              child: ListView.builder(
+                itemCount: 50,
+                itemBuilder: (context, index) =&gt;
+                    _buildItem(index, '始终可见'),
+              ),
+            ),
+            // 自定义样式
+            Scrollbar(
+              thumbVisibility: true,
+              thickness: 8, // 滚动条粗细
+              radius: const Radius.circular(4), // 圆角
+              interactive: true, // 可拖拽
+              controller: _scrollController,
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: 50,
+                itemBuilder: (context, index) =&gt;
+                    _buildItem(index, '自定义样式'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildItem(int index, String prefix) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: Colors.primaries[index % Colors.primaries.length],
+        child: Text('${index + 1}',
+            style: const TextStyle(color: Colors.white, fontSize: 12)),
+      ),
+      title: Text('$prefix - 列表项 ${index + 1}'),
+      subtitle: Text('这是第 ${index + 1} 个列表项的描述'),
+    );
+  }
+}
+</code></pre>
+<h3 id="104-通过主题全局配置-scrollbar">10.4 通过主题全局配置 Scrollbar</h3>
+<p>可以通过 <code>ScrollbarThemeData</code> 在 <code>ThemeData</code> 中全局配置 Scrollbar 样式，避免每处单独设置。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const ScrollbarThemeDemoApp());
+}
+
+class ScrollbarThemeDemoApp extends StatelessWidget {
+  const ScrollbarThemeDemoApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        useMaterial3: true,
+        // 全局配置 Scrollbar 主题
+        scrollbarTheme: ScrollbarThemeData(
+          thumbVisibility: WidgetStateProperty.all(true),
+          thickness: WidgetStateProperty.all(6),
+          radius: const Radius.circular(3),
+          thumbColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.dragged)) {
+              return Colors.indigo; // 拖拽时的颜色
+            }
+            if (states.contains(WidgetState.hovered)) {
+              return Colors.indigo.withOpacity(0.8); // 悬停时的颜色
+            }
+            return Colors.indigo.withOpacity(0.5); // 默认颜色
+          }),
+        ),
+      ),
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Scrollbar 全局主题')),
+        // Scrollbar 会自动应用全局主题
+        body: Scrollbar(
+          child: ListView.builder(
+            itemCount: 100,
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: CircleAvatar(child: Text('${index + 1}')),
+                title: Text('全局主题列表项 ${index + 1}'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：当 <code>Scrollbar</code> 的 <code>thumbVisibility</code> 为 <code>true</code> 且子组件有自己的 <code>ScrollController</code> 时，<code>Scrollbar</code> 必须也绑定相同的 <code>ScrollController</code>，否则会报错。</p>
+</blockquote>
+<hr />
+<h2 id="11-综合实战联系人列表应用">11. 综合实战：联系人列表应用</h2>
+<p>下面的示例综合运用本课所学知识，实现一个功能完整的联系人列表：包含下拉刷新、滚动条、回到顶部按钮和滚动监听。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'dart:math';
+
+void main() {
+  runApp(const ContactListApp());
+}
+
+class ContactListApp extends StatelessWidget {
+  const ContactListApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const ContactListPage(),
+    );
+  }
+}
+
+class ContactListPage extends StatefulWidget {
+  const ContactListPage({super.key});
+
+  @override
+  State&lt;ContactListPage&gt; createState() =&gt; _ContactListPageState();
+}
+
+class _ContactListPageState extends State&lt;ContactListPage&gt; {
+  final ScrollController _scrollController = ScrollController();
+  final Random _random = Random();
+
+  List&lt;Map&lt;String, dynamic&gt;&gt; _contacts = [];
+  bool _showBackToTop = false;
+  bool _isLoadingMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _generateContacts(30);
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _generateContacts(int count) {
+    final names = ['张伟', '王芳', '李明', '赵静', '刘洋', '陈磊', '杨帆',
+      '黄丽', '周涛', '吴强', '孙倩', '马超', '朱婷', '胡杰', '林琳'];
+    _contacts = List.generate(count, (index) {
+      final name = names[_random.nextInt(names.length)];
+      return {
+        'id': index,
+        'name': '$name${_random.nextInt(100)}',
+        'phone': '1${_random.nextInt(9) + 3}${List.generate(9, (_) =&gt; _random.nextInt(10)).join()}',
+        'isOnline': _random.nextBool(),
+      };
+    });
+  }
+
+  void _onScroll() {
+    final offset = _scrollController.offset;
+    final maxExtent = _scrollController.position.maxScrollExtent;
+
+    // 控制回到顶部按钮的显示
+    if (offset &gt; 500 &amp;&amp; !_showBackToTop) {
+      setState(() =&gt; _showBackToTop = true);
+    } else if (offset &lt;= 500 &amp;&amp; _showBackToTop) {
+      setState(() =&gt; _showBackToTop = false);
+    }
+
+    // 滚动到接近底部时触发加载更多
+    if (offset &gt;= maxExtent - 200 &amp;&amp; !_isLoadingMore) {
+      _loadMore();
+    }
+  }
+
+  Future&lt;void&gt; _onRefresh() async {
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      _generateContacts(30);
+    });
+  }
+
+  Future&lt;void&gt; _loadMore() async {
+    setState(() =&gt; _isLoadingMore = true);
+    await Future.delayed(const Duration(seconds: 1));
+    if (!mounted) return;
+    setState(() {
+      final currentLength = _contacts.length;
+      final names = ['张伟', '王芳', '李明', '赵静', '刘洋'];
+      _contacts.addAll(List.generate(15, (index) {
+        final name = names[_random.nextInt(names.length)];
+        return {
+          'id': currentLength + index,
+          'name': '$name${_random.nextInt(100)}',
+          'phone': '1${_random.nextInt(9) + 3}${List.generate(9, (_) =&gt; _random.nextInt(10)).join()}',
+          'isOnline': _random.nextBool(),
+        };
+      }));
+      _isLoadingMore = false;
+    });
+  }
+
+  void _scrollToTop() {
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('联系人'),
+        actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Text('${_contacts.length} 人'),
+            ),
+          ),
+        ],
+      ),
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: Scrollbar(
+          controller: _scrollController,
+          thumbVisibility: true,
+          radius: const Radius.circular(4),
+          child: ListView.separated(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            itemCount: _contacts.length + (_isLoadingMore ? 1 : 0),
+            itemBuilder: (context, index) {
+              // 底部加载指示器
+              if (index == _contacts.length) {
+                return const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              final contact = _contacts[index];
+              final bool isOnline = contact['isOnline'] as bool;
+
+              return ListTile(
+                leading: Stack(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors
+                          .primaries[index % Colors.primaries.length]
+                          .withOpacity(0.7),
+                      child: Text(
+                        (contact['name'] as String).substring(0, 1),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    // 在线状态指示点
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: isOnline ? Colors.green : Colors.grey,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                title: Text(contact['name'] as String),
+                subtitle: Text(contact['phone'] as String),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isOnline)
+                      const Text('在线',
+                          style: TextStyle(color: Colors.green, fontSize: 12)),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.chevron_right, color: Colors.grey),
+                  ],
+                ),
+              );
+            },
+            separatorBuilder: (context, index) {
+              return const Divider(height: 1, indent: 72);
+            },
+          ),
+        ),
+      ),
+      floatingActionButton: AnimatedOpacity(
+        opacity: _showBackToTop ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 200),
+        child: _showBackToTop
+            ? FloatingActionButton.small(
+                onPressed: _scrollToTop,
+                child: const Icon(Icons.arrow_upward),
+              )
+            : null,
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="本课小结">本课小结</h2>
+<p>本课系统讲解了 Flutter 列表与滚动组件的基础知识，以下是核心要点：</p>
+<ol>
+<li>
+<p><strong>SingleChildScrollView</strong>：最简单的滚动容器，只包含一个子组件，适合内容量可控的页面（如表单、设置页）。不具备懒加载能力，不适用于长列表。</p>
+</li>
+<li>
+<p><strong>ListView 四种构造方式</strong>：</p>
+<ul>
+<li><strong>默认构造</strong>：一次性创建所有子组件，适合少量固定内容</li>
+<li><strong>builder</strong>：懒加载按需创建，长列表首选，95% 场景使用它</li>
+<li><strong>separated</strong>：在 builder 基础上增加分割线支持</li>
+<li><strong>custom</strong>：完全自定义子组件管理策略，高级场景使用</li>
+</ul>
+</li>
+<li>
+<p><strong>性能优化</strong>：使用 <code>itemExtent</code> 或 <code>prototypeItem</code> 指定固定列表项尺寸，跳过布局计算，显著提升长列表性能。</p>
+</li>
+<li>
+<p><strong>ScrollController</strong>：提供滚动监听（<code>addListener</code>）和编程式滚动（<code>animateTo</code>、<code>jumpTo</code>）能力。使用后必须 <code>dispose</code> 释放资源。</p>
+</li>
+<li>
+<p><strong>ScrollPhysics</strong>：控制滚动行为，常用的有 <code>BouncingScrollPhysics</code>（iOS 弹性）、<code>ClampingScrollPhysics</code>（Android 微光）、<code>NeverScrollableScrollPhysics</code>（禁止滚动）和 <code>AlwaysScrollableScrollPhysics</code>（始终可滚动）。</p>
+</li>
+<li>
+<p><strong>RefreshIndicator</strong>：Material 风格下拉刷新，<code>onRefresh</code> 必须返回 <code>Future</code>，常配合 <code>AlwaysScrollableScrollPhysics</code> 使用。</p>
+</li>
+<li>
+<p><strong>Scrollbar</strong>：为可滚动组件添加滚动条，通过 <code>thumbVisibility</code>、<code>thickness</code>、<code>radius</code> 等属性定制样式，可通过 <code>ScrollbarThemeData</code> 全局配置。</p>
+</li>
+</ol>
+<hr />
+<h2 id="课后练习">课后练习</h2>
+<h3 id="练习1设置页面基础">练习1：设置页面（基础）</h3>
+<p>使用 <code>ListView</code> 默认构造创建一个设置页面，包含以下分组：</p>
+<ul>
+<li>账户设置（头像、用户名、手机号）</li>
+<li>通知设置（推送开关、声音开关、震动开关 —— 使用 <code>SwitchListTile</code>）</li>
+<li>外观设置（主题色选择、字体大小）</li>
+<li>关于（版本号、用户协议、隐私政策）</li>
+</ul>
+<p>每个分组之间用带标题的分组头分隔。</p>
+<h3 id="练习2加载更多列表中级">练习2：加载更多列表（中级）</h3>
+<p>使用 <code>ListView.builder</code> 实现一个&quot;新闻资讯&quot;列表：</p>
+<ul>
+<li>初始加载 20 条数据</li>
+<li>滚动到底部时自动加载更多（每次追加 10 条）</li>
+<li>加载过程中底部显示 <code>CircularProgressIndicator</code></li>
+<li>使用 <code>itemExtent</code> 优化性能</li>
+<li>总共最多加载 100 条，达到上限后显示&quot;没有更多了&quot;</li>
+</ul>
+<h3 id="练习3滚动监听仪表盘中级">练习3：滚动监听仪表盘（中级）</h3>
+<p>创建一个列表页面，顶部固定一个&quot;滚动仪表盘&quot;：</p>
+<ul>
+<li>实时显示：当前滚动偏移量、最大滚动范围、滚动百分比</li>
+<li>一个 <code>LinearProgressIndicator</code> 实时反映滚动进度</li>
+<li>一个文字标签显示当前滚动方向（向上/向下/静止）</li>
+<li>使用 <code>NotificationListener&lt;ScrollNotification&gt;</code> 实现</li>
+</ul>
+<h3 id="练习4自定义刷新列表中级">练习4：自定义刷新列表（中级）</h3>
+<p>实现一个带完整交互的商品列表：</p>
+<ul>
+<li><code>RefreshIndicator</code> 下拉刷新（模拟网络请求，刷新后数据随机变化）</li>
+<li><code>Scrollbar</code> 始终可见</li>
+<li><code>ListView.separated</code> 构建列表，分割线使用自定义样式</li>
+<li>滚动超过 300px 后显示&quot;回到顶部&quot; <code>FloatingActionButton</code></li>
+<li>使用 <code>ScrollController</code> 实现回到顶部动画</li>
+</ul>
+<h3 id="练习5综合思考题">练习5：综合思考题</h3>
+<p>回答以下问题（建议动手验证）：</p>
+<ol>
+<li><code>ListView.builder</code> 中如果不传 <code>itemCount</code>，会发生什么？在什么场景下这样做是合理的？</li>
+<li><code>shrinkWrap: true</code> 对 ListView 的性能有什么影响？为什么在嵌套场景中必须使用它？有没有更好的替代方案？</li>
+<li>为什么 <code>RefreshIndicator</code> 在使用 <code>ClampingScrollPhysics</code> 时可能无法正常工作？如何解决？</li>
+<li>一个 <code>ScrollController</code> 能同时绑定到两个 <code>ListView</code> 上吗？如果不能，有什么替代方案？</li>
+</ol>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：<a href="lesson13_gridview_sliver.md">第13课 网格与高级滚动组件</a> —— 深入学习 GridView 网格布局、CustomScrollView 与 Sliver 系列组件，掌握 SliverAppBar 折叠效果和 NestedScrollView 嵌套滚动协调。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

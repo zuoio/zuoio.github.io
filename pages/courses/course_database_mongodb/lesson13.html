@@ -1,0 +1,2449 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第13章-安全与运维基础">第13章 安全与运维基础</h1>
+<blockquote>
+<p>MongoDB 默认安装后没有开启认证，任何人都可以连接并操作数据库——这在生产环境中是极其危险的。
+本章将系统讲解 MongoDB 的安全配置（用户认证、角色授权、连接安全）和运维基础（副本集高可用、
+分片扩展、备份恢复），帮助你构建安全可靠的 MongoDB 部署方案。</p>
+</blockquote>
+<hr />
+<h2 id="131-用户认证与角色授权rbac">13.1 用户认证与角色授权（RBAC）</h2>
+<p>MongoDB 使用 <strong>RBAC（Role-Based Access Control，基于角色的访问控制）</strong> 模型来管理权限。核心概念：</p>
+<ul>
+<li><strong>用户（User）</strong>：关联到特定数据库的账号</li>
+<li><strong>角色（Role）</strong>：一组权限的集合</li>
+<li><strong>权限（Privilege）</strong>：对特定资源执行特定操作的能力</li>
+</ul>
+<h3 id="1311-创建管理员用户">13.1.1 创建管理员用户</h3>
+<p>首先需要创建一个拥有最高权限的管理员账号。</p>
+<pre><code class="language-javascript">// 连接到 MongoDB（未开启认证时）
+// mongosh
+
+// 切换到 admin 数据库
+use admin;
+
+// 创建超级管理员（root 角色）
+db.createUser({
+    user: &quot;admin&quot;,
+    pwd: &quot;Admin@2024!Secure&quot;,   // 生产环境请使用强密码
+    roles: [
+        { role: &quot;root&quot;, db: &quot;admin&quot; }
+    ]
+});
+
+// 创建用户管理员（只能管理用户，不能操作业务数据）
+db.createUser({
+    user: &quot;userAdmin&quot;,
+    pwd: &quot;UserAdmin@2024!&quot;,
+    roles: [
+        { role: &quot;userAdminAnyDatabase&quot;, db: &quot;admin&quot; }
+    ]
+});
+
+// 验证用户创建成功
+db.getUsers();
+</code></pre>
+<p><strong>开启认证后重启 MongoDB：</strong></p>
+<pre><code class="language-bash"># 方式1：命令行参数
+mongod --auth --dbpath /data/db --port 27017
+
+# 方式2：配置文件 mongod.conf
+# security:
+#   authorization: enabled
+
+# 方式3：Docker 启动时添加 --auth
+docker run -d --name mongo \
+  -p 27017:27017 \
+  -v mongo-data:/data/db \
+  mongo:7.0 --auth
+</code></pre>
+<p><strong>使用认证连接：</strong></p>
+<pre><code class="language-bash"># 命令行认证
+mongosh -u admin -p &quot;Admin@2024!Secure&quot; --authenticationDatabase admin
+
+# 或者连接后再认证
+mongosh
+use admin;
+db.auth(&quot;admin&quot;, &quot;Admin@2024!Secure&quot;);
+</code></pre>
+<h3 id="1312-创建普通数据库用户">13.1.2 创建普通数据库用户</h3>
+<pre><code class="language-javascript">// 以管理员身份连接
+use admin;
+db.auth(&quot;admin&quot;, &quot;Admin@2024!Secure&quot;);
+
+// 为 shop 数据库创建读写用户
+use shop;
+db.createUser({
+    user: &quot;shopApp&quot;,
+    pwd: &quot;ShopApp@2024!&quot;,
+    roles: [
+        { role: &quot;readWrite&quot;, db: &quot;shop&quot; }
+    ]
+});
+
+// 为 shop 数据库创建只读用户（用于报表查询）
+db.createUser({
+    user: &quot;shopReader&quot;,
+    pwd: &quot;ShopReader@2024!&quot;,
+    roles: [
+        { role: &quot;read&quot;, db: &quot;shop&quot; }
+    ]
+});
+
+// 创建可以读写多个数据库的用户
+use admin;
+db.createUser({
+    user: &quot;multiDbUser&quot;,
+    pwd: &quot;MultiDb@2024!&quot;,
+    roles: [
+        { role: &quot;readWrite&quot;, db: &quot;shop&quot; },
+        { role: &quot;readWrite&quot;, db: &quot;cms&quot; },
+        { role: &quot;read&quot;, db: &quot;analytics&quot; }
+    ]
+});
+</code></pre>
+<h3 id="1313-内置角色">13.1.3 内置角色</h3>
+<p>MongoDB 提供了丰富的内置角色：</p>
+<p><strong>数据库级别角色：</strong></p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>权限</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>read</code></td>
+<td>读取数据</td>
+<td>可以执行 find、aggregate 等读操作</td>
+</tr>
+<tr>
+<td><code>readWrite</code></td>
+<td>读写数据</td>
+<td>在 read 基础上增加 insert、update、delete 等写操作</td>
+</tr>
+<tr>
+<td><code>dbAdmin</code></td>
+<td>数据库管理</td>
+<td>索引管理、统计信息、compact 等，但不能读写用户数据</td>
+</tr>
+<tr>
+<td><code>dbOwner</code></td>
+<td>数据库所有者</td>
+<td>等同于 readWrite + dbAdmin + userAdmin</td>
+</tr>
+<tr>
+<td><code>userAdmin</code></td>
+<td>用户管理</td>
+<td>创建/修改/删除用户和角色</td>
+</tr>
+</tbody>
+</table>
+<p><strong>全局角色（在 admin 数据库上授予）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>权限</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>readAnyDatabase</code></td>
+<td>读取所有数据库</td>
+<td>对所有数据库有 read 权限</td>
+</tr>
+<tr>
+<td><code>readWriteAnyDatabase</code></td>
+<td>读写所有数据库</td>
+<td>对所有数据库有 readWrite 权限</td>
+</tr>
+<tr>
+<td><code>dbAdminAnyDatabase</code></td>
+<td>管理所有数据库</td>
+<td>对所有数据库有 dbAdmin 权限</td>
+</tr>
+<tr>
+<td><code>userAdminAnyDatabase</code></td>
+<td>管理所有用户</td>
+<td>可以管理任何数据库的用户</td>
+</tr>
+<tr>
+<td><code>clusterAdmin</code></td>
+<td>集群管理</td>
+<td>副本集管理、分片管理、集群监控</td>
+</tr>
+<tr>
+<td><code>clusterManager</code></td>
+<td>集群管理（受限）</td>
+<td>集群监控和管理，但不能删除数据</td>
+</tr>
+<tr>
+<td><code>clusterMonitor</code></td>
+<td>集群监控</td>
+<td>只能查看集群状态，不能修改</td>
+</tr>
+<tr>
+<td><code>root</code></td>
+<td>超级管理员</td>
+<td>拥有所有权限</td>
+</tr>
+</tbody>
+</table>
+<p><strong>特殊角色：</strong></p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backup</code></td>
+<td>可以使用 mongodump 备份数据</td>
+</tr>
+<tr>
+<td><code>restore</code></td>
+<td>可以使用 mongorestore 恢复数据</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1314-自定义角色">13.1.4 自定义角色</h3>
+<p>当内置角色不满足需求时，可以创建自定义角色。</p>
+<pre><code class="language-javascript">use admin;
+
+// 创建自定义角色：只能对 orders 集合进行读操作和对 products 集合进行读写
+db.createRole({
+    role: &quot;orderReaderProductWriter&quot;,
+    privileges: [
+        {
+            resource: { db: &quot;shop&quot;, collection: &quot;orders&quot; },
+            actions: [&quot;find&quot;, &quot;aggregate&quot;]
+        },
+        {
+            resource: { db: &quot;shop&quot;, collection: &quot;products&quot; },
+            actions: [&quot;find&quot;, &quot;insert&quot;, &quot;update&quot;, &quot;remove&quot;]
+        }
+    ],
+    roles: []   // 不继承其他角色
+});
+
+// 创建只能查看日志的角色
+db.createRole({
+    role: &quot;auditLogReader&quot;,
+    privileges: [
+        {
+            resource: { db: &quot;shop&quot;, collection: &quot;auditLogs&quot; },
+            actions: [&quot;find&quot;]
+        }
+    ],
+    roles: []
+});
+
+// 创建继承自内置角色的自定义角色
+db.createRole({
+    role: &quot;shopDeveloper&quot;,
+    privileges: [
+        // 额外允许创建索引
+        {
+            resource: { db: &quot;shop&quot;, collection: &quot;&quot; },
+            actions: [&quot;createIndex&quot;, &quot;dropIndex&quot;, &quot;listIndexes&quot;]
+        }
+    ],
+    roles: [
+        { role: &quot;readWrite&quot;, db: &quot;shop&quot; }   // 继承 readWrite 权限
+    ]
+});
+
+// 使用自定义角色创建用户
+use shop;
+db.createUser({
+    user: &quot;developer&quot;,
+    pwd: &quot;Dev@2024!&quot;,
+    roles: [
+        { role: &quot;shopDeveloper&quot;, db: &quot;admin&quot; }
+    ]
+});
+</code></pre>
+<h3 id="1315-用户管理常用命令">13.1.5 用户管理常用命令</h3>
+<pre><code class="language-javascript">// ===== 查看用户 =====
+use shop;
+db.getUsers();                        // 查看当前数据库的所有用户
+db.getUser(&quot;shopApp&quot;);                // 查看指定用户
+
+// ===== 修改用户密码 =====
+db.changeUserPassword(&quot;shopApp&quot;, &quot;NewPassword@2024!&quot;);
+
+// ===== 授予角色 =====
+db.grantRolesToUser(&quot;shopApp&quot;, [
+    { role: &quot;dbAdmin&quot;, db: &quot;shop&quot; }
+]);
+
+// ===== 回收角色 =====
+db.revokeRolesFromUser(&quot;shopApp&quot;, [
+    { role: &quot;dbAdmin&quot;, db: &quot;shop&quot; }
+]);
+
+// ===== 删除用户 =====
+db.dropUser(&quot;shopReader&quot;);
+
+// ===== 查看当前连接的用户信息 =====
+db.runCommand({ connectionStatus: 1 });
+
+// ===== 查看角色的详细权限 =====
+use admin;
+db.getRole(&quot;readWrite&quot;, { showPrivileges: true });
+
+// ===== 查看自定义角色 =====
+db.getRoles({ showBuiltinRoles: false });
+</code></pre>
+<hr />
+<h2 id="132-连接安全认证机制与连接串配置">13.2 连接安全：认证机制与连接串配置</h2>
+<h3 id="1321-scram-认证机制">13.2.1 SCRAM 认证机制</h3>
+<p>MongoDB 默认使用 <strong>SCRAM（Salted Challenge Response Authentication Mechanism）</strong> 认证机制：</p>
+<table>
+<thead>
+<tr>
+<th>认证机制</th>
+<th>说明</th>
+<th>MongoDB 版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SCRAM-SHA-1</td>
+<td>基于 SHA-1 的 SCRAM</td>
+<td>3.0+</td>
+</tr>
+<tr>
+<td><strong>SCRAM-SHA-256</strong></td>
+<td>基于 SHA-256 的 SCRAM（<strong>推荐</strong>）</td>
+<td>4.0+</td>
+</tr>
+<tr>
+<td>x.509</td>
+<td>基于证书的认证</td>
+<td>2.6+</td>
+</tr>
+<tr>
+<td>LDAP</td>
+<td>企业版，对接 LDAP/AD</td>
+<td>企业版</td>
+</tr>
+<tr>
+<td>Kerberos</td>
+<td>企业版，对接 Kerberos</td>
+<td>企业版</td>
+</tr>
+</tbody>
+</table>
+<p>SCRAM 的认证流程：</p>
+<pre><code>客户端                                    服务端
+  │                                        │
+  │─── 1. 发送用户名 ───────────────────&gt;  │
+  │                                        │
+  │&lt;── 2. 返回盐值(salt)+迭代次数 ────────  │
+  │                                        │
+  │─── 3. 发送加密后的认证证明 ──────────&gt;  │
+  │                                        │
+  │&lt;── 4. 验证通过/失败 ─────────────────  │
+  │                                        │
+</code></pre>
+<p>密码在传输过程中<strong>不会以明文形式出现</strong>，安全性较高。</p>
+<h3 id="1322-连接字符串格式详解">13.2.2 连接字符串格式详解</h3>
+<p>MongoDB 的标准连接字符串格式：</p>
+<pre><code>mongodb://[username:password@]host1[:port1][,host2[:port2],...][/database][?options]
+</code></pre>
+<p><strong>各部分说明：</strong></p>
+<table>
+<thead>
+<tr>
+<th>部分</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mongodb://</code></td>
+<td>协议前缀（必须）</td>
+<td><code>mongodb://</code> 或 <code>mongodb+srv://</code></td>
+</tr>
+<tr>
+<td><code>username:password</code></td>
+<td>认证凭据（可选）</td>
+<td><code>admin:Admin%402024</code></td>
+</tr>
+<tr>
+<td><code>host:port</code></td>
+<td>主机和端口</td>
+<td><code>localhost:27017</code></td>
+</tr>
+<tr>
+<td><code>/database</code></td>
+<td>默认数据库</td>
+<td><code>/shop</code></td>
+</tr>
+<tr>
+<td><code>?options</code></td>
+<td>连接选项</td>
+<td><code>?authSource=admin&amp;replicaSet=rs0</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>完整连接字符串示例：</strong></p>
+<pre><code class="language-bash"># 最简单的连接（无认证）
+mongodb://localhost:27017/mydb
+
+# 带认证的连接
+mongodb://shopApp:ShopApp%402024!@localhost:27017/shop?authSource=shop
+
+# 连接副本集（多节点）
+mongodb://shopApp:password@host1:27017,host2:27017,host3:27017/shop?replicaSet=rs0&amp;authSource=admin
+
+# 使用 SRV 记录连接（MongoDB Atlas 等云服务常用）
+mongodb+srv://shopApp:password@cluster0.example.mongodb.net/shop?authSource=admin
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：密码中的特殊字符需要进行 URL 编码。例如 <code>@</code> 编码为 <code>%40</code>，<code>#</code> 编码为 <code>%23</code>。</p>
+</blockquote>
+<h3 id="1323-常用连接选项">13.2.3 常用连接选项</h3>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>authSource</code></td>
+<td>连接的数据库</td>
+<td>存储用户凭据的数据库，通常是 <code>admin</code></td>
+</tr>
+<tr>
+<td><code>authMechanism</code></td>
+<td>SCRAM-SHA-256</td>
+<td>认证机制</td>
+</tr>
+<tr>
+<td><code>replicaSet</code></td>
+<td>无</td>
+<td>副本集名称</td>
+</tr>
+<tr>
+<td><code>directConnection</code></td>
+<td>false</td>
+<td>直接连接到指定节点（不做副本集发现）</td>
+</tr>
+<tr>
+<td><code>readPreference</code></td>
+<td>primary</td>
+<td>读偏好：primary / secondary / nearest 等</td>
+</tr>
+<tr>
+<td><code>w</code></td>
+<td>1</td>
+<td>写关注级别：1 / majority / 0</td>
+</tr>
+<tr>
+<td><code>wtimeoutMS</code></td>
+<td>0</td>
+<td>写关注超时时间</td>
+</tr>
+<tr>
+<td><code>connectTimeoutMS</code></td>
+<td>10000</td>
+<td>连接超时（毫秒）</td>
+</tr>
+<tr>
+<td><code>socketTimeoutMS</code></td>
+<td>0</td>
+<td>Socket 超时</td>
+</tr>
+<tr>
+<td><code>maxPoolSize</code></td>
+<td>100</td>
+<td>连接池最大连接数</td>
+</tr>
+<tr>
+<td><code>minPoolSize</code></td>
+<td>0</td>
+<td>连接池最小连接数</td>
+</tr>
+<tr>
+<td><code>maxIdleTimeMS</code></td>
+<td>0</td>
+<td>连接最大空闲时间</td>
+</tr>
+<tr>
+<td><code>retryWrites</code></td>
+<td>true</td>
+<td>是否自动重试写操作</td>
+</tr>
+<tr>
+<td><code>retryReads</code></td>
+<td>true</td>
+<td>是否自动重试读操作</td>
+</tr>
+<tr>
+<td><code>ssl</code> / <code>tls</code></td>
+<td>false</td>
+<td>是否启用 TLS/SSL</td>
+</tr>
+<tr>
+<td><code>compressors</code></td>
+<td>无</td>
+<td>压缩算法：snappy / zlib / zstd</td>
+</tr>
+</tbody>
+</table>
+<p><strong>生产环境推荐的连接字符串：</strong></p>
+<pre><code>mongodb://shopApp:password@node1:27017,node2:27017,node3:27017/shop?authSource=admin&amp;replicaSet=rs0&amp;w=majority&amp;retryWrites=true&amp;readPreference=secondaryPreferred&amp;maxPoolSize=50&amp;connectTimeoutMS=5000&amp;compressors=zstd
+</code></pre>
+<h3 id="1324-tlsssl-配置简述">13.2.4 TLS/SSL 配置简述</h3>
+<p>生产环境中，建议启用 TLS 加密传输。</p>
+<p><strong>MongoDB 服务端启用 TLS：</strong></p>
+<pre><code class="language-yaml"># mongod.conf
+net:
+  tls:
+    mode: requireTLS
+    certificateKeyFile: /etc/ssl/mongodb.pem
+    CAFile: /etc/ssl/ca.pem
+</code></pre>
+<p><strong>连接字符串中启用 TLS：</strong></p>
+<pre><code>mongodb://user:pass@host:27017/db?tls=true&amp;tlsCAFile=/path/to/ca.pem&amp;tlsCertificateKeyFile=/path/to/client.pem
+</code></pre>
+<h3 id="1325-spring-boot-中的安全连接配置">13.2.5 Spring Boot 中的安全连接配置</h3>
+<p><strong>基本认证配置（application.yml）：</strong></p>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      # 方式1：使用连接字符串（推荐）
+      uri: mongodb://shopApp:ShopApp%402024!@localhost:27017/shop?authSource=admin
+
+      # 方式2：分开配置（二选一，不要同时使用 uri 和下面的配置）
+      # host: localhost
+      # port: 27017
+      # database: shop
+      # username: shopApp
+      # password: ShopApp@2024!
+      # authentication-database: admin
+</code></pre>
+<p><strong>副本集连接配置：</strong></p>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      uri: &gt;-
+        mongodb://shopApp:ShopApp%402024!@
+        node1:27017,node2:27017,node3:27017
+        /shop
+        ?authSource=admin
+        &amp;replicaSet=rs0
+        &amp;readPreference=secondaryPreferred
+        &amp;w=majority
+        &amp;retryWrites=true
+        &amp;connectTimeoutMS=5000
+        &amp;maxPoolSize=50
+</code></pre>
+<p><strong>TLS 连接配置：</strong></p>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      uri: &gt;-
+        mongodb://shopApp:password@host:27017/shop
+        ?authSource=admin
+        &amp;tls=true
+        &amp;tlsAllowInvalidCertificates=false
+
+  # SSL 信任库配置（如果使用自签名证书）
+  ssl:
+    trust-store: classpath:truststore.jks
+    trust-store-password: changeit
+</code></pre>
+<p><strong>通过 Java 配置自定义 MongoClient：</strong></p>
+<pre><code class="language-java">import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
+
+import java.util.concurrent.TimeUnit;
+
+@Configuration
+public class MongoConfig extends AbstractMongoClientConfiguration {
+
+    @Override
+    protected String getDatabaseName() {
+        return &quot;shop&quot;;
+    }
+
+    @Override
+    @Bean
+    public MongoClient mongoClient() {
+        ConnectionString connStr = new ConnectionString(
+                &quot;mongodb://shopApp:ShopApp%402024!@localhost:27017/shop?authSource=admin&quot;
+        );
+
+        MongoClientSettings settings = MongoClientSettings.builder()
+                .applyConnectionString(connStr)
+                .applyToConnectionPoolSettings(pool -&gt; pool
+                        .maxSize(50)
+                        .minSize(5)
+                        .maxConnectionIdleTime(30, TimeUnit.SECONDS)
+                        .maxWaitTime(5, TimeUnit.SECONDS))
+                .applyToSocketSettings(socket -&gt; socket
+                        .connectTimeout(5, TimeUnit.SECONDS)
+                        .readTimeout(10, TimeUnit.SECONDS))
+                .retryWrites(true)
+                .retryReads(true)
+                .build();
+
+        return MongoClients.create(settings);
+    }
+}
+</code></pre>
+<hr />
+<h2 id="133-副本集replica-set概念与高可用">13.3 副本集（Replica Set）概念与高可用</h2>
+<h3 id="1331-副本集的架构">13.3.1 副本集的架构</h3>
+<p>副本集是 MongoDB 提供高可用性的核心机制。一个副本集包含多个 MongoDB 实例，数据在各节点之间自动同步。</p>
+<pre><code>                    ┌──────────────────────┐
+                    │   Primary（主节点）    │ ← 接受所有写操作
+                    │   读 + 写              │
+                    └──────────┬───────────┘
+                               │ oplog 同步
+                    ┌──────────┴───────────┐
+              ┌─────┴─────┐          ┌─────┴─────┐
+              │ Secondary │          │ Secondary │ ← 数据副本，可分担读
+              │  （从节点） │          │  （从节点） │
+              └───────────┘          └───────────┘
+</code></pre>
+<p><strong>三种节点类型：</strong></p>
+<table>
+<thead>
+<tr>
+<th>节点类型</th>
+<th>说明</th>
+<th>是否存储数据</th>
+<th>是否参与选举</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Primary</strong></td>
+<td>主节点，接受所有写操作</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Secondary</strong></td>
+<td>从节点，复制主节点数据</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>Arbiter</strong></td>
+<td>仲裁节点，只参与投票</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见的副本集拓扑：</strong></p>
+<table>
+<thead>
+<tr>
+<th>拓扑</th>
+<th>节点数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PSS</td>
+<td>1 Primary + 2 Secondary</td>
+<td><strong>最常用</strong>，3个数据副本</td>
+</tr>
+<tr>
+<td>PSA</td>
+<td>1 Primary + 1 Secondary + 1 Arbiter</td>
+<td>节省资源，但只有2个数据副本</td>
+</tr>
+<tr>
+<td>PSSSS</td>
+<td>1 Primary + 4 Secondary</td>
+<td>更高的读扩展能力</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>推荐</strong>：生产环境至少使用 3 个数据节点（PSS），避免使用仲裁节点，因为仲裁节点不存储数据，
+当 Primary 故障时只剩一个数据副本，风险较高。</p>
+</blockquote>
+<h3 id="1332-自动故障转移机制">13.3.2 自动故障转移机制</h3>
+<p>当 Primary 节点故障时，副本集会自动进行选举，选出新的 Primary：</p>
+<pre><code>正常状态:
+  Primary ←── Secondary1
+          ←── Secondary2
+
+Primary 故障:
+  Primary ✗    Secondary1  ←→  Secondary2
+                    │                │
+                    └──── 选举 ──────┘
+                           │
+                           ▼
+               Secondary1 成为新的 Primary
+
+故障恢复:
+  新Primary ←── Secondary2
+            ←── 原Primary（恢复后变成 Secondary）
+</code></pre>
+<p><strong>选举规则：</strong></p>
+<ul>
+<li>需要<strong>多数节点</strong>（majority）同意才能选出新 Primary</li>
+<li>3 节点副本集：至少 2 个节点存活才能选举</li>
+<li>5 节点副本集：至少 3 个节点存活才能选举</li>
+<li>选举通常在 <strong>10-12 秒</strong>内完成</li>
+<li>选举期间<strong>无法写入</strong>，但配置了 <code>readPreference</code> 的读操作可以继续</li>
+</ul>
+<h3 id="1333-读写分离readpreference">13.3.3 读写分离：ReadPreference</h3>
+<p>通过 ReadPreference 可以将读操作分散到从节点，减轻主节点压力。</p>
+<table>
+<thead>
+<tr>
+<th>ReadPreference</th>
+<th>说明</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>primary</code></td>
+<td><strong>默认</strong>，所有读写都走主节点</td>
+<td>对数据实时性要求高</td>
+</tr>
+<tr>
+<td><code>primaryPreferred</code></td>
+<td>优先读主节点，主不可用时读从节点</td>
+<td>大部分读需要实时数据</td>
+</tr>
+<tr>
+<td><code>secondary</code></td>
+<td>只从从节点读取</td>
+<td>报表查询、数据分析</td>
+</tr>
+<tr>
+<td><code>secondaryPreferred</code></td>
+<td>优先读从节点，从不可用时读主节点</td>
+<td><strong>最常用的读写分离策略</strong></td>
+</tr>
+<tr>
+<td><code>nearest</code></td>
+<td>从网络延迟最低的节点读取</td>
+<td>跨地域部署</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>：从 Secondary 读取的数据可能有<strong>短暂的延迟</strong>（通常毫秒级），因为 oplog 同步是异步的。
+对数据一致性要求极高的操作（如支付后查询余额）应使用 <code>primary</code>。</p>
+</blockquote>
+<h3 id="1334-docker-compose-搭建-3-节点副本集">13.3.4 Docker Compose 搭建 3 节点副本集</h3>
+<p><strong>docker-compose.yml：</strong></p>
+<pre><code class="language-yaml">version: '3.8'
+
+services:
+  mongo1:
+    image: mongo:7.0
+    container_name: mongo-rs-1
+    ports:
+      - &quot;27017:27017&quot;
+    command: mongod --replSet rs0 --bind_ip_all --keyFile /etc/mongo-keyfile
+    volumes:
+      - mongo1-data:/data/db
+      - ./mongo-keyfile:/etc/mongo-keyfile:ro
+    networks:
+      - mongo-cluster
+
+  mongo2:
+    image: mongo:7.0
+    container_name: mongo-rs-2
+    ports:
+      - &quot;27018:27017&quot;
+    command: mongod --replSet rs0 --bind_ip_all --keyFile /etc/mongo-keyfile
+    volumes:
+      - mongo2-data:/data/db
+      - ./mongo-keyfile:/etc/mongo-keyfile:ro
+    networks:
+      - mongo-cluster
+
+  mongo3:
+    image: mongo:7.0
+    container_name: mongo-rs-3
+    ports:
+      - &quot;27019:27017&quot;
+    command: mongod --replSet rs0 --bind_ip_all --keyFile /etc/mongo-keyfile
+    volumes:
+      - mongo3-data:/data/db
+      - ./mongo-keyfile:/etc/mongo-keyfile:ro
+    networks:
+      - mongo-cluster
+
+volumes:
+  mongo1-data:
+  mongo2-data:
+  mongo3-data:
+
+networks:
+  mongo-cluster:
+    driver: bridge
+</code></pre>
+<p><strong>生成 keyFile（节点间认证）：</strong></p>
+<pre><code class="language-bash"># 生成随机密钥文件
+openssl rand -base64 756 &gt; mongo-keyfile
+
+# 设置权限（MongoDB 要求 keyFile 权限为 400 或 600）
+chmod 400 mongo-keyfile
+</code></pre>
+<blockquote>
+<p><strong>说明</strong>：keyFile 是副本集节点之间互相认证的凭据。开启 keyFile 认证后，
+客户端连接也必须使用用户名密码认证（相当于自动开启了 <code>--auth</code>）。</p>
+</blockquote>
+<p><strong>简化版（开发环境，不使用 keyFile）：</strong></p>
+<p>如果仅用于本地开发测试，可以不使用 keyFile：</p>
+<pre><code class="language-yaml">version: '3.8'
+
+services:
+  mongo1:
+    image: mongo:7.0
+    container_name: mongo-rs-1
+    ports:
+      - &quot;27017:27017&quot;
+    command: mongod --replSet rs0 --bind_ip_all
+    volumes:
+      - mongo1-data:/data/db
+    networks:
+      - mongo-cluster
+
+  mongo2:
+    image: mongo:7.0
+    container_name: mongo-rs-2
+    ports:
+      - &quot;27018:27017&quot;
+    command: mongod --replSet rs0 --bind_ip_all
+    volumes:
+      - mongo2-data:/data/db
+    networks:
+      - mongo-cluster
+
+  mongo3:
+    image: mongo:7.0
+    container_name: mongo-rs-3
+    ports:
+      - &quot;27019:27017&quot;
+    command: mongod --replSet rs0 --bind_ip_all
+    volumes:
+      - mongo3-data:/data/db
+    networks:
+      - mongo-cluster
+
+volumes:
+  mongo1-data:
+  mongo2-data:
+  mongo3-data:
+
+networks:
+  mongo-cluster:
+    driver: bridge
+</code></pre>
+<h3 id="1335-初始化副本集">13.3.5 初始化副本集</h3>
+<pre><code class="language-bash"># 启动所有容器
+docker-compose up -d
+
+# 等待几秒，让 MongoDB 完全启动
+sleep 5
+
+# 连接到第一个节点
+docker exec -it mongo-rs-1 mongosh
+</code></pre>
+<pre><code class="language-javascript">// 初始化副本集
+rs.initiate({
+    _id: &quot;rs0&quot;,
+    members: [
+        { _id: 0, host: &quot;mongo1:27017&quot;, priority: 2 },   // 优先级高，优先选为 Primary
+        { _id: 1, host: &quot;mongo2:27017&quot;, priority: 1 },
+        { _id: 2, host: &quot;mongo3:27017&quot;, priority: 1 }
+    ]
+});
+
+// 等待选举完成
+sleep(3000);
+
+// 查看副本集状态
+rs.status();
+
+// 查看副本集配置
+rs.conf();
+
+// 查看简要信息
+rs.isMaster();
+</code></pre>
+<p><strong>rs.status() 关键字段说明：</strong></p>
+<pre><code class="language-javascript">{
+    &quot;set&quot;: &quot;rs0&quot;,                    // 副本集名称
+    &quot;myState&quot;: 1,                    // 当前节点状态（1=PRIMARY, 2=SECONDARY）
+    &quot;members&quot;: [
+        {
+            &quot;name&quot;: &quot;mongo1:27017&quot;,
+            &quot;stateStr&quot;: &quot;PRIMARY&quot;,   // 节点角色
+            &quot;health&quot;: 1,             // 健康状态（1=正常）
+            &quot;uptime&quot;: 3600,          // 运行时间（秒）
+            &quot;optime&quot;: { ... },       // 最后一次操作的时间戳
+            &quot;optimeDate&quot;: ISODate(&quot;...&quot;),
+            &quot;syncSourceHost&quot;: &quot;&quot;,    // 同步源（Primary 为空）
+            &quot;electionDate&quot;: ISODate(&quot;...&quot;)
+        },
+        {
+            &quot;name&quot;: &quot;mongo2:27017&quot;,
+            &quot;stateStr&quot;: &quot;SECONDARY&quot;,
+            &quot;health&quot;: 1,
+            &quot;syncSourceHost&quot;: &quot;mongo1:27017&quot;,
+            &quot;secondsBehind&quot;: 0       // 同步延迟（秒）
+        }
+        // ...
+    ]
+}
+</code></pre>
+<p><strong>创建管理员用户（开启 keyFile 后）：</strong></p>
+<pre><code class="language-javascript">// 在 Primary 节点上
+use admin;
+db.createUser({
+    user: &quot;admin&quot;,
+    pwd: &quot;Admin@2024!Secure&quot;,
+    roles: [{ role: &quot;root&quot;, db: &quot;admin&quot; }]
+});
+
+// 创建应用用户
+use shop;
+db.createUser({
+    user: &quot;shopApp&quot;,
+    pwd: &quot;ShopApp@2024!&quot;,
+    roles: [{ role: &quot;readWrite&quot;, db: &quot;shop&quot; }]
+});
+</code></pre>
+<h3 id="1336-spring-boot-连接副本集的配置">13.3.6 Spring Boot 连接副本集的配置</h3>
+<pre><code class="language-yaml">spring:
+  data:
+    mongodb:
+      # 连接副本集
+      uri: &gt;-
+        mongodb://shopApp:ShopApp%402024!@
+        localhost:27017,localhost:27018,localhost:27019
+        /shop
+        ?authSource=shop
+        &amp;replicaSet=rs0
+        &amp;readPreference=secondaryPreferred
+        &amp;w=majority
+        &amp;retryWrites=true
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：如果使用 Docker 内部网络名称（如 <code>mongo1:27017</code>），需要确保 Spring Boot 应用
+也在同一个 Docker 网络中，或者在宿主机的 hosts 文件中配置映射。
+本地开发时建议使用 <code>localhost:27017,localhost:27018,localhost:27019</code>。</p>
+</blockquote>
+<hr />
+<h2 id="134-分片sharding概念简介">13.4 分片（Sharding）概念简介</h2>
+<p>当单个副本集无法满足存储容量或吞吐量需求时，可以通过<strong>分片</strong>将数据水平分布到多个副本集上。</p>
+<h3 id="1341-分片架构">13.4.1 分片架构</h3>
+<pre><code>           客户端应用
+               │
+               ▼
+        ┌──────────────┐
+        │    mongos     │   ← 路由器，接受客户端请求
+        │  （路由进程）   │     将请求转发到正确的分片
+        └──────┬───────┘
+               │
+    ┌──────────┼──────────┐
+    ▼          ▼          ▼
+┌────────┐ ┌────────┐ ┌────────┐
+│ Shard1 │ │ Shard2 │ │ Shard3 │   ← 数据分片，每个分片是一个副本集
+│ (RS)   │ │ (RS)   │ │ (RS)   │
+└────────┘ └────────┘ └────────┘
+
+        ┌──────────────┐
+        │ Config Server│   ← 配置服务器（也是副本集）
+        │    (RS)      │     存储分片的元数据和路由规则
+        └──────────────┘
+</code></pre>
+<p><strong>三个核心组件：</strong></p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>说明</th>
+<th>部署建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>mongos</strong></td>
+<td>路由进程，客户端的访问入口</td>
+<td>可部署多个（无状态），建议 2-3 个</td>
+</tr>
+<tr>
+<td><strong>Shard</strong></td>
+<td>数据分片，存储实际数据</td>
+<td>每个分片是一个副本集</td>
+</tr>
+<tr>
+<td><strong>Config Server</strong></td>
+<td>配置服务器，存储路由表和分片元数据</td>
+<td>必须是 3 节点副本集</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1342-分片键的选择原则">13.4.2 分片键的选择原则</h3>
+<p>分片键（Shard Key）决定了数据如何在各分片之间分布，<strong>一旦设定无法更改</strong>（MongoDB 5.0+ 支持 refine），是分片设计中最关键的决策。</p>
+<p><strong>好的分片键应具备：</strong></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>说明</th>
+<th>反例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>高基数（Cardinality）</strong></td>
+<td>取值种类多，数据能均匀分布</td>
+<td>❌ <code>status</code>（只有几个值）</td>
+</tr>
+<tr>
+<td><strong>低频率（Frequency）</strong></td>
+<td>没有某个值特别多</td>
+<td>❌ <code>country</code>（某个国家占 80%）</td>
+</tr>
+<tr>
+<td><strong>非单调变化</strong></td>
+<td>不是递增/递减的</td>
+<td>❌ <code>_id</code>（ObjectId 递增）</td>
+</tr>
+<tr>
+<td><strong>查询友好</strong></td>
+<td>常用查询条件包含分片键</td>
+<td>❌ 几乎不作为查询条件的字段</td>
+</tr>
+</tbody>
+</table>
+<p><strong>分片键选择示例：</strong></p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>好的分片键</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>用户数据</td>
+<td><code>{ userId: &quot;hashed&quot; }</code></td>
+<td>userId 基数高，哈希后分布均匀</td>
+</tr>
+<tr>
+<td>订单数据</td>
+<td><code>{ userId: 1, createdAt: 1 }</code></td>
+<td>复合键，兼顾查询和分布</td>
+</tr>
+<tr>
+<td>日志数据</td>
+<td><code>{ appName: 1, timestamp: 1 }</code></td>
+<td>按应用分片，时间排序</td>
+</tr>
+<tr>
+<td>IoT 数据</td>
+<td><code>{ deviceId: &quot;hashed&quot; }</code></td>
+<td>设备数量大，哈希均匀分布</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1343-范围分片-vs-哈希分片">13.4.3 范围分片 vs 哈希分片</h3>
+<table>
+<thead>
+<tr>
+<th>对比</th>
+<th>范围分片（Range）</th>
+<th>哈希分片（Hashed）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>分布方式</strong></td>
+<td>按分片键的值范围划分</td>
+<td>按分片键的哈希值划分</td>
+</tr>
+<tr>
+<td><strong>数据分布</strong></td>
+<td>可能不均匀（热点问题）</td>
+<td>均匀分布</td>
+</tr>
+<tr>
+<td><strong>范围查询</strong></td>
+<td>✅ 高效（数据连续存储）</td>
+<td>❌ 低效（数据分散在多个分片）</td>
+</tr>
+<tr>
+<td><strong>写入分布</strong></td>
+<td>单调递增键会导致写入集中</td>
+<td>写入均匀分散</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>经常按范围查询的数据</td>
+<td>需要均匀写入分布的数据</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-javascript">// 范围分片
+sh.shardCollection(&quot;shop.orders&quot;, { userId: 1, createdAt: 1 });
+
+// 哈希分片
+sh.shardCollection(&quot;shop.logs&quot;, { deviceId: &quot;hashed&quot; });
+</code></pre>
+<h3 id="1344-何时需要分片">13.4.4 何时需要分片</h3>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>参考阈值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>数据量</strong></td>
+<td>&gt; 200GB ~ 500GB</td>
+<td>单个副本集的数据量接近磁盘容量</td>
+</tr>
+<tr>
+<td><strong>文档数量</strong></td>
+<td>&gt; 10 亿条</td>
+<td>索引变大，查询性能下降</td>
+</tr>
+<tr>
+<td><strong>写入吞吐量</strong></td>
+<td>&gt; 10,000 次/秒</td>
+<td>单个 Primary 的写能力不足</td>
+</tr>
+<tr>
+<td><strong>读取吞吐量</strong></td>
+<td>&gt; 50,000 次/秒</td>
+<td>即使读写分离也无法满足</td>
+</tr>
+<tr>
+<td><strong>工作集大小</strong></td>
+<td>超过可用内存</td>
+<td>频繁的磁盘 IO 导致性能急剧下降</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>决策建议</strong>：</p>
+<ol>
+<li><strong>不要过早分片</strong>——分片会大幅增加架构复杂度和运维成本</li>
+<li>先尝试<strong>垂直扩展</strong>（升级硬件：更多内存、更快的 SSD）</li>
+<li>先尝试<strong>优化索引和查询</strong></li>
+<li>先尝试<strong>读写分离</strong>（副本集 + ReadPreference）</li>
+<li>以上方案都无法满足时，再考虑分片</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="135-备份与恢复mongodump--mongorestore">13.5 备份与恢复：mongodump / mongorestore</h2>
+<h3 id="1351-mongodump-基本用法">13.5.1 mongodump 基本用法</h3>
+<p><code>mongodump</code> 用于将 MongoDB 数据导出为 BSON 格式的备份文件。</p>
+<p><strong>常用参数：</strong></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--uri</code></td>
+<td>连接字符串</td>
+<td><code>--uri=&quot;mongodb://user:pass@host:27017&quot;</code></td>
+</tr>
+<tr>
+<td><code>--host</code> / <code>-h</code></td>
+<td>主机地址</td>
+<td><code>--host=localhost:27017</code></td>
+</tr>
+<tr>
+<td><code>--db</code> / <code>-d</code></td>
+<td>指定数据库</td>
+<td><code>--db=shop</code></td>
+</tr>
+<tr>
+<td><code>--collection</code> / <code>-c</code></td>
+<td>指定集合</td>
+<td><code>--collection=orders</code></td>
+</tr>
+<tr>
+<td><code>--out</code> / <code>-o</code></td>
+<td>输出目录</td>
+<td><code>--out=/backup/2024-01-15</code></td>
+</tr>
+<tr>
+<td><code>--gzip</code></td>
+<td>压缩输出</td>
+<td><code>--gzip</code></td>
+</tr>
+<tr>
+<td><code>--archive</code></td>
+<td>输出为单个归档文件</td>
+<td><code>--archive=/backup/shop.archive</code></td>
+</tr>
+<tr>
+<td><code>--query</code> / <code>-q</code></td>
+<td>按条件导出</td>
+<td><code>--query='{&quot;status&quot;:&quot;COMPLETED&quot;}'</code></td>
+</tr>
+<tr>
+<td><code>--oplog</code></td>
+<td>备份 oplog（支持时间点恢复）</td>
+<td><code>--oplog</code></td>
+</tr>
+<tr>
+<td><code>--authenticationDatabase</code></td>
+<td>认证数据库</td>
+<td><code>--authenticationDatabase=admin</code></td>
+</tr>
+<tr>
+<td><code>--numParallelCollections</code></td>
+<td>并行导出集合数</td>
+<td><code>--numParallelCollections=4</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>示例：</strong></p>
+<pre><code class="language-bash"># 备份所有数据库
+mongodump --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+          --authenticationDatabase=admin \
+          --out=/backup/full-$(date +%Y%m%d)
+
+# 备份单个数据库
+mongodump --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+          --authenticationDatabase=admin \
+          --db=shop \
+          --out=/backup/shop-$(date +%Y%m%d)
+
+# 备份单个集合
+mongodump --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+          --authenticationDatabase=admin \
+          --db=shop \
+          --collection=orders \
+          --out=/backup/orders-$(date +%Y%m%d)
+
+# 压缩备份（节省磁盘空间）
+mongodump --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+          --authenticationDatabase=admin \
+          --db=shop \
+          --gzip \
+          --out=/backup/shop-gz-$(date +%Y%m%d)
+
+# 输出为单个归档文件
+mongodump --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+          --authenticationDatabase=admin \
+          --db=shop \
+          --archive=/backup/shop-$(date +%Y%m%d).archive \
+          --gzip
+
+# 按条件备份（只导出已完成的订单）
+mongodump --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+          --authenticationDatabase=admin \
+          --db=shop \
+          --collection=orders \
+          --query='{&quot;status&quot;:&quot;COMPLETED&quot;,&quot;createdAt&quot;:{&quot;$gte&quot;:{&quot;$date&quot;:&quot;2024-01-01T00:00:00Z&quot;}}}' \
+          --out=/backup/completed-orders
+
+# 备份副本集（包含 oplog，支持时间点恢复）
+mongodump --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+          --authenticationDatabase=admin \
+          --oplog \
+          --out=/backup/full-with-oplog-$(date +%Y%m%d)
+</code></pre>
+<p><strong>备份文件结构：</strong></p>
+<pre><code>/backup/shop-20240115/
+├── shop/
+│   ├── orders.bson          # orders 集合的数据
+│   ├── orders.metadata.json # orders 集合的元数据（索引等）
+│   ├── products.bson
+│   ├── products.metadata.json
+│   ├── users.bson
+│   └── users.metadata.json
+└── oplog.bson               # oplog（使用 --oplog 时）
+</code></pre>
+<h3 id="1352-mongorestore-基本用法">13.5.2 mongorestore 基本用法</h3>
+<p><code>mongorestore</code> 用于从 <code>mongodump</code> 的备份文件中恢复数据。</p>
+<p><strong>常用参数：</strong></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--uri</code></td>
+<td>连接字符串</td>
+<td><code>--uri=&quot;mongodb://user:pass@host:27017&quot;</code></td>
+</tr>
+<tr>
+<td><code>--db</code> / <code>-d</code></td>
+<td>恢复到指定数据库</td>
+<td><code>--db=shop</code></td>
+</tr>
+<tr>
+<td><code>--collection</code> / <code>-c</code></td>
+<td>恢复指定集合</td>
+<td><code>--collection=orders</code></td>
+</tr>
+<tr>
+<td><code>--drop</code></td>
+<td>恢复前先删除已有集合</td>
+<td><code>--drop</code></td>
+</tr>
+<tr>
+<td><code>--gzip</code></td>
+<td>从压缩备份恢复</td>
+<td><code>--gzip</code></td>
+</tr>
+<tr>
+<td><code>--archive</code></td>
+<td>从归档文件恢复</td>
+<td><code>--archive=/backup/shop.archive</code></td>
+</tr>
+<tr>
+<td><code>--nsInclude</code></td>
+<td>指定命名空间</td>
+<td><code>--nsInclude=&quot;shop.orders&quot;</code></td>
+</tr>
+<tr>
+<td><code>--nsExclude</code></td>
+<td>排除命名空间</td>
+<td><code>--nsExclude=&quot;shop.logs&quot;</code></td>
+</tr>
+<tr>
+<td><code>--nsFrom</code> / <code>--nsTo</code></td>
+<td>重命名命名空间</td>
+<td>恢复到不同库/集合</td>
+</tr>
+<tr>
+<td><code>--oplogReplay</code></td>
+<td>回放 oplog</td>
+<td><code>--oplogReplay</code></td>
+</tr>
+<tr>
+<td><code>--numParallelCollections</code></td>
+<td>并行恢复集合数</td>
+<td><code>--numParallelCollections=4</code></td>
+</tr>
+<tr>
+<td><code>--noIndexRestore</code></td>
+<td>不恢复索引</td>
+<td><code>--noIndexRestore</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>示例：</strong></p>
+<pre><code class="language-bash"># 恢复整个备份
+mongorestore --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+             --authenticationDatabase=admin \
+             /backup/full-20240115
+
+# 恢复单个数据库
+mongorestore --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+             --authenticationDatabase=admin \
+             --db=shop \
+             /backup/shop-20240115/shop
+
+# 恢复单个集合
+mongorestore --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+             --authenticationDatabase=admin \
+             --db=shop \
+             --collection=orders \
+             /backup/shop-20240115/shop/orders.bson
+
+# 恢复前删除已有数据（谨慎使用！）
+mongorestore --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+             --authenticationDatabase=admin \
+             --drop \
+             /backup/full-20240115
+
+# 从压缩备份恢复
+mongorestore --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+             --authenticationDatabase=admin \
+             --gzip \
+             /backup/shop-gz-20240115
+
+# 从归档文件恢复
+mongorestore --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+             --authenticationDatabase=admin \
+             --archive=/backup/shop-20240115.archive \
+             --gzip
+
+# 恢复到不同的数据库（重命名）
+mongorestore --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+             --authenticationDatabase=admin \
+             --nsFrom=&quot;shop.*&quot; \
+             --nsTo=&quot;shop_backup.*&quot; \
+             /backup/shop-20240115
+
+# 恢复时回放 oplog（时间点恢复）
+mongorestore --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+             --authenticationDatabase=admin \
+             --oplogReplay \
+             /backup/full-with-oplog-20240115
+</code></pre>
+<h3 id="1353-定时备份脚本">13.5.3 定时备份脚本</h3>
+<p><strong>Linux/Mac 定时备份脚本（backup-mongodb.sh）：</strong></p>
+<pre><code class="language-bash">#!/bin/bash
+
+# MongoDB 备份脚本
+# 用法: ./backup-mongodb.sh
+# 建议通过 crontab 定时执行
+
+# ========== 配置区 ==========
+MONGO_URI=&quot;mongodb://admin:password@localhost:27017&quot;
+AUTH_DB=&quot;admin&quot;
+BACKUP_DIR=&quot;/data/backup/mongodb&quot;
+RETAIN_DAYS=7                    # 保留最近7天的备份
+DATE=$(date +%Y%m%d_%H%M%S)
+LOG_FILE=&quot;${BACKUP_DIR}/backup.log&quot;
+# ============================
+
+# 创建备份目录
+BACKUP_PATH=&quot;${BACKUP_DIR}/${DATE}&quot;
+mkdir -p &quot;${BACKUP_PATH}&quot;
+
+echo &quot;[$(date)] 开始备份...&quot; &gt;&gt; &quot;${LOG_FILE}&quot;
+
+# 执行备份（压缩 + oplog）
+mongodump \
+    --uri=&quot;${MONGO_URI}&quot; \
+    --authenticationDatabase=&quot;${AUTH_DB}&quot; \
+    --gzip \
+    --oplog \
+    --out=&quot;${BACKUP_PATH}&quot; \
+    2&gt;&gt; &quot;${LOG_FILE}&quot;
+
+# 检查备份结果
+if [ $? -eq 0 ]; then
+    # 计算备份大小
+    BACKUP_SIZE=$(du -sh &quot;${BACKUP_PATH}&quot; | awk '{print $1}')
+    echo &quot;[$(date)] 备份成功: ${BACKUP_PATH} (${BACKUP_SIZE})&quot; &gt;&gt; &quot;${LOG_FILE}&quot;
+else
+    echo &quot;[$(date)] 备份失败!&quot; &gt;&gt; &quot;${LOG_FILE}&quot;
+    # 可以在这里发送告警通知
+    exit 1
+fi
+
+# 清理过期备份
+echo &quot;[$(date)] 清理 ${RETAIN_DAYS} 天前的备份...&quot; &gt;&gt; &quot;${LOG_FILE}&quot;
+find &quot;${BACKUP_DIR}&quot; -maxdepth 1 -type d -name &quot;20*&quot; -mtime +${RETAIN_DAYS} -exec rm -rf {} \;
+
+echo &quot;[$(date)] 备份任务完成&quot; &gt;&gt; &quot;${LOG_FILE}&quot;
+echo &quot;---&quot; &gt;&gt; &quot;${LOG_FILE}&quot;
+</code></pre>
+<p><strong>设置定时任务（crontab）：</strong></p>
+<pre><code class="language-bash"># 编辑 crontab
+crontab -e
+
+# 每天凌晨 2 点执行备份
+0 2 * * * /opt/scripts/backup-mongodb.sh
+
+# 每 6 小时备份一次
+0 */6 * * * /opt/scripts/backup-mongodb.sh
+</code></pre>
+<p><strong>Windows 定时备份脚本（backup-mongodb.bat）：</strong></p>
+<pre><code class="language-bat">@echo off
+setlocal
+
+set MONGO_URI=mongodb://admin:password@localhost:27017
+set AUTH_DB=admin
+set BACKUP_DIR=D:\backup\mongodb
+set DATE=%date:~0,4%%date:~5,2%%date:~8,2%_%time:~0,2%%time:~3,2%%time:~6,2%
+set DATE=%DATE: =0%
+
+set BACKUP_PATH=%BACKUP_DIR%\%DATE%
+
+echo [%date% %time%] 开始备份...
+
+mongodump --uri=&quot;%MONGO_URI%&quot; --authenticationDatabase=%AUTH_DB% --gzip --out=&quot;%BACKUP_PATH%&quot;
+
+if %ERRORLEVEL% EQU 0 (
+    echo [%date% %time%] 备份成功: %BACKUP_PATH%
+) else (
+    echo [%date% %time%] 备份失败!
+)
+
+REM 清理7天前的备份
+forfiles /p &quot;%BACKUP_DIR%&quot; /d -7 /c &quot;cmd /c if @isdir==TRUE rd /s /q @path&quot; 2&gt;nul
+
+endlocal
+</code></pre>
+<h3 id="1354-mongoexport--mongoimportjsoncsv-导入导出">13.5.4 mongoexport / mongoimport（JSON/CSV 导入导出）</h3>
+<p><code>mongoexport</code> 和 <code>mongoimport</code> 用于将数据导出为人类可读的格式（JSON/CSV），适合数据交换和分析。</p>
+<blockquote>
+<p><strong>与 mongodump/mongorestore 的区别</strong>：</p>
+<ul>
+<li><code>mongodump/mongorestore</code> 使用 BSON 格式，保留所有数据类型，适合<strong>备份恢复</strong></li>
+<li><code>mongoexport/mongoimport</code> 使用 JSON/CSV 格式，可能丢失部分类型信息，适合<strong>数据交换</strong></li>
+</ul>
+</blockquote>
+<p><strong>mongoexport 示例：</strong></p>
+<pre><code class="language-bash"># 导出为 JSON（默认格式）
+mongoexport --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+            --authenticationDatabase=admin \
+            --db=shop \
+            --collection=products \
+            --out=products.json
+
+# 导出为 CSV
+mongoexport --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+            --authenticationDatabase=admin \
+            --db=shop \
+            --collection=products \
+            --type=csv \
+            --fields=name,price,stock,category \
+            --out=products.csv
+
+# 按条件导出
+mongoexport --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+            --authenticationDatabase=admin \
+            --db=shop \
+            --collection=orders \
+            --query='{&quot;status&quot;:&quot;COMPLETED&quot;}' \
+            --out=completed-orders.json
+
+# 导出指定字段
+mongoexport --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+            --authenticationDatabase=admin \
+            --db=shop \
+            --collection=users \
+            --fields=name,email,createdAt \
+            --out=users-basic.json
+
+# 导出为 JSON 数组格式（而非每行一个 JSON）
+mongoexport --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+            --authenticationDatabase=admin \
+            --db=shop \
+            --collection=products \
+            --jsonArray \
+            --out=products-array.json
+</code></pre>
+<p><strong>mongoimport 示例：</strong></p>
+<pre><code class="language-bash"># 从 JSON 文件导入
+mongoimport --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+            --authenticationDatabase=admin \
+            --db=shop \
+            --collection=products \
+            --file=products.json
+
+# 从 CSV 文件导入
+mongoimport --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+            --authenticationDatabase=admin \
+            --db=shop \
+            --collection=products \
+            --type=csv \
+            --headerline \
+            --file=products.csv
+
+# 从 CSV 导入（手动指定列名）
+mongoimport --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+            --authenticationDatabase=admin \
+            --db=shop \
+            --collection=products \
+            --type=csv \
+            --fields=name,price,stock,category \
+            --file=products-noheader.csv
+
+# 导入 JSON 数组格式
+mongoimport --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+            --authenticationDatabase=admin \
+            --db=shop \
+            --collection=products \
+            --jsonArray \
+            --file=products-array.json
+
+# 导入时更新已有文档（upsert 模式）
+mongoimport --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+            --authenticationDatabase=admin \
+            --db=shop \
+            --collection=products \
+            --mode=upsert \
+            --upsertFields=name \
+            --file=products-update.json
+
+# 导入前删除已有数据
+mongoimport --uri=&quot;mongodb://admin:password@localhost:27017&quot; \
+            --authenticationDatabase=admin \
+            --db=shop \
+            --collection=products \
+            --drop \
+            --file=products.json
+</code></pre>
+<p><strong>mongoimport 的导入模式：</strong></p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>insert</code>（默认）</td>
+<td>只插入新文档，遇到 <code>_id</code> 冲突会报错</td>
+</tr>
+<tr>
+<td><code>upsert</code></td>
+<td>匹配到则更新，未匹配到则插入</td>
+</tr>
+<tr>
+<td><code>merge</code></td>
+<td>匹配到则合并字段，未匹配到则插入</td>
+</tr>
+<tr>
+<td><code>delete</code></td>
+<td>匹配到则删除</td>
+</tr>
+</tbody>
+</table>
+<p><strong>实用场景：从 MySQL 迁移数据到 MongoDB</strong></p>
+<pre><code class="language-bash"># 1. 从 MySQL 导出 CSV
+mysql -u root -p -e &quot;SELECT id, name, email, created_at FROM users&quot; shop &gt; users.csv
+
+# 2. 将 CSV 导入 MongoDB
+mongoimport --uri=&quot;mongodb://localhost:27017&quot; \
+            --db=shop \
+            --collection=users \
+            --type=csv \
+            --headerline \
+            --file=users.csv
+</code></pre>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RBAC 权限模型</td>
+<td>用户 → 角色 → 权限，先创建 admin 用户再开启认证</td>
+</tr>
+<tr>
+<td>内置角色</td>
+<td>read / readWrite / dbAdmin / userAdmin / root 等</td>
+</tr>
+<tr>
+<td>连接字符串</td>
+<td><code>mongodb://user:pass@host:port/db?options</code></td>
+</tr>
+<tr>
+<td>SCRAM 认证</td>
+<td>默认认证机制，密码不以明文传输</td>
+</tr>
+<tr>
+<td>副本集架构</td>
+<td>Primary + Secondary，自动故障转移</td>
+</tr>
+<tr>
+<td>ReadPreference</td>
+<td>primary / secondaryPreferred / nearest 等</td>
+</tr>
+<tr>
+<td>分片架构</td>
+<td>mongos + Shard + Config Server</td>
+</tr>
+<tr>
+<td>分片键选择</td>
+<td>高基数、低频率、非单调、查询友好</td>
+</tr>
+<tr>
+<td>mongodump</td>
+<td>BSON 格式备份，支持 --gzip、--oplog</td>
+</tr>
+<tr>
+<td>mongorestore</td>
+<td>从 BSON 备份恢复，支持 --drop、--oplogReplay</td>
+</tr>
+<tr>
+<td>mongoexport</td>
+<td>导出为 JSON/CSV，适合数据交换</td>
+</tr>
+<tr>
+<td>mongoimport</td>
+<td>从 JSON/CSV 导入，支持 upsert/merge 模式</td>
+</tr>
+</tbody>
+</table>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

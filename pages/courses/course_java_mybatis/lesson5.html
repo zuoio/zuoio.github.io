@@ -1,0 +1,2210 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第五章-resultmap-高级映射-">第五章 ResultMap 高级映射 ⭐</h1>
+<blockquote>
+<p>处理复杂业务模型的关键能力。当数据库表与 Java 对象之间不再是简单的一一对应，而是涉及关联对象、集合嵌套、继承多态时，<code>resultMap</code> 是 MyBatis 最核心的武器。</p>
+</blockquote>
+<hr />
+<h2 id="本章数据模型与建表-sql">本章数据模型与建表 SQL</h2>
+<p>本章使用一个贯穿始终的电商场景数据模型：<strong>用户（User）→ 订单（Order）→ 订单项（OrderItem）→ 商品（Product）</strong>。</p>
+<h3 id="er-关系">ER 关系</h3>
+<pre><code>User (1) ──── (N) Order (1) ──── (N) OrderItem (N) ──── (1) Product
+</code></pre>
+<ul>
+<li>一个用户可以有多个订单（一对多）</li>
+<li>一个订单属于一个用户（一对一 / 多对一）</li>
+<li>一个订单包含多个订单项（一对多）</li>
+<li>一个订单项对应一个商品（一对一 / 多对一）</li>
+</ul>
+<h3 id="建表-sqlmysql">建表 SQL（MySQL）</h3>
+<pre><code class="language-sql">-- 用户表
+CREATE TABLE t_user (
+    id          BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username    VARCHAR(50)  NOT NULL,
+    email       VARCHAR(100) NOT NULL,
+    phone       VARCHAR(20),
+    create_time DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 商品表
+CREATE TABLE t_product (
+    id             BIGINT PRIMARY KEY AUTO_INCREMENT,
+    product_name   VARCHAR(200) NOT NULL,
+    price          DECIMAL(10, 2) NOT NULL,
+    stock          INT          NOT NULL DEFAULT 0,
+    category       VARCHAR(50),
+    create_time    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 订单表
+CREATE TABLE t_order (
+    id          BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_no    VARCHAR(64)    NOT NULL UNIQUE,
+    user_id     BIGINT         NOT NULL,
+    total_amount DECIMAL(12, 2) NOT NULL,
+    status      TINYINT        NOT NULL DEFAULT 0 COMMENT '0-待支付 1-已支付 2-已发货 3-已完成 4-已取消',
+    create_time DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES t_user(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 订单项表
+CREATE TABLE t_order_item (
+    id          BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_id    BIGINT         NOT NULL,
+    product_id  BIGINT         NOT NULL,
+    quantity    INT            NOT NULL,
+    unit_price  DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (order_id)   REFERENCES t_order(id),
+    FOREIGN KEY (product_id) REFERENCES t_product(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+</code></pre>
+<h3 id="测试数据">测试数据</h3>
+<pre><code class="language-sql">INSERT INTO t_user (id, username, email, phone) VALUES
+(1, '张三', 'zhangsan@example.com', '13800000001'),
+(2, '李四', 'lisi@example.com',     '13800000002');
+
+INSERT INTO t_product (id, product_name, price, stock, category) VALUES
+(1, 'Java编程思想',    108.00, 500, '图书'),
+(2, 'MacBook Pro 14',  14999.00, 100, '电子产品'),
+(3, 'MyBatis实战指南',  79.00, 300, '图书');
+
+INSERT INTO t_order (id, order_no, user_id, total_amount, status) VALUES
+(1, 'ORD20250101001', 1, 15186.00, 1),
+(2, 'ORD20250101002', 1, 79.00,    0);
+
+INSERT INTO t_order_item (id, order_id, product_id, quantity, unit_price) VALUES
+(1, 1, 1, 1, 108.00),
+(2, 1, 2, 1, 14999.00),
+(3, 1, 3, 1, 79.00),
+(4, 2, 3, 1, 79.00);
+</code></pre>
+<h3 id="java-实体类">Java 实体类</h3>
+<pre><code class="language-java">public class User {
+    private Long id;
+    private String username;
+    private String email;
+    private String phone;
+    private LocalDateTime createTime;
+
+    // getter / setter 省略
+}
+</code></pre>
+<pre><code class="language-java">public class Product {
+    private Long id;
+    private String productName;
+    private BigDecimal price;
+    private Integer stock;
+    private String category;
+    private LocalDateTime createTime;
+
+    // getter / setter 省略
+}
+</code></pre>
+<pre><code class="language-java">public class Order {
+    private Long id;
+    private String orderNo;
+    private Long userId;
+    private BigDecimal totalAmount;
+    private Integer status;
+    private LocalDateTime createTime;
+
+    private User user;                  // 一对一：关联用户
+    private List&lt;OrderItem&gt; orderItems; // 一对多：关联订单项
+
+    // getter / setter 省略
+}
+</code></pre>
+<pre><code class="language-java">public class OrderItem {
+    private Long id;
+    private Long orderId;
+    private Long productId;
+    private Integer quantity;
+    private BigDecimal unitPrice;
+
+    private Product product; // 一对一：关联商品
+
+    // getter / setter 省略
+}
+</code></pre>
+<hr />
+<h2 id="51-resultmap-基础结构--idresultconstructor">5.1 resultMap 基础结构 —— id、result、constructor</h2>
+<h3 id="511-为什么需要-resultmap">5.1.1 为什么需要 resultMap</h3>
+<p><code>resultType</code> 只能处理<strong>列名与属性名完全匹配</strong>（或在开启 <code>mapUnderscoreToCamelCase</code> 后下划线到驼峰自动转换）的简单情况。当出现以下场景时，必须使用 <code>resultMap</code>：</p>
+<ol>
+<li>列名与属性名不匹配，且无法通过驼峰规则转换</li>
+<li>需要映射关联对象（一对一、一对多）</li>
+<li>需要根据某个列的值映射到不同的 Java 子类（鉴别器）</li>
+<li>需要通过构造器创建对象</li>
+</ol>
+<h3 id="512-resultmap-完整结构">5.1.2 resultMap 完整结构</h3>
+<pre><code class="language-xml">&lt;resultMap id=&quot;唯一标识&quot; type=&quot;映射的Java全限定类名或别名&quot;
+           autoMapping=&quot;true|false&quot; extends=&quot;继承另一个resultMap的id&quot;&gt;
+
+    &lt;!-- 构造器映射（可选，与 id/result 二选一来设置主键和普通列） --&gt;
+    &lt;constructor&gt;
+        &lt;idArg column=&quot;列名&quot; javaType=&quot;Java类型&quot;/&gt;
+        &lt;arg   column=&quot;列名&quot; javaType=&quot;Java类型&quot;/&gt;
+    &lt;/constructor&gt;
+
+    &lt;!-- 主键列映射（推荐始终声明，影响性能优化和嵌套映射去重） --&gt;
+    &lt;id property=&quot;Java属性名&quot; column=&quot;列名&quot; javaType=&quot;&quot; jdbcType=&quot;&quot; typeHandler=&quot;&quot;/&gt;
+
+    &lt;!-- 普通列映射 --&gt;
+    &lt;result property=&quot;Java属性名&quot; column=&quot;列名&quot; javaType=&quot;&quot; jdbcType=&quot;&quot; typeHandler=&quot;&quot;/&gt;
+
+    &lt;!-- 一对一关联映射 --&gt;
+    &lt;association property=&quot;属性名&quot; javaType=&quot;关联对象类型&quot; .../&gt;
+
+    &lt;!-- 一对多关联映射 --&gt;
+    &lt;collection property=&quot;属性名&quot; ofType=&quot;集合元素类型&quot; .../&gt;
+
+    &lt;!-- 鉴别器（多态映射） --&gt;
+    &lt;discriminator javaType=&quot;&quot; column=&quot;&quot;&gt;
+        &lt;case value=&quot;值&quot; resultMap=&quot;&quot; | resultType=&quot;&quot;&gt;
+            &lt;!-- 嵌套映射 --&gt;
+        &lt;/case&gt;
+    &lt;/discriminator&gt;
+
+&lt;/resultMap&gt;
+</code></pre>
+<h3 id="513-各子标签详解">5.1.3 各子标签详解</h3>
+<h4 id="id--主键映射"><code>&lt;id&gt;</code> —— 主键映射</h4>
+<pre><code class="language-xml">&lt;id property=&quot;id&quot; column=&quot;id&quot;/&gt;
+</code></pre>
+<p>与 <code>&lt;result&gt;</code> 功能相同，但有两个重要区别：</p>
+<ol>
+<li><strong>性能优化</strong>：MyBatis 内部使用 <code>&lt;id&gt;</code> 标记的列值作为缓存的 key，在嵌套映射中用于判断对象是否相同（去重合并）</li>
+<li><strong>语义明确</strong>：标识哪一列是主键，提升可读性</li>
+</ol>
+<blockquote>
+<p><strong>最佳实践</strong>：即使所有列名和属性名都能自动匹配，也建议显式声明 <code>&lt;id&gt;</code>，尤其在使用 <code>association</code> / <code>collection</code> 嵌套结果映射时——不声明 <code>&lt;id&gt;</code> 会导致 MyBatis 使用所有列的组合值来判断对象唯一性，既慢又容易出错。</p>
+</blockquote>
+<h4 id="result--普通列映射"><code>&lt;result&gt;</code> —— 普通列映射</h4>
+<pre><code class="language-xml">&lt;result property=&quot;username&quot; column=&quot;username&quot;/&gt;
+&lt;result property=&quot;createTime&quot; column=&quot;create_time&quot;/&gt;
+</code></pre>
+<p>常用属性：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>property</code></td>
+<td>Java 对象的属性名</td>
+</tr>
+<tr>
+<td><code>column</code></td>
+<td>查询结果集的列名（或别名）</td>
+</tr>
+<tr>
+<td><code>javaType</code></td>
+<td>Java 属性类型，大多数情况 MyBatis 可自动推断，无需显式指定</td>
+</tr>
+<tr>
+<td><code>jdbcType</code></td>
+<td>JDBC 类型，通常在插入 null 值时才需要指定（如 Oracle）</td>
+</tr>
+<tr>
+<td><code>typeHandler</code></td>
+<td>指定自定义类型处理器的全限定类名</td>
+</tr>
+</tbody>
+</table>
+<h4 id="constructor--构造器映射"><code>&lt;constructor&gt;</code> —— 构造器映射</h4>
+<p>当实体类没有无参构造器，或你希望创建不可变对象（immutable object）时使用：</p>
+<pre><code class="language-java">public class User {
+    private final Long id;
+    private final String username;
+
+    public User(Long id, String username) {
+        this.id = id;
+        this.username = username;
+    }
+
+    // 只有 getter，没有 setter
+}
+</code></pre>
+<pre><code class="language-xml">&lt;resultMap id=&quot;userMap&quot; type=&quot;User&quot;&gt;
+    &lt;constructor&gt;
+        &lt;idArg column=&quot;id&quot; javaType=&quot;long&quot;/&gt;
+        &lt;arg column=&quot;username&quot; javaType=&quot;string&quot;/&gt;
+    &lt;/constructor&gt;
+    &lt;!-- 其余列仍可用 result 映射 --&gt;
+    &lt;result property=&quot;email&quot; column=&quot;email&quot;/&gt;
+&lt;/resultMap&gt;
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>&lt;constructor&gt;</code> 中 <code>&lt;arg&gt;</code> 的顺序必须与构造器参数的顺序严格一致。从 MyBatis 3.4.3 开始，也可以使用 <code>name</code> 属性指定参数名来避免顺序依赖（需配合编译参数 <code>-parameters</code> 或 <code>@Param</code> 注解）。</p>
+</blockquote>
+<h3 id="514-基础示例user-的完整-resultmap">5.1.4 基础示例：User 的完整 resultMap</h3>
+<pre><code class="language-xml">&lt;resultMap id=&quot;baseUserMap&quot; type=&quot;com.example.entity.User&quot;&gt;
+    &lt;id     property=&quot;id&quot;         column=&quot;id&quot;/&gt;
+    &lt;result property=&quot;username&quot;   column=&quot;username&quot;/&gt;
+    &lt;result property=&quot;email&quot;      column=&quot;email&quot;/&gt;
+    &lt;result property=&quot;phone&quot;      column=&quot;phone&quot;/&gt;
+    &lt;result property=&quot;createTime&quot; column=&quot;create_time&quot;/&gt;
+&lt;/resultMap&gt;
+
+&lt;select id=&quot;selectUserById&quot; resultMap=&quot;baseUserMap&quot;&gt;
+    SELECT id, username, email, phone, create_time
+    FROM t_user
+    WHERE id = #{id}
+&lt;/select&gt;
+</code></pre>
+<h3 id="515-resultmap-的继承extends">5.1.5 resultMap 的继承（extends）</h3>
+<p>当多个 <code>resultMap</code> 有共同的基础映射时，可以用 <code>extends</code> 避免重复：</p>
+<pre><code class="language-xml">&lt;!-- 基础映射：只包含 User 自身的列 --&gt;
+&lt;resultMap id=&quot;baseUserMap&quot; type=&quot;User&quot;&gt;
+    &lt;id     property=&quot;id&quot;         column=&quot;id&quot;/&gt;
+    &lt;result property=&quot;username&quot;   column=&quot;username&quot;/&gt;
+    &lt;result property=&quot;email&quot;      column=&quot;email&quot;/&gt;
+    &lt;result property=&quot;phone&quot;      column=&quot;phone&quot;/&gt;
+    &lt;result property=&quot;createTime&quot; column=&quot;create_time&quot;/&gt;
+&lt;/resultMap&gt;
+
+&lt;!-- 扩展映射：继承基础映射，额外加上关联 --&gt;
+&lt;resultMap id=&quot;userWithOrdersMap&quot; type=&quot;User&quot; extends=&quot;baseUserMap&quot;&gt;
+    &lt;collection property=&quot;orders&quot; ofType=&quot;Order&quot;&gt;
+        &lt;!-- ... --&gt;
+    &lt;/collection&gt;
+&lt;/resultMap&gt;
+</code></pre>
+<hr />
+<h2 id="52-association--一对一关联映射">5.2 association —— 一对一关联映射</h2>
+<p><code>&lt;association&gt;</code> 用于映射 Java 对象中的<strong>关联对象属性</strong>，即属性类型是另一个 POJO 的场景。</p>
+<p>在我们的数据模型中，<code>Order</code> 对象包含一个 <code>User user</code> 属性——这就是典型的一对一（多对一）关联。MyBatis 提供两种方式来实现这种映射：<strong>嵌套查询</strong>和<strong>嵌套结果</strong>。</p>
+<hr />
+<h3 id="521-嵌套查询nested-select--n1-问题">5.2.1 嵌套查询（Nested Select / N+1 问题）</h3>
+<h4 id="原理">原理</h4>
+<p>嵌套查询的工作方式是：先执行主查询获取 <code>Order</code> 数据，然后对每一条 <code>Order</code> 记录，再单独发起一次查询去获取关联的 <code>User</code> 对象。</p>
+<h4 id="实体类">实体类</h4>
+<pre><code class="language-java">public class Order {
+    private Long id;
+    private String orderNo;
+    private Long userId;
+    private BigDecimal totalAmount;
+    private Integer status;
+    private LocalDateTime createTime;
+
+    private User user; // 关联的用户对象
+    // getter / setter 省略
+}
+</code></pre>
+<h4 id="mapper-接口">Mapper 接口</h4>
+<pre><code class="language-java">public interface OrderMapper {
+    Order selectOrderById(Long id);
+    List&lt;Order&gt; selectAllOrders();
+}
+
+public interface UserMapper {
+    User selectUserById(Long id);
+}
+</code></pre>
+<h4 id="mapper-xml">Mapper XML</h4>
+<p><strong>UserMapper.xml</strong></p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.example.mapper.UserMapper&quot;&gt;
+
+    &lt;resultMap id=&quot;baseUserMap&quot; type=&quot;com.example.entity.User&quot;&gt;
+        &lt;id     property=&quot;id&quot;         column=&quot;id&quot;/&gt;
+        &lt;result property=&quot;username&quot;   column=&quot;username&quot;/&gt;
+        &lt;result property=&quot;email&quot;      column=&quot;email&quot;/&gt;
+        &lt;result property=&quot;phone&quot;      column=&quot;phone&quot;/&gt;
+        &lt;result property=&quot;createTime&quot; column=&quot;create_time&quot;/&gt;
+    &lt;/resultMap&gt;
+
+    &lt;select id=&quot;selectUserById&quot; resultMap=&quot;baseUserMap&quot;&gt;
+        SELECT id, username, email, phone, create_time
+        FROM t_user
+        WHERE id = #{id}
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<p><strong>OrderMapper.xml</strong></p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE mapper PUBLIC &quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;
+        &quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;&gt;
+&lt;mapper namespace=&quot;com.example.mapper.OrderMapper&quot;&gt;
+
+    &lt;!-- 嵌套查询方式的 resultMap --&gt;
+    &lt;resultMap id=&quot;orderWithUserNestedSelectMap&quot; type=&quot;com.example.entity.Order&quot;&gt;
+        &lt;id     property=&quot;id&quot;          column=&quot;id&quot;/&gt;
+        &lt;result property=&quot;orderNo&quot;     column=&quot;order_no&quot;/&gt;
+        &lt;result property=&quot;userId&quot;      column=&quot;user_id&quot;/&gt;
+        &lt;result property=&quot;totalAmount&quot; column=&quot;total_amount&quot;/&gt;
+        &lt;result property=&quot;status&quot;      column=&quot;status&quot;/&gt;
+        &lt;result property=&quot;createTime&quot;  column=&quot;create_time&quot;/&gt;
+        &lt;!--
+            association 嵌套查询：
+            - property: Order 中的关联属性名
+            - column:   传递给嵌套查询的参数（主查询结果集中的列名）
+            - select:   嵌套查询的 statement id（namespace.id）
+        --&gt;
+        &lt;association property=&quot;user&quot;
+                     column=&quot;user_id&quot;
+                     select=&quot;com.example.mapper.UserMapper.selectUserById&quot;/&gt;
+    &lt;/resultMap&gt;
+
+    &lt;select id=&quot;selectOrderById&quot; resultMap=&quot;orderWithUserNestedSelectMap&quot;&gt;
+        SELECT id, order_no, user_id, total_amount, status, create_time
+        FROM t_order
+        WHERE id = #{id}
+    &lt;/select&gt;
+
+    &lt;select id=&quot;selectAllOrders&quot; resultMap=&quot;orderWithUserNestedSelectMap&quot;&gt;
+        SELECT id, order_no, user_id, total_amount, status, create_time
+        FROM t_order
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<h4 id="执行效果">执行效果</h4>
+<p>当调用 <code>selectOrderById(1)</code> 时，MyBatis 实际执行了<strong>两条 SQL</strong>：</p>
+<pre><code class="language-sql">-- 第1条：主查询
+SELECT id, order_no, user_id, total_amount, status, create_time
+FROM t_order WHERE id = 1;
+
+-- 第2条：嵌套查询（根据主查询结果中的 user_id 发起）
+SELECT id, username, email, phone, create_time
+FROM t_user WHERE id = 1;
+</code></pre>
+<h4 id="n1-问题">N+1 问题</h4>
+<p><strong>N+1 问题是嵌套查询最大的隐患。</strong> 当调用 <code>selectAllOrders()</code> 查询所有订单时：</p>
+<pre><code>第 1 条 SQL：SELECT ... FROM t_order               → 返回 N 条订单
+第 2 条 SQL：SELECT ... FROM t_user WHERE id = ?    → 订单1 的用户
+第 3 条 SQL：SELECT ... FROM t_user WHERE id = ?    → 订单2 的用户
+...
+第 N+1 条 SQL：SELECT ... FROM t_user WHERE id = ?  → 订单N 的用户
+</code></pre>
+<p>一共执行了 <strong>1 + N</strong> 条 SQL。如果有 1000 条订单，就会触发 1001 次数据库查询。即使有些用户重复（如同一个用户的多个订单），默认情况下仍然会重复查询。</p>
+<p><strong>N+1 问题产生的根本原因</strong>：嵌套查询是「逐行触发」的——MyBatis 遍历主查询的每一行结果，对每一行都独立执行一次嵌套子查询。这是一种典型的用多次网络往返换取代码简洁性的方式，在数据量小的时候可以接受，但数据量一大就会成为严重的性能瓶颈。</p>
+<blockquote>
+<p><strong>缓解手段</strong>：</p>
+<ol>
+<li>开启延迟加载（Lazy Loading）—— 只有真正访问 <code>order.getUser()</code> 时才触发嵌套查询，不访问则不查</li>
+<li>MyBatis 的一级缓存可以避免同一个 <code>SqlSession</code> 内对相同 <code>user_id</code> 的重复查询</li>
+<li>从根本上解决——改用嵌套结果映射（JOIN 查询），见下节</li>
+</ol>
+</blockquote>
+<h4 id="多列参数传递">多列参数传递</h4>
+<p>如果嵌套查询需要多个参数，使用 <code>column</code> 属性的多列语法：</p>
+<pre><code class="language-xml">&lt;association property=&quot;user&quot;
+             column=&quot;{id=user_id, type=user_type}&quot;
+             select=&quot;com.example.mapper.UserMapper.selectUserByIdAndType&quot;/&gt;
+</code></pre>
+<p>格式为 <code>{嵌套查询的参数名=主查询的列名, ...}</code>。</p>
+<hr />
+<h3 id="522-嵌套结果nested-resultmap--join-查询">5.2.2 嵌套结果（Nested ResultMap / JOIN 查询）</h3>
+<h4 id="原理-1">原理</h4>
+<p>嵌套结果的方式是：通过一条 JOIN SQL 一次性查出所有需要的数据，然后由 MyBatis 在内存中根据 <code>resultMap</code> 的映射规则将扁平的结果集&quot;拆分&quot;并组装成嵌套的对象结构。</p>
+<h4 id="mapper-接口-1">Mapper 接口</h4>
+<pre><code class="language-java">public interface OrderMapper {
+    Order selectOrderWithUserById(Long id);
+    List&lt;Order&gt; selectAllOrdersWithUser();
+}
+</code></pre>
+<h4 id="mapper-xml-1">Mapper XML</h4>
+<pre><code class="language-xml">&lt;mapper namespace=&quot;com.example.mapper.OrderMapper&quot;&gt;
+
+    &lt;!-- 方式一：在 association 内部直接写映射 --&gt;
+    &lt;resultMap id=&quot;orderWithUserNestedResultMap&quot; type=&quot;com.example.entity.Order&quot;&gt;
+        &lt;id     property=&quot;id&quot;          column=&quot;o_id&quot;/&gt;
+        &lt;result property=&quot;orderNo&quot;     column=&quot;order_no&quot;/&gt;
+        &lt;result property=&quot;userId&quot;      column=&quot;user_id&quot;/&gt;
+        &lt;result property=&quot;totalAmount&quot; column=&quot;total_amount&quot;/&gt;
+        &lt;result property=&quot;status&quot;      column=&quot;status&quot;/&gt;
+        &lt;result property=&quot;createTime&quot;  column=&quot;o_create_time&quot;/&gt;
+        &lt;association property=&quot;user&quot; javaType=&quot;com.example.entity.User&quot;&gt;
+            &lt;id     property=&quot;id&quot;         column=&quot;u_id&quot;/&gt;
+            &lt;result property=&quot;username&quot;   column=&quot;username&quot;/&gt;
+            &lt;result property=&quot;email&quot;      column=&quot;email&quot;/&gt;
+            &lt;result property=&quot;phone&quot;      column=&quot;phone&quot;/&gt;
+            &lt;result property=&quot;createTime&quot; column=&quot;u_create_time&quot;/&gt;
+        &lt;/association&gt;
+    &lt;/resultMap&gt;
+
+    &lt;!-- 方式二：引用外部 resultMap（推荐，可复用） --&gt;
+    &lt;resultMap id=&quot;orderWithUserNestedResultMap2&quot; type=&quot;com.example.entity.Order&quot;&gt;
+        &lt;id     property=&quot;id&quot;          column=&quot;o_id&quot;/&gt;
+        &lt;result property=&quot;orderNo&quot;     column=&quot;order_no&quot;/&gt;
+        &lt;result property=&quot;userId&quot;      column=&quot;user_id&quot;/&gt;
+        &lt;result property=&quot;totalAmount&quot; column=&quot;total_amount&quot;/&gt;
+        &lt;result property=&quot;status&quot;      column=&quot;status&quot;/&gt;
+        &lt;result property=&quot;createTime&quot;  column=&quot;o_create_time&quot;/&gt;
+        &lt;association property=&quot;user&quot;
+                     resultMap=&quot;com.example.mapper.UserMapper.baseUserMap&quot;
+                     columnPrefix=&quot;u_&quot;/&gt;
+    &lt;/resultMap&gt;
+
+    &lt;select id=&quot;selectOrderWithUserById&quot; resultMap=&quot;orderWithUserNestedResultMap&quot;&gt;
+        SELECT
+            o.id            AS o_id,
+            o.order_no,
+            o.user_id,
+            o.total_amount,
+            o.status,
+            o.create_time   AS o_create_time,
+            u.id            AS u_id,
+            u.username,
+            u.email,
+            u.phone,
+            u.create_time   AS u_create_time
+        FROM t_order o
+        INNER JOIN t_user u ON o.user_id = u.id
+        WHERE o.id = #{id}
+    &lt;/select&gt;
+
+    &lt;select id=&quot;selectAllOrdersWithUser&quot; resultMap=&quot;orderWithUserNestedResultMap&quot;&gt;
+        SELECT
+            o.id            AS o_id,
+            o.order_no,
+            o.user_id,
+            o.total_amount,
+            o.status,
+            o.create_time   AS o_create_time,
+            u.id            AS u_id,
+            u.username,
+            u.email,
+            u.phone,
+            u.create_time   AS u_create_time
+        FROM t_order o
+        INNER JOIN t_user u ON o.user_id = u.id
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<h4 id="columnprefix-的妙用">columnPrefix 的妙用</h4>
+<p>当使用 <code>方式二</code> 引用外部 <code>resultMap</code> 时，<code>columnPrefix</code> 属性非常实用。它的作用是：被引用的 <code>resultMap</code> 中的每个 <code>column</code> 值都会自动加上这个前缀去匹配结果集列名。</p>
+<p>例如 <code>baseUserMap</code> 中的 <code>&lt;id column=&quot;id&quot;/&gt;</code> 在加上 <code>columnPrefix=&quot;u_&quot;</code> 之后，实际匹配的列名就变成了 <code>u_id</code>。这样做的好处：</p>
+<ol>
+<li>不需要修改被引用的 <code>resultMap</code>，保持其通用性</li>
+<li>避免多表 JOIN 时的列名冲突（<code>t_order.id</code> 和 <code>t_user.id</code> 都叫 <code>id</code>）</li>
+<li>SQL 中只需给列加上对应前缀的别名即可</li>
+</ol>
+<h4 id="执行效果-1">执行效果</h4>
+<p>无论查询一条还是查全部，只执行<strong>一条 SQL</strong>：</p>
+<pre><code class="language-sql">SELECT o.id AS o_id, o.order_no, o.user_id, o.total_amount, o.status,
+       o.create_time AS o_create_time,
+       u.id AS u_id, u.username, u.email, u.phone, u.create_time AS u_create_time
+FROM t_order o
+INNER JOIN t_user u ON o.user_id = u.id;
+</code></pre>
+<p>MyBatis 从每一行结果中提取 <code>o_</code> 前缀的列组装 <code>Order</code> 对象，提取 <code>u_</code> 前缀的列组装 <code>User</code> 对象，然后将 <code>User</code> 设置到 <code>Order.user</code> 属性上。</p>
+<hr />
+<h3 id="523-两种方式的选择策略">5.2.3 两种方式的选择策略</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>嵌套查询（Nested Select）</th>
+<th>嵌套结果（Nested ResultMap）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SQL 条数</strong></td>
+<td>1 + N 条（有 N+1 问题）</td>
+<td>1 条（JOIN 查询）</td>
+</tr>
+<tr>
+<td><strong>网络往返</strong></td>
+<td>多次</td>
+<td>一次</td>
+</tr>
+<tr>
+<td><strong>是否支持延迟加载</strong></td>
+<td>✅ 支持（核心优势）</td>
+<td>❌ 不支持</td>
+</tr>
+<tr>
+<td><strong>SQL 复杂度</strong></td>
+<td>每条 SQL 简单</td>
+<td>JOIN SQL 可能较复杂</td>
+</tr>
+<tr>
+<td><strong>resultMap 复杂度</strong></td>
+<td>简单（只需声明 select 引用）</td>
+<td>较复杂（需要处理列别名冲突）</td>
+</tr>
+<tr>
+<td><strong>数据重复</strong></td>
+<td>无重复</td>
+<td>JOIN 可能导致主表数据重复传输</td>
+</tr>
+<tr>
+<td><strong>跨 namespace 复用</strong></td>
+<td>天然支持（引用其他 Mapper 的 select）</td>
+<td>支持（通过 resultMap 引用 + columnPrefix）</td>
+</tr>
+<tr>
+<td><strong>缓存友好度</strong></td>
+<td>子查询可被一级/二级缓存命中</td>
+<td>无法利用子查询缓存</td>
+</tr>
+<tr>
+<td><strong>性能（少量数据）</strong></td>
+<td>可接受</td>
+<td>优秀</td>
+</tr>
+<tr>
+<td><strong>性能（大量数据）</strong></td>
+<td>差（N+1 问题严重）</td>
+<td>优秀</td>
+</tr>
+<tr>
+<td><strong>可维护性</strong></td>
+<td>SQL 独立，职责清晰</td>
+<td>SQL 耦合度高</td>
+</tr>
+</tbody>
+</table>
+<h4 id="选择建议">选择建议</h4>
+<pre><code>┌───────────────────────────────────────────────────────────────┐
+│  默认优先使用嵌套结果（JOIN）                                     │
+│  ├── 查询数据量可能较大时 → 嵌套结果（避免 N+1）                   │
+│  ├── 关联数据不一定每次都用到 → 嵌套查询 + 延迟加载                 │
+│  ├── 关联关系很深（3层以上嵌套）→ 考虑在业务层分步查询再组装           │
+│  └── 分页查询的主表 + 关联 → 主表分页用嵌套结果，深层关联用延迟加载    │
+└───────────────────────────────────────────────────────────────┘
+</code></pre>
+<p><strong>核心原则</strong>：</p>
+<ol>
+<li><strong>大多数场景选嵌套结果</strong>：一条 SQL 解决，性能有保障</li>
+<li><strong>需要延迟加载时选嵌套查询</strong>：配合 <code>fetchType=&quot;lazy&quot;</code> 使用，按需加载</li>
+<li><strong>复杂场景混合使用</strong>：主关联用 JOIN，深层关联用嵌套查询 + 延迟加载</li>
+</ol>
+<hr />
+<h2 id="53-collection--一对多关联映射">5.3 collection —— 一对多关联映射</h2>
+<p><code>&lt;collection&gt;</code> 用于映射 Java 对象中的<strong>集合属性</strong>，即属性类型是 <code>List&lt;T&gt;</code> / <code>Set&lt;T&gt;</code> 等集合的场景。</p>
+<p>在我们的数据模型中，<code>Order</code> 对象包含 <code>List&lt;OrderItem&gt; orderItems</code> —— 一个订单包含多个订单项，这就是典型的一对多关联。</p>
+<hr />
+<h3 id="531-嵌套查询">5.3.1 嵌套查询</h3>
+<h4 id="mapper-接口-2">Mapper 接口</h4>
+<pre><code class="language-java">public interface OrderItemMapper {
+    List&lt;OrderItem&gt; selectByOrderId(Long orderId);
+}
+</code></pre>
+<h4 id="mapper-xml-2">Mapper XML</h4>
+<p><strong>OrderItemMapper.xml</strong></p>
+<pre><code class="language-xml">&lt;mapper namespace=&quot;com.example.mapper.OrderItemMapper&quot;&gt;
+
+    &lt;resultMap id=&quot;baseOrderItemMap&quot; type=&quot;com.example.entity.OrderItem&quot;&gt;
+        &lt;id     property=&quot;id&quot;        column=&quot;id&quot;/&gt;
+        &lt;result property=&quot;orderId&quot;   column=&quot;order_id&quot;/&gt;
+        &lt;result property=&quot;productId&quot; column=&quot;product_id&quot;/&gt;
+        &lt;result property=&quot;quantity&quot;  column=&quot;quantity&quot;/&gt;
+        &lt;result property=&quot;unitPrice&quot; column=&quot;unit_price&quot;/&gt;
+    &lt;/resultMap&gt;
+
+    &lt;select id=&quot;selectByOrderId&quot; resultMap=&quot;baseOrderItemMap&quot;&gt;
+        SELECT id, order_id, product_id, quantity, unit_price
+        FROM t_order_item
+        WHERE order_id = #{orderId}
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<p><strong>OrderMapper.xml（新增嵌套查询 resultMap）</strong></p>
+<pre><code class="language-xml">&lt;resultMap id=&quot;orderWithItemsNestedSelectMap&quot; type=&quot;com.example.entity.Order&quot;&gt;
+    &lt;id     property=&quot;id&quot;          column=&quot;id&quot;/&gt;
+    &lt;result property=&quot;orderNo&quot;     column=&quot;order_no&quot;/&gt;
+    &lt;result property=&quot;userId&quot;      column=&quot;user_id&quot;/&gt;
+    &lt;result property=&quot;totalAmount&quot; column=&quot;total_amount&quot;/&gt;
+    &lt;result property=&quot;status&quot;      column=&quot;status&quot;/&gt;
+    &lt;result property=&quot;createTime&quot;  column=&quot;create_time&quot;/&gt;
+    &lt;!--
+        collection 嵌套查询：
+        - property: Order 中的集合属性名
+        - ofType:   集合中元素的类型
+        - column:   传递给嵌套查询的参数
+        - select:   嵌套查询的 statement id
+    --&gt;
+    &lt;collection property=&quot;orderItems&quot;
+                ofType=&quot;com.example.entity.OrderItem&quot;
+                column=&quot;id&quot;
+                select=&quot;com.example.mapper.OrderItemMapper.selectByOrderId&quot;/&gt;
+&lt;/resultMap&gt;
+
+&lt;select id=&quot;selectOrderWithItemsById&quot; resultMap=&quot;orderWithItemsNestedSelectMap&quot;&gt;
+    SELECT id, order_no, user_id, total_amount, status, create_time
+    FROM t_order
+    WHERE id = #{id}
+&lt;/select&gt;
+</code></pre>
+<p>执行 <code>selectOrderWithItemsById(1)</code> 时的 SQL：</p>
+<pre><code class="language-sql">-- 主查询
+SELECT id, order_no, user_id, total_amount, status, create_time
+FROM t_order WHERE id = 1;
+
+-- 嵌套查询（使用主查询结果的 id 作为参数）
+SELECT id, order_id, product_id, quantity, unit_price
+FROM t_order_item WHERE order_id = 1;
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>collection</code> 的嵌套查询同样存在 N+1 问题。如果查询所有订单，每个订单都会触发一次订单项子查询。</p>
+</blockquote>
+<hr />
+<h3 id="532-嵌套结果">5.3.2 嵌套结果</h3>
+<h4 id="mapper-xml-3">Mapper XML</h4>
+<pre><code class="language-xml">&lt;resultMap id=&quot;orderWithItemsNestedResultMap&quot; type=&quot;com.example.entity.Order&quot;&gt;
+    &lt;id     property=&quot;id&quot;          column=&quot;o_id&quot;/&gt;
+    &lt;result property=&quot;orderNo&quot;     column=&quot;order_no&quot;/&gt;
+    &lt;result property=&quot;userId&quot;      column=&quot;user_id&quot;/&gt;
+    &lt;result property=&quot;totalAmount&quot; column=&quot;total_amount&quot;/&gt;
+    &lt;result property=&quot;status&quot;      column=&quot;status&quot;/&gt;
+    &lt;result property=&quot;createTime&quot;  column=&quot;o_create_time&quot;/&gt;
+    &lt;collection property=&quot;orderItems&quot; ofType=&quot;com.example.entity.OrderItem&quot;&gt;
+        &lt;id     property=&quot;id&quot;        column=&quot;oi_id&quot;/&gt;
+        &lt;result property=&quot;orderId&quot;   column=&quot;oi_order_id&quot;/&gt;
+        &lt;result property=&quot;productId&quot; column=&quot;oi_product_id&quot;/&gt;
+        &lt;result property=&quot;quantity&quot;  column=&quot;quantity&quot;/&gt;
+        &lt;result property=&quot;unitPrice&quot; column=&quot;unit_price&quot;/&gt;
+    &lt;/collection&gt;
+&lt;/resultMap&gt;
+
+&lt;select id=&quot;selectOrderWithItemsById&quot; resultMap=&quot;orderWithItemsNestedResultMap&quot;&gt;
+    SELECT
+        o.id            AS o_id,
+        o.order_no,
+        o.user_id,
+        o.total_amount,
+        o.status,
+        o.create_time   AS o_create_time,
+        oi.id           AS oi_id,
+        oi.order_id     AS oi_order_id,
+        oi.product_id   AS oi_product_id,
+        oi.quantity,
+        oi.unit_price
+    FROM t_order o
+    LEFT JOIN t_order_item oi ON o.id = oi.order_id
+    WHERE o.id = #{id}
+&lt;/select&gt;
+</code></pre>
+<h4 id="嵌套结果的去重原理">嵌套结果的去重原理</h4>
+<p>这条 JOIN 查询对于 <code>订单1</code> 会返回 3 行数据（因为它有 3 个订单项）：</p>
+<table>
+<thead>
+<tr>
+<th>o_id</th>
+<th>order_no</th>
+<th>...</th>
+<th>oi_id</th>
+<th>quantity</th>
+<th>unit_price</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>ORD20250101001</td>
+<td>...</td>
+<td>1</td>
+<td>1</td>
+<td>108.00</td>
+</tr>
+<tr>
+<td>1</td>
+<td>ORD20250101001</td>
+<td>...</td>
+<td>2</td>
+<td>1</td>
+<td>14999.00</td>
+</tr>
+<tr>
+<td>1</td>
+<td>ORD20250101001</td>
+<td>...</td>
+<td>3</td>
+<td>1</td>
+<td>79.00</td>
+</tr>
+</tbody>
+</table>
+<p>MyBatis 是怎么知道这 3 行应该合并成 1 个 <code>Order</code> + 3 个 <code>OrderItem</code> 的？</p>
+<p><strong>关键在于 <code>&lt;id&gt;</code> 标签</strong>。MyBatis 用 <code>&lt;id column=&quot;o_id&quot;/&gt;</code> 标记的列值来判断是否是同一个 <code>Order</code> 对象——这 3 行的 <code>o_id</code> 都是 1，所以被识别为同一个 Order。而 <code>&lt;id column=&quot;oi_id&quot;/&gt;</code> 的值分别是 1、2、3，所以被识别为 3 个不同的 <code>OrderItem</code>，收集到 <code>orderItems</code> 集合中。</p>
+<blockquote>
+<p><strong>重要</strong>：在使用 <code>collection</code> 嵌套结果映射时，必须正确声明 <code>&lt;id&gt;</code> 标签。如果遗漏，MyBatis 可能无法正确去重，导致结果集中出现重复的对象。</p>
+</blockquote>
+<hr />
+<h2 id="54-discriminator--鉴别器类似-java-多态映射">5.4 discriminator —— 鉴别器（类似 Java 多态映射）</h2>
+<p><code>&lt;discriminator&gt;</code> 类似 Java 中的 <code>switch</code> 语句或多态的 <code>instanceof</code> 判断——根据某一列的值，决定使用哪个 <code>resultMap</code> 来映射结果。这在需要将查询结果映射到不同子类时非常有用。</p>
+<h3 id="场景设计通知系统">场景设计：通知系统</h3>
+<p>假设系统中有一个通知表，通知类型不同，携带的额外信息也不同：</p>
+<pre><code class="language-sql">CREATE TABLE t_notification (
+    id          BIGINT PRIMARY KEY AUTO_INCREMENT,
+    type        VARCHAR(20) NOT NULL COMMENT 'SMS-短信, EMAIL-邮件, PUSH-推送',
+    title       VARCHAR(200) NOT NULL,
+    content     TEXT,
+    recipient   VARCHAR(100) NOT NULL,
+    -- 短信通知特有
+    phone       VARCHAR(20),
+    -- 邮件通知特有
+    email_addr  VARCHAR(100),
+    cc_list     VARCHAR(500),
+    -- 推送通知特有
+    device_token VARCHAR(200),
+    badge_count  INT,
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+</code></pre>
+<h3 id="java-类结构">Java 类结构</h3>
+<pre><code class="language-java">public class Notification {
+    private Long id;
+    private String type;
+    private String title;
+    private String content;
+    private String recipient;
+    private LocalDateTime createTime;
+    // getter / setter
+}
+
+public class SmsNotification extends Notification {
+    private String phone;
+    // getter / setter
+}
+
+public class EmailNotification extends Notification {
+    private String emailAddr;
+    private String ccList;
+    // getter / setter
+}
+
+public class PushNotification extends Notification {
+    private String deviceToken;
+    private Integer badgeCount;
+    // getter / setter
+}
+</code></pre>
+<h3 id="mapper-xml-4">Mapper XML</h3>
+<pre><code class="language-xml">&lt;mapper namespace=&quot;com.example.mapper.NotificationMapper&quot;&gt;
+
+    &lt;resultMap id=&quot;notificationMap&quot; type=&quot;com.example.entity.Notification&quot;&gt;
+        &lt;id     property=&quot;id&quot;         column=&quot;id&quot;/&gt;
+        &lt;result property=&quot;type&quot;       column=&quot;type&quot;/&gt;
+        &lt;result property=&quot;title&quot;      column=&quot;title&quot;/&gt;
+        &lt;result property=&quot;content&quot;    column=&quot;content&quot;/&gt;
+        &lt;result property=&quot;recipient&quot;  column=&quot;recipient&quot;/&gt;
+        &lt;result property=&quot;createTime&quot; column=&quot;create_time&quot;/&gt;
+        &lt;discriminator javaType=&quot;string&quot; column=&quot;type&quot;&gt;
+            &lt;case value=&quot;SMS&quot;   resultType=&quot;com.example.entity.SmsNotification&quot;&gt;
+                &lt;result property=&quot;phone&quot; column=&quot;phone&quot;/&gt;
+            &lt;/case&gt;
+            &lt;case value=&quot;EMAIL&quot; resultType=&quot;com.example.entity.EmailNotification&quot;&gt;
+                &lt;result property=&quot;emailAddr&quot; column=&quot;email_addr&quot;/&gt;
+                &lt;result property=&quot;ccList&quot;    column=&quot;cc_list&quot;/&gt;
+            &lt;/case&gt;
+            &lt;case value=&quot;PUSH&quot;  resultType=&quot;com.example.entity.PushNotification&quot;&gt;
+                &lt;result property=&quot;deviceToken&quot; column=&quot;device_token&quot;/&gt;
+                &lt;result property=&quot;badgeCount&quot;  column=&quot;badge_count&quot;/&gt;
+            &lt;/case&gt;
+        &lt;/discriminator&gt;
+    &lt;/resultMap&gt;
+
+    &lt;select id=&quot;selectAll&quot; resultMap=&quot;notificationMap&quot;&gt;
+        SELECT * FROM t_notification ORDER BY create_time DESC
+    &lt;/select&gt;
+
+    &lt;select id=&quot;selectById&quot; resultMap=&quot;notificationMap&quot;&gt;
+        SELECT * FROM t_notification WHERE id = #{id}
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<h3 id="mapper-接口-3">Mapper 接口</h3>
+<pre><code class="language-java">public interface NotificationMapper {
+    List&lt;Notification&gt; selectAll();
+    Notification selectById(Long id);
+}
+</code></pre>
+<h3 id="执行效果-2">执行效果</h3>
+<pre><code class="language-java">List&lt;Notification&gt; notifications = notificationMapper.selectAll();
+for (Notification n : notifications) {
+    if (n instanceof SmsNotification sms) {
+        System.out.println(&quot;短信通知 → &quot; + sms.getPhone());
+    } else if (n instanceof EmailNotification email) {
+        System.out.println(&quot;邮件通知 → &quot; + email.getEmailAddr());
+    } else if (n instanceof PushNotification push) {
+        System.out.println(&quot;推送通知 → &quot; + push.getDeviceToken());
+    }
+}
+</code></pre>
+<p>MyBatis 会根据每行数据的 <code>type</code> 列值自动选择映射逻辑：</p>
+<ul>
+<li><code>type = 'SMS'</code> → 创建 <code>SmsNotification</code> 对象，映射 <code>phone</code> 字段</li>
+<li><code>type = 'EMAIL'</code> → 创建 <code>EmailNotification</code> 对象，映射 <code>emailAddr</code> 和 <code>ccList</code></li>
+<li><code>type = 'PUSH'</code> → 创建 <code>PushNotification</code> 对象，映射 <code>deviceToken</code> 和 <code>badgeCount</code></li>
+<li>其他值 → 使用默认的 <code>Notification</code> 类型</li>
+</ul>
+<blockquote>
+<p><strong>注意</strong>：<code>&lt;case&gt;</code> 标签中可以使用 <code>resultType</code>（内联映射）或 <code>resultMap</code>（引用外部 resultMap），后者适合映射较复杂的子类。<code>&lt;case&gt;</code> 中定义的映射会<strong>覆盖</strong>父级 <code>resultMap</code> 中同名 <code>property</code> 的映射（如果有的话），而不是追加。如果你希望子类同时拥有父级的映射，需要在 <code>&lt;case&gt;</code> 中引用一个 <code>extends</code> 了父级映射的 <code>resultMap</code>。</p>
+</blockquote>
+<hr />
+<h2 id="55-自动映射automapping与映射策略">5.5 自动映射（autoMapping）与映射策略</h2>
+<h3 id="551-什么是自动映射">5.5.1 什么是自动映射</h3>
+<p>MyBatis 具备自动将结果集列映射到 Java 属性的能力——当列名（或转换后的列名）与属性名匹配时，无需显式声明 <code>&lt;result&gt;</code> 标签。</p>
+<h3 id="552-全局映射策略automappingbehavior">5.5.2 全局映射策略（autoMappingBehavior）</h3>
+<p>在 <code>mybatis-config.xml</code> 的 <code>&lt;settings&gt;</code> 中配置：</p>
+<pre><code class="language-xml">&lt;settings&gt;
+    &lt;!-- NONE: 禁用自动映射 | PARTIAL: 部分自动映射（默认） | FULL: 完全自动映射 --&gt;
+    &lt;setting name=&quot;autoMappingBehavior&quot; value=&quot;PARTIAL&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NONE</code></td>
+<td>完全禁用自动映射，所有列都必须在 <code>resultMap</code> 中显式声明</td>
+</tr>
+<tr>
+<td><code>PARTIAL</code>（默认）</td>
+<td>对没有嵌套映射（<code>association</code>/<code>collection</code>）的 <code>resultMap</code> 启用自动映射。一旦 <code>resultMap</code> 中出现了嵌套映射，未显式声明的列就不会自动映射</td>
+</tr>
+<tr>
+<td><code>FULL</code></td>
+<td>无条件启用自动映射，即使存在嵌套映射也会自动映射未声明的列</td>
+</tr>
+</tbody>
+</table>
+<h3 id="553-resultmap-级别的-automapping-属性">5.5.3 resultMap 级别的 autoMapping 属性</h3>
+<p>可以在单个 <code>resultMap</code> 上覆盖全局策略：</p>
+<pre><code class="language-xml">&lt;!-- 对这个 resultMap 强制启用自动映射，即使全局策略是 NONE 或有嵌套映射 --&gt;
+&lt;resultMap id=&quot;orderMap&quot; type=&quot;Order&quot; autoMapping=&quot;true&quot;&gt;
+    &lt;id property=&quot;id&quot; column=&quot;o_id&quot;/&gt;
+    &lt;!-- username、email 等同名列会自动映射，无需显式声明 --&gt;
+    &lt;association property=&quot;user&quot; javaType=&quot;User&quot; autoMapping=&quot;true&quot;&gt;
+        &lt;id property=&quot;id&quot; column=&quot;u_id&quot;/&gt;
+        &lt;!-- user 的其他属性如果列名匹配也会自动映射 --&gt;
+    &lt;/association&gt;
+&lt;/resultMap&gt;
+</code></pre>
+<h3 id="554-配合-mapunderscoretocamelcase">5.5.4 配合 mapUnderscoreToCamelCase</h3>
+<p>自动映射能力与驼峰转换配合使用效果最佳：</p>
+<pre><code class="language-xml">&lt;settings&gt;
+    &lt;setting name=&quot;mapUnderscoreToCamelCase&quot; value=&quot;true&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<p>开启后，数据库列名 <code>create_time</code> 会自动匹配 Java 属性 <code>createTime</code>，<code>product_name</code> 匹配 <code>productName</code>，以此类推。</p>
+<h3 id="555-最佳实践">5.5.5 最佳实践</h3>
+<pre><code>推荐配置：
+  autoMappingBehavior = PARTIAL（默认值，不需要改）
+  mapUnderscoreToCamelCase = true（强烈推荐开启）
+
+编码建议：
+  1. 即使开启自动映射，&lt;id&gt; 标签始终显式声明
+  2. 嵌套映射中的列建议显式声明，不依赖 FULL 模式
+  3. 简单的 resultMap 可以放心依赖自动映射减少样板代码
+</code></pre>
+<h3 id="556-automappingunknowncolumnbehavior">5.5.6 autoMappingUnknownColumnBehavior</h3>
+<p>当自动映射遇到无法匹配的列时的行为：</p>
+<pre><code class="language-xml">&lt;settings&gt;
+    &lt;!-- NONE: 静默忽略（默认） | WARNING: 日志警告 | FAILING: 抛出异常 --&gt;
+    &lt;setting name=&quot;autoMappingUnknownColumnBehavior&quot; value=&quot;NONE&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<p>开发阶段建议设为 <code>WARNING</code>，便于及时发现映射遗漏。</p>
+<hr />
+<h2 id="56-延迟加载lazy-loading的配置与原理">5.6 延迟加载（Lazy Loading）的配置与原理</h2>
+<h3 id="561-什么是延迟加载">5.6.1 什么是延迟加载</h3>
+<p>延迟加载（也叫懒加载）是指：<strong>关联对象不在主查询时立即加载，而是推迟到第一次访问该属性时才触发查询</strong>。它只能配合<strong>嵌套查询</strong>（Nested Select）使用，对嵌套结果（Nested ResultMap）无效。</p>
+<h3 id="562-配置方式">5.6.2 配置方式</h3>
+<h4 id="全局配置">全局配置</h4>
+<pre><code class="language-xml">&lt;!-- mybatis-config.xml --&gt;
+&lt;settings&gt;
+    &lt;!-- 全局开关：是否启用延迟加载（默认 false） --&gt;
+    &lt;setting name=&quot;lazyLoadingEnabled&quot; value=&quot;true&quot;/&gt;
+
+    &lt;!--
+        积极/侵入式加载：访问对象的任意属性时是否触发所有延迟加载属性的加载
+        MyBatis 3.4.1 之前默认 true，之后默认 false
+        推荐 false——只有访问具体的延迟加载属性时才触发该属性的加载
+    --&gt;
+    &lt;setting name=&quot;aggressiveLazyLoading&quot; value=&quot;false&quot;/&gt;
+
+    &lt;!--
+        触发延迟加载的方法列表
+        调用这些方法时会强制加载所有延迟属性
+        默认值：&quot;equals,clone,hashCode,toString&quot;
+    --&gt;
+    &lt;setting name=&quot;lazyLoadTriggerMethods&quot; value=&quot;equals,clone,hashCode,toString&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<h4 id="局部配置推荐">局部配置（推荐）</h4>
+<p>在 <code>&lt;association&gt;</code> 或 <code>&lt;collection&gt;</code> 上使用 <code>fetchType</code> 属性，优先级高于全局配置：</p>
+<pre><code class="language-xml">&lt;association property=&quot;user&quot;
+             column=&quot;user_id&quot;
+             select=&quot;com.example.mapper.UserMapper.selectUserById&quot;
+             fetchType=&quot;lazy&quot;/&gt;
+
+&lt;collection property=&quot;orderItems&quot;
+            ofType=&quot;com.example.entity.OrderItem&quot;
+            column=&quot;id&quot;
+            select=&quot;com.example.mapper.OrderItemMapper.selectByOrderId&quot;
+            fetchType=&quot;eager&quot;/&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>fetchType 值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lazy</code></td>
+<td>延迟加载，访问时才查询</td>
+</tr>
+<tr>
+<td><code>eager</code></td>
+<td>立即加载，主查询完成后立刻查询</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>推荐做法</strong>：不开启全局延迟加载，而是在需要的 <code>association</code> / <code>collection</code> 上逐个指定 <code>fetchType=&quot;lazy&quot;</code>，做到精确控制。</p>
+</blockquote>
+<h3 id="563-底层原理基于动态代理">5.6.3 底层原理：基于动态代理</h3>
+<p>延迟加载的核心实现依赖于<strong>动态代理</strong>：</p>
+<pre><code>                      ┌──────────────────────────────────────┐
+                      │     MyBatis 延迟加载原理               │
+                      └──────────────┬───────────────────────┘
+                                     │
+                      ┌──────────────▼───────────────────────┐
+                      │  1. 执行主查询，获取 Order 数据         │
+                      └──────────────┬───────────────────────┘
+                                     │
+                      ┌──────────────▼───────────────────────┐
+                      │  2. 创建 Order 对象时，发现 user 属性   │
+                      │     配置了延迟加载                      │
+                      └──────────────┬───────────────────────┘
+                                     │
+                      ┌──────────────▼───────────────────────┐
+                      │  3. 不直接创建 Order 实例，而是创建     │
+                      │     Order 的代理对象（Proxy）            │
+                      │     - 优先使用 Javassist               │
+                      │     - 备选使用 Cglib                    │
+                      └──────────────┬───────────────────────┘
+                                     │
+                      ┌──────────────▼───────────────────────┐
+                      │  4. 代理对象拦截 getUser() 方法调用     │
+                      │     → 检查 user 属性是否已加载          │
+                      │     → 未加载则执行嵌套 SQL 查询         │
+                      │     → 将查询结果设置到 user 属性        │
+                      │     → 返回 user 对象                   │
+                      └──────────────────────────────────────┘
+</code></pre>
+<h4 id="代理技术选择">代理技术选择</h4>
+<p>MyBatis 通过 <code>proxyFactory</code> 设置选择代理实现：</p>
+<pre><code class="language-xml">&lt;settings&gt;
+    &lt;!-- JAVASSIST（默认）或 CGLIB --&gt;
+    &lt;setting name=&quot;proxyFactory&quot; value=&quot;JAVASSIST&quot;/&gt;
+&lt;/settings&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>代理技术</th>
+<th>原理</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Javassist</strong>（默认）</td>
+<td>在运行时直接操作字节码生成子类</td>
+<td>MyBatis 内置依赖，无需额外引入 jar</td>
+</tr>
+<tr>
+<td><strong>Cglib</strong></td>
+<td>基于 ASM 框架在运行时生成目标类的子类</td>
+<td>需额外引入 cglib 依赖</td>
+</tr>
+</tbody>
+</table>
+<p>两者的共同机制：</p>
+<ol>
+<li>生成目标实体类的<strong>子类</strong>（所以实体类不能是 <code>final</code> 的）</li>
+<li>重写 getter 方法，在方法入口处插入拦截逻辑</li>
+<li>首次调用 getter 时执行延迟加载 SQL，后续调用直接返回已加载的值</li>
+</ol>
+<h4 id="源码层面的关键类">源码层面的关键类</h4>
+<pre><code>ResultLoader       : 持有嵌套查询的信息（MappedStatement、参数等），负责实际执行延迟加载SQL
+ResultLoaderMap    : 管理一个对象上所有待延迟加载的属性
+JavassistProxyFactory / CglibProxyFactory : 创建代理对象的工厂
+EnhancedResultObjectProxyImpl             : 代理对象的方法拦截器，核心逻辑所在
+</code></pre>
+<h3 id="564-延迟加载的注意事项">5.6.4 延迟加载的注意事项</h3>
+<ol>
+<li>
+<p><strong>序列化问题</strong>：代理对象在序列化（如 JSON 序列化、RPC 传输）时可能触发所有延迟加载，或者因为代理类型导致序列化失败。建议在跨层传输前转为 DTO</p>
+</li>
+<li>
+<p><strong>SqlSession 关闭后访问</strong>：延迟加载需要通过 <code>SqlSession</code> 执行 SQL。如果 <code>SqlSession</code> 已经关闭后再访问延迟属性，会抛出异常。在 Spring 环境中，默认的 <code>SqlSessionTemplate</code> 会在每次操作后关闭 Session，这时需要配合 <code>OpenSessionInViewFilter</code>/<code>Interceptor</code> 或改用立即加载</p>
+</li>
+<li>
+<p><strong>调试时意外触发</strong>：在 IDE 的 Debug 模式下，鼠标悬浮查看对象属性或 Watch 窗口会触发 <code>toString()</code>，从而触发所有延迟加载。可以在 <code>lazyLoadTriggerMethods</code> 中移除 <code>toString</code> 来缓解</p>
+</li>
+<li>
+<p><strong>不能和嵌套结果混用</strong>：延迟加载只在嵌套查询（<code>select</code> 属性）模式下生效，嵌套结果（JOIN 查询 + 内联 resultMap）不支持延迟加载</p>
+</li>
+</ol>
+<h3 id="565-完整配置示例">5.6.5 完整配置示例</h3>
+<pre><code class="language-xml">&lt;!-- Order 的 resultMap：user 延迟加载，orderItems 延迟加载 --&gt;
+&lt;resultMap id=&quot;orderLazyLoadMap&quot; type=&quot;com.example.entity.Order&quot;&gt;
+    &lt;id     property=&quot;id&quot;          column=&quot;id&quot;/&gt;
+    &lt;result property=&quot;orderNo&quot;     column=&quot;order_no&quot;/&gt;
+    &lt;result property=&quot;userId&quot;      column=&quot;user_id&quot;/&gt;
+    &lt;result property=&quot;totalAmount&quot; column=&quot;total_amount&quot;/&gt;
+    &lt;result property=&quot;status&quot;      column=&quot;status&quot;/&gt;
+    &lt;result property=&quot;createTime&quot;  column=&quot;create_time&quot;/&gt;
+    &lt;association property=&quot;user&quot;
+                 column=&quot;user_id&quot;
+                 select=&quot;com.example.mapper.UserMapper.selectUserById&quot;
+                 fetchType=&quot;lazy&quot;/&gt;
+    &lt;collection property=&quot;orderItems&quot;
+                ofType=&quot;com.example.entity.OrderItem&quot;
+                column=&quot;id&quot;
+                select=&quot;com.example.mapper.OrderItemMapper.selectByOrderId&quot;
+                fetchType=&quot;lazy&quot;/&gt;
+&lt;/resultMap&gt;
+
+&lt;select id=&quot;selectOrderLazyById&quot; resultMap=&quot;orderLazyLoadMap&quot;&gt;
+    SELECT id, order_no, user_id, total_amount, status, create_time
+    FROM t_order WHERE id = #{id}
+&lt;/select&gt;
+</code></pre>
+<pre><code class="language-java">Order order = orderMapper.selectOrderLazyById(1L);
+// 此时只执行了 1 条 SQL：查询 t_order
+
+System.out.println(order.getOrderNo());
+// 不涉及关联属性，不触发额外查询
+
+System.out.println(order.getUser().getUsername());
+// 首次访问 user 属性，触发延迟加载
+// → 执行 SELECT ... FROM t_user WHERE id = ?
+
+System.out.println(order.getOrderItems().size());
+// 首次访问 orderItems 属性，触发延迟加载
+// → 执行 SELECT ... FROM t_order_item WHERE order_id = ?
+</code></pre>
+<hr />
+<h2 id="57-复杂映射实战订单---用户---商品三表关联">5.7 复杂映射实战：订单 - 用户 - 商品三表关联</h2>
+<p>本节将把前面学到的所有知识综合运用，实现一个完整的多表关联映射：<strong>查询订单详情，包含用户信息、订单项列表，每个订单项还关联了商品信息</strong>。</p>
+<h3 id="571-目标对象结构">5.7.1 目标对象结构</h3>
+<pre><code>Order
+├── id, orderNo, totalAmount, status, createTime
+├── user: User                      ← 一对一（association）
+│   └── id, username, email, phone
+└── orderItems: List&lt;OrderItem&gt;     ← 一对多（collection）
+    ├── OrderItem
+    │   ├── id, quantity, unitPrice
+    │   └── product: Product        ← 一对一（association）
+    │       └── id, productName, price, category
+    ├── OrderItem
+    │   └── product: Product
+    └── ...
+</code></pre>
+<h3 id="572-方案一嵌套结果一条-join-sql推荐">5.7.2 方案一：嵌套结果（一条 JOIN SQL，推荐）</h3>
+<h4 id="mapper-接口-4">Mapper 接口</h4>
+<pre><code class="language-java">public interface OrderMapper {
+    Order selectOrderDetailById(Long id);
+    List&lt;Order&gt; selectAllOrderDetails();
+}
+</code></pre>
+<h4 id="mapper-xml-5">Mapper XML</h4>
+<pre><code class="language-xml">&lt;mapper namespace=&quot;com.example.mapper.OrderMapper&quot;&gt;
+
+    &lt;!-- ==================== 基础 ResultMap（可复用） ==================== --&gt;
+
+    &lt;resultMap id=&quot;baseOrderMap&quot; type=&quot;com.example.entity.Order&quot;&gt;
+        &lt;id     property=&quot;id&quot;          column=&quot;o_id&quot;/&gt;
+        &lt;result property=&quot;orderNo&quot;     column=&quot;o_order_no&quot;/&gt;
+        &lt;result property=&quot;userId&quot;      column=&quot;o_user_id&quot;/&gt;
+        &lt;result property=&quot;totalAmount&quot; column=&quot;o_total_amount&quot;/&gt;
+        &lt;result property=&quot;status&quot;      column=&quot;o_status&quot;/&gt;
+        &lt;result property=&quot;createTime&quot;  column=&quot;o_create_time&quot;/&gt;
+    &lt;/resultMap&gt;
+
+    &lt;!-- ==================== 完整订单详情 ResultMap ==================== --&gt;
+
+    &lt;resultMap id=&quot;orderDetailMap&quot; type=&quot;com.example.entity.Order&quot; extends=&quot;baseOrderMap&quot;&gt;
+
+        &lt;!-- 一对一：Order → User --&gt;
+        &lt;association property=&quot;user&quot; javaType=&quot;com.example.entity.User&quot;&gt;
+            &lt;id     property=&quot;id&quot;         column=&quot;u_id&quot;/&gt;
+            &lt;result property=&quot;username&quot;   column=&quot;u_username&quot;/&gt;
+            &lt;result property=&quot;email&quot;      column=&quot;u_email&quot;/&gt;
+            &lt;result property=&quot;phone&quot;      column=&quot;u_phone&quot;/&gt;
+            &lt;result property=&quot;createTime&quot; column=&quot;u_create_time&quot;/&gt;
+        &lt;/association&gt;
+
+        &lt;!-- 一对多：Order → List&lt;OrderItem&gt; --&gt;
+        &lt;collection property=&quot;orderItems&quot; ofType=&quot;com.example.entity.OrderItem&quot;&gt;
+            &lt;id     property=&quot;id&quot;        column=&quot;oi_id&quot;/&gt;
+            &lt;result property=&quot;orderId&quot;   column=&quot;oi_order_id&quot;/&gt;
+            &lt;result property=&quot;productId&quot; column=&quot;oi_product_id&quot;/&gt;
+            &lt;result property=&quot;quantity&quot;  column=&quot;oi_quantity&quot;/&gt;
+            &lt;result property=&quot;unitPrice&quot; column=&quot;oi_unit_price&quot;/&gt;
+
+            &lt;!-- 一对一：OrderItem → Product（嵌套在 collection 内部） --&gt;
+            &lt;association property=&quot;product&quot; javaType=&quot;com.example.entity.Product&quot;&gt;
+                &lt;id     property=&quot;id&quot;          column=&quot;p_id&quot;/&gt;
+                &lt;result property=&quot;productName&quot; column=&quot;p_product_name&quot;/&gt;
+                &lt;result property=&quot;price&quot;       column=&quot;p_price&quot;/&gt;
+                &lt;result property=&quot;stock&quot;       column=&quot;p_stock&quot;/&gt;
+                &lt;result property=&quot;category&quot;    column=&quot;p_category&quot;/&gt;
+            &lt;/association&gt;
+        &lt;/collection&gt;
+
+    &lt;/resultMap&gt;
+
+    &lt;!-- ==================== SQL 片段 ==================== --&gt;
+
+    &lt;sql id=&quot;orderDetailColumns&quot;&gt;
+        o.id            AS o_id,
+        o.order_no      AS o_order_no,
+        o.user_id       AS o_user_id,
+        o.total_amount  AS o_total_amount,
+        o.status        AS o_status,
+        o.create_time   AS o_create_time,
+        u.id            AS u_id,
+        u.username      AS u_username,
+        u.email         AS u_email,
+        u.phone         AS u_phone,
+        u.create_time   AS u_create_time,
+        oi.id           AS oi_id,
+        oi.order_id     AS oi_order_id,
+        oi.product_id   AS oi_product_id,
+        oi.quantity      AS oi_quantity,
+        oi.unit_price   AS oi_unit_price,
+        p.id            AS p_id,
+        p.product_name  AS p_product_name,
+        p.price         AS p_price,
+        p.stock         AS p_stock,
+        p.category      AS p_category
+    &lt;/sql&gt;
+
+    &lt;!-- ==================== 查询语句 ==================== --&gt;
+
+    &lt;select id=&quot;selectOrderDetailById&quot; resultMap=&quot;orderDetailMap&quot;&gt;
+        SELECT
+            &lt;include refid=&quot;orderDetailColumns&quot;/&gt;
+        FROM t_order o
+        INNER JOIN t_user u        ON o.user_id    = u.id
+        LEFT  JOIN t_order_item oi ON o.id          = oi.order_id
+        LEFT  JOIN t_product p     ON oi.product_id = p.id
+        WHERE o.id = #{id}
+    &lt;/select&gt;
+
+    &lt;select id=&quot;selectAllOrderDetails&quot; resultMap=&quot;orderDetailMap&quot;&gt;
+        SELECT
+            &lt;include refid=&quot;orderDetailColumns&quot;/&gt;
+        FROM t_order o
+        INNER JOIN t_user u        ON o.user_id    = u.id
+        LEFT  JOIN t_order_item oi ON o.id          = oi.order_id
+        LEFT  JOIN t_product p     ON oi.product_id = p.id
+        ORDER BY o.id, oi.id
+    &lt;/select&gt;
+
+&lt;/mapper&gt;
+</code></pre>
+<h4 id="执行效果分析">执行效果分析</h4>
+<p>调用 <code>selectOrderDetailById(1)</code> 只执行一条 SQL，数据库返回 3 行（因为订单 1 有 3 个订单项）：</p>
+<table>
+<thead>
+<tr>
+<th>o_id</th>
+<th>o_order_no</th>
+<th>u_id</th>
+<th>u_username</th>
+<th>oi_id</th>
+<th>oi_quantity</th>
+<th>p_id</th>
+<th>p_product_name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>ORD20250101001</td>
+<td>1</td>
+<td>张三</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>Java编程思想</td>
+</tr>
+<tr>
+<td>1</td>
+<td>ORD20250101001</td>
+<td>1</td>
+<td>张三</td>
+<td>2</td>
+<td>1</td>
+<td>2</td>
+<td>MacBook Pro 14</td>
+</tr>
+<tr>
+<td>1</td>
+<td>ORD20250101001</td>
+<td>1</td>
+<td>张三</td>
+<td>3</td>
+<td>1</td>
+<td>3</td>
+<td>MyBatis实战指南</td>
+</tr>
+</tbody>
+</table>
+<p>MyBatis 映射过程：</p>
+<ol>
+<li>读取第 1 行，<code>o_id = 1</code> 创建 <code>Order</code> 对象，<code>u_id = 1</code> 创建 <code>User</code> 设置到 <code>order.user</code></li>
+<li><code>oi_id = 1</code> 创建 <code>OrderItem</code>，<code>p_id = 1</code> 创建 <code>Product</code> 设置到 <code>orderItem.product</code>，将 <code>OrderItem</code> 加入 <code>orderItems</code> 列表</li>
+<li>读取第 2 行，<code>o_id = 1</code> 与已有 Order 匹配（同一个对象），<code>u_id = 1</code> 同理复用</li>
+<li><code>oi_id = 2</code> 是新的 OrderItem，创建并加入列表</li>
+<li>第 3 行同理</li>
+</ol>
+<p>最终结果：<strong>1 个 Order 对象，内含 1 个 User + 3 个 OrderItem，每个 OrderItem 内含 1 个 Product</strong>。</p>
+<h4 id="使用示例">使用示例</h4>
+<pre><code class="language-java">Order order = orderMapper.selectOrderDetailById(1L);
+
+System.out.println(&quot;订单号：&quot; + order.getOrderNo());
+System.out.println(&quot;用户：&quot; + order.getUser().getUsername());
+System.out.println(&quot;订单项数量：&quot; + order.getOrderItems().size());
+
+for (OrderItem item : order.getOrderItems()) {
+    System.out.printf(&quot;  商品：%s × %d = ¥%.2f%n&quot;,
+        item.getProduct().getProductName(),
+        item.getQuantity(),
+        item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+}
+</code></pre>
+<p>输出：</p>
+<pre><code>订单号：ORD20250101001
+用户：张三
+订单项数量：3
+  商品：Java编程思想 × 1 = ¥108.00
+  商品：MacBook Pro 14 × 1 = ¥14999.00
+  商品：MyBatis实战指南 × 1 = ¥79.00
+</code></pre>
+<h3 id="573-方案二混合策略主关联-join--深层关联延迟加载">5.7.3 方案二：混合策略（主关联 JOIN + 深层关联延迟加载）</h3>
+<p>在实际项目中，有时并不总是需要加载所有层级的关联数据。这时可以采用混合策略：</p>
+<pre><code class="language-xml">&lt;!-- 混合策略 ResultMap：User 用 JOIN，OrderItems 和 Product 用延迟加载 --&gt;
+&lt;resultMap id=&quot;orderMixedMap&quot; type=&quot;com.example.entity.Order&quot;&gt;
+    &lt;id     property=&quot;id&quot;          column=&quot;o_id&quot;/&gt;
+    &lt;result property=&quot;orderNo&quot;     column=&quot;order_no&quot;/&gt;
+    &lt;result property=&quot;userId&quot;      column=&quot;user_id&quot;/&gt;
+    &lt;result property=&quot;totalAmount&quot; column=&quot;total_amount&quot;/&gt;
+    &lt;result property=&quot;status&quot;      column=&quot;status&quot;/&gt;
+    &lt;result property=&quot;createTime&quot;  column=&quot;o_create_time&quot;/&gt;
+
+    &lt;!-- User 用嵌套结果：一次 JOIN 搞定 --&gt;
+    &lt;association property=&quot;user&quot; javaType=&quot;com.example.entity.User&quot;&gt;
+        &lt;id     property=&quot;id&quot;         column=&quot;u_id&quot;/&gt;
+        &lt;result property=&quot;username&quot;   column=&quot;username&quot;/&gt;
+        &lt;result property=&quot;email&quot;      column=&quot;email&quot;/&gt;
+        &lt;result property=&quot;phone&quot;      column=&quot;phone&quot;/&gt;
+        &lt;result property=&quot;createTime&quot; column=&quot;u_create_time&quot;/&gt;
+    &lt;/association&gt;
+
+    &lt;!-- OrderItems 用嵌套查询 + 延迟加载：按需加载 --&gt;
+    &lt;collection property=&quot;orderItems&quot;
+                ofType=&quot;com.example.entity.OrderItem&quot;
+                column=&quot;o_id&quot;
+                select=&quot;com.example.mapper.OrderItemMapper.selectWithProductByOrderId&quot;
+                fetchType=&quot;lazy&quot;/&gt;
+&lt;/resultMap&gt;
+
+&lt;select id=&quot;selectOrderMixedById&quot; resultMap=&quot;orderMixedMap&quot;&gt;
+    SELECT
+        o.id AS o_id, o.order_no, o.user_id, o.total_amount, o.status,
+        o.create_time AS o_create_time,
+        u.id AS u_id, u.username, u.email, u.phone,
+        u.create_time AS u_create_time
+    FROM t_order o
+    INNER JOIN t_user u ON o.user_id = u.id
+    WHERE o.id = #{id}
+&lt;/select&gt;
+</code></pre>
+<p><strong>OrderItemMapper.xml（带 Product 关联的查询）</strong></p>
+<pre><code class="language-xml">&lt;resultMap id=&quot;orderItemWithProductMap&quot; type=&quot;com.example.entity.OrderItem&quot;&gt;
+    &lt;id     property=&quot;id&quot;        column=&quot;oi_id&quot;/&gt;
+    &lt;result property=&quot;orderId&quot;   column=&quot;order_id&quot;/&gt;
+    &lt;result property=&quot;productId&quot; column=&quot;product_id&quot;/&gt;
+    &lt;result property=&quot;quantity&quot;  column=&quot;quantity&quot;/&gt;
+    &lt;result property=&quot;unitPrice&quot; column=&quot;unit_price&quot;/&gt;
+    &lt;association property=&quot;product&quot; javaType=&quot;com.example.entity.Product&quot;&gt;
+        &lt;id     property=&quot;id&quot;          column=&quot;p_id&quot;/&gt;
+        &lt;result property=&quot;productName&quot; column=&quot;product_name&quot;/&gt;
+        &lt;result property=&quot;price&quot;       column=&quot;price&quot;/&gt;
+        &lt;result property=&quot;stock&quot;       column=&quot;stock&quot;/&gt;
+        &lt;result property=&quot;category&quot;    column=&quot;category&quot;/&gt;
+    &lt;/association&gt;
+&lt;/resultMap&gt;
+
+&lt;select id=&quot;selectWithProductByOrderId&quot; resultMap=&quot;orderItemWithProductMap&quot;&gt;
+    SELECT
+        oi.id AS oi_id, oi.order_id, oi.product_id, oi.quantity, oi.unit_price,
+        p.id AS p_id, p.product_name, p.price, p.stock, p.category
+    FROM t_order_item oi
+    INNER JOIN t_product p ON oi.product_id = p.id
+    WHERE oi.order_id = #{orderId}
+&lt;/select&gt;
+</code></pre>
+<h4 id="执行效果-3">执行效果</h4>
+<pre><code class="language-java">Order order = orderMapper.selectOrderMixedById(1L);
+// SQL 1: SELECT ... FROM t_order o JOIN t_user u ... WHERE o.id = 1
+// 此时 user 已加载，orderItems 未加载
+
+System.out.println(order.getUser().getUsername()); // → &quot;张三&quot;（无额外 SQL）
+
+// 只有在真正需要时才加载订单项
+List&lt;OrderItem&gt; items = order.getOrderItems();
+// SQL 2: SELECT ... FROM t_order_item oi JOIN t_product p ... WHERE oi.order_id = 1
+// 此时才执行第二条 SQL，一次性加载所有订单项及关联商品
+</code></pre>
+<p>这种混合策略的优势：</p>
+<ul>
+<li>用户信息作为订单页面必然展示的数据，通过 JOIN 一次性获取</li>
+<li>订单项列表可能需要用户点击&quot;展开详情&quot;才看到，通过延迟加载按需获取</li>
+<li>总共最多执行 2 条 SQL（而非 1 + N 条），兼顾性能和灵活性</li>
+</ul>
+<h3 id="574-方案对比总结">5.7.4 方案对比总结</h3>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>SQL 条数</th>
+<th>优势</th>
+<th>劣势</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>嵌套结果（全 JOIN）</td>
+<td>1 条</td>
+<td>性能最优，一次网络往返</td>
+<td>SQL 复杂，数据冗余传输</td>
+<td>确定需要所有关联数据</td>
+</tr>
+<tr>
+<td>嵌套查询（全延迟）</td>
+<td>1 + N 条</td>
+<td>代码简洁，按需加载</td>
+<td>潜在的 N+1 问题</td>
+<td>关联数据很少被访问</td>
+</tr>
+<tr>
+<td>混合策略</td>
+<td>2 条左右</td>
+<td>灵活平衡</td>
+<td>设计稍复杂</td>
+<td>部分关联必需，部分按需</td>
+</tr>
+<tr>
+<td>业务层组装</td>
+<td>多条独立查询</td>
+<td>完全可控，利于缓存</td>
+<td>代码量大，需要手动组装</td>
+<td>跨服务调用、需要独立缓存</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>核心要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>resultMap 基础</strong></td>
+<td><code>&lt;id&gt;</code> 必须声明（影响去重和缓存）；<code>&lt;constructor&gt;</code> 用于不可变对象</td>
+</tr>
+<tr>
+<td><strong>association</strong></td>
+<td>一对一映射；嵌套查询简单但有 N+1 风险；嵌套结果高效但 SQL 复杂</td>
+</tr>
+<tr>
+<td><strong>collection</strong></td>
+<td>一对多映射；<code>ofType</code> 指定集合元素类型；<code>&lt;id&gt;</code> 是去重关键</td>
+</tr>
+<tr>
+<td><strong>discriminator</strong></td>
+<td>多态映射；根据列值决定实例化哪个子类</td>
+</tr>
+<tr>
+<td><strong>autoMapping</strong></td>
+<td><code>PARTIAL</code> 模式 + <code>mapUnderscoreToCamelCase</code> 是最佳实践</td>
+</tr>
+<tr>
+<td><strong>延迟加载</strong></td>
+<td>仅适用于嵌套查询；基于 Javassist/Cglib 代理；注意序列化和 Session 关闭问题</td>
+</tr>
+<tr>
+<td><strong>复杂映射实战</strong></td>
+<td>优先使用嵌套结果（JOIN）；深层关联考虑混合策略（JOIN + 延迟加载）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>下一章预告</strong>：第六章将介绍注解开发方式，包括 <code>@Results</code>、<code>@One</code>、<code>@Many</code> 等注解如何实现本章 XML 方式完成的映射功能，以及 XML 与注解混合使用的最佳实践。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

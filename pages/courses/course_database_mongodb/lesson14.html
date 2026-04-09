@@ -1,0 +1,3871 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第14章-实战项目内容管理平台cms">第14章 实战项目：内容管理平台（CMS）</h1>
+<blockquote>
+<p>本章是整个课程的综合实战章节。我们将从零构建一个轻量级内容管理平台（CMS），涵盖用户管理、文章发布、分类标签、评论互动、文件上传与数据统计等功能，综合运用前 13 章所学的全部核心知识。</p>
+</blockquote>
+<hr />
+<h2 id="141-项目概述与需求分析">14.1 项目概述与需求分析</h2>
+<h3 id="1411-功能模块说明">14.1.1 功能模块说明</h3>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>功能点</th>
+<th>涉及知识点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>用户模块</strong></td>
+<td>用户注册、登录、JWT Token 认证、角色管理</td>
+<td>文档 CRUD、唯一索引、密码加密</td>
+</tr>
+<tr>
+<td><strong>文章模块</strong></td>
+<td>发布文章、编辑、删除、详情（浏览量+1）、分页列表、多条件筛选</td>
+<td>MongoTemplate、Criteria 动态查询、分页排序、事务</td>
+</tr>
+<tr>
+<td><strong>分类模块</strong></td>
+<td>分类树 CRUD、树形结构展示</td>
+<td>树形文档模型设计、递归查询</td>
+</tr>
+<tr>
+<td><strong>标签模块</strong></td>
+<td>标签作为文章数组字段、标签聚合统计</td>
+<td>数组操作符、聚合管道</td>
+</tr>
+<tr>
+<td><strong>评论模块</strong></td>
+<td>发表评论、嵌套回复、分页获取</td>
+<td>引用关联、分页查询</td>
+</tr>
+<tr>
+<td><strong>文件模块</strong></td>
+<td>基于 GridFS 的文件上传、下载、删除</td>
+<td>GridFS 集成</td>
+</tr>
+<tr>
+<td><strong>数据统计</strong></td>
+<td>每日发文量、热门标签 Top10、用户活跃度排行</td>
+<td>Aggregation API</td>
+</tr>
+<tr>
+<td><strong>实时通知</strong></td>
+<td>新评论实时推送</td>
+<td>Change Streams、SSE</td>
+</tr>
+<tr>
+<td><strong>自动清理</strong></td>
+<td>过期验证码自动删除</td>
+<td>TTL 索引</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1412-技术选型与版本">14.1.2 技术选型与版本</h3>
+<table>
+<thead>
+<tr>
+<th>技术</th>
+<th>版本</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java</td>
+<td>17+</td>
+<td>LTS 版本，支持 Records、Text Blocks 等特性</td>
+</tr>
+<tr>
+<td>Spring Boot</td>
+<td>3.2.x</td>
+<td>当前主流稳定版</td>
+</tr>
+<tr>
+<td>Spring Data MongoDB</td>
+<td>4.2.x</td>
+<td>随 Spring Boot 3.2 自动管理</td>
+</tr>
+<tr>
+<td>MongoDB</td>
+<td>7.0</td>
+<td>支持事务、Change Streams、全文搜索等</td>
+</tr>
+<tr>
+<td>JJWT</td>
+<td>0.12.x</td>
+<td>JWT Token 生成与解析</td>
+</tr>
+<tr>
+<td>Lombok</td>
+<td>最新</td>
+<td>简化 Java 样板代码</td>
+</tr>
+<tr>
+<td>Testcontainers</td>
+<td>1.19.x</td>
+<td>集成测试中启动真实 MongoDB 容器</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1413-api-接口规划表">14.1.3 API 接口规划表</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>路径</th>
+<th>说明</th>
+<th>认证</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/api/users/register</code></td>
+<td>用户注册</td>
+<td>否</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/users/login</code></td>
+<td>用户登录</td>
+<td>否</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/users/{id}</code></td>
+<td>获取用户信息</td>
+<td>是</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/articles</code></td>
+<td>发布文章</td>
+<td>是</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/api/articles/{id}</code></td>
+<td>编辑文章</td>
+<td>是</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/api/articles/{id}</code></td>
+<td>删除文章</td>
+<td>是</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/articles/{id}</code></td>
+<td>文章详情</td>
+<td>否</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/articles</code></td>
+<td>文章列表（分页筛选）</td>
+<td>否</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/articles/search</code></td>
+<td>全文搜索</td>
+<td>否</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/categories</code></td>
+<td>创建分类</td>
+<td>是</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/categories/tree</code></td>
+<td>获取分类树</td>
+<td>否</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/api/categories/{id}</code></td>
+<td>更新分类</td>
+<td>是</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/api/categories/{id}</code></td>
+<td>删除分类</td>
+<td>是</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/tags/statistics</code></td>
+<td>标签聚合统计</td>
+<td>否</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/comments</code></td>
+<td>发表评论</td>
+<td>是</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/comments/article/{articleId}</code></td>
+<td>获取文章评论（分页）</td>
+<td>否</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/files/upload</code></td>
+<td>上传文件</td>
+<td>是</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/files/{id}</code></td>
+<td>下载文件</td>
+<td>否</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/api/files/{id}</code></td>
+<td>删除文件</td>
+<td>是</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/statistics/daily-articles</code></td>
+<td>每日发文量统计</td>
+<td>否</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/statistics/hot-tags</code></td>
+<td>热门标签 Top10</td>
+<td>否</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/statistics/active-users</code></td>
+<td>用户活跃度排行</td>
+<td>否</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/notifications/stream</code></td>
+<td>SSE 实时通知流</td>
+<td>是</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="142-文档模型设计">14.2 文档模型设计</h2>
+<h3 id="1421-user-文档">14.2.1 User 文档</h3>
+<p><strong>MongoDB 文档结构（JSON 示例）：</strong></p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: ObjectId(&quot;665a1b2c3d4e5f6a7b8c9d0e&quot;),
+  &quot;username&quot;: &quot;zhangsan&quot;,
+  &quot;password&quot;: &quot;$2a$10$N9qo8uLOickgx2ZMRZoMy...&quot;,
+  &quot;nickname&quot;: &quot;张三&quot;,
+  &quot;email&quot;: &quot;zhangsan@example.com&quot;,
+  &quot;avatar&quot;: &quot;665a1b2c3d4e5f6a7b8c9d0f&quot;,
+  &quot;roles&quot;: [&quot;ROLE_USER&quot;],
+  &quot;status&quot;: 1,
+  &quot;created_at&quot;: ISODate(&quot;2024-06-01T10:00:00Z&quot;),
+  &quot;updated_at&quot;: ISODate(&quot;2024-06-01T10:00:00Z&quot;)
+}
+</code></pre>
+<p><strong>Java 实体类：</strong></p>
+<pre><code class="language-java">package com.cms.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+@Document(collection = &quot;users&quot;)
+public class User {
+
+    @Id
+    private String id;
+
+    @Indexed(unique = true)
+    private String username;
+
+    private String password;
+
+    private String nickname;
+
+    @Indexed(unique = true)
+    private String email;
+
+    private String avatar;
+
+    private List&lt;String&gt; roles;
+
+    /** 状态：1-正常，0-禁用 */
+    private Integer status;
+
+    @CreatedDate
+    @Field(&quot;created_at&quot;)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Field(&quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+}
+</code></pre>
+<h3 id="1422-article-文档">14.2.2 Article 文档</h3>
+<p><strong>MongoDB 文档结构（JSON 示例）：</strong></p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: ObjectId(&quot;665b2c3d4e5f6a7b8c9d0e1f&quot;),
+  &quot;title&quot;: &quot;MongoDB 聚合管道实战指南&quot;,
+  &quot;summary&quot;: &quot;本文详细介绍聚合管道的常用阶段与优化技巧...&quot;,
+  &quot;content&quot;: &quot;&lt;p&gt;MongoDB 的聚合管道是数据处理的强大工具...&lt;/p&gt;&quot;,
+  &quot;author_id&quot;: &quot;665a1b2c3d4e5f6a7b8c9d0e&quot;,
+  &quot;author_name&quot;: &quot;张三&quot;,
+  &quot;category_id&quot;: &quot;665c3d4e5f6a7b8c9d0e1f2a&quot;,
+  &quot;category_name&quot;: &quot;数据库&quot;,
+  &quot;tags&quot;: [&quot;MongoDB&quot;, &quot;聚合&quot;, &quot;NoSQL&quot;],
+  &quot;cover_image&quot;: &quot;665d4e5f6a7b8c9d0e1f2a3b&quot;,
+  &quot;status&quot;: &quot;PUBLISHED&quot;,
+  &quot;view_count&quot;: 1024,
+  &quot;comment_count&quot;: 18,
+  &quot;is_top&quot;: false,
+  &quot;created_at&quot;: ISODate(&quot;2024-06-15T08:30:00Z&quot;),
+  &quot;updated_at&quot;: ISODate(&quot;2024-06-16T14:20:00Z&quot;)
+}
+</code></pre>
+<p><strong>Java 实体类：</strong></p>
+<pre><code class="language-java">package com.cms.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.TextIndexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.TextScore;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+@Document(collection = &quot;articles&quot;)
+@CompoundIndex(name = &quot;idx_category_status_created&quot;,
+        def = &quot;{'category_id': 1, 'status': 1, 'created_at': -1}&quot;)
+public class Article {
+
+    @Id
+    private String id;
+
+    @TextIndexed(weight = 10)
+    private String title;
+
+    @TextIndexed(weight = 5)
+    private String summary;
+
+    @TextIndexed
+    private String content;
+
+    @Indexed
+    @Field(&quot;author_id&quot;)
+    private String authorId;
+
+    @Field(&quot;author_name&quot;)
+    private String authorName;
+
+    @Indexed
+    @Field(&quot;category_id&quot;)
+    private String categoryId;
+
+    @Field(&quot;category_name&quot;)
+    private String categoryName;
+
+    @Indexed
+    private List&lt;String&gt; tags;
+
+    @Field(&quot;cover_image&quot;)
+    private String coverImage;
+
+    /** DRAFT-草稿, PUBLISHED-已发布, ARCHIVED-已归档 */
+    @Indexed
+    private String status;
+
+    @Field(&quot;view_count&quot;)
+    private Long viewCount;
+
+    @Field(&quot;comment_count&quot;)
+    private Integer commentCount;
+
+    @Field(&quot;is_top&quot;)
+    private Boolean isTop;
+
+    @TextScore
+    private Float score;
+
+    @CreatedDate
+    @Field(&quot;created_at&quot;)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Field(&quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+}
+</code></pre>
+<h3 id="1423-category-文档树形结构">14.2.3 Category 文档（树形结构）</h3>
+<p><strong>MongoDB 文档结构（JSON 示例）：</strong></p>
+<pre><code class="language-json">// 顶级分类
+{
+  &quot;_id&quot;: ObjectId(&quot;665c3d4e5f6a7b8c9d0e1f2a&quot;),
+  &quot;name&quot;: &quot;技术&quot;,
+  &quot;slug&quot;: &quot;tech&quot;,
+  &quot;parent_id&quot;: null,
+  &quot;sort_order&quot;: 1,
+  &quot;article_count&quot;: 56,
+  &quot;created_at&quot;: ISODate(&quot;2024-06-01T10:00:00Z&quot;),
+  &quot;updated_at&quot;: ISODate(&quot;2024-06-01T10:00:00Z&quot;)
+}
+
+// 子分类
+{
+  &quot;_id&quot;: ObjectId(&quot;665c3d4e5f6a7b8c9d0e1f2b&quot;),
+  &quot;name&quot;: &quot;数据库&quot;,
+  &quot;slug&quot;: &quot;database&quot;,
+  &quot;parent_id&quot;: &quot;665c3d4e5f6a7b8c9d0e1f2a&quot;,
+  &quot;sort_order&quot;: 1,
+  &quot;article_count&quot;: 23,
+  &quot;created_at&quot;: ISODate(&quot;2024-06-01T10:00:00Z&quot;),
+  &quot;updated_at&quot;: ISODate(&quot;2024-06-01T10:00:00Z&quot;)
+}
+</code></pre>
+<p><strong>Java 实体类：</strong></p>
+<pre><code class="language-java">package com.cms.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@Document(collection = &quot;categories&quot;)
+public class Category {
+
+    @Id
+    private String id;
+
+    @Indexed(unique = true)
+    private String name;
+
+    @Indexed(unique = true)
+    private String slug;
+
+    @Indexed
+    @Field(&quot;parent_id&quot;)
+    private String parentId;
+
+    @Field(&quot;sort_order&quot;)
+    private Integer sortOrder;
+
+    @Field(&quot;article_count&quot;)
+    private Integer articleCount;
+
+    /** 子分类列表——不持久化到数据库，仅用于构建树形结构返回给前端 */
+    @Transient
+    private List&lt;Category&gt; children = new ArrayList&lt;&gt;();
+
+    @CreatedDate
+    @Field(&quot;created_at&quot;)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Field(&quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+}
+</code></pre>
+<h3 id="1424-comment-文档">14.2.4 Comment 文档</h3>
+<p><strong>MongoDB 文档结构（JSON 示例）：</strong></p>
+<pre><code class="language-json">{
+  &quot;_id&quot;: ObjectId(&quot;665d4e5f6a7b8c9d0e1f2a3c&quot;),
+  &quot;article_id&quot;: &quot;665b2c3d4e5f6a7b8c9d0e1f&quot;,
+  &quot;user_id&quot;: &quot;665a1b2c3d4e5f6a7b8c9d0e&quot;,
+  &quot;user_nickname&quot;: &quot;张三&quot;,
+  &quot;content&quot;: &quot;这篇文章写得非常好，聚合管道的讲解很清晰！&quot;,
+  &quot;parent_id&quot;: null,
+  &quot;reply_to_user_id&quot;: null,
+  &quot;reply_to_nickname&quot;: null,
+  &quot;status&quot;: 1,
+  &quot;created_at&quot;: ISODate(&quot;2024-06-16T09:00:00Z&quot;),
+  &quot;updated_at&quot;: ISODate(&quot;2024-06-16T09:00:00Z&quot;)
+}
+</code></pre>
+<p><strong>Java 实体类：</strong></p>
+<pre><code class="language-java">package com.cms.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.LocalDateTime;
+
+@Data
+@Document(collection = &quot;comments&quot;)
+@CompoundIndex(name = &quot;idx_article_created&quot;,
+        def = &quot;{'article_id': 1, 'created_at': -1}&quot;)
+public class Comment {
+
+    @Id
+    private String id;
+
+    @Indexed
+    @Field(&quot;article_id&quot;)
+    private String articleId;
+
+    @Indexed
+    @Field(&quot;user_id&quot;)
+    private String userId;
+
+    @Field(&quot;user_nickname&quot;)
+    private String userNickname;
+
+    private String content;
+
+    /** 父评论ID，null表示顶级评论 */
+    @Field(&quot;parent_id&quot;)
+    private String parentId;
+
+    /** 被回复用户ID */
+    @Field(&quot;reply_to_user_id&quot;)
+    private String replyToUserId;
+
+    /** 被回复用户昵称 */
+    @Field(&quot;reply_to_nickname&quot;)
+    private String replyToNickname;
+
+    /** 状态：1-正常，0-已删除 */
+    private Integer status;
+
+    @CreatedDate
+    @Field(&quot;created_at&quot;)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Field(&quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+}
+</code></pre>
+<h3 id="1425-verificationcode-文档ttl-自动过期">14.2.5 VerificationCode 文档（TTL 自动过期）</h3>
+<pre><code class="language-java">package com.cms.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.Instant;
+
+@Data
+@Document(collection = &quot;verification_codes&quot;)
+public class VerificationCode {
+
+    @Id
+    private String id;
+
+    @Indexed(unique = true)
+    private String email;
+
+    private String code;
+
+    /** 创建时间，TTL 索引将基于此字段自动删除过期文档 */
+    @Indexed(expireAfterSeconds = 300)
+    @Field(&quot;created_at&quot;)
+    private Instant createdAt;
+}
+</code></pre>
+<h3 id="1426-设计决策分析为什么评论使用独立集合">14.2.6 设计决策分析：为什么评论使用独立集合</h3>
+<p>在文档模型设计中，评论数据的存放方式是一个典型的决策点。我们选择 <strong>独立集合（Reference）</strong> 而非 <strong>内嵌文档（Embed）</strong> ，原因如下：</p>
+<table>
+<thead>
+<tr>
+<th>考量维度</th>
+<th>内嵌方案</th>
+<th>独立集合方案（本项目选择）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>文档大小</strong></td>
+<td>热门文章可能有成百上千条评论，单文档会逼近 16MB 限制</td>
+<td>每条评论独立存储，无大小风险</td>
+</tr>
+<tr>
+<td><strong>查询灵活性</strong></td>
+<td>难以单独对评论做分页、排序、聚合</td>
+<td>可独立查询、分页、按时间排序</td>
+</tr>
+<tr>
+<td><strong>写入冲突</strong></td>
+<td>多用户同时评论会导致对同一文档的写竞争</td>
+<td>各评论独立写入，无竞争</td>
+</tr>
+<tr>
+<td><strong>更新性能</strong></td>
+<td>修改深层嵌套数据需要位置操作符，性能较差</td>
+<td>直接通过 <code>_id</code> 更新，简单高效</td>
+</tr>
+<tr>
+<td><strong>独立生命周期</strong></td>
+<td>评论的增删不应影响文章文档的版本和更新时间</td>
+<td>评论与文章解耦，互不影响</td>
+</tr>
+<tr>
+<td><strong>级联删除</strong></td>
+<td>删除文章时需手动清理内嵌数据（但本身就在文档内）</td>
+<td>需要事务保证删除文章时同步删评论</td>
+</tr>
+</tbody>
+</table>
+<p><strong>结论</strong>：当子数据量可能增长到不确定规模、且需要独立查询时，应选择独立集合 + 引用关联。</p>
+<h3 id="1427-索引设计方案">14.2.7 索引设计方案</h3>
+<pre><code class="language-javascript">// users 集合
+db.users.createIndex({ &quot;username&quot;: 1 }, { unique: true })
+db.users.createIndex({ &quot;email&quot;: 1 }, { unique: true })
+
+// articles 集合
+db.articles.createIndex({ &quot;author_id&quot;: 1 })
+db.articles.createIndex({ &quot;category_id&quot;: 1, &quot;status&quot;: 1, &quot;created_at&quot;: -1 })
+db.articles.createIndex({ &quot;tags&quot;: 1 })
+db.articles.createIndex({ &quot;status&quot;: 1, &quot;created_at&quot;: -1 })
+db.articles.createIndex(
+  { &quot;title&quot;: &quot;text&quot;, &quot;summary&quot;: &quot;text&quot;, &quot;content&quot;: &quot;text&quot; },
+  { weights: { &quot;title&quot;: 10, &quot;summary&quot;: 5, &quot;content&quot;: 1 }, default_language: &quot;none&quot; }
+)
+
+// categories 集合
+db.categories.createIndex({ &quot;name&quot;: 1 }, { unique: true })
+db.categories.createIndex({ &quot;slug&quot;: 1 }, { unique: true })
+db.categories.createIndex({ &quot;parent_id&quot;: 1 })
+
+// comments 集合
+db.comments.createIndex({ &quot;article_id&quot;: 1, &quot;created_at&quot;: -1 })
+db.comments.createIndex({ &quot;user_id&quot;: 1 })
+
+// verification_codes 集合
+db.verification_codes.createIndex({ &quot;email&quot;: 1 }, { unique: true })
+db.verification_codes.createIndex({ &quot;created_at&quot;: 1 }, { expireAfterSeconds: 300 })
+</code></pre>
+<blockquote>
+<p><strong>索引设计思路</strong>：遵循 ESR 原则（Equality → Sort → Range），将等值查询字段放在前面，排序字段居中，范围查询字段放在最后。例如文章列表查询通常先按 <code>category_id</code> 和 <code>status</code> 精确过滤，再按 <code>created_at</code> 倒序排列，因此复合索引设计为 <code>{category_id: 1, status: 1, created_at: -1}</code>。</p>
+</blockquote>
+<hr />
+<h2 id="143-项目骨架搭建">14.3 项目骨架搭建</h2>
+<h3 id="1431-完整的-pomxml">14.3.1 完整的 pom.xml</h3>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;3.2.5&lt;/version&gt;
+        &lt;relativePath/&gt;
+    &lt;/parent&gt;
+
+    &lt;groupId&gt;com.cms&lt;/groupId&gt;
+    &lt;artifactId&gt;cms-mongodb&lt;/artifactId&gt;
+    &lt;version&gt;1.0.0&lt;/version&gt;
+    &lt;name&gt;CMS MongoDB&lt;/name&gt;
+    &lt;description&gt;内容管理平台 - Spring Boot + MongoDB 实战项目&lt;/description&gt;
+
+    &lt;properties&gt;
+        &lt;java.version&gt;17&lt;/java.version&gt;
+        &lt;jjwt.version&gt;0.12.5&lt;/jjwt.version&gt;
+        &lt;testcontainers.version&gt;1.19.7&lt;/testcontainers.version&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;!-- Spring Boot Web --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- Spring Data MongoDB --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-data-mongodb&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- Spring Boot Validation --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-validation&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- Spring Security Crypto（仅用BCrypt加密，不引入完整Security） --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.security&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-security-crypto&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- JJWT --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+            &lt;artifactId&gt;jjwt-api&lt;/artifactId&gt;
+            &lt;version&gt;${jjwt.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+            &lt;artifactId&gt;jjwt-impl&lt;/artifactId&gt;
+            &lt;version&gt;${jjwt.version}&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+            &lt;artifactId&gt;jjwt-jackson&lt;/artifactId&gt;
+            &lt;version&gt;${jjwt.version}&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- Lombok --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+            &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+            &lt;optional&gt;true&lt;/optional&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- Test --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- Testcontainers --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.testcontainers&lt;/groupId&gt;
+            &lt;artifactId&gt;testcontainers&lt;/artifactId&gt;
+            &lt;version&gt;${testcontainers.version}&lt;/version&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.testcontainers&lt;/groupId&gt;
+            &lt;artifactId&gt;mongodb&lt;/artifactId&gt;
+            &lt;version&gt;${testcontainers.version}&lt;/version&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.testcontainers&lt;/groupId&gt;
+            &lt;artifactId&gt;junit-jupiter&lt;/artifactId&gt;
+            &lt;version&gt;${testcontainers.version}&lt;/version&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+                &lt;configuration&gt;
+                    &lt;excludes&gt;
+                        &lt;exclude&gt;
+                            &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+                            &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+                        &lt;/exclude&gt;
+                    &lt;/excludes&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/project&gt;
+</code></pre>
+<h3 id="1432-applicationyml">14.3.2 application.yml</h3>
+<p><strong>开发环境配置（application-dev.yml）：</strong></p>
+<pre><code class="language-yaml">server:
+  port: 8080
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/cms_db
+      auto-index-creation: true
+
+# JWT 配置
+jwt:
+  secret: cms-dev-secret-key-must-be-at-least-256-bits-long-for-hs256-algorithm!!
+  expiration: 86400000  # 24小时，单位毫秒
+
+# 文件上传限制
+spring.servlet.multipart:
+  max-file-size: 10MB
+  max-request-size: 10MB
+
+logging:
+  level:
+    org.springframework.data.mongodb: DEBUG
+</code></pre>
+<p><strong>生产环境配置（application-prod.yml）：</strong></p>
+<pre><code class="language-yaml">server:
+  port: 8080
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://cms_user:strongPassword@mongo-primary:27017,mongo-secondary1:27017,mongo-secondary2:27017/cms_db?replicaSet=rs0&amp;authSource=admin&amp;readPreference=secondaryPreferred
+      auto-index-creation: false  # 生产环境建议手动管理索引
+
+jwt:
+  secret: ${JWT_SECRET}  # 从环境变量读取
+  expiration: 86400000
+
+spring.servlet.multipart:
+  max-file-size: 10MB
+  max-request-size: 10MB
+
+logging:
+  level:
+    root: WARN
+    com.cms: INFO
+</code></pre>
+<p><strong>主配置文件（application.yml）：</strong></p>
+<pre><code class="language-yaml">spring:
+  profiles:
+    active: dev
+</code></pre>
+<h3 id="1433-项目目录结构">14.3.3 项目目录结构</h3>
+<pre><code>cms-mongodb/
+├── pom.xml
+└── src/
+    ├── main/
+    │   ├── java/com/cms/
+    │   │   ├── CmsApplication.java              # 启动类
+    │   │   ├── config/
+    │   │   │   ├── MongoAuditingConfig.java      # 审计配置
+    │   │   │   ├── MongoTransactionConfig.java   # 事务管理器
+    │   │   │   └── ChangeStreamConfig.java       # Change Streams 配置
+    │   │   ├── common/
+    │   │   │   ├── Result.java                   # 统一响应封装
+    │   │   │   └── GlobalExceptionHandler.java   # 全局异常处理
+    │   │   ├── entity/
+    │   │   │   ├── User.java
+    │   │   │   ├── Article.java
+    │   │   │   ├── Category.java
+    │   │   │   ├── Comment.java
+    │   │   │   └── VerificationCode.java
+    │   │   ├── dto/
+    │   │   │   ├── RegisterRequest.java
+    │   │   │   ├── LoginRequest.java
+    │   │   │   ├── ArticleRequest.java
+    │   │   │   ├── ArticleQuery.java
+    │   │   │   ├── CommentRequest.java
+    │   │   │   └── CategoryRequest.java
+    │   │   ├── repository/
+    │   │   │   ├── UserRepository.java
+    │   │   │   ├── ArticleRepository.java
+    │   │   │   ├── CategoryRepository.java
+    │   │   │   └── CommentRepository.java
+    │   │   ├── service/
+    │   │   │   ├── UserService.java
+    │   │   │   ├── ArticleService.java
+    │   │   │   ├── CategoryService.java
+    │   │   │   ├── CommentService.java
+    │   │   │   ├── FileService.java
+    │   │   │   └── StatisticsService.java
+    │   │   ├── controller/
+    │   │   │   ├── UserController.java
+    │   │   │   ├── ArticleController.java
+    │   │   │   ├── CategoryController.java
+    │   │   │   ├── CommentController.java
+    │   │   │   ├── FileController.java
+    │   │   │   ├── StatisticsController.java
+    │   │   │   └── NotificationController.java
+    │   │   ├── listener/
+    │   │   │   └── CommentChangeStreamListener.java
+    │   │   └── util/
+    │   │       └── JwtUtil.java
+    │   └── resources/
+    │       ├── application.yml
+    │       ├── application-dev.yml
+    │       └── application-prod.yml
+    └── test/
+        └── java/com/cms/
+            ├── BaseIntegrationTest.java
+            ├── service/
+            │   ├── UserServiceTest.java
+            │   └── ArticleServiceTest.java
+            └── repository/
+                └── ArticleRepositoryTest.java
+</code></pre>
+<h3 id="1434-启动类">14.3.4 启动类</h3>
+<pre><code class="language-java">package com.cms;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class CmsApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(CmsApplication.class, args);
+    }
+}
+</code></pre>
+<h3 id="1435-统一响应封装类-resultt">14.3.5 统一响应封装类 Result&lt;T&gt;</h3>
+<pre><code class="language-java">package com.cms.common;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
+
+@Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Result&lt;T&gt; {
+
+    private int code;
+    private String message;
+    private T data;
+
+    private Result() {}
+
+    public static &lt;T&gt; Result&lt;T&gt; success(T data) {
+        Result&lt;T&gt; result = new Result&lt;&gt;();
+        result.setCode(200);
+        result.setMessage(&quot;success&quot;);
+        result.setData(data);
+        return result;
+    }
+
+    public static &lt;T&gt; Result&lt;T&gt; success() {
+        return success(null);
+    }
+
+    public static &lt;T&gt; Result&lt;T&gt; error(int code, String message) {
+        Result&lt;T&gt; result = new Result&lt;&gt;();
+        result.setCode(code);
+        result.setMessage(message);
+        return result;
+    }
+
+    public static &lt;T&gt; Result&lt;T&gt; error(String message) {
+        return error(500, message);
+    }
+
+    public static &lt;T&gt; Result&lt;T&gt; badRequest(String message) {
+        return error(400, message);
+    }
+
+    public static &lt;T&gt; Result&lt;T&gt; unauthorized(String message) {
+        return error(401, message);
+    }
+
+    public static &lt;T&gt; Result&lt;T&gt; notFound(String message) {
+        return error(404, message);
+    }
+}
+</code></pre>
+<h3 id="1436-全局异常处理器-globalexceptionhandler">14.3.6 全局异常处理器 GlobalExceptionHandler</h3>
+<pre><code class="language-java">package com.cms.common;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.stream.Collectors;
+
+@Slf4j
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result&lt;Void&gt; handleIllegalArgument(IllegalArgumentException e) {
+        log.warn(&quot;参数错误: {}&quot;, e.getMessage());
+        return Result.badRequest(e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result&lt;Void&gt; handleValidation(MethodArgumentNotValidException e) {
+        String msg = e.getBindingResult().getFieldErrors().stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.joining(&quot;; &quot;));
+        log.warn(&quot;参数校验失败: {}&quot;, msg);
+        return Result.badRequest(msg);
+    }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Result&lt;Void&gt; handleDuplicateKey(DuplicateKeyException e) {
+        log.warn(&quot;唯一键冲突: {}&quot;, e.getMessage());
+        return Result.error(409, &quot;数据已存在，请检查唯一字段&quot;);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Result&lt;Void&gt; handleRuntime(RuntimeException e) {
+        log.error(&quot;运行时异常&quot;, e);
+        return Result.error(&quot;服务器内部错误: &quot; + e.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Result&lt;Void&gt; handleException(Exception e) {
+        log.error(&quot;未知异常&quot;, e);
+        return Result.error(&quot;服务器内部错误&quot;);
+    }
+}
+</code></pre>
+<h3 id="1437-mongodb-审计配置">14.3.7 MongoDB 审计配置</h3>
+<pre><code class="language-java">package com.cms.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
+
+@Configuration
+@EnableMongoAuditing
+public class MongoAuditingConfig {
+    // @EnableMongoAuditing 开启后，实体中的 @CreatedDate 和 @LastModifiedDate 会自动填充
+}
+</code></pre>
+<p><strong>MongoDB 事务管理器配置：</strong></p>
+<pre><code class="language-java">package com.cms.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.MongoTransactionManager;
+
+@Configuration
+public class MongoTransactionConfig {
+
+    @Bean
+    MongoTransactionManager transactionManager(MongoDatabaseFactory dbFactory) {
+        return new MongoTransactionManager(dbFactory);
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：MongoDB 事务需要副本集（Replica Set）或分片集群环境。开发时可以使用单节点副本集，启动时加 <code>--replSet rs0</code> 参数，然后执行 <code>rs.initiate()</code> 初始化。</p>
+</blockquote>
+<hr />
+<h2 id="144-核心功能开发">14.4 核心功能开发</h2>
+<h3 id="1441-dto-类">14.4.1 DTO 类</h3>
+<p>在编写各模块代码之前，先定义通用的请求 DTO：</p>
+<pre><code class="language-java">package com.cms.dto;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
+
+@Data
+public class RegisterRequest {
+
+    @NotBlank(message = &quot;用户名不能为空&quot;)
+    @Size(min = 3, max = 20, message = &quot;用户名长度 3-20 个字符&quot;)
+    private String username;
+
+    @NotBlank(message = &quot;密码不能为空&quot;)
+    @Size(min = 6, max = 50, message = &quot;密码长度 6-50 个字符&quot;)
+    private String password;
+
+    @NotBlank(message = &quot;昵称不能为空&quot;)
+    private String nickname;
+
+    @NotBlank(message = &quot;邮箱不能为空&quot;)
+    @Email(message = &quot;邮箱格式不正确&quot;)
+    private String email;
+}
+</code></pre>
+<pre><code class="language-java">package com.cms.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+@Data
+public class LoginRequest {
+
+    @NotBlank(message = &quot;用户名不能为空&quot;)
+    private String username;
+
+    @NotBlank(message = &quot;密码不能为空&quot;)
+    private String password;
+}
+</code></pre>
+<pre><code class="language-java">package com.cms.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class ArticleRequest {
+
+    @NotBlank(message = &quot;标题不能为空&quot;)
+    private String title;
+
+    private String summary;
+
+    @NotBlank(message = &quot;内容不能为空&quot;)
+    private String content;
+
+    private String categoryId;
+    private String categoryName;
+    private List&lt;String&gt; tags;
+    private String coverImage;
+
+    /** DRAFT 或 PUBLISHED */
+    private String status;
+}
+</code></pre>
+<pre><code class="language-java">package com.cms.dto;
+
+import lombok.Data;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+public class ArticleQuery {
+
+    private String categoryId;
+    private String status;
+    private List&lt;String&gt; tags;
+    private String keyword;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private int page = 1;
+    private int size = 10;
+    private String sortBy = &quot;created_at&quot;;
+    private String sortDir = &quot;desc&quot;;
+}
+</code></pre>
+<pre><code class="language-java">package com.cms.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+@Data
+public class CommentRequest {
+
+    @NotBlank(message = &quot;文章ID不能为空&quot;)
+    private String articleId;
+
+    @NotBlank(message = &quot;评论内容不能为空&quot;)
+    private String content;
+
+    /** 父评论ID，为空表示顶级评论 */
+    private String parentId;
+
+    /** 被回复的用户ID */
+    private String replyToUserId;
+
+    /** 被回复的用户昵称 */
+    private String replyToNickname;
+}
+</code></pre>
+<pre><code class="language-java">package com.cms.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+@Data
+public class CategoryRequest {
+
+    @NotBlank(message = &quot;分类名称不能为空&quot;)
+    private String name;
+
+    @NotBlank(message = &quot;分类别名不能为空&quot;)
+    private String slug;
+
+    private String parentId;
+
+    private Integer sortOrder;
+}
+</code></pre>
+<h3 id="1442-jwt-工具类">14.4.2 JWT 工具类</h3>
+<pre><code class="language-java">package com.cms.util;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.List;
+
+@Component
+public class JwtUtil {
+
+    private final SecretKey key;
+    private final long expiration;
+
+    public JwtUtil(@Value(&quot;${jwt.secret}&quot;) String secret,
+                   @Value(&quot;${jwt.expiration}&quot;) long expiration) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expiration = expiration;
+    }
+
+    public String generateToken(String userId, String username, List&lt;String&gt; roles) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + expiration);
+
+        return Jwts.builder()
+                .subject(userId)
+                .claim(&quot;username&quot;, username)
+                .claim(&quot;roles&quot;, roles)
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(key)
+                .compact();
+    }
+
+    public Claims parseToken(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    public String getUserIdFromToken(String token) {
+        return parseToken(token).getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            parseToken(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
+</code></pre>
+<hr />
+<h3 id="1443-用户模块">14.4.3 用户模块</h3>
+<p><strong>UserRepository：</strong></p>
+<pre><code class="language-java">package com.cms.repository;
+
+import com.cms.entity.User;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.Optional;
+
+public interface UserRepository extends MongoRepository&lt;User, String&gt; {
+
+    Optional&lt;User&gt; findByUsername(String username);
+
+    Optional&lt;User&gt; findByEmail(String email);
+
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
+}
+</code></pre>
+<p><strong>UserService：</strong></p>
+<pre><code class="language-java">package com.cms.service;
+
+import com.cms.dto.LoginRequest;
+import com.cms.dto.RegisterRequest;
+import com.cms.entity.User;
+import com.cms.repository.UserRepository;
+import com.cms.util.JwtUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Service
+@RequiredArgsConstructor
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    public User register(RegisterRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new IllegalArgumentException(&quot;用户名已存在&quot;);
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException(&quot;邮箱已被注册&quot;);
+        }
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setNickname(request.getNickname());
+        user.setEmail(request.getEmail());
+        user.setRoles(List.of(&quot;ROLE_USER&quot;));
+        user.setStatus(1);
+
+        return userRepository.save(user);
+    }
+
+    public Map&lt;String, Object&gt; login(LoginRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;用户名或密码错误&quot;));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException(&quot;用户名或密码错误&quot;);
+        }
+
+        if (user.getStatus() == 0) {
+            throw new IllegalArgumentException(&quot;账号已被禁用&quot;);
+        }
+
+        String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRoles());
+
+        Map&lt;String, Object&gt; result = new HashMap&lt;&gt;();
+        result.put(&quot;token&quot;, token);
+        result.put(&quot;userId&quot;, user.getId());
+        result.put(&quot;username&quot;, user.getUsername());
+        result.put(&quot;nickname&quot;, user.getNickname());
+        result.put(&quot;roles&quot;, user.getRoles());
+        return result;
+    }
+
+    public User getUserById(String id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;用户不存在&quot;));
+        user.setPassword(null);
+        return user;
+    }
+}
+</code></pre>
+<p><strong>UserController：</strong></p>
+<pre><code class="language-java">package com.cms.controller;
+
+import com.cms.common.Result;
+import com.cms.dto.LoginRequest;
+import com.cms.dto.RegisterRequest;
+import com.cms.entity.User;
+import com.cms.service.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping(&quot;/api/users&quot;)
+@RequiredArgsConstructor
+public class UserController {
+
+    private final UserService userService;
+
+    @PostMapping(&quot;/register&quot;)
+    public Result&lt;User&gt; register(@Valid @RequestBody RegisterRequest request) {
+        User user = userService.register(request);
+        user.setPassword(null);
+        return Result.success(user);
+    }
+
+    @PostMapping(&quot;/login&quot;)
+    public Result&lt;Map&lt;String, Object&gt;&gt; login(@Valid @RequestBody LoginRequest request) {
+        Map&lt;String, Object&gt; loginResult = userService.login(request);
+        return Result.success(loginResult);
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public Result&lt;User&gt; getUserById(@PathVariable String id) {
+        return Result.success(userService.getUserById(id));
+    }
+}
+</code></pre>
+<hr />
+<h3 id="1444-文章模块">14.4.4 文章模块</h3>
+<p><strong>ArticleRepository：</strong></p>
+<pre><code class="language-java">package com.cms.repository;
+
+import com.cms.entity.Article;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+
+import java.util.List;
+
+public interface ArticleRepository extends MongoRepository&lt;Article, String&gt; {
+
+    Page&lt;Article&gt; findByStatus(String status, Pageable pageable);
+
+    Page&lt;Article&gt; findByAuthorId(String authorId, Pageable pageable);
+
+    List&lt;Article&gt; findByTagsContaining(String tag);
+
+    @Query(&quot;{ 'status': 'PUBLISHED', 'category_id': ?0 }&quot;)
+    Page&lt;Article&gt; findPublishedByCategoryId(String categoryId, Pageable pageable);
+
+    long countByAuthorId(String authorId);
+}
+</code></pre>
+<p><strong>ArticleService：</strong></p>
+<pre><code class="language-java">package com.cms.service;
+
+import com.cms.dto.ArticleQuery;
+import com.cms.dto.ArticleRequest;
+import com.cms.entity.Article;
+import com.cms.entity.User;
+import com.cms.repository.ArticleRepository;
+import com.cms.repository.CommentRepository;
+import com.cms.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ArticleService {
+
+    private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final MongoTemplate mongoTemplate;
+
+    public Article publish(ArticleRequest request, String userId) {
+        User author = userRepository.findById(userId)
+                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;用户不存在&quot;));
+
+        Article article = new Article();
+        article.setTitle(request.getTitle());
+        article.setSummary(request.getSummary());
+        article.setContent(request.getContent());
+        article.setAuthorId(userId);
+        article.setAuthorName(author.getNickname());
+        article.setCategoryId(request.getCategoryId());
+        article.setCategoryName(request.getCategoryName());
+        article.setTags(request.getTags());
+        article.setCoverImage(request.getCoverImage());
+        article.setStatus(request.getStatus() != null ? request.getStatus() : &quot;DRAFT&quot;);
+        article.setViewCount(0L);
+        article.setCommentCount(0);
+        article.setIsTop(false);
+
+        return articleRepository.save(article);
+    }
+
+    public Article update(String id, ArticleRequest request, String userId) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;文章不存在&quot;));
+
+        if (!article.getAuthorId().equals(userId)) {
+            throw new IllegalArgumentException(&quot;无权编辑他人文章&quot;);
+        }
+
+        article.setTitle(request.getTitle());
+        article.setSummary(request.getSummary());
+        article.setContent(request.getContent());
+        article.setCategoryId(request.getCategoryId());
+        article.setCategoryName(request.getCategoryName());
+        article.setTags(request.getTags());
+        article.setCoverImage(request.getCoverImage());
+        if (request.getStatus() != null) {
+            article.setStatus(request.getStatus());
+        }
+
+        return articleRepository.save(article);
+    }
+
+    /**
+     * 删除文章并同时删除其所有评论（使用事务保证一致性）。
+     * 需要 MongoDB 副本集环境支持。
+     */
+    @Transactional
+    public void delete(String id, String userId) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;文章不存在&quot;));
+
+        if (!article.getAuthorId().equals(userId)) {
+            throw new IllegalArgumentException(&quot;无权删除他人文章&quot;);
+        }
+
+        commentRepository.deleteByArticleId(id);
+        articleRepository.deleteById(id);
+    }
+
+    /**
+     * 查看文章详情，同时对浏览量原子+1。
+     * 使用 MongoTemplate 的 findAndModify 实现原子操作。
+     */
+    public Article getDetail(String id) {
+        Query query = new Query(Criteria.where(&quot;_id&quot;).is(id));
+        Update update = new Update().inc(&quot;view_count&quot;, 1);
+        Article article = mongoTemplate.findAndModify(query, update,
+                new org.springframework.data.mongodb.core.FindAndModifyOptions().returnNew(true),
+                Article.class);
+
+        if (article == null) {
+            throw new IllegalArgumentException(&quot;文章不存在&quot;);
+        }
+        return article;
+    }
+
+    /**
+     * 多条件筛选文章列表（分页）。
+     * 使用 MongoTemplate + Criteria 动态构建查询条件。
+     */
+    public Page&lt;Article&gt; queryArticles(ArticleQuery queryParam) {
+        List&lt;Criteria&gt; criteriaList = new ArrayList&lt;&gt;();
+
+        if (StringUtils.hasText(queryParam.getCategoryId())) {
+            criteriaList.add(Criteria.where(&quot;category_id&quot;).is(queryParam.getCategoryId()));
+        }
+        if (StringUtils.hasText(queryParam.getStatus())) {
+            criteriaList.add(Criteria.where(&quot;status&quot;).is(queryParam.getStatus()));
+        }
+        if (queryParam.getTags() != null &amp;&amp; !queryParam.getTags().isEmpty()) {
+            criteriaList.add(Criteria.where(&quot;tags&quot;).all(queryParam.getTags()));
+        }
+        if (StringUtils.hasText(queryParam.getKeyword())) {
+            Criteria keywordCriteria = new Criteria().orOperator(
+                    Criteria.where(&quot;title&quot;).regex(queryParam.getKeyword(), &quot;i&quot;),
+                    Criteria.where(&quot;summary&quot;).regex(queryParam.getKeyword(), &quot;i&quot;)
+            );
+            criteriaList.add(keywordCriteria);
+        }
+        if (queryParam.getStartTime() != null) {
+            criteriaList.add(Criteria.where(&quot;created_at&quot;).gte(queryParam.getStartTime()));
+        }
+        if (queryParam.getEndTime() != null) {
+            criteriaList.add(Criteria.where(&quot;created_at&quot;).lte(queryParam.getEndTime()));
+        }
+
+        Query query = new Query();
+        if (!criteriaList.isEmpty()) {
+            query.addCriteria(new Criteria().andOperator(criteriaList.toArray(new Criteria[0])));
+        }
+
+        long total = mongoTemplate.count(query, Article.class);
+
+        Sort.Direction direction = &quot;asc&quot;.equalsIgnoreCase(queryParam.getSortDir())
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(
+                queryParam.getPage() - 1,
+                queryParam.getSize(),
+                Sort.by(direction, queryParam.getSortBy()));
+        query.with(pageable);
+
+        // 列表页不返回全文内容，排除 content 字段以提升性能
+        query.fields().exclude(&quot;content&quot;);
+
+        List&lt;Article&gt; articles = mongoTemplate.find(query, Article.class);
+        return new PageImpl&lt;&gt;(articles, pageable, total);
+    }
+}
+</code></pre>
+<p><strong>ArticleController：</strong></p>
+<pre><code class="language-java">package com.cms.controller;
+
+import com.cms.common.Result;
+import com.cms.dto.ArticleQuery;
+import com.cms.dto.ArticleRequest;
+import com.cms.entity.Article;
+import com.cms.service.ArticleService;
+import com.cms.util.JwtUtil;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping(&quot;/api/articles&quot;)
+@RequiredArgsConstructor
+public class ArticleController {
+
+    private final ArticleService articleService;
+    private final JwtUtil jwtUtil;
+
+    @PostMapping
+    public Result&lt;Article&gt; publish(@Valid @RequestBody ArticleRequest request,
+                                   @RequestHeader(&quot;Authorization&quot;) String token) {
+        String userId = jwtUtil.getUserIdFromToken(token.replace(&quot;Bearer &quot;, &quot;&quot;));
+        return Result.success(articleService.publish(request, userId));
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public Result&lt;Article&gt; update(@PathVariable String id,
+                                  @Valid @RequestBody ArticleRequest request,
+                                  @RequestHeader(&quot;Authorization&quot;) String token) {
+        String userId = jwtUtil.getUserIdFromToken(token.replace(&quot;Bearer &quot;, &quot;&quot;));
+        return Result.success(articleService.update(id, request, userId));
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public Result&lt;Void&gt; delete(@PathVariable String id,
+                               @RequestHeader(&quot;Authorization&quot;) String token) {
+        String userId = jwtUtil.getUserIdFromToken(token.replace(&quot;Bearer &quot;, &quot;&quot;));
+        articleService.delete(id, userId);
+        return Result.success();
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public Result&lt;Article&gt; getDetail(@PathVariable String id) {
+        return Result.success(articleService.getDetail(id));
+    }
+
+    @GetMapping
+    public Result&lt;Page&lt;Article&gt;&gt; list(ArticleQuery query) {
+        return Result.success(articleService.queryArticles(query));
+    }
+}
+</code></pre>
+<hr />
+<h3 id="1445-分类与标签模块">14.4.5 分类与标签模块</h3>
+<p><strong>CategoryRepository：</strong></p>
+<pre><code class="language-java">package com.cms.repository;
+
+import com.cms.entity.Category;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface CategoryRepository extends MongoRepository&lt;Category, String&gt; {
+
+    List&lt;Category&gt; findByParentIdIsNullOrderBySortOrderAsc();
+
+    List&lt;Category&gt; findByParentIdOrderBySortOrderAsc(String parentId);
+
+    Optional&lt;Category&gt; findBySlug(String slug);
+
+    boolean existsByName(String name);
+
+    boolean existsBySlug(String slug);
+}
+</code></pre>
+<p><strong>CategoryService：</strong></p>
+<pre><code class="language-java">package com.cms.service;
+
+import com.cms.dto.CategoryRequest;
+import com.cms.entity.Category;
+import com.cms.repository.CategoryRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class CategoryService {
+
+    private final CategoryRepository categoryRepository;
+
+    public Category create(CategoryRequest request) {
+        if (categoryRepository.existsByName(request.getName())) {
+            throw new IllegalArgumentException(&quot;分类名称已存在&quot;);
+        }
+        if (categoryRepository.existsBySlug(request.getSlug())) {
+            throw new IllegalArgumentException(&quot;分类别名已存在&quot;);
+        }
+
+        Category category = new Category();
+        category.setName(request.getName());
+        category.setSlug(request.getSlug());
+        category.setParentId(request.getParentId());
+        category.setSortOrder(request.getSortOrder() != null ? request.getSortOrder() : 0);
+        category.setArticleCount(0);
+
+        return categoryRepository.save(category);
+    }
+
+    /**
+     * 获取完整的分类树结构。
+     * 先查出所有顶级分类（parentId 为 null），再递归填充子分类。
+     */
+    public List&lt;Category&gt; getCategoryTree() {
+        List&lt;Category&gt; roots = categoryRepository.findByParentIdIsNullOrderBySortOrderAsc();
+        roots.forEach(this::fillChildren);
+        return roots;
+    }
+
+    private void fillChildren(Category parent) {
+        List&lt;Category&gt; children = categoryRepository.findByParentIdOrderBySortOrderAsc(parent.getId());
+        parent.setChildren(children);
+        children.forEach(this::fillChildren);
+    }
+
+    public Category update(String id, CategoryRequest request) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;分类不存在&quot;));
+
+        category.setName(request.getName());
+        category.setSlug(request.getSlug());
+        category.setParentId(request.getParentId());
+        if (request.getSortOrder() != null) {
+            category.setSortOrder(request.getSortOrder());
+        }
+
+        return categoryRepository.save(category);
+    }
+
+    public void delete(String id) {
+        List&lt;Category&gt; children = categoryRepository.findByParentIdOrderBySortOrderAsc(id);
+        if (!children.isEmpty()) {
+            throw new IllegalArgumentException(&quot;该分类下还有子分类，不能直接删除&quot;);
+        }
+        categoryRepository.deleteById(id);
+    }
+}
+</code></pre>
+<p><strong>CategoryController：</strong></p>
+<pre><code class="language-java">package com.cms.controller;
+
+import com.cms.common.Result;
+import com.cms.dto.CategoryRequest;
+import com.cms.entity.Category;
+import com.cms.service.CategoryService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/categories&quot;)
+@RequiredArgsConstructor
+public class CategoryController {
+
+    private final CategoryService categoryService;
+
+    @PostMapping
+    public Result&lt;Category&gt; create(@Valid @RequestBody CategoryRequest request) {
+        return Result.success(categoryService.create(request));
+    }
+
+    @GetMapping(&quot;/tree&quot;)
+    public Result&lt;List&lt;Category&gt;&gt; tree() {
+        return Result.success(categoryService.getCategoryTree());
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public Result&lt;Category&gt; update(@PathVariable String id,
+                                   @Valid @RequestBody CategoryRequest request) {
+        return Result.success(categoryService.update(id, request));
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public Result&lt;Void&gt; delete(@PathVariable String id) {
+        categoryService.delete(id);
+        return Result.success();
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>标签说明</strong>：标签不单独建集合，而是作为 Article 文档中的 <code>tags</code> 数组字段存储。标签的聚合统计接口将在 14.5 节的 StatisticsService 中实现。</p>
+</blockquote>
+<hr />
+<h3 id="1446-评论模块">14.4.6 评论模块</h3>
+<p><strong>CommentRepository：</strong></p>
+<pre><code class="language-java">package com.cms.repository;
+
+import com.cms.entity.Comment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.List;
+
+public interface CommentRepository extends MongoRepository&lt;Comment, String&gt; {
+
+    Page&lt;Comment&gt; findByArticleIdAndParentIdIsNullAndStatus(
+            String articleId, Integer status, Pageable pageable);
+
+    List&lt;Comment&gt; findByParentIdAndStatus(String parentId, Integer status);
+
+    long countByArticleId(String articleId);
+
+    long countByUserId(String userId);
+
+    void deleteByArticleId(String articleId);
+}
+</code></pre>
+<p><strong>CommentService：</strong></p>
+<pre><code class="language-java">package com.cms.service;
+
+import com.cms.dto.CommentRequest;
+import com.cms.entity.Comment;
+import com.cms.entity.User;
+import com.cms.repository.CommentRepository;
+import com.cms.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class CommentService {
+
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final MongoTemplate mongoTemplate;
+
+    public Comment addComment(CommentRequest request, String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;用户不存在&quot;));
+
+        Comment comment = new Comment();
+        comment.setArticleId(request.getArticleId());
+        comment.setUserId(userId);
+        comment.setUserNickname(user.getNickname());
+        comment.setContent(request.getContent());
+        comment.setParentId(request.getParentId());
+        comment.setReplyToUserId(request.getReplyToUserId());
+        comment.setReplyToNickname(request.getReplyToNickname());
+        comment.setStatus(1);
+
+        Comment saved = commentRepository.save(comment);
+
+        // 文章评论数 +1
+        Query query = new Query(Criteria.where(&quot;_id&quot;).is(request.getArticleId()));
+        Update update = new Update().inc(&quot;comment_count&quot;, 1);
+        mongoTemplate.updateFirst(query, update, &quot;articles&quot;);
+
+        return saved;
+    }
+
+    /**
+     * 分页获取文章的顶级评论，并为每条顶级评论填充子回复。
+     * 顶级评论分页加载，子回复全量加载（通常数量有限）。
+     */
+    public Page&lt;Comment&gt; getArticleComments(String articleId, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, &quot;created_at&quot;));
+        Page&lt;Comment&gt; topLevelComments = commentRepository
+                .findByArticleIdAndParentIdIsNullAndStatus(articleId, 1, pageable);
+
+        // 为每条顶级评论加载子回复（暂时全量加载，评论层级较浅）
+        topLevelComments.getContent().forEach(comment -&gt; {
+            // 复用 Comment 实体无 children 字段的设计，此处通过额外接口返回
+            // 实际项目中可在 Comment 中加 @Transient List&lt;Comment&gt; replies
+        });
+
+        return topLevelComments;
+    }
+
+    /**
+     * 获取某条评论的子回复列表。
+     */
+    public java.util.List&lt;Comment&gt; getReplies(String parentId) {
+        return commentRepository.findByParentIdAndStatus(parentId, 1);
+    }
+}
+</code></pre>
+<p><strong>CommentController：</strong></p>
+<pre><code class="language-java">package com.cms.controller;
+
+import com.cms.common.Result;
+import com.cms.dto.CommentRequest;
+import com.cms.entity.Comment;
+import com.cms.service.CommentService;
+import com.cms.util.JwtUtil;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/comments&quot;)
+@RequiredArgsConstructor
+public class CommentController {
+
+    private final CommentService commentService;
+    private final JwtUtil jwtUtil;
+
+    @PostMapping
+    public Result&lt;Comment&gt; addComment(@Valid @RequestBody CommentRequest request,
+                                      @RequestHeader(&quot;Authorization&quot;) String token) {
+        String userId = jwtUtil.getUserIdFromToken(token.replace(&quot;Bearer &quot;, &quot;&quot;));
+        return Result.success(commentService.addComment(request, userId));
+    }
+
+    @GetMapping(&quot;/article/{articleId}&quot;)
+    public Result&lt;Page&lt;Comment&gt;&gt; getArticleComments(
+            @PathVariable String articleId,
+            @RequestParam(defaultValue = &quot;1&quot;) int page,
+            @RequestParam(defaultValue = &quot;10&quot;) int size) {
+        return Result.success(commentService.getArticleComments(articleId, page, size));
+    }
+
+    @GetMapping(&quot;/{parentId}/replies&quot;)
+    public Result&lt;List&lt;Comment&gt;&gt; getReplies(@PathVariable String parentId) {
+        return Result.success(commentService.getReplies(parentId));
+    }
+}
+</code></pre>
+<hr />
+<h3 id="1447-文件模块gridfs">14.4.7 文件模块（GridFS）</h3>
+<p><strong>FileService：</strong></p>
+<pre><code class="language-java">package com.cms.service;
+
+import com.mongodb.client.gridfs.model.GridFSFile;
+import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+@Service
+@RequiredArgsConstructor
+public class FileService {
+
+    private final GridFsTemplate gridFsTemplate;
+
+    /**
+     * 上传文件到 GridFS，返回文件ID和元数据。
+     */
+    public Map&lt;String, Object&gt; upload(MultipartFile file) throws IOException {
+        String filename = file.getOriginalFilename();
+        InputStream inputStream = file.getInputStream();
+        String contentType = file.getContentType();
+
+        ObjectId fileId = gridFsTemplate.store(inputStream, filename, contentType);
+
+        Map&lt;String, Object&gt; result = new HashMap&lt;&gt;();
+        result.put(&quot;fileId&quot;, fileId.toHexString());
+        result.put(&quot;filename&quot;, filename);
+        result.put(&quot;contentType&quot;, contentType);
+        result.put(&quot;size&quot;, file.getSize());
+        return result;
+    }
+
+    /**
+     * 根据文件ID获取 GridFS 文件资源，用于下载。
+     */
+    public GridFsResource download(String fileId) {
+        GridFSFile gridFSFile = gridFsTemplate.findOne(
+                new Query(Criteria.where(&quot;_id&quot;).is(new ObjectId(fileId))));
+
+        if (gridFSFile == null) {
+            throw new IllegalArgumentException(&quot;文件不存在&quot;);
+        }
+
+        return gridFsTemplate.getResource(gridFSFile);
+    }
+
+    /**
+     * 根据文件ID删除 GridFS 文件。
+     */
+    public void delete(String fileId) {
+        gridFsTemplate.delete(new Query(Criteria.where(&quot;_id&quot;).is(new ObjectId(fileId))));
+    }
+}
+</code></pre>
+<p><strong>FileController：</strong></p>
+<pre><code class="language-java">package com.cms.controller;
+
+import com.cms.common.Result;
+import com.cms.service.FileService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Map;
+
+@RestController
+@RequestMapping(&quot;/api/files&quot;)
+@RequiredArgsConstructor
+public class FileController {
+
+    private final FileService fileService;
+
+    @PostMapping(&quot;/upload&quot;)
+    public Result&lt;Map&lt;String, Object&gt;&gt; upload(@RequestParam(&quot;file&quot;) MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            return Result.badRequest(&quot;请选择要上传的文件&quot;);
+        }
+        return Result.success(fileService.upload(file));
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Resource&gt; download(@PathVariable String id) throws IOException {
+        GridFsResource resource = fileService.download(id);
+
+        String contentType = resource.getContentType();
+        if (contentType == null) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        &quot;inline; filename=\&quot;&quot; + resource.getFilename() + &quot;\&quot;&quot;)
+                .body(resource);
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public Result&lt;Void&gt; delete(@PathVariable String id) {
+        fileService.delete(id);
+        return Result.success();
+    }
+}
+</code></pre>
+<hr />
+<h2 id="145-查询与数据统计">14.5 查询与数据统计</h2>
+<h3 id="1451-文章多条件筛选mongotemplate--criteria">14.5.1 文章多条件筛选（MongoTemplate + Criteria）</h3>
+<p>文章多条件筛选的完整实现已在 <code>ArticleService.queryArticles()</code> 方法中给出（见 14.4.4 节）。这里对核心逻辑做进一步解析：</p>
+<pre><code class="language-java">// 动态构建查询条件的关键思路
+List&lt;Criteria&gt; criteriaList = new ArrayList&lt;&gt;();
+
+// 1. 精确匹配条件
+if (StringUtils.hasText(queryParam.getCategoryId())) {
+    criteriaList.add(Criteria.where(&quot;category_id&quot;).is(queryParam.getCategoryId()));
+}
+
+// 2. 数组包含条件：文章必须同时包含所有指定标签
+if (queryParam.getTags() != null &amp;&amp; !queryParam.getTags().isEmpty()) {
+    criteriaList.add(Criteria.where(&quot;tags&quot;).all(queryParam.getTags()));
+}
+
+// 3. 模糊匹配条件：标题或摘要包含关键词（不区分大小写）
+if (StringUtils.hasText(queryParam.getKeyword())) {
+    Criteria keywordCriteria = new Criteria().orOperator(
+            Criteria.where(&quot;title&quot;).regex(queryParam.getKeyword(), &quot;i&quot;),
+            Criteria.where(&quot;summary&quot;).regex(queryParam.getKeyword(), &quot;i&quot;)
+    );
+    criteriaList.add(keywordCriteria);
+}
+
+// 4. 时间范围条件
+if (queryParam.getStartTime() != null) {
+    criteriaList.add(Criteria.where(&quot;created_at&quot;).gte(queryParam.getStartTime()));
+}
+
+// 5. 将所有条件用 AND 组合
+Query query = new Query();
+if (!criteriaList.isEmpty()) {
+    query.addCriteria(new Criteria().andOperator(criteriaList.toArray(new Criteria[0])));
+}
+</code></pre>
+<h3 id="1452-全文搜索功能">14.5.2 全文搜索功能</h3>
+<p>文章集合已在实体类中通过 <code>@TextIndexed</code> 注解创建了文本索引。下面实现基于 <code>TextCriteria</code> 的全文搜索功能。</p>
+<p>在 <code>ArticleService</code> 中添加搜索方法：</p>
+<pre><code class="language-java">package com.cms.service;
+
+// ... 已有 import ...
+import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.query.TextQuery;
+
+@Service
+@RequiredArgsConstructor
+public class ArticleService {
+
+    // ... 已有字段和方法 ...
+
+    /**
+     * 全文搜索文章。
+     * 利用 MongoDB 文本索引实现，搜索结果按相关性评分排序。
+     */
+    public Page&lt;Article&gt; searchArticles(String keyword, int page, int size) {
+        TextCriteria textCriteria = TextCriteria.forDefaultLanguage()
+                .matchingPhrase(keyword);
+
+        Query query = TextQuery.queryText(textCriteria)
+                .sortByScore()
+                .addCriteria(Criteria.where(&quot;status&quot;).is(&quot;PUBLISHED&quot;));
+
+        long total = mongoTemplate.count(query, Article.class);
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        query.with(pageable);
+        query.fields().exclude(&quot;content&quot;);
+
+        List&lt;Article&gt; articles = mongoTemplate.find(query, Article.class);
+        return new PageImpl&lt;&gt;(articles, pageable, total);
+    }
+}
+</code></pre>
+<p>在 <code>ArticleController</code> 中添加搜索接口：</p>
+<pre><code class="language-java">@GetMapping(&quot;/search&quot;)
+public Result&lt;Page&lt;Article&gt;&gt; search(
+        @RequestParam String keyword,
+        @RequestParam(defaultValue = &quot;1&quot;) int page,
+        @RequestParam(defaultValue = &quot;10&quot;) int size) {
+    return Result.success(articleService.searchArticles(keyword, page, size));
+}
+</code></pre>
+<h3 id="1453-聚合统计接口">14.5.3 聚合统计接口</h3>
+<p><strong>StatisticsService：</strong></p>
+<pre><code class="language-java">package com.cms.service;
+
+import lombok.RequiredArgsConstructor;
+import org.bson.Document;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+@Service
+@RequiredArgsConstructor
+public class StatisticsService {
+
+    private final MongoTemplate mongoTemplate;
+
+    /**
+     * 每日发文量统计。
+     * 按创建日期分组统计最近 30 天每天的发文数量。
+     *
+     * 等效的 MongoDB Shell 聚合：
+     * db.articles.aggregate([
+     *   { $match: { status: &quot;PUBLISHED&quot;, created_at: { $gte: ISODate(&quot;...&quot;) } } },
+     *   { $group: {
+     *       _id: { $dateToString: { format: &quot;%Y-%m-%d&quot;, date: &quot;$created_at&quot; } },
+     *       count: { $sum: 1 }
+     *   }},
+     *   { $sort: { _id: 1 } }
+     * ])
+     */
+    public List&lt;Document&gt; getDailyArticleCount(int days) {
+        LocalDateTime startDate = LocalDateTime.now().minusDays(days);
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(
+                        Criteria.where(&quot;status&quot;).is(&quot;PUBLISHED&quot;)
+                                .and(&quot;created_at&quot;).gte(startDate)
+                ),
+                Aggregation.project()
+                        .and(DateOperators.DateToString.dateOf(&quot;created_at&quot;)
+                                .toString(&quot;%Y-%m-%d&quot;))
+                        .as(&quot;date&quot;)
+                        .and(&quot;_id&quot;).as(&quot;articleId&quot;),
+                Aggregation.group(&quot;date&quot;).count().as(&quot;count&quot;),
+                Aggregation.sort(Sort.Direction.ASC, &quot;_id&quot;),
+                Aggregation.project()
+                        .and(&quot;_id&quot;).as(&quot;date&quot;)
+                        .and(&quot;count&quot;).as(&quot;count&quot;)
+                        .andExclude(&quot;_id&quot;)
+        );
+
+        AggregationResults&lt;Document&gt; results =
+                mongoTemplate.aggregate(aggregation, &quot;articles&quot;, Document.class);
+        return results.getMappedResults();
+    }
+
+    /**
+     * 热门标签 Top10。
+     * 将文章的 tags 数组展开后分组统计。
+     *
+     * 等效的 MongoDB Shell 聚合：
+     * db.articles.aggregate([
+     *   { $match: { status: &quot;PUBLISHED&quot; } },
+     *   { $unwind: &quot;$tags&quot; },
+     *   { $group: { _id: &quot;$tags&quot;, count: { $sum: 1 } } },
+     *   { $sort: { count: -1 } },
+     *   { $limit: 10 },
+     *   { $project: { _id: 0, tag: &quot;$_id&quot;, count: 1 } }
+     * ])
+     */
+    public List&lt;Document&gt; getHotTags(int limit) {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where(&quot;status&quot;).is(&quot;PUBLISHED&quot;)),
+                Aggregation.unwind(&quot;tags&quot;),
+                Aggregation.group(&quot;tags&quot;).count().as(&quot;count&quot;),
+                Aggregation.sort(Sort.Direction.DESC, &quot;count&quot;),
+                Aggregation.limit(limit),
+                Aggregation.project()
+                        .and(&quot;_id&quot;).as(&quot;tag&quot;)
+                        .and(&quot;count&quot;).as(&quot;count&quot;)
+                        .andExclude(&quot;_id&quot;)
+        );
+
+        AggregationResults&lt;Document&gt; results =
+                mongoTemplate.aggregate(aggregation, &quot;articles&quot;, Document.class);
+        return results.getMappedResults();
+    }
+
+    /**
+     * 用户活跃度排行——按文章数和评论数综合排序。
+     * 使用 $lookup 关联 users、articles、comments 三个集合。
+     *
+     * 等效的 MongoDB Shell 聚合：
+     * db.users.aggregate([
+     *   { $lookup: {
+     *       from: &quot;articles&quot;,
+     *       localField: &quot;_id&quot;,
+     *       foreignField: &quot;author_id&quot;,
+     *       as: &quot;user_articles&quot;
+     *   }},
+     *   { $lookup: {
+     *       from: &quot;comments&quot;,
+     *       localField: &quot;_id&quot;,
+     *       foreignField: &quot;user_id&quot;,
+     *       as: &quot;user_comments&quot;
+     *   }},
+     *   { $project: {
+     *       nickname: 1,
+     *       username: 1,
+     *       article_count: { $size: &quot;$user_articles&quot; },
+     *       comment_count: { $size: &quot;$user_comments&quot; },
+     *       activity_score: { $add: [
+     *         { $multiply: [{ $size: &quot;$user_articles&quot; }, 5] },
+     *         { $size: &quot;$user_comments&quot; }
+     *       ]}
+     *   }},
+     *   { $sort: { activity_score: -1 } },
+     *   { $limit: 10 }
+     * ])
+     */
+    public List&lt;Document&gt; getActiveUsers(int limit) {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.lookup(&quot;articles&quot;, &quot;_id&quot;, &quot;author_id&quot;, &quot;user_articles&quot;),
+                Aggregation.lookup(&quot;comments&quot;, &quot;_id&quot;, &quot;user_id&quot;, &quot;user_comments&quot;),
+                Aggregation.project(&quot;nickname&quot;, &quot;username&quot;)
+                        .and(ArrayOperators.Size.lengthOfArray(
+                                ConditionalOperators.ifNull(&quot;user_articles&quot;).then(List.of())))
+                        .as(&quot;articleCount&quot;)
+                        .and(ArrayOperators.Size.lengthOfArray(
+                                ConditionalOperators.ifNull(&quot;user_comments&quot;).then(List.of())))
+                        .as(&quot;commentCount&quot;),
+                Aggregation.addFields()
+                        .addFieldWithValue(&quot;activityScore&quot;,
+                                ArithmeticOperators.Add.valueOf(
+                                        ArithmeticOperators.Multiply.valueOf(&quot;articleCount&quot;).multiplyBy(5)
+                                ).add(&quot;commentCount&quot;))
+                        .build(),
+                Aggregation.sort(Sort.Direction.DESC, &quot;activityScore&quot;),
+                Aggregation.limit(limit),
+                Aggregation.project(&quot;nickname&quot;, &quot;username&quot;, &quot;articleCount&quot;, &quot;commentCount&quot;, &quot;activityScore&quot;)
+        );
+
+        AggregationResults&lt;Document&gt; results =
+                mongoTemplate.aggregate(aggregation, &quot;users&quot;, Document.class);
+        return results.getMappedResults();
+    }
+}
+</code></pre>
+<p><strong>StatisticsController：</strong></p>
+<pre><code class="language-java">package com.cms.controller;
+
+import com.cms.common.Result;
+import com.cms.service.StatisticsService;
+import lombok.RequiredArgsConstructor;
+import org.bson.Document;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/statistics&quot;)
+@RequiredArgsConstructor
+public class StatisticsController {
+
+    private final StatisticsService statisticsService;
+
+    @GetMapping(&quot;/daily-articles&quot;)
+    public Result&lt;List&lt;Document&gt;&gt; dailyArticles(
+            @RequestParam(defaultValue = &quot;30&quot;) int days) {
+        return Result.success(statisticsService.getDailyArticleCount(days));
+    }
+
+    @GetMapping(&quot;/hot-tags&quot;)
+    public Result&lt;List&lt;Document&gt;&gt; hotTags(
+            @RequestParam(defaultValue = &quot;10&quot;) int limit) {
+        return Result.success(statisticsService.getHotTags(limit));
+    }
+
+    @GetMapping(&quot;/active-users&quot;)
+    public Result&lt;List&lt;Document&gt;&gt; activeUsers(
+            @RequestParam(defaultValue = &quot;10&quot;) int limit) {
+        return Result.success(statisticsService.getActiveUsers(limit));
+    }
+}
+</code></pre>
+<hr />
+<h2 id="146-进阶功能">14.6 进阶功能</h2>
+<h3 id="1461-change-streams-实现新评论实时通知">14.6.1 Change Streams 实现新评论实时通知</h3>
+<p>当有用户在文章下发表新评论时，我们希望实时推送通知给正在浏览该文章的用户。实现方案：<strong>Change Streams 监听 comments 集合的插入事件 → 通过 SSE（Server-Sent Events）推送给前端</strong>。</p>
+<p><strong>配置类 ChangeStreamConfig：</strong></p>
+<pre><code class="language-java">package com.cms.config;
+
+import com.cms.listener.CommentChangeStreamListener;
+import com.mongodb.client.model.changestream.FullDocument;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.messaging.ChangeStreamRequest;
+import org.springframework.data.mongodb.core.messaging.DefaultMessageListenerContainer;
+import org.springframework.data.mongodb.core.messaging.MessageListenerContainer;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+
+@Configuration
+public class ChangeStreamConfig {
+
+    @Bean
+    MessageListenerContainer messageListenerContainer(
+            MongoTemplate mongoTemplate,
+            CommentChangeStreamListener listener) {
+
+        MessageListenerContainer container = new DefaultMessageListenerContainer(mongoTemplate);
+        container.start();
+
+        ChangeStreamRequest&lt;org.bson.Document&gt; request = ChangeStreamRequest.builder(listener)
+                .collection(&quot;comments&quot;)
+                .filter(match(where(&quot;operationType&quot;).is(&quot;insert&quot;)))
+                .fullDocumentLookup(FullDocument.UPDATE_LOOKUP)
+                .build();
+
+        container.register(request, org.bson.Document.class);
+
+        return container;
+    }
+}
+</code></pre>
+<p><strong>监听器 CommentChangeStreamListener：</strong></p>
+<pre><code class="language-java">package com.cms.listener;
+
+import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
+import org.springframework.data.mongodb.core.messaging.Message;
+import org.springframework.data.mongodb.core.messaging.MessageListener;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+@Slf4j
+@Component
+public class CommentChangeStreamListener implements MessageListener&lt;Document, Document&gt; {
+
+    /**
+     * 存储每篇文章的 SSE 连接列表。
+     * key = articleId, value = 订阅该文章的 SSE 连接列表。
+     */
+    private final Map&lt;String, List&lt;SseEmitter&gt;&gt; articleEmitters = new ConcurrentHashMap&lt;&gt;();
+
+    /**
+     * 为某篇文章注册一个 SSE 连接。
+     */
+    public SseEmitter subscribe(String articleId) {
+        SseEmitter emitter = new SseEmitter(300_000L); // 5分钟超时
+        articleEmitters.computeIfAbsent(articleId, k -&gt; new CopyOnWriteArrayList&lt;&gt;()).add(emitter);
+
+        emitter.onCompletion(() -&gt; removeEmitter(articleId, emitter));
+        emitter.onTimeout(() -&gt; removeEmitter(articleId, emitter));
+        emitter.onError(e -&gt; removeEmitter(articleId, emitter));
+
+        return emitter;
+    }
+
+    private void removeEmitter(String articleId, SseEmitter emitter) {
+        List&lt;SseEmitter&gt; emitters = articleEmitters.get(articleId);
+        if (emitters != null) {
+            emitters.remove(emitter);
+            if (emitters.isEmpty()) {
+                articleEmitters.remove(articleId);
+            }
+        }
+    }
+
+    /**
+     * 收到 Change Stream 事件时触发。
+     * 解析新评论数据，推送给订阅对应文章的所有 SSE 客户端。
+     */
+    @Override
+    public void onMessage(Message&lt;Document, Document&gt; message) {
+        Document fullDocument = message.getBody();
+        if (fullDocument == null) {
+            return;
+        }
+
+        String articleId = fullDocument.getString(&quot;article_id&quot;);
+        String userNickname = fullDocument.getString(&quot;user_nickname&quot;);
+        String content = fullDocument.getString(&quot;content&quot;);
+
+        log.info(&quot;收到新评论 - 文章:{}, 用户:{}, 内容:{}&quot;, articleId, userNickname, content);
+
+        List&lt;SseEmitter&gt; emitters = articleEmitters.get(articleId);
+        if (emitters == null || emitters.isEmpty()) {
+            return;
+        }
+
+        String jsonPayload = &quot;&quot;&quot;
+                {&quot;articleId&quot;:&quot;%s&quot;,&quot;userNickname&quot;:&quot;%s&quot;,&quot;content&quot;:&quot;%s&quot;}
+                &quot;&quot;&quot;.formatted(articleId, userNickname, content).trim();
+
+        for (SseEmitter emitter : emitters) {
+            try {
+                emitter.send(SseEmitter.event()
+                        .name(&quot;new-comment&quot;)
+                        .data(jsonPayload));
+            } catch (IOException e) {
+                removeEmitter(articleId, emitter);
+            }
+        }
+    }
+}
+</code></pre>
+<p><strong>SSE 通知 Controller：</strong></p>
+<pre><code class="language-java">package com.cms.controller;
+
+import com.cms.listener.CommentChangeStreamListener;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+@RestController
+@RequestMapping(&quot;/api/notifications&quot;)
+@RequiredArgsConstructor
+public class NotificationController {
+
+    private final CommentChangeStreamListener listener;
+
+    /**
+     * 客户端通过此接口订阅某篇文章的新评论通知。
+     * 使用 Server-Sent Events (SSE) 实现服务端推送。
+     *
+     * 前端使用示例：
+     * const eventSource = new EventSource('/api/notifications/stream?articleId=xxx');
+     * eventSource.addEventListener('new-comment', (event) =&gt; {
+     *     const data = JSON.parse(event.data);
+     *     console.log('新评论:', data);
+     * });
+     */
+    @GetMapping(value = &quot;/stream&quot;, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter stream(@RequestParam String articleId) {
+        return listener.subscribe(articleId);
+    }
+}
+</code></pre>
+<h3 id="1462-事务示例删除文章同时清理评论">14.6.2 事务示例：删除文章同时清理评论</h3>
+<p>事务的完整实现已在 <code>ArticleService.delete()</code> 方法中给出（见 14.4.4 节）。这里做详细说明和补充一个更完整的示例：</p>
+<pre><code class="language-java">package com.cms.service;
+
+import com.cms.entity.Article;
+import com.cms.repository.ArticleRepository;
+import com.cms.repository.CommentRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class ArticleTransactionDemo {
+
+    private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
+    private final MongoTemplate mongoTemplate;
+
+    /**
+     * 事务性删除文章及其所有关联数据。
+     *
+     * @Transactional 注解确保以下操作要么全部成功，要么全部回滚：
+     * 1. 删除文章下的所有评论
+     * 2. 删除 GridFS 中的封面图片记录（可选）
+     * 3. 删除文章本身
+     *
+     * 注意：MongoDB 事务需要副本集环境。
+     */
+    @Transactional
+    public void deleteArticleWithCleanup(String articleId, String userId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;文章不存在&quot;));
+
+        if (!article.getAuthorId().equals(userId)) {
+            throw new IllegalArgumentException(&quot;无权删除他人文章&quot;);
+        }
+
+        // 步骤1：删除该文章下的所有评论
+        long deletedComments = mongoTemplate.remove(
+                new Query(Criteria.where(&quot;article_id&quot;).is(articleId)),
+                &quot;comments&quot;
+        ).getDeletedCount();
+        log.info(&quot;删除文章[{}]的评论 {} 条&quot;, articleId, deletedComments);
+
+        // 步骤2：删除文章文档
+        articleRepository.deleteById(articleId);
+        log.info(&quot;文章[{}]已删除&quot;, articleId);
+
+        // 如果在步骤 1 和步骤 2 之间发生异常，事务将回滚，
+        // 已删除的评论也会被恢复，保证数据一致性。
+    }
+}
+</code></pre>
+<p><strong>事务的关键要点</strong>：</p>
+<ol>
+<li>MongoDB 事务要求 <strong>副本集（Replica Set）</strong> 或分片集群环境</li>
+<li>需要配置 <code>MongoTransactionManager</code> Bean（见 14.3.7 节）</li>
+<li>使用 Spring 的 <code>@Transactional</code> 注解即可声明式管理事务</li>
+<li>事务内的操作受到 60 秒超时限制（默认）</li>
+<li>事务内不能执行创建集合或创建索引等 DDL 操作</li>
+</ol>
+<h3 id="1463-ttl-索引自动清理过期验证码">14.6.3 TTL 索引：自动清理过期验证码</h3>
+<p>TTL（Time-To-Live）索引可以让 MongoDB 自动删除过期文档，非常适合验证码、临时 Token 等场景。</p>
+<p><strong>实体类</strong>（已在 14.2.5 节定义）：</p>
+<pre><code class="language-java">@Data
+@Document(collection = &quot;verification_codes&quot;)
+public class VerificationCode {
+    @Id
+    private String id;
+
+    @Indexed(unique = true)
+    private String email;
+
+    private String code;
+
+    @Indexed(expireAfterSeconds = 300)  // 5分钟后自动删除
+    @Field(&quot;created_at&quot;)
+    private Instant createdAt;
+}
+</code></pre>
+<p><strong>Repository：</strong></p>
+<pre><code class="language-java">package com.cms.repository;
+
+import com.cms.entity.VerificationCode;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.Optional;
+
+public interface VerificationCodeRepository extends MongoRepository&lt;VerificationCode, String&gt; {
+
+    Optional&lt;VerificationCode&gt; findByEmailAndCode(String email, String code);
+
+    void deleteByEmail(String email);
+}
+</code></pre>
+<p><strong>Service 实现：</strong></p>
+<pre><code class="language-java">package com.cms.service;
+
+import com.cms.entity.VerificationCode;
+import com.cms.repository.VerificationCodeRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.util.Random;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class VerificationCodeService {
+
+    private final VerificationCodeRepository codeRepository;
+
+    /**
+     * 生成6位数字验证码并存储。
+     * TTL 索引会在 300 秒（5分钟）后自动删除该文档。
+     */
+    public String generateCode(String email) {
+        // 先删除该邮箱的旧验证码
+        codeRepository.deleteByEmail(email);
+
+        String code = String.format(&quot;%06d&quot;, new Random().nextInt(999999));
+
+        VerificationCode verificationCode = new VerificationCode();
+        verificationCode.setEmail(email);
+        verificationCode.setCode(code);
+        verificationCode.setCreatedAt(Instant.now());
+
+        codeRepository.save(verificationCode);
+        log.info(&quot;已生成验证码 [{}] -&gt; {}, 5分钟后自动过期&quot;, email, code);
+
+        return code;
+    }
+
+    /**
+     * 验证码校验。
+     * 如果文档已被 TTL 索引自动删除，则查询不到，校验自然失败。
+     */
+    public boolean verifyCode(String email, String code) {
+        return codeRepository.findByEmailAndCode(email, code).isPresent();
+    }
+}
+</code></pre>
+<p><strong>工作原理说明</strong>：</p>
+<ul>
+<li><code>@Indexed(expireAfterSeconds = 300)</code> 在 <code>created_at</code> 字段上创建 TTL 索引</li>
+<li>MongoDB 后台线程每 60 秒扫描一次，删除 <code>created_at + 300秒 &lt; 当前时间</code> 的文档</li>
+<li>实际删除可能有最多 60 秒的延迟（取决于后台扫描间隔）</li>
+<li>TTL 索引只能建在类型为 <code>Date</code> / <code>Instant</code> 的字段上</li>
+</ul>
+<hr />
+<h2 id="147-测试与总结">14.7 测试与总结</h2>
+<h3 id="1471-testcontainers-集成测试配置">14.7.1 Testcontainers 集成测试配置</h3>
+<p>Testcontainers 可以在测试期间自动启动一个真实的 MongoDB Docker 容器，无需手动安装 MongoDB，测试结束后自动销毁，保证测试环境的隔离性和可重复性。</p>
+<p><strong>基础测试类 BaseIntegrationTest：</strong></p>
+<pre><code class="language-java">package com.cms;
+
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+@SpringBootTest
+@Testcontainers
+public abstract class BaseIntegrationTest {
+
+    @Container
+    static MongoDBContainer mongoDBContainer = new MongoDBContainer(&quot;mongo:7.0&quot;)
+            .withExposedPorts(27017);
+
+    /**
+     * 动态注入 Testcontainers 启动的 MongoDB 连接地址。
+     * 这样每次测试运行时都会使用容器的随机端口，避免端口冲突。
+     */
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry registry) {
+        registry.add(&quot;spring.data.mongodb.uri&quot;, mongoDBContainer::getReplicaSetUrl);
+    }
+}
+</code></pre>
+<h3 id="1472-userservice-集成测试">14.7.2 UserService 集成测试</h3>
+<pre><code class="language-java">package com.cms.service;
+
+import com.cms.BaseIntegrationTest;
+import com.cms.dto.LoginRequest;
+import com.cms.dto.RegisterRequest;
+import com.cms.entity.User;
+import com.cms.repository.UserRepository;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class UserServiceTest extends BaseIntegrationTest {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @BeforeEach
+    void cleanUp() {
+        userRepository.deleteAll();
+    }
+
+    @Test
+    @Order(1)
+    @DisplayName(&quot;用户注册 - 成功&quot;)
+    void testRegisterSuccess() {
+        RegisterRequest request = new RegisterRequest();
+        request.setUsername(&quot;testuser&quot;);
+        request.setPassword(&quot;123456&quot;);
+        request.setNickname(&quot;测试用户&quot;);
+        request.setEmail(&quot;test@example.com&quot;);
+
+        User user = userService.register(request);
+
+        assertNotNull(user.getId());
+        assertEquals(&quot;testuser&quot;, user.getUsername());
+        assertEquals(&quot;测试用户&quot;, user.getNickname());
+        assertNotEquals(&quot;123456&quot;, user.getPassword()); // 密码应已加密
+        assertEquals(1, user.getRoles().size());
+        assertEquals(&quot;ROLE_USER&quot;, user.getRoles().get(0));
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName(&quot;用户注册 - 用户名重复应抛出异常&quot;)
+    void testRegisterDuplicateUsername() {
+        RegisterRequest request = new RegisterRequest();
+        request.setUsername(&quot;duplicate&quot;);
+        request.setPassword(&quot;123456&quot;);
+        request.setNickname(&quot;用户A&quot;);
+        request.setEmail(&quot;a@example.com&quot;);
+        userService.register(request);
+
+        RegisterRequest request2 = new RegisterRequest();
+        request2.setUsername(&quot;duplicate&quot;);
+        request2.setPassword(&quot;654321&quot;);
+        request2.setNickname(&quot;用户B&quot;);
+        request2.setEmail(&quot;b@example.com&quot;);
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -&gt; userService.register(request2)
+        );
+        assertEquals(&quot;用户名已存在&quot;, exception.getMessage());
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName(&quot;用户登录 - 成功返回Token&quot;)
+    void testLoginSuccess() {
+        RegisterRequest registerReq = new RegisterRequest();
+        registerReq.setUsername(&quot;loginuser&quot;);
+        registerReq.setPassword(&quot;mypassword&quot;);
+        registerReq.setNickname(&quot;登录测试&quot;);
+        registerReq.setEmail(&quot;login@example.com&quot;);
+        userService.register(registerReq);
+
+        LoginRequest loginReq = new LoginRequest();
+        loginReq.setUsername(&quot;loginuser&quot;);
+        loginReq.setPassword(&quot;mypassword&quot;);
+
+        Map&lt;String, Object&gt; result = userService.login(loginReq);
+
+        assertNotNull(result.get(&quot;token&quot;));
+        assertEquals(&quot;loginuser&quot;, result.get(&quot;username&quot;));
+        assertEquals(&quot;登录测试&quot;, result.get(&quot;nickname&quot;));
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName(&quot;用户登录 - 密码错误应抛出异常&quot;)
+    void testLoginWrongPassword() {
+        RegisterRequest registerReq = new RegisterRequest();
+        registerReq.setUsername(&quot;wrongpwd&quot;);
+        registerReq.setPassword(&quot;correct&quot;);
+        registerReq.setNickname(&quot;密码测试&quot;);
+        registerReq.setEmail(&quot;pwd@example.com&quot;);
+        userService.register(registerReq);
+
+        LoginRequest loginReq = new LoginRequest();
+        loginReq.setUsername(&quot;wrongpwd&quot;);
+        loginReq.setPassword(&quot;wrong&quot;);
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -&gt; userService.login(loginReq)
+        );
+        assertEquals(&quot;用户名或密码错误&quot;, exception.getMessage());
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName(&quot;根据ID查询用户 - 密码字段应为null&quot;)
+    void testGetUserById() {
+        RegisterRequest registerReq = new RegisterRequest();
+        registerReq.setUsername(&quot;findme&quot;);
+        registerReq.setPassword(&quot;123456&quot;);
+        registerReq.setNickname(&quot;查找测试&quot;);
+        registerReq.setEmail(&quot;find@example.com&quot;);
+        User savedUser = userService.register(registerReq);
+
+        User found = userService.getUserById(savedUser.getId());
+
+        assertEquals(&quot;findme&quot;, found.getUsername());
+        assertNull(found.getPassword());
+    }
+}
+</code></pre>
+<h3 id="1473-articleservice-集成测试">14.7.3 ArticleService 集成测试</h3>
+<pre><code class="language-java">package com.cms.service;
+
+import com.cms.BaseIntegrationTest;
+import com.cms.dto.ArticleQuery;
+import com.cms.dto.ArticleRequest;
+import com.cms.dto.RegisterRequest;
+import com.cms.entity.Article;
+import com.cms.entity.User;
+import com.cms.repository.ArticleRepository;
+import com.cms.repository.UserRepository;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class ArticleServiceTest extends BaseIntegrationTest {
+
+    @Autowired
+    private ArticleService articleService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ArticleRepository articleRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private String testUserId;
+
+    @BeforeEach
+    void setUp() {
+        articleRepository.deleteAll();
+        userRepository.deleteAll();
+
+        RegisterRequest registerReq = new RegisterRequest();
+        registerReq.setUsername(&quot;author&quot;);
+        registerReq.setPassword(&quot;123456&quot;);
+        registerReq.setNickname(&quot;作者&quot;);
+        registerReq.setEmail(&quot;author@example.com&quot;);
+        User user = userService.register(registerReq);
+        testUserId = user.getId();
+    }
+
+    @Test
+    @Order(1)
+    @DisplayName(&quot;发布文章 - 成功&quot;)
+    void testPublishArticle() {
+        ArticleRequest request = new ArticleRequest();
+        request.setTitle(&quot;MongoDB 入门教程&quot;);
+        request.setSummary(&quot;从零开始学习 MongoDB&quot;);
+        request.setContent(&quot;&lt;p&gt;MongoDB 是一个面向文档的数据库...&lt;/p&gt;&quot;);
+        request.setTags(List.of(&quot;MongoDB&quot;, &quot;数据库&quot;, &quot;教程&quot;));
+        request.setStatus(&quot;PUBLISHED&quot;);
+
+        Article article = articleService.publish(request, testUserId);
+
+        assertNotNull(article.getId());
+        assertEquals(&quot;MongoDB 入门教程&quot;, article.getTitle());
+        assertEquals(&quot;作者&quot;, article.getAuthorName());
+        assertEquals(0L, article.getViewCount());
+        assertEquals(3, article.getTags().size());
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName(&quot;文章详情 - 浏览量自增&quot;)
+    void testViewCountIncrement() {
+        ArticleRequest request = new ArticleRequest();
+        request.setTitle(&quot;浏览量测试&quot;);
+        request.setContent(&quot;内容&quot;);
+        request.setStatus(&quot;PUBLISHED&quot;);
+        Article article = articleService.publish(request, testUserId);
+
+        Article detail1 = articleService.getDetail(article.getId());
+        assertEquals(1L, detail1.getViewCount());
+
+        Article detail2 = articleService.getDetail(article.getId());
+        assertEquals(2L, detail2.getViewCount());
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName(&quot;多条件筛选 - 按标签和关键词&quot;)
+    void testQueryArticles() {
+        // 准备测试数据
+        ArticleRequest req1 = new ArticleRequest();
+        req1.setTitle(&quot;Spring Boot 与 MongoDB 整合&quot;);
+        req1.setContent(&quot;内容1&quot;);
+        req1.setTags(List.of(&quot;Spring Boot&quot;, &quot;MongoDB&quot;));
+        req1.setStatus(&quot;PUBLISHED&quot;);
+        articleService.publish(req1, testUserId);
+
+        ArticleRequest req2 = new ArticleRequest();
+        req2.setTitle(&quot;Redis 缓存实战&quot;);
+        req2.setContent(&quot;内容2&quot;);
+        req2.setTags(List.of(&quot;Redis&quot;, &quot;缓存&quot;));
+        req2.setStatus(&quot;PUBLISHED&quot;);
+        articleService.publish(req2, testUserId);
+
+        ArticleRequest req3 = new ArticleRequest();
+        req3.setTitle(&quot;MongoDB 聚合管道详解&quot;);
+        req3.setContent(&quot;内容3&quot;);
+        req3.setTags(List.of(&quot;MongoDB&quot;, &quot;聚合&quot;));
+        req3.setStatus(&quot;PUBLISHED&quot;);
+        articleService.publish(req3, testUserId);
+
+        // 按关键词搜索 &quot;MongoDB&quot;
+        ArticleQuery query = new ArticleQuery();
+        query.setKeyword(&quot;MongoDB&quot;);
+        Page&lt;Article&gt; result = articleService.queryArticles(query);
+        assertEquals(2, result.getTotalElements());
+
+        // 按标签筛选
+        ArticleQuery tagQuery = new ArticleQuery();
+        tagQuery.setTags(List.of(&quot;MongoDB&quot;));
+        Page&lt;Article&gt; tagResult = articleService.queryArticles(tagQuery);
+        assertEquals(2, tagResult.getTotalElements());
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName(&quot;编辑文章 - 非作者应抛出异常&quot;)
+    void testUpdateByNonAuthor() {
+        ArticleRequest request = new ArticleRequest();
+        request.setTitle(&quot;权限测试&quot;);
+        request.setContent(&quot;内容&quot;);
+        request.setStatus(&quot;DRAFT&quot;);
+        Article article = articleService.publish(request, testUserId);
+
+        RegisterRequest otherUserReq = new RegisterRequest();
+        otherUserReq.setUsername(&quot;other&quot;);
+        otherUserReq.setPassword(&quot;123456&quot;);
+        otherUserReq.setNickname(&quot;其他人&quot;);
+        otherUserReq.setEmail(&quot;other@example.com&quot;);
+        User otherUser = userService.register(otherUserReq);
+
+        ArticleRequest updateReq = new ArticleRequest();
+        updateReq.setTitle(&quot;被篡改的标题&quot;);
+        updateReq.setContent(&quot;被篡改的内容&quot;);
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -&gt; articleService.update(article.getId(), updateReq, otherUser.getId())
+        );
+        assertEquals(&quot;无权编辑他人文章&quot;, exception.getMessage());
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName(&quot;删除文章 - 不存在的文章应抛出异常&quot;)
+    void testDeleteNonExistentArticle() {
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -&gt; articleService.delete(&quot;nonexistent_id&quot;, testUserId)
+        );
+        assertEquals(&quot;文章不存在&quot;, exception.getMessage());
+    }
+}
+</code></pre>
+<h3 id="1474-课程知识点总结回顾">14.7.4 课程知识点总结回顾</h3>
+<p>通过本项目，我们综合运用了课程全部 13 章的核心知识，下面做一个系统梳理：</p>
+<table>
+<thead>
+<tr>
+<th>章节</th>
+<th>知识点</th>
+<th>在项目中的体现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>第01章</strong> 初识 MongoDB</td>
+<td>文档数据库概念、BSON 类型</td>
+<td>User / Article / Comment 等文档模型的设计</td>
+</tr>
+<tr>
+<td><strong>第02章</strong> 环境搭建</td>
+<td>Spring Boot 集成、Docker</td>
+<td>pom.xml 依赖配置、Testcontainers 启动 MongoDB 容器</td>
+</tr>
+<tr>
+<td><strong>第03章</strong> CRUD 操作</td>
+<td>增删改查操作</td>
+<td>各模块的基础 CRUD 功能</td>
+</tr>
+<tr>
+<td><strong>第04章</strong> Spring Data MongoDB</td>
+<td>@Document 注解、MongoRepository、方法名派生查询</td>
+<td>所有实体类注解、Repository 接口定义</td>
+</tr>
+<tr>
+<td><strong>第05章</strong> MongoTemplate</td>
+<td>Criteria 动态查询、Update 部分更新、分页排序</td>
+<td>文章多条件筛选、浏览量原子+1、分页列表</td>
+</tr>
+<tr>
+<td><strong>第06章</strong> 索引基础</td>
+<td>单字段索引、复合索引、唯一索引、TTL 索引</td>
+<td>用户唯一索引、文章复合索引、验证码 TTL 索引</td>
+</tr>
+<tr>
+<td><strong>第07章</strong> 聚合管道</td>
+<td>$match、$group、$unwind、$lookup、$sort</td>
+<td>每日发文量、热门标签 Top10、用户活跃度排行</td>
+</tr>
+<tr>
+<td><strong>第08章</strong> 文档模型设计</td>
+<td>内嵌 vs 引用、树形结构</td>
+<td>评论独立集合（引用）、分类树形结构、标签内嵌数组</td>
+</tr>
+<tr>
+<td><strong>第09章</strong> 事务</td>
+<td>@Transactional、多文档事务</td>
+<td>删除文章同时清理评论的事务保证</td>
+</tr>
+<tr>
+<td><strong>第10章</strong> 高级索引</td>
+<td>文本索引、全文搜索</td>
+<td>文章全文搜索功能（TextCriteria）</td>
+</tr>
+<tr>
+<td><strong>第11章</strong> Change Streams</td>
+<td>监听集合变更、实时推送</td>
+<td>新评论实时通知（SSE）</td>
+</tr>
+<tr>
+<td><strong>第12章</strong> GridFS</td>
+<td>文件的上传/下载/删除</td>
+<td>文件管理模块（图片/附件存储）</td>
+</tr>
+<tr>
+<td><strong>第13章</strong> 安全与运维</td>
+<td>认证配置、副本集</td>
+<td>连接串配置多环境、事务依赖副本集</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1475-进阶学习建议">14.7.5 进阶学习建议</h3>
+<p>完成本课程后，可以沿以下方向继续深入：</p>
+<p><strong>1. 性能优化方向</strong></p>
+<ul>
+<li>学习 MongoDB Profiler 和慢查询日志分析</li>
+<li>掌握索引覆盖查询（Covered Query）优化</li>
+<li>研究读写分离策略（Read Preference / Write Concern）</li>
+<li>了解连接池调优参数</li>
+</ul>
+<p><strong>2. 架构进阶方向</strong></p>
+<ul>
+<li>学习 MongoDB 分片集群（Sharded Cluster）的搭建与管理</li>
+<li>掌握分片键（Shard Key）的选择策略</li>
+<li>了解 Zone Sharding 实现数据区域化部署</li>
+<li>学习 MongoDB Atlas（云托管服务）的使用</li>
+</ul>
+<p><strong>3. 生态集成方向</strong></p>
+<ul>
+<li>MongoDB + Elasticsearch 实现更强大的搜索功能</li>
+<li>MongoDB + Redis 实现热点数据缓存</li>
+<li>MongoDB + Kafka 实现 CDC（Change Data Capture）数据同步</li>
+<li>MongoDB + Spring WebFlux 实现响应式应用</li>
+</ul>
+<p><strong>4. 运维与监控方向</strong></p>
+<ul>
+<li>掌握 MongoDB 备份恢复策略（逻辑备份 / 物理备份 / 快照）</li>
+<li>学习使用 MongoDB Ops Manager 或 Cloud Manager 进行集群管理</li>
+<li>了解 Prometheus + Grafana 监控 MongoDB 集群</li>
+</ul>
+<p><strong>5. 推荐学习资源</strong></p>
+<ul>
+<li><a href="https://www.mongodb.com/docs/manual/">MongoDB 官方文档</a></li>
+<li><a href="https://docs.spring.io/spring-data/mongodb/reference/">Spring Data MongoDB 参考文档</a></li>
+<li><a href="https://learn.mongodb.com/">MongoDB University 免费课程</a></li>
+<li>《MongoDB 权威指南（第3版）》—— O'Reilly 出版</li>
+<li>《MongoDB 实战（第2版）》—— Manning 出版</li>
+</ul>
+<hr />
+<blockquote>
+<p><strong>恭喜！</strong> 至此你已完成 MongoDB 与 Spring Boot 实战课程的全部学习内容。从基础的文档 CRUD，到高级的聚合管道、事务、Change Streams，再到完整的项目实战，你已经具备了在实际项目中使用 MongoDB 的坚实基础。接下来，在真实项目中多加实践，是巩固和提升技能的最佳方式。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

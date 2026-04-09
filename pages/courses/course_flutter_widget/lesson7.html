@@ -1,0 +1,2483 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第07课-层叠布局---stack-与定位">第07课 层叠布局 - Stack 与定位</h1>
+<blockquote>
+<p><strong>前置知识</strong>：已掌握 Dart 基础语法，了解 Flutter Widget 体系，学完第06课 Row 与 Column 线性布局。</p>
+</blockquote>
+<hr />
+<h2 id="本课目标">本课目标</h2>
+<ul>
+<li>理解 Stack 层叠布局与 Row/Column 线性布局的本质区别</li>
+<li>掌握 Stack 的 fit、alignment、clipBehavior 三大核心属性</li>
+<li>熟练使用 Positioned 对子组件进行精确定位</li>
+<li>理解 Align 与 Alignment 坐标系的工作原理</li>
+<li>学会使用 FractionallySizedBox 按比例控制尺寸</li>
+<li>了解 IndexedStack 在页面切换场景中的应用</li>
+<li>能够独立实现头像角标、浮动标签、图片文字叠加等常见效果</li>
+</ul>
+<hr />
+<h2 id="1-stack-与线性布局的本质区别">1. Stack 与线性布局的本质区别</h2>
+<p>在第06课中，我们学习了 Row 和 Column ——它们沿<strong>单一方向</strong>排列子组件，子组件之间<strong>不会重叠</strong>。这种布局方式叫做<strong>线性布局</strong>。</p>
+<p>但在实际开发中，我们经常需要让组件<strong>相互叠加</strong>：比如图片上覆盖文字、头像右上角放一个红色圆点、卡片左上角贴一个&quot;热销&quot;标签……这些场景都需要<strong>层叠布局</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Row / Column（线性布局）</th>
+<th>Stack（层叠布局）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>排列方向</td>
+<td>沿主轴单方向排列</td>
+<td>沿 Z 轴方向层叠</td>
+</tr>
+<tr>
+<td>子组件关系</td>
+<td>互不重叠，依次排列</td>
+<td>可以重叠，后添加的在上层</td>
+</tr>
+<tr>
+<td>定位方式</td>
+<td>通过主轴/交叉轴对齐</td>
+<td>通过 Positioned 或 Align 精确定位</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>水平/垂直排列的表单、列表</td>
+<td>叠加效果：角标、浮层、遮罩</td>
+</tr>
+<tr>
+<td>尺寸行为</td>
+<td>受主轴方向约束</td>
+<td>默认由非定位子组件决定</td>
+</tr>
+</tbody>
+</table>
+<p>Stack 的核心思想：<strong>子组件在同一块画布上自由摆放，按添加顺序从下往上层叠</strong>，就像把多张纸片叠放在桌面上一样。</p>
+<hr />
+<h2 id="2-stack-基础">2. Stack 基础</h2>
+<h3 id="21-最简单的-stack">2.1 最简单的 Stack</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Stack 基础示例')),
+        body: Center(
+          child: Stack(
+            children: [
+              // 第一个子组件在最底层
+              Container(
+                width: 200,
+                height: 200,
+                color: Colors.blue,
+              ),
+              // 第二个子组件叠在上面
+              Container(
+                width: 150,
+                height: 150,
+                color: Colors.green,
+              ),
+              // 第三个子组件在最上层
+              Container(
+                width: 100,
+                height: 100,
+                color: Colors.red,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>运行这段代码你会看到三个正方形叠放在一起，蓝色在最底下，红色在最上面。这就是 Stack 最基本的工作方式——<strong>children 列表中索引越大的组件越靠上层</strong>。</p>
+<h3 id="22-stack-中的两类子组件">2.2 Stack 中的两类子组件</h3>
+<p>Stack 中的子组件分为两类，理解它们对掌握 Stack 的尺寸行为至关重要：</p>
+<ul>
+<li><strong>非定位子组件（Non-positioned）</strong>：没有被 <code>Positioned</code> 包裹的子组件。Stack 的大小默认由这些子组件中的最大尺寸决定。</li>
+<li><strong>定位子组件（Positioned）</strong>：被 <code>Positioned</code> 包裹的子组件。它们不参与 Stack 大小的计算，而是根据 <code>left</code>、<code>top</code>、<code>right</code>、<code>bottom</code> 相对于 Stack 边界进行定位。</li>
+</ul>
+<pre><code class="language-dart">Stack(
+  children: [
+    Container(width: 200, height: 200, color: Colors.blue), // 非定位子组件 → 决定 Stack 大小
+    Positioned(                                               // 定位子组件 → 不影响 Stack 大小
+      left: 20,
+      top: 20,
+      child: Container(width: 50, height: 50, color: Colors.red),
+    ),
+  ],
+)
+</code></pre>
+<hr />
+<h2 id="3-stack-核心属性详解">3. Stack 核心属性详解</h2>
+<h3 id="31-alignment-属性">3.1 alignment 属性</h3>
+<p><code>alignment</code> 控制<strong>非定位子组件</strong>在 Stack 中的对齐位置。默认值为 <code>AlignmentDirectional.topStart</code>（即左上角）。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Stack alignment 示例')),
+        body: Center(
+          child: Container(
+            width: 300,
+            height: 300,
+            color: Colors.grey.shade200,
+            child: Stack(
+              // 非定位子组件居中对齐
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 200,
+                  height: 200,
+                  color: Colors.blue.shade300,
+                  child: const Center(child: Text('底层 200×200')),
+                ),
+                Container(
+                  width: 100,
+                  height: 100,
+                  color: Colors.orange.shade300,
+                  child: const Center(child: Text('上层 100×100')),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>常用的 alignment 值：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Alignment.topLeft</code></td>
+<td>左上角</td>
+</tr>
+<tr>
+<td><code>Alignment.topCenter</code></td>
+<td>顶部居中</td>
+</tr>
+<tr>
+<td><code>Alignment.topRight</code></td>
+<td>右上角</td>
+</tr>
+<tr>
+<td><code>Alignment.centerLeft</code></td>
+<td>左侧居中</td>
+</tr>
+<tr>
+<td><code>Alignment.center</code></td>
+<td>正中心</td>
+</tr>
+<tr>
+<td><code>Alignment.centerRight</code></td>
+<td>右侧居中</td>
+</tr>
+<tr>
+<td><code>Alignment.bottomLeft</code></td>
+<td>左下角</td>
+</tr>
+<tr>
+<td><code>Alignment.bottomCenter</code></td>
+<td>底部居中</td>
+</tr>
+<tr>
+<td><code>Alignment.bottomRight</code></td>
+<td>右下角</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>：<code>alignment</code> 只影响非定位子组件。被 <code>Positioned</code> 包裹的子组件不受此属性影响。</p>
+</blockquote>
+<h3 id="32-fit-属性stackfit">3.2 fit 属性（StackFit）</h3>
+<p><code>fit</code> 属性决定了 Stack 如何将<strong>来自父组件的约束</strong>传递给<strong>非定位子组件</strong>。这是 Stack 中最容易混淆但也最重要的属性之一。</p>
+<h4 id="321-stackfitloose默认值">3.2.1 StackFit.loose（默认值）</h4>
+<p>Stack 将父组件传来的约束<strong>放宽</strong>为 0 到最大值的范围，子组件可以自由选择自己的尺寸（只要不超过父组件允许的最大值）。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('StackFit.loose 示例')),
+        body: SizedBox(
+          width: 300,
+          height: 300,
+          child: Stack(
+            fit: StackFit.loose,
+            children: [
+              // 子组件可以自由决定自己的大小
+              // 这里它选择了 150×150，并非被迫填满 300×300
+              Container(
+                width: 150,
+                height: 150,
+                color: Colors.blue,
+                child: const Center(
+                  child: Text('150×150', style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>效果</strong>：子 Container 显示为 150×150，它自由选择了自己的尺寸。</p>
+<h4 id="322-stackfitexpand">3.2.2 StackFit.expand</h4>
+<p>Stack 将父组件的约束<strong>收紧</strong>为必须等于最大值，强制所有非定位子组件<strong>填满</strong> Stack 的空间。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('StackFit.expand 示例')),
+        body: SizedBox(
+          width: 300,
+          height: 300,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // 即使设置了 width 和 height，子组件也会被强制拉伸到 300×300
+              Container(
+                width: 150,  // 这个值会被忽略
+                height: 150, // 这个值会被忽略
+                color: Colors.blue,
+                child: const Center(
+                  child: Text(
+                    '被强制拉伸到 300×300',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>效果</strong>：尽管 Container 设置了 150×150，但在 StackFit.expand 下它被强制拉伸到 300×300。</p>
+<h4 id="323-stackfitpassthrough">3.2.3 StackFit.passthrough</h4>
+<p>Stack <strong>直接透传</strong>父组件的约束给子组件，不做任何修改。这在 Stack 被嵌套在另一个有特殊约束的组件中时很有用。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('StackFit.passthrough 示例')),
+        body: SizedBox(
+          width: 300,
+          height: 300,
+          child: Row(
+            children: [
+              // Row 给子组件的宽度约束是 0~300（loose），高度约束是 300（tight）
+              Expanded(
+                child: Stack(
+                  fit: StackFit.passthrough,
+                  children: [
+                    // passthrough 直接把 Row/Expanded 的约束传给子组件
+                    // 宽度被 Expanded 强制填满，高度也被 SizedBox 固定为 300
+                    Container(
+                      color: Colors.blue,
+                      child: const Center(
+                        child: Text(
+                          '透传 Expanded 的约束',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>效果</strong>：Stack 将 Expanded 给出的紧约束直接传递给子组件，子组件被强制填满 Expanded 分配的空间。</p>
+<h4 id="三种-fit-模式对比总结">三种 fit 模式对比总结</h4>
+<table>
+<thead>
+<tr>
+<th>StackFit</th>
+<th>行为</th>
+<th>子组件尺寸</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>loose</code>（默认）</td>
+<td>放宽约束，最小值设为 0</td>
+<td>子组件自由决定大小</td>
+</tr>
+<tr>
+<td><code>expand</code></td>
+<td>收紧约束，最小值 = 最大值</td>
+<td>强制填满 Stack</td>
+</tr>
+<tr>
+<td><code>passthrough</code></td>
+<td>原样透传父组件的约束</td>
+<td>取决于父组件的约束类型</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-clipbehavior-属性">3.3 clipBehavior 属性</h3>
+<p>当子组件超出 Stack 边界时，<code>clipBehavior</code> 决定是否裁剪溢出部分。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('clipBehavior 对比')),
+        body: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // 不裁剪，溢出部分可见
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Clip.none'),
+                  const SizedBox(height: 20),
+                  Container(
+                    color: Colors.grey.shade300,
+                    width: 120,
+                    height: 120,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(width: 120, height: 120, color: Colors.blue),
+                        Positioned(
+                          right: -20,
+                          top: -20,
+                          child: Container(
+                            width: 60,
+                            height: 60,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              // 裁剪溢出部分
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Clip.hardEdge'),
+                  const SizedBox(height: 20),
+                  Container(
+                    color: Colors.grey.shade300,
+                    width: 120,
+                    height: 120,
+                    child: Stack(
+                      clipBehavior: Clip.hardEdge,
+                      children: [
+                        Container(width: 120, height: 120, color: Colors.blue),
+                        Positioned(
+                          right: -20,
+                          top: -20,
+                          child: Container(
+                            width: 60,
+                            height: 60,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>可选的 Clip 值：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Clip.none</code></td>
+<td>不裁剪，溢出部分可见（性能最好）</td>
+</tr>
+<tr>
+<td><code>Clip.hardEdge</code></td>
+<td>硬裁剪，边缘可能有锯齿（性能较好）</td>
+</tr>
+<tr>
+<td><code>Clip.antiAlias</code></td>
+<td>抗锯齿裁剪（性能适中）</td>
+</tr>
+<tr>
+<td><code>Clip.antiAliasWithSaveLayer</code></td>
+<td>带图层保存的抗锯齿裁剪（性能最差，效果最好）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：Stack 默认的 <code>clipBehavior</code> 为 <code>Clip.hardEdge</code>。如果确定子组件不会溢出 Stack，可以设置为 <code>Clip.none</code> 来获得更好的性能。需要溢出显示效果（如角标探出边界）时也用 <code>Clip.none</code>。</p>
+</blockquote>
+<hr />
+<h2 id="4-positioned-精确定位">4. Positioned 精确定位</h2>
+<p><code>Positioned</code> 是 Stack 最重要的搭档，它允许你通过 <code>left</code>、<code>top</code>、<code>right</code>、<code>bottom</code> 精确指定子组件相对于 Stack 四条边的距离。</p>
+<h3 id="41-基本用法">4.1 基本用法</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Positioned 基本用法')),
+        body: Center(
+          child: Container(
+            width: 300,
+            height: 300,
+            color: Colors.grey.shade200,
+            child: Stack(
+              children: [
+                // 左上角定位
+                Positioned(
+                  left: 10,
+                  top: 10,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.red,
+                    child: const Center(
+                      child: Text('左上', style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
+                // 右上角定位
+                Positioned(
+                  right: 10,
+                  top: 10,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.green,
+                    child: const Center(
+                      child: Text('右上', style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
+                // 左下角定位
+                Positioned(
+                  left: 10,
+                  bottom: 10,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.blue,
+                    child: const Center(
+                      child: Text('左下', style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
+                // 右下角定位
+                Positioned(
+                  right: 10,
+                  bottom: 10,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.orange,
+                    child: const Center(
+                      child: Text('右下', style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="42-通过对向约束控制尺寸">4.2 通过对向约束控制尺寸</h3>
+<p>当你同时指定 <code>left</code> 和 <code>right</code>（或 <code>top</code> 和 <code>bottom</code>）时，子组件的宽度（或高度）会被这两个值<strong>隐式决定</strong>，此时不需要再设置 <code>width</code>（或 <code>height</code>）。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Positioned 对向约束')),
+        body: Center(
+          child: Container(
+            width: 300,
+            height: 300,
+            color: Colors.grey.shade200,
+            child: Stack(
+              children: [
+                // 水平方向：left + right 决定宽度 = 300 - 20 - 20 = 260
+                Positioned(
+                  left: 20,
+                  right: 20,
+                  top: 20,
+                  height: 60,
+                  child: Container(
+                    color: Colors.blue,
+                    child: const Center(
+                      child: Text(
+                        '宽度由 left + right 决定',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+                // 垂直方向：top + bottom 决定高度 = 300 - 100 - 20 = 180
+                Positioned(
+                  left: 20,
+                  width: 80,
+                  top: 100,
+                  bottom: 20,
+                  child: Container(
+                    color: Colors.green,
+                    child: const Center(
+                      child: Text(
+                        '高度由\ntop+bottom\n决定',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ),
+                  ),
+                ),
+                // 四边都指定：宽度和高度都被隐式决定
+                Positioned(
+                  left: 120,
+                  right: 20,
+                  top: 100,
+                  bottom: 20,
+                  child: Container(
+                    color: Colors.orange,
+                    child: const Center(
+                      child: Text(
+                        '四边约束\n宽高都被决定',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：在同一个方向上，<code>left</code>/<code>right</code>/<code>width</code> 三者最多只能指定两个（<code>top</code>/<code>bottom</code>/<code>height</code> 同理）。如果三个都指定了会产生过约束（over-constrained），此时 <code>width</code>（或 <code>height</code>）和 <code>left</code>（或 <code>top</code>）优先，<code>right</code>（或 <code>bottom</code>）被忽略。</p>
+</blockquote>
+<h3 id="43-positionedfill">4.3 Positioned.fill</h3>
+<p><code>Positioned.fill</code> 是一个常用的命名构造函数，它让子组件<strong>填满整个 Stack</strong>。等价于 <code>Positioned(left: 0, top: 0, right: 0, bottom: 0, ...)</code>。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Positioned.fill 示例')),
+        body: Center(
+          child: SizedBox(
+            width: 300,
+            height: 200,
+            child: Stack(
+              children: [
+                // 填满整个 Stack 的背景
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.blue.shade400, Colors.purple.shade400],
+                      ),
+                    ),
+                  ),
+                ),
+                // 在渐变背景上显示文字
+                const Center(
+                  child: Text(
+                    '渐变背景上的文字',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><code>Positioned.fill</code> 还可以搭配缩进参数使用：</p>
+<pre><code class="language-dart">// 四周各留 16 像素的内边距
+Positioned.fill(
+  // 可传入额外的 left/top/right/bottom 作为间距偏移
+  child: Container(color: Colors.red.withOpacity(0.3)),
+)
+</code></pre>
+<h3 id="44-positioned-定位规则总结">4.4 Positioned 定位规则总结</h3>
+<table>
+<thead>
+<tr>
+<th>参数组合</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>只指定 <code>left</code></td>
+<td>从左边定位，宽度由子组件自身决定</td>
+</tr>
+<tr>
+<td>只指定 <code>right</code></td>
+<td>从右边定位，宽度由子组件自身决定</td>
+</tr>
+<tr>
+<td><code>left</code> + <code>width</code></td>
+<td>从左边定位，宽度固定</td>
+</tr>
+<tr>
+<td><code>right</code> + <code>width</code></td>
+<td>从右边定位，宽度固定</td>
+</tr>
+<tr>
+<td><code>left</code> + <code>right</code></td>
+<td>两端定位，宽度 = Stack宽度 - left - right</td>
+</tr>
+<tr>
+<td>以上规则对 <code>top</code> / <code>bottom</code> / <code>height</code> 同理</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-align-与-alignment">5. Align 与 Alignment</h2>
+<h3 id="51-align-组件">5.1 Align 组件</h3>
+<p><code>Align</code> 组件可以在 Stack 内部（也可以独立使用）控制子组件的对齐位置。与 <code>Positioned</code> 使用像素值定位不同，<code>Align</code> 使用<strong>相对坐标</strong>来定位。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Align 在 Stack 中的使用')),
+        body: Center(
+          child: Container(
+            width: 300,
+            height: 300,
+            color: Colors.grey.shade200,
+            child: Stack(
+              children: [
+                // 使用 Align 将子组件放在右上角
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.red,
+                    child: const Center(
+                      child: Text('右上', style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
+                // 使用 Align 将子组件放在中心
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.green,
+                    child: const Center(
+                      child: Text('居中', style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
+                // 使用 Align 将子组件放在左下角
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.blue,
+                    child: const Center(
+                      child: Text('左下', style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="52-alignment-坐标系">5.2 Alignment 坐标系</h3>
+<p><code>Alignment</code> 使用一个以<strong>组件中心为原点</strong>的坐标系，x 和 y 的范围都是 <strong>-1 到 1</strong>：</p>
+<pre><code>(-1, -1) -------- (0, -1) -------- (1, -1)
+    |                 |                 |
+    |                 |                 |
+(-1, 0)  -------- (0, 0)  -------- (1, 0)
+    |                 |                 |
+    |                 |                 |
+(-1, 1)  -------- (0, 1)  -------- (1, 1)
+</code></pre>
+<ul>
+<li><code>Alignment(-1, -1)</code> = 左上角 = <code>Alignment.topLeft</code></li>
+<li><code>Alignment(0, 0)</code> = 正中心 = <code>Alignment.center</code></li>
+<li><code>Alignment(1, 1)</code> = 右下角 = <code>Alignment.bottomRight</code></li>
+</ul>
+<p>你也可以使用超出 -1 到 1 范围的值，这会让子组件定位到父容器边界之外。</p>
+<p><strong>对齐计算公式</strong>：</p>
+<p>子组件在父容器中的实际偏移：</p>
+<pre><code>x 偏移 = (父宽度 - 子宽度) / 2 × (1 + alignment.x)
+y 偏移 = (父高度 - 子高度) / 2 × (1 + alignment.y)
+</code></pre>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Alignment 坐标系')),
+        body: Center(
+          child: Container(
+            width: 300,
+            height: 300,
+            color: Colors.grey.shade200,
+            child: Stack(
+              children: [
+                // 自定义坐标：x=0.5 表示在水平中心和右边缘之间的中点
+                Align(
+                  alignment: const Alignment(0.5, -0.8),
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.purple,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        '(0.5,\n-0.8)',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white, fontSize: 11),
+                      ),
+                    ),
+                  ),
+                ),
+                // 中心偏左偏下
+                Align(
+                  alignment: const Alignment(-0.3, 0.6),
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.teal,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        '(-0.3,\n0.6)',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white, fontSize: 11),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="53-fractionaloffset">5.3 FractionalOffset</h3>
+<p><code>FractionalOffset</code> 是另一种坐标系，它以<strong>左上角为原点</strong>，范围从 <strong>0 到 1</strong>：</p>
+<pre><code>(0, 0)   ---------- (0.5, 0)  ---------- (1, 0)
+   |                    |                    |
+(0, 0.5) ---------- (0.5, 0.5) ---------- (1, 0.5)
+   |                    |                    |
+(0, 1)   ---------- (0.5, 1)  ---------- (1, 1)
+</code></pre>
+<ul>
+<li><code>FractionalOffset(0, 0)</code> = 左上角</li>
+<li><code>FractionalOffset(0.5, 0.5)</code> = 正中心</li>
+<li><code>FractionalOffset(1, 1)</code> = 右下角</li>
+</ul>
+<p><code>FractionalOffset</code> 与 <code>Alignment</code> 的转换关系：</p>
+<pre><code>FractionalOffset.x = (Alignment.x + 1) / 2
+FractionalOffset.y = (Alignment.y + 1) / 2
+</code></pre>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('FractionalOffset 示例')),
+        body: Center(
+          child: Container(
+            width: 300,
+            height: 300,
+            color: Colors.grey.shade200,
+            child: Stack(
+              children: [
+                // FractionalOffset(0.25, 0.25) = 距左上角 25% 的位置
+                Align(
+                  alignment: const FractionalOffset(0.25, 0.25),
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    color: Colors.red,
+                    child: const Center(
+                      child: Text(
+                        '25%',
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ),
+                  ),
+                ),
+                // FractionalOffset(0.75, 0.75) = 距左上角 75% 的位置
+                Align(
+                  alignment: const FractionalOffset(0.75, 0.75),
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    color: Colors.blue,
+                    child: const Center(
+                      child: Text(
+                        '75%',
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="54-positioned-与-align-的选择">5.4 Positioned 与 Align 的选择</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>需要精确像素定位</td>
+<td><code>Positioned</code></td>
+<td>直接指定距离边缘的像素值</td>
+</tr>
+<tr>
+<td>需要相对比例定位</td>
+<td><code>Align</code></td>
+<td>使用 -1 到 1 的相对坐标，自适应不同尺寸</td>
+</tr>
+<tr>
+<td>需要子组件填满某个区域</td>
+<td><code>Positioned</code></td>
+<td>用 left + right + top + bottom 拉伸</td>
+</tr>
+<tr>
+<td>需要简单的角落/居中对齐</td>
+<td><code>Align</code></td>
+<td>代码更简洁直观</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-fractionallysizedbox">6. FractionallySizedBox</h2>
+<p><code>FractionallySizedBox</code> 让子组件按<strong>父容器的百分比</strong>来确定自身尺寸。<code>widthFactor</code> 和 <code>heightFactor</code> 分别控制宽度和高度占父容器的比例。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('FractionallySizedBox 示例')),
+        body: Center(
+          child: Container(
+            width: 300,
+            height: 300,
+            color: Colors.grey.shade200,
+            child: Stack(
+              children: [
+                // 占父容器宽度的 80%，高度的 50%
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: FractionallySizedBox(
+                      widthFactor: 0.8,   // 宽度 = 300 × 0.8 = 240
+                      heightFactor: 0.5,  // 高度 = 300 × 0.5 = 150
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            '80% 宽 × 50% 高',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><code>FractionallySizedBox</code> 也可以独立使用（不一定要在 Stack 中），但在 Stack 中配合使用非常方便：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('进度条效果')),
+        body: Center(
+          child: Container(
+            width: 280,
+            height: 20,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Stack(
+              children: [
+                // 用 FractionallySizedBox 实现进度条
+                FractionallySizedBox(
+                  widthFactor: 0.7, // 70% 进度
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.blue, Colors.blue.shade700],
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                // 进度文字
+                const Center(
+                  child: Text(
+                    '70%',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>FractionallySizedBox</code> 的 <code>alignment</code> 属性控制子组件在自身分配到的空间中的对齐方式。当 <code>widthFactor</code> 或 <code>heightFactor</code> 为 null 时，该方向上子组件会尽可能填满父容器。</p>
+</blockquote>
+<hr />
+<h2 id="7-indexedstack">7. IndexedStack</h2>
+<p><code>IndexedStack</code> 继承自 Stack，它一次只显示 <code>children</code> 中<strong>指定索引</strong>的那一个子组件，其余子组件虽然不可见但仍然保持状态。这使它非常适合<strong>简单的页面切换</strong>场景。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State&lt;MyApp&gt; createState() =&gt; _MyAppState();
+}
+
+class _MyAppState extends State&lt;MyApp&gt; {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('IndexedStack 页面切换')),
+        body: IndexedStack(
+          index: _currentIndex,
+          children: const [
+            // 页面 0：首页
+            _HomePage(),
+            // 页面 1：搜索
+            _SearchPage(),
+            // 页面 2：我的
+            _ProfilePage(),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: '首页'),
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: '搜索'),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: '我的'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HomePage extends StatelessWidget {
+  const _HomePage();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.home, size: 64, color: Colors.blue),
+          SizedBox(height: 16),
+          Text('首页内容', style: TextStyle(fontSize: 24)),
+        ],
+      ),
+    );
+  }
+}
+
+class _SearchPage extends StatelessWidget {
+  const _SearchPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.search, size: 64, color: Colors.green),
+          SizedBox(height: 16),
+          Text('搜索页面', style: TextStyle(fontSize: 24)),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfilePage extends StatelessWidget {
+  const _ProfilePage();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.person, size: 64, color: Colors.orange),
+          SizedBox(height: 16),
+          Text('个人中心', style: TextStyle(fontSize: 24)),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="indexedstack-特性与注意事项">IndexedStack 特性与注意事项</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>状态保持</td>
+<td>所有子组件的状态都会保持，切换页面不会触发重建</td>
+</tr>
+<tr>
+<td>内存占用</td>
+<td>所有子组件都会被构建并保持在内存中，即使不可见</td>
+</tr>
+<tr>
+<td>尺寸行为</td>
+<td>始终占据所有子组件中最大的尺寸</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>页面数量少（3-5个）、需要保持状态的场景</td>
+</tr>
+<tr>
+<td>不适用场景</td>
+<td>页面过多或每个页面很重（大量图片、网络请求）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践</strong>：如果页面数量多或者页面内容比较复杂，建议使用 <code>PageView</code> + <code>AutomaticKeepAliveClientMixin</code> 或状态管理方案代替 <code>IndexedStack</code>，以避免不必要的内存开销。</p>
+</blockquote>
+<hr />
+<h2 id="8-实战案例">8. 实战案例</h2>
+<h3 id="81-头像角标未读消息提示">8.1 头像角标（未读消息提示）</h3>
+<p>这是社交类 App 中最常见的叠加效果——在头像右上角显示一个红色圆点或数字角标。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('头像角标示例')),
+        body: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // 样式一：红色圆点角标
+              _buildAvatarWithDot(),
+              // 样式二：数字角标
+              _buildAvatarWithCount(5),
+              // 样式三：99+ 角标
+              _buildAvatarWithCount(128),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 红色圆点角标
+  Widget _buildAvatarWithDot() {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // 头像
+        const CircleAvatar(
+          radius: 30,
+          backgroundColor: Colors.blueGrey,
+          child: Icon(Icons.person, size: 36, color: Colors.white),
+        ),
+        // 红色圆点
+        Positioned(
+          right: 0,
+          top: 0,
+          child: Container(
+            width: 14,
+            height: 14,
+            decoration: BoxDecoration(
+              color: Colors.red,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 数字角标（超过 99 显示 99+）
+  Widget _buildAvatarWithCount(int count) {
+    final displayText = count &gt; 99 ? '99+' : '$count';
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // 头像
+        const CircleAvatar(
+          radius: 30,
+          backgroundColor: Colors.blueGrey,
+          child: Icon(Icons.person, size: 36, color: Colors.white),
+        ),
+        // 数字角标
+        Positioned(
+          right: -8,
+          top: -4,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white, width: 2),
+            ),
+            constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+            child: Text(
+              displayText,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<p><strong>要点解析</strong>：</p>
+<ul>
+<li>使用 <code>Clip.none</code> 允许角标探出头像边界</li>
+<li>数字角标用 <code>padding</code> + <code>BorderRadius</code> 实现自适应宽度的圆角矩形</li>
+<li>角标外围的白色边框（<code>Border.all</code>）使视觉上与背景分离</li>
+</ul>
+<h3 id="82-图片上的文字叠加与渐变遮罩">8.2 图片上的文字叠加与渐变遮罩</h3>
+<p>这是新闻类、电商类 App 中非常常见的效果——在图片底部覆盖一层半透明渐变，再在上面显示标题文字。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('图片文字叠加')),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // 新闻卡片
+              _buildNewsCard(
+                imageUrl: 'https://picsum.photos/seed/flutter1/400/250',
+                title: 'Flutter 4.0 正式发布，带来全新渲染引擎',
+                category: '技术资讯',
+              ),
+              const SizedBox(height: 16),
+              _buildNewsCard(
+                imageUrl: 'https://picsum.photos/seed/flutter2/400/250',
+                title: '2026 年最受欢迎的跨平台框架排行榜',
+                category: '行业报告',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNewsCard({
+    required String imageUrl,
+    required String title,
+    required String category,
+  }) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: SizedBox(
+        height: 200,
+        width: double.infinity,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // 底层：图片
+            Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: Colors.grey.shade300,
+                  child: const Center(
+                    child: Icon(Icons.image, size: 48, color: Colors.grey),
+                  ),
+                );
+              },
+            ),
+            // 中层：底部渐变遮罩
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 120,
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black87,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // 上层：文字信息
+            Positioned(
+              left: 16,
+              right: 16,
+              bottom: 16,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 分类标签
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      category,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  // 标题
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>要点解析</strong>：</p>
+<ul>
+<li><code>Stack(fit: StackFit.expand)</code> 让图片自动填满整个区域</li>
+<li>渐变遮罩使用 <code>LinearGradient</code>，从透明过渡到黑色半透明，确保文字可读</li>
+<li>使用 <code>ClipRRect</code> 统一裁剪圆角</li>
+</ul>
+<h3 id="83-浮动标签与促销角标">8.3 浮动标签与促销角标</h3>
+<p>电商 App 中常见的&quot;热销&quot;、&quot;新品&quot;、&quot;折扣&quot;标签效果。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('浮动标签示例')),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              _buildProductCard(
+                name: 'Flutter 实战教程',
+                price: '¥99.00',
+                originalPrice: '¥199.00',
+                tag: '限时半价',
+                tagColor: Colors.red,
+              ),
+              _buildProductCard(
+                name: 'Dart 语言精讲',
+                price: '¥59.00',
+                tag: '新品上线',
+                tagColor: Colors.green,
+              ),
+              _buildProductCard(
+                name: 'UI 设计课',
+                price: '¥129.00',
+                tag: '热销',
+                tagColor: Colors.orange,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductCard({
+    required String name,
+    required String price,
+    String? originalPrice,
+    required String tag,
+    required Color tagColor,
+  }) {
+    return SizedBox(
+      width: 170,
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Stack(
+          children: [
+            // 卡片内容
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 商品图片区域
+                Container(
+                  height: 120,
+                  width: double.infinity,
+                  color: Colors.grey.shade200,
+                  child: const Icon(
+                    Icons.shopping_bag,
+                    size: 48,
+                    color: Colors.grey,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Text(
+                            price,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red.shade700,
+                            ),
+                          ),
+                          if (originalPrice != null) ...[
+                            const SizedBox(width: 4),
+                            Text(
+                              originalPrice,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade500,
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            // 左上角浮动标签
+            Positioned(
+              left: 0,
+              top: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: tagColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  tag,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p><strong>要点解析</strong>：</p>
+<ul>
+<li>Card 设置 <code>clipBehavior: Clip.antiAlias</code> 确保标签不会溢出圆角</li>
+<li>标签使用 <code>BorderRadius.only</code> 只圆角化特定角落，与卡片边缘贴合</li>
+<li>整体结构：Stack 包裹 Column（内容）+ Positioned（标签）</li>
+</ul>
+<hr />
+<h2 id="9-注意事项与最佳实践">9. 注意事项与最佳实践</h2>
+<h3 id="性能优化">性能优化</h3>
+<ol>
+<li><strong>优先使用 <code>Clip.none</code></strong>：如果确定子组件不会溢出 Stack，设置 <code>clipBehavior: Clip.none</code> 可以避免不必要的裁剪开销。</li>
+<li><strong>避免过深的 Stack 嵌套</strong>：多层 Stack 嵌套会增加布局计算的复杂度。如果只需要简单的对齐，考虑使用 Align 代替 Stack。</li>
+<li><strong>IndexedStack 谨慎使用</strong>：所有子组件都会保持在内存中，页面过多或过重时考虑其他方案。</li>
+</ol>
+<h3 id="布局原则">布局原则</h3>
+<ol start="4">
+<li><strong>至少保留一个非定位子组件</strong>：如果 Stack 中所有子组件都是 Positioned，Stack 会尝试尽可能大（填满父约束）。如果你想让 Stack 由内容决定大小，至少保留一个非定位子组件。</li>
+<li><strong>Positioned 不能脱离 Stack</strong>：<code>Positioned</code> 必须是 Stack 的直接子组件，不能被其他 Widget（如 Padding、Container）包裹后再放入 Stack。</li>
+<li><strong>注意溢出</strong>：当 <code>Positioned</code> 的定位值让子组件超出 Stack 边界时，默认会被裁剪。需要溢出可见时记得设置 <code>clipBehavior: Clip.none</code>。</li>
+</ol>
+<h3 id="选择合适的定位方式">选择合适的定位方式</h3>
+<ol start="7">
+<li><strong>像素定位用 <code>Positioned</code></strong>：需要精确到像素的场景（如角标偏移 -8px）。</li>
+<li><strong>比例定位用 <code>Align</code></strong>：需要按比例自适应不同屏幕尺寸的场景。</li>
+<li><strong>比例尺寸用 <code>FractionallySizedBox</code></strong>：子组件需要占父容器固定百分比的场景。</li>
+</ol>
+<hr />
+<h2 id="10-本课小结">10. 本课小结</h2>
+<p>本课我们系统学习了 Flutter 中的层叠布局体系：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>核心能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Stack</strong></td>
+<td>层叠布局容器，子组件按 Z 轴叠放</td>
+</tr>
+<tr>
+<td><strong>Positioned</strong></td>
+<td>在 Stack 中精确像素定位子组件</td>
+</tr>
+<tr>
+<td><strong>Align</strong></td>
+<td>在 Stack 中按相对坐标对齐子组件</td>
+</tr>
+<tr>
+<td><strong>FractionallySizedBox</strong></td>
+<td>按父容器百分比控制子组件尺寸</td>
+</tr>
+<tr>
+<td><strong>IndexedStack</strong></td>
+<td>同时只显示一个子组件，用于简单页面切换</td>
+</tr>
+</tbody>
+</table>
+<p><strong>关键记忆点</strong>：</p>
+<ul>
+<li>Stack 的 <code>fit</code> 属性控制约束传递方式：<code>loose</code>（放宽）、<code>expand</code>（收紧）、<code>passthrough</code>（透传）</li>
+<li>Stack 的大小由非定位子组件决定，Positioned 子组件不参与 Stack 尺寸计算</li>
+<li><code>Alignment</code> 坐标系以中心为原点（-1 到 1），<code>FractionalOffset</code> 以左上角为原点（0 到 1）</li>
+<li><code>Positioned</code> 在同一方向上最多指定两个参数（left/right/width 三选二）</li>
+<li><code>IndexedStack</code> 适合少量页面的保持状态切换，页面多时考虑其他方案</li>
+</ul>
+<hr />
+<h2 id="11-课后练习">11. 课后练习</h2>
+<h3 id="练习一基础练习">练习一：基础练习</h3>
+<p>创建一个 300×300 的 Stack，在其中放置 4 个不同颜色的 100×100 方块，分别定位在四个角落，中心再放一个圆形组件。要求使用 <code>Positioned</code> 定位四角，使用 <code>Align</code> 居中圆形。</p>
+<h3 id="练习二实战练习">练习二：实战练习</h3>
+<p>实现一个<strong>用户卡片</strong>组件，要求：</p>
+<ul>
+<li>背景是一张图片（可用 <code>Container</code> + 颜色模拟）</li>
+<li>底部有半透明黑色遮罩，上面显示用户名和简介</li>
+<li>右上角有一个&quot;VIP&quot;金色标签</li>
+<li>左下角显示在线状态的绿色圆点</li>
+</ul>
+<h3 id="练习三进阶练习">练习三：进阶练习</h3>
+<p>使用 <code>IndexedStack</code> + <code>BottomNavigationBar</code> 实现一个 3 页面的 Tab 切换应用，其中每个页面都包含一个计数器（<code>StatefulWidget</code>），验证页面切换时状态是否保持。然后思考：如果有 20 个这样的页面，<code>IndexedStack</code> 还合适吗？你会选择什么替代方案？</p>
+<hr />
+<blockquote>
+<p><strong>下一课预告</strong>：第08课 弹性布局与流式布局 - Wrap、Flow 与响应式布局，我们将学习当内容放不下一行时如何自动换行排列。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

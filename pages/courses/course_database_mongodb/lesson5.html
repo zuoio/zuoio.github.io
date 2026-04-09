@@ -1,0 +1,1881 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第05章-mongotemplate-详解">第05章 MongoTemplate 详解</h1>
+<blockquote>
+<p>在上一章中我们学习了 MongoRepository 的便捷用法。但在实际项目中，面对复杂的查询、动态条件拼接、批量更新等场景，MongoRepository 往往力不从心。本章将深入学习 MongoTemplate —— Spring Data MongoDB 提供的底层模板类，掌握它意味着你可以驾驭几乎所有 MongoDB 操作。</p>
+</blockquote>
+<hr />
+<h2 id="51-mongotemplate-vs-mongorepository--如何选择">5.1 MongoTemplate vs MongoRepository —— 如何选择</h2>
+<h3 id="511-对比总览">5.1.1 对比总览</h3>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>MongoRepository</th>
+<th>MongoTemplate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>使用方式</strong></td>
+<td>继承接口，声明方法名即可</td>
+<td>注入 Bean，手动编写查询逻辑</td>
+</tr>
+<tr>
+<td><strong>学习成本</strong></td>
+<td>低，上手快</td>
+<td>中等，需要了解 Criteria/Query API</td>
+</tr>
+<tr>
+<td><strong>CRUD 操作</strong></td>
+<td>自动生成，开箱即用</td>
+<td>需要手动编写，但控制力强</td>
+</tr>
+<tr>
+<td><strong>复杂查询</strong></td>
+<td>方法名派生有局限，@Query 也受限</td>
+<td>支持任意复杂的查询条件组合</td>
+</tr>
+<tr>
+<td><strong>动态查询</strong></td>
+<td>不擅长（条件不固定时难以处理）</td>
+<td>非常擅长，可以动态拼接 Criteria</td>
+</tr>
+<tr>
+<td><strong>聚合操作</strong></td>
+<td>不支持</td>
+<td>完整支持 Aggregation Pipeline</td>
+</tr>
+<tr>
+<td><strong>批量操作</strong></td>
+<td>有限支持</td>
+<td>完整支持 bulkOps</td>
+</tr>
+<tr>
+<td><strong>部分字段更新</strong></td>
+<td>不方便（save 是整体替换）</td>
+<td>精确控制 Update 哪些字段</td>
+</tr>
+<tr>
+<td><strong>分页排序</strong></td>
+<td>内置支持，使用简单</td>
+<td>需手动实现，但更灵活</td>
+</tr>
+<tr>
+<td><strong>原子操作</strong></td>
+<td>不支持 findAndModify</td>
+<td>支持 findAndModify、findAndReplace</td>
+</tr>
+<tr>
+<td><strong>返回值控制</strong></td>
+<td>返回完整实体</td>
+<td>可以投影返回部分字段</td>
+</tr>
+</tbody>
+</table>
+<h3 id="512-适用场景分析">5.1.2 适用场景分析</h3>
+<p><strong>推荐使用 MongoRepository 的场景：</strong></p>
+<ul>
+<li>简单的增删改查操作</li>
+<li>查询条件固定、明确</li>
+<li>快速搭建原型，追求开发效率</li>
+<li>标准的分页列表查询</li>
+</ul>
+<p><strong>推荐使用 MongoTemplate 的场景：</strong></p>
+<ul>
+<li>动态查询条件（如管理后台的多条件筛选）</li>
+<li>复杂的嵌套文档查询</li>
+<li>需要原子更新操作（如计数器自增、数组元素操作）</li>
+<li>聚合统计</li>
+<li>需要精细控制返回字段</li>
+<li>批量操作，对性能有要求</li>
+</ul>
+<h3 id="513-最佳实践混合使用">5.1.3 最佳实践：混合使用</h3>
+<p>在实际项目中，<strong>两者完全可以共存</strong>。推荐策略：</p>
+<pre><code class="language-java">// 1. 定义 Repository 接口处理简单 CRUD
+public interface UserRepository extends MongoRepository&lt;User, String&gt; {
+    List&lt;User&gt; findByStatus(String status);
+    Optional&lt;User&gt; findByEmail(String email);
+}
+
+// 2. 在 Service 中同时注入两者
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final MongoTemplate mongoTemplate;
+
+    public UserService(UserRepository userRepository, MongoTemplate mongoTemplate) {
+        this.userRepository = userRepository;
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    // 简单查询 —— 使用 Repository
+    public Optional&lt;User&gt; findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    // 复杂动态查询 —— 使用 MongoTemplate
+    public List&lt;User&gt; searchUsers(String name, Integer minAge, Integer maxAge, String status) {
+        Query query = new Query();
+        if (name != null) {
+            query.addCriteria(Criteria.where(&quot;name&quot;).regex(name, &quot;i&quot;));
+        }
+        if (minAge != null) {
+            query.addCriteria(Criteria.where(&quot;age&quot;).gte(minAge));
+        }
+        if (maxAge != null) {
+            query.addCriteria(Criteria.where(&quot;age&quot;).lte(maxAge));
+        }
+        if (status != null) {
+            query.addCriteria(Criteria.where(&quot;status&quot;).is(status));
+        }
+        return mongoTemplate.find(query, User.class);
+    }
+}
+</code></pre>
+<hr />
+<h2 id="52-使用-mongotemplate-进行-crud-操作">5.2 使用 MongoTemplate 进行 CRUD 操作</h2>
+<h3 id="前置准备实体类">前置准备：实体类</h3>
+<p>后续示例统一使用以下实体类：</p>
+<pre><code class="language-java">package com.example.mongo.entity;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Document(collection = &quot;users&quot;)
+public class User {
+
+    @Id
+    private String id;
+
+    private String name;
+
+    private Integer age;
+
+    private String email;
+
+    private String status;
+
+    private List&lt;String&gt; tags;
+
+    @Field(&quot;created_at&quot;)
+    private LocalDateTime createdAt;
+
+    // 构造方法
+    public User() {}
+
+    public User(String name, Integer age, String email) {
+        this.name = name;
+        this.age = age;
+        this.email = email;
+        this.createdAt = LocalDateTime.now();
+        this.status = &quot;ACTIVE&quot;;
+    }
+
+    // getter / setter 省略，实际项目中建议使用 Lombok @Data
+}
+</code></pre>
+<h3 id="521-insert--insertall插入文档">5.2.1 insert / insertAll：插入文档</h3>
+<p><code>insert</code> 方法用于向集合中插入一个新文档。如果文档的 <code>_id</code> 已存在，会抛出 <code>DuplicateKeyException</code>。</p>
+<p><strong>插入单个文档：</strong></p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import com.example.mongo.entity.User;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public UserService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    public User createUser(User user) {
+        // insert 会将生成的 _id 回写到 user 对象中
+        return mongoTemplate.insert(user);
+    }
+
+    // 指定集合名称插入（当实体类没有 @Document 注解时有用）
+    public User createUserToCollection(User user, String collectionName) {
+        return mongoTemplate.insert(user, collectionName);
+    }
+}
+</code></pre>
+<p><strong>批量插入文档：</strong></p>
+<pre><code class="language-java">import java.util.Collection;
+import java.util.List;
+
+public Collection&lt;User&gt; batchCreateUsers(List&lt;User&gt; users) {
+    // insertAll 批量插入，性能优于循环调用 insert
+    return mongoTemplate.insertAll(users);
+}
+
+// 也可以使用 insert 的重载方法批量插入到指定集合
+public Collection&lt;User&gt; batchInsert(List&lt;User&gt; users) {
+    return mongoTemplate.insert(users, &quot;users&quot;);
+}
+</code></pre>
+<p><strong>使用示例：</strong></p>
+<pre><code class="language-java">// 插入单个
+User user = new User(&quot;张三&quot;, 25, &quot;zhangsan@example.com&quot;);
+user.setTags(List.of(&quot;Java&quot;, &quot;MongoDB&quot;));
+User saved = userService.createUser(user);
+System.out.println(&quot;生成的ID: &quot; + saved.getId());
+
+// 批量插入
+List&lt;User&gt; users = List.of(
+    new User(&quot;李四&quot;, 30, &quot;lisi@example.com&quot;),
+    new User(&quot;王五&quot;, 28, &quot;wangwu@example.com&quot;),
+    new User(&quot;赵六&quot;, 35, &quot;zhaoliu@example.com&quot;)
+);
+Collection&lt;User&gt; result = userService.batchCreateUsers(users);
+System.out.println(&quot;插入数量: &quot; + result.size());
+</code></pre>
+<blockquote>
+<p><strong>注意</strong>：<code>insert</code> 和 <code>save</code> 的区别：<code>insert</code> 在 <code>_id</code> 冲突时抛异常，<code>save</code> 在 <code>_id</code> 存在时执行更新。</p>
+</blockquote>
+<h3 id="522-find--findone--findbyid查询文档">5.2.2 find / findOne / findById：查询文档</h3>
+<p><strong>查询所有文档：</strong></p>
+<pre><code class="language-java">import org.springframework.data.mongodb.core.query.Query;
+import java.util.List;
+
+public List&lt;User&gt; findAllUsers() {
+    return mongoTemplate.findAll(User.class);
+}
+
+// 指定集合名称
+public List&lt;User&gt; findAllUsersFromCollection(String collectionName) {
+    return mongoTemplate.findAll(User.class, collectionName);
+}
+</code></pre>
+<p><strong>根据条件查询多个文档：</strong></p>
+<pre><code class="language-java">import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+
+public List&lt;User&gt; findActiveUsers() {
+    Query query = new Query(Criteria.where(&quot;status&quot;).is(&quot;ACTIVE&quot;));
+    return mongoTemplate.find(query, User.class);
+}
+
+public List&lt;User&gt; findUsersByAgeRange(int minAge, int maxAge) {
+    Query query = new Query(
+        Criteria.where(&quot;age&quot;).gte(minAge).lte(maxAge)
+    );
+    return mongoTemplate.find(query, User.class);
+}
+</code></pre>
+<p><strong>查询单个文档：</strong></p>
+<pre><code class="language-java">public User findOneByEmail(String email) {
+    Query query = new Query(Criteria.where(&quot;email&quot;).is(email));
+    // findOne：返回匹配的第一个文档，没有匹配则返回 null
+    return mongoTemplate.findOne(query, User.class);
+}
+</code></pre>
+<p><strong>根据 ID 查询：</strong></p>
+<pre><code class="language-java">public User findUserById(String id) {
+    // findById 是根据 _id 查询的快捷方法
+    return mongoTemplate.findById(id, User.class);
+}
+</code></pre>
+<p><strong>查询文档数量：</strong></p>
+<pre><code class="language-java">public long countActiveUsers() {
+    Query query = new Query(Criteria.where(&quot;status&quot;).is(&quot;ACTIVE&quot;));
+    return mongoTemplate.count(query, User.class);
+}
+</code></pre>
+<p><strong>判断文档是否存在：</strong></p>
+<pre><code class="language-java">public boolean existsByEmail(String email) {
+    Query query = new Query(Criteria.where(&quot;email&quot;).is(email));
+    return mongoTemplate.exists(query, User.class);
+}
+</code></pre>
+<h3 id="523-save保存文档">5.2.3 save：保存文档</h3>
+<p><code>save</code> 方法的行为取决于文档是否包含 <code>_id</code>：</p>
+<ul>
+<li>如果 <code>_id</code> 为 null → 执行插入操作（等同于 insert）</li>
+<li>如果 <code>_id</code> 有值且已存在 → 执行<strong>整体替换更新</strong></li>
+<li>如果 <code>_id</code> 有值但不存在 → 执行插入操作</li>
+</ul>
+<pre><code class="language-java">public User saveUser(User user) {
+    return mongoTemplate.save(user);
+}
+</code></pre>
+<p><strong>典型使用场景 —— 查出来修改后保存：</strong></p>
+<pre><code class="language-java">public User updateUserName(String id, String newName) {
+    User user = mongoTemplate.findById(id, User.class);
+    if (user == null) {
+        throw new RuntimeException(&quot;用户不存在: &quot; + id);
+    }
+    user.setName(newName);
+    // save 会整体替换该文档（注意：其他字段如果为 null 也会被写入）
+    return mongoTemplate.save(user);
+}
+</code></pre>
+<blockquote>
+<p><strong>⚠️ 警告</strong>：<code>save</code> 是整体替换文档，如果你只想更新某几个字段，应该使用 <code>updateFirst</code> / <code>updateMulti</code> + <code>Update</code> 对象，避免意外覆盖其他字段。</p>
+</blockquote>
+<h3 id="524-updatefirst--updatemulti更新文档">5.2.4 updateFirst / updateMulti：更新文档</h3>
+<p>与 <code>save</code> 不同，<code>updateFirst</code> 和 <code>updateMulti</code> 可以<strong>只更新指定的字段</strong>，不影响文档中的其他字段。</p>
+<p><strong>更新第一个匹配的文档：</strong></p>
+<pre><code class="language-java">import org.springframework.data.mongodb.core.query.Update;
+import com.mongodb.client.result.UpdateResult;
+
+public long updateUserStatus(String id, String newStatus) {
+    Query query = new Query(Criteria.where(&quot;_id&quot;).is(id));
+    Update update = new Update().set(&quot;status&quot;, newStatus);
+
+    UpdateResult result = mongoTemplate.updateFirst(query, update, User.class);
+    return result.getModifiedCount(); // 返回实际修改的文档数
+}
+</code></pre>
+<p><strong>更新所有匹配的文档：</strong></p>
+<pre><code class="language-java">public long deactivateOldUsers(int maxAge) {
+    Query query = new Query(Criteria.where(&quot;age&quot;).gt(maxAge));
+    Update update = new Update()
+        .set(&quot;status&quot;, &quot;INACTIVE&quot;)
+        .set(&quot;updatedAt&quot;, LocalDateTime.now());
+
+    UpdateResult result = mongoTemplate.updateMulti(query, update, User.class);
+
+    System.out.println(&quot;匹配数量: &quot; + result.getMatchedCount());
+    System.out.println(&quot;修改数量: &quot; + result.getModifiedCount());
+
+    return result.getModifiedCount();
+}
+</code></pre>
+<p><strong>UpdateResult 常用方法：</strong></p>
+<pre><code class="language-java">UpdateResult result = mongoTemplate.updateFirst(query, update, User.class);
+
+result.getMatchedCount();    // 匹配到的文档数
+result.getModifiedCount();   // 实际被修改的文档数
+result.getUpsertedId();      // 如果是 upsert 操作，返回新插入文档的 _id
+result.wasAcknowledged();    // 操作是否被确认
+</code></pre>
+<h3 id="525-remove删除文档">5.2.5 remove：删除文档</h3>
+<pre><code class="language-java">import com.mongodb.client.result.DeleteResult;
+
+// 根据条件删除
+public long deleteUserByEmail(String email) {
+    Query query = new Query(Criteria.where(&quot;email&quot;).is(email));
+    DeleteResult result = mongoTemplate.remove(query, User.class);
+    return result.getDeletedCount();
+}
+
+// 根据对象删除（需要对象中包含 _id）
+public long deleteUser(User user) {
+    DeleteResult result = mongoTemplate.remove(user);
+    return result.getDeletedCount();
+}
+
+// 删除集合中所有文档
+public long deleteAllUsers() {
+    Query query = new Query();
+    DeleteResult result = mongoTemplate.remove(query, User.class);
+    return result.getDeletedCount();
+}
+
+// 删除并返回被删除的文档
+public User findAndRemove(String email) {
+    Query query = new Query(Criteria.where(&quot;email&quot;).is(email));
+    return mongoTemplate.findAndRemove(query, User.class);
+}
+
+// 删除所有匹配的文档并返回它们
+public List&lt;User&gt; findAllAndRemove(String status) {
+    Query query = new Query(Criteria.where(&quot;status&quot;).is(status));
+    return mongoTemplate.findAllAndRemove(query, User.class);
+}
+</code></pre>
+<hr />
+<h2 id="53-criteria-与-query-构建复杂查询条件">5.3 Criteria 与 Query 构建复杂查询条件</h2>
+<p><code>Criteria</code> 和 <code>Query</code> 是 MongoTemplate 中构建查询条件的核心 API。<code>Criteria</code> 用于定义条件，<code>Query</code> 用于组装条件并附加排序、分页、投影等设置。</p>
+<h3 id="531-criteria-基本比较操作符">5.3.1 Criteria 基本比较操作符</h3>
+<pre><code class="language-java">import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+
+// is —— 等于
+Query q1 = new Query(Criteria.where(&quot;name&quot;).is(&quot;张三&quot;));
+
+// ne —— 不等于
+Query q2 = new Query(Criteria.where(&quot;status&quot;).ne(&quot;DELETED&quot;));
+
+// gt / gte —— 大于 / 大于等于
+Query q3 = new Query(Criteria.where(&quot;age&quot;).gt(18));
+Query q4 = new Query(Criteria.where(&quot;age&quot;).gte(18));
+
+// lt / lte —— 小于 / 小于等于
+Query q5 = new Query(Criteria.where(&quot;age&quot;).lt(60));
+Query q6 = new Query(Criteria.where(&quot;age&quot;).lte(60));
+
+// 链式调用实现范围查询：18 &lt;= age &lt;= 60
+Query q7 = new Query(Criteria.where(&quot;age&quot;).gte(18).lte(60));
+
+// in —— 值在集合中
+Query q8 = new Query(Criteria.where(&quot;status&quot;).in(&quot;ACTIVE&quot;, &quot;PENDING&quot;));
+
+// nin —— 值不在集合中
+Query q9 = new Query(Criteria.where(&quot;status&quot;).nin(&quot;DELETED&quot;, &quot;BANNED&quot;));
+
+// exists —— 字段是否存在
+Query q10 = new Query(Criteria.where(&quot;email&quot;).exists(true));
+
+// regex —— 正则匹配（第二个参数 &quot;i&quot; 表示不区分大小写）
+Query q11 = new Query(Criteria.where(&quot;name&quot;).regex(&quot;^张&quot;, &quot;i&quot;));
+</code></pre>
+<h3 id="532-逻辑组合查询">5.3.2 逻辑组合查询</h3>
+<p><strong>AND 组合（默认行为）：</strong></p>
+<p>在同一个 <code>Query</code> 上添加多个 <code>Criteria</code> 就是 AND 关系：</p>
+<pre><code class="language-java">// 查询 status 为 ACTIVE 且 age &gt; 25 的用户
+Query query = new Query();
+query.addCriteria(Criteria.where(&quot;status&quot;).is(&quot;ACTIVE&quot;));
+query.addCriteria(Criteria.where(&quot;age&quot;).gt(25));
+// 等价于 MongoDB: { status: &quot;ACTIVE&quot;, age: { $gt: 25 } }
+</code></pre>
+<p><strong>使用 andOperator：</strong></p>
+<p>当需要对<strong>同一个字段</strong>组合多个条件，或者需要显式的 <code>$and</code> 时：</p>
+<pre><code class="language-java">// 对同一字段使用 $and（避免 key 冲突）
+Criteria criteria = new Criteria().andOperator(
+    Criteria.where(&quot;age&quot;).gt(18),
+    Criteria.where(&quot;age&quot;).lt(60),
+    Criteria.where(&quot;status&quot;).is(&quot;ACTIVE&quot;)
+);
+Query query = new Query(criteria);
+// MongoDB: { $and: [ {age: {$gt:18}}, {age: {$lt:60}}, {status: &quot;ACTIVE&quot;} ] }
+</code></pre>
+<p><strong>OR 组合 —— orOperator：</strong></p>
+<pre><code class="language-java">// 查询 status 为 ACTIVE 或 age &lt; 20 的用户
+Criteria criteria = new Criteria().orOperator(
+    Criteria.where(&quot;status&quot;).is(&quot;ACTIVE&quot;),
+    Criteria.where(&quot;age&quot;).lt(20)
+);
+Query query = new Query(criteria);
+// MongoDB: { $or: [ {status: &quot;ACTIVE&quot;}, {age: {$lt: 20}} ] }
+</code></pre>
+<p><strong>AND + OR 混合使用：</strong></p>
+<pre><code class="language-java">// 查询 name 以 &quot;张&quot; 开头，且 (status 为 ACTIVE 或 age &gt; 30) 的用户
+Criteria criteria = Criteria.where(&quot;name&quot;).regex(&quot;^张&quot;)
+    .orOperator(
+        Criteria.where(&quot;status&quot;).is(&quot;ACTIVE&quot;),
+        Criteria.where(&quot;age&quot;).gt(30)
+    );
+Query query = new Query(criteria);
+// MongoDB: { name: /^张/, $or: [ {status: &quot;ACTIVE&quot;}, {age: {$gt: 30}} ] }
+</code></pre>
+<h3 id="533-嵌套文档查询">5.3.3 嵌套文档查询</h3>
+<p>假设 User 文档中有嵌套的地址信息：</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;张三&quot;,
+  &quot;address&quot;: {
+    &quot;city&quot;: &quot;北京&quot;,
+    &quot;district&quot;: &quot;朝阳区&quot;,
+    &quot;zipCode&quot;: &quot;100000&quot;
+  }
+}
+</code></pre>
+<p>使用<strong>点号表示法</strong>查询嵌套字段：</p>
+<pre><code class="language-java">// 查询地址在北京的用户
+Query query = new Query(Criteria.where(&quot;address.city&quot;).is(&quot;北京&quot;));
+List&lt;User&gt; users = mongoTemplate.find(query, User.class);
+
+// 查询地址在北京市朝阳区的用户
+Query query2 = new Query(
+    Criteria.where(&quot;address.city&quot;).is(&quot;北京&quot;)
+            .and(&quot;address.district&quot;).is(&quot;朝阳区&quot;)
+);
+List&lt;User&gt; users2 = mongoTemplate.find(query2, User.class);
+</code></pre>
+<h3 id="534-数组字段查询">5.3.4 数组字段查询</h3>
+<p>假设用户文档中有如下结构：</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;张三&quot;,
+  &quot;tags&quot;: [&quot;Java&quot;, &quot;MongoDB&quot;, &quot;Spring&quot;],
+  &quot;scores&quot;: [
+    { &quot;subject&quot;: &quot;数学&quot;, &quot;score&quot;: 90 },
+    { &quot;subject&quot;: &quot;英语&quot;, &quot;score&quot;: 85 }
+  ]
+}
+</code></pre>
+<p><strong>基本数组查询：</strong></p>
+<pre><code class="language-java">// 查询 tags 中包含 &quot;Java&quot; 的用户
+Query q1 = new Query(Criteria.where(&quot;tags&quot;).is(&quot;Java&quot;));
+
+// 查询 tags 中同时包含 &quot;Java&quot; 和 &quot;MongoDB&quot; 的用户
+Query q2 = new Query(Criteria.where(&quot;tags&quot;).all(&quot;Java&quot;, &quot;MongoDB&quot;));
+
+// 查询 tags 数组大小为 3 的用户
+Query q3 = new Query(Criteria.where(&quot;tags&quot;).size(3));
+</code></pre>
+<p><strong>elemMatch —— 数组内嵌文档查询：</strong></p>
+<pre><code class="language-java">// 查询 scores 数组中存在「数学成绩大于 80」的用户
+Query q4 = new Query(
+    Criteria.where(&quot;scores&quot;).elemMatch(
+        Criteria.where(&quot;subject&quot;).is(&quot;数学&quot;).and(&quot;score&quot;).gt(80)
+    )
+);
+List&lt;User&gt; users = mongoTemplate.find(q4, User.class);
+</code></pre>
+<h3 id="535-综合查询示例由简到繁">5.3.5 综合查询示例（由简到繁）</h3>
+<p>下面给出 10 个不同复杂度的查询示例：</p>
+<pre><code class="language-java">@Service
+public class UserQueryService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public UserQueryService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    // 示例1：精确匹配单个字段
+    public User findByEmail(String email) {
+        Query query = new Query(Criteria.where(&quot;email&quot;).is(email));
+        return mongoTemplate.findOne(query, User.class);
+    }
+
+    // 示例2：范围查询
+    public List&lt;User&gt; findByAgeRange(int min, int max) {
+        Query query = new Query(Criteria.where(&quot;age&quot;).gte(min).lte(max));
+        return mongoTemplate.find(query, User.class);
+    }
+
+    // 示例3：正则模糊查询
+    public List&lt;User&gt; searchByName(String keyword) {
+        Query query = new Query(
+            Criteria.where(&quot;name&quot;).regex(keyword, &quot;i&quot;)
+        );
+        return mongoTemplate.find(query, User.class);
+    }
+
+    // 示例4：IN 查询 + 排序
+    public List&lt;User&gt; findByStatusIn(List&lt;String&gt; statuses) {
+        Query query = new Query(
+            Criteria.where(&quot;status&quot;).in(statuses)
+        );
+        query.with(Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));
+        return mongoTemplate.find(query, User.class);
+    }
+
+    // 示例5：多条件 AND 查询
+    public List&lt;User&gt; findActiveAdults() {
+        Query query = new Query();
+        query.addCriteria(Criteria.where(&quot;status&quot;).is(&quot;ACTIVE&quot;));
+        query.addCriteria(Criteria.where(&quot;age&quot;).gte(18));
+        return mongoTemplate.find(query, User.class);
+    }
+
+    // 示例6：OR 条件查询
+    public List&lt;User&gt; findVipOrSenior() {
+        Criteria criteria = new Criteria().orOperator(
+            Criteria.where(&quot;tags&quot;).is(&quot;VIP&quot;),
+            Criteria.where(&quot;age&quot;).gte(60)
+        );
+        return mongoTemplate.find(new Query(criteria), User.class);
+    }
+
+    // 示例7：嵌套文档 + AND + OR 组合
+    public List&lt;User&gt; findBeijingActiveOrYoung() {
+        Criteria criteria = Criteria.where(&quot;address.city&quot;).is(&quot;北京&quot;)
+            .orOperator(
+                Criteria.where(&quot;status&quot;).is(&quot;ACTIVE&quot;),
+                Criteria.where(&quot;age&quot;).lt(25)
+            );
+        return mongoTemplate.find(new Query(criteria), User.class);
+    }
+
+    // 示例8：数组 elemMatch + 其他条件
+    public List&lt;User&gt; findHighScoreStudents(String subject, int minScore) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where(&quot;status&quot;).is(&quot;ACTIVE&quot;));
+        query.addCriteria(
+            Criteria.where(&quot;scores&quot;).elemMatch(
+                Criteria.where(&quot;subject&quot;).is(subject).and(&quot;score&quot;).gte(minScore)
+            )
+        );
+        return mongoTemplate.find(query, User.class);
+    }
+
+    // 示例9：字段投影（只返回部分字段）+ 分页
+    public List&lt;User&gt; findUserNamesAndEmails(int page, int size) {
+        Query query = new Query(Criteria.where(&quot;status&quot;).is(&quot;ACTIVE&quot;));
+        query.fields().include(&quot;name&quot;).include(&quot;email&quot;).exclude(&quot;_id&quot;);
+        query.skip((long) page * size).limit(size);
+        return mongoTemplate.find(query, User.class);
+    }
+
+    // 示例10：复杂动态查询（管理后台常见场景）
+    public List&lt;User&gt; advancedSearch(String name, Integer minAge, Integer maxAge,
+                                     String status, String city,
+                                     List&lt;String&gt; tags, String sortField,
+                                     String sortDirection) {
+        Query query = new Query();
+
+        if (name != null &amp;&amp; !name.isBlank()) {
+            query.addCriteria(Criteria.where(&quot;name&quot;).regex(name, &quot;i&quot;));
+        }
+        if (minAge != null) {
+            query.addCriteria(Criteria.where(&quot;age&quot;).gte(minAge));
+        }
+        if (maxAge != null) {
+            // 注意：如果 minAge 和 maxAge 都有值，不能对同一字段 addCriteria 两次
+            // 需要合并成一个 Criteria：Criteria.where(&quot;age&quot;).gte(minAge).lte(maxAge)
+            // 这里简化处理，假设 minAge 和 maxAge 互斥传入
+            query.addCriteria(Criteria.where(&quot;age&quot;).lte(maxAge));
+        }
+        if (status != null) {
+            query.addCriteria(Criteria.where(&quot;status&quot;).is(status));
+        }
+        if (city != null) {
+            query.addCriteria(Criteria.where(&quot;address.city&quot;).is(city));
+        }
+        if (tags != null &amp;&amp; !tags.isEmpty()) {
+            query.addCriteria(Criteria.where(&quot;tags&quot;).all(tags));
+        }
+
+        Sort.Direction direction = &quot;desc&quot;.equalsIgnoreCase(sortDirection)
+            ? Sort.Direction.DESC : Sort.Direction.ASC;
+        query.with(Sort.by(direction, sortField != null ? sortField : &quot;createdAt&quot;));
+
+        return mongoTemplate.find(query, User.class);
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong>提示</strong>：对同一个字段不能在同一个 Query 中 <code>addCriteria</code> 两次（会报错），需要合并为一个 Criteria 链式调用，如 <code>Criteria.where(&quot;age&quot;).gte(18).lte(60)</code>。</p>
+</blockquote>
+<hr />
+<h2 id="54-update-对象与部分字段更新">5.4 Update 对象与部分字段更新</h2>
+<p><code>Update</code> 类是 MongoTemplate 中用于构建更新操作的核心类。它对应 MongoDB 的各种更新操作符。</p>
+<h3 id="541-常用-update-方法">5.4.1 常用 Update 方法</h3>
+<pre><code class="language-java">import org.springframework.data.mongodb.core.query.Update;
+
+// set —— 设置字段值（字段不存在则创建）
+Update u1 = new Update().set(&quot;name&quot;, &quot;新名字&quot;);
+
+// unset —— 删除字段
+Update u2 = new Update().unset(&quot;tempField&quot;);
+
+// inc —— 字段值自增（支持正负数）
+Update u3 = new Update().inc(&quot;viewCount&quot;, 1);      // +1
+Update u4 = new Update().inc(&quot;balance&quot;, -100);      // -100
+
+// push —— 向数组添加一个元素
+Update u5 = new Update().push(&quot;tags&quot;, &quot;Python&quot;);
+
+// push 多个元素
+Update u6 = new Update().push(&quot;tags&quot;).each(&quot;Python&quot;, &quot;Go&quot;, &quot;Rust&quot;);
+
+// addToSet —— 向数组添加元素（如果不存在才添加，避免重复）
+Update u7 = new Update().addToSet(&quot;tags&quot;, &quot;Java&quot;);
+
+// addToSet 多个元素
+Update u8 = new Update().addToSet(&quot;tags&quot;).each(&quot;Java&quot;, &quot;Spring&quot;);
+
+// pull —— 从数组中移除匹配的元素
+Update u9 = new Update().pull(&quot;tags&quot;, &quot;PHP&quot;);
+
+// pop —— 移除数组的第一个或最后一个元素
+Update u10 = new Update().pop(&quot;tags&quot;, Update.Position.LAST);   // 移除最后一个
+Update u11 = new Update().pop(&quot;tags&quot;, Update.Position.FIRST);  // 移除第一个
+
+// rename —— 重命名字段
+Update u12 = new Update().rename(&quot;oldField&quot;, &quot;newField&quot;);
+
+// 链式组合多个更新操作
+Update combined = new Update()
+    .set(&quot;name&quot;, &quot;新名字&quot;)
+    .set(&quot;status&quot;, &quot;ACTIVE&quot;)
+    .inc(&quot;loginCount&quot;, 1)
+    .set(&quot;lastLoginTime&quot;, LocalDateTime.now());
+</code></pre>
+<h3 id="542-完整的更新示例">5.4.2 完整的更新示例</h3>
+<pre><code class="language-java">@Service
+public class UserUpdateService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public UserUpdateService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    // 更新用户的基本信息
+    public long updateUserInfo(String id, String name, String email) {
+        Query query = new Query(Criteria.where(&quot;_id&quot;).is(id));
+        Update update = new Update()
+            .set(&quot;name&quot;, name)
+            .set(&quot;email&quot;, email)
+            .set(&quot;updatedAt&quot;, LocalDateTime.now());
+        UpdateResult result = mongoTemplate.updateFirst(query, update, User.class);
+        return result.getModifiedCount();
+    }
+
+    // 浏览量自增
+    public void incrementViewCount(String articleId) {
+        Query query = new Query(Criteria.where(&quot;_id&quot;).is(articleId));
+        Update update = new Update().inc(&quot;viewCount&quot;, 1);
+        mongoTemplate.updateFirst(query, update, &quot;articles&quot;);
+    }
+
+    // 给用户添加标签（避免重复）
+    public void addTag(String userId, String tag) {
+        Query query = new Query(Criteria.where(&quot;_id&quot;).is(userId));
+        Update update = new Update().addToSet(&quot;tags&quot;, tag);
+        mongoTemplate.updateFirst(query, update, User.class);
+    }
+
+    // 批量给用户添加多个标签
+    public void addTags(String userId, List&lt;String&gt; newTags) {
+        Query query = new Query(Criteria.where(&quot;_id&quot;).is(userId));
+        Update update = new Update().addToSet(&quot;tags&quot;).each(newTags.toArray());
+        mongoTemplate.updateFirst(query, update, User.class);
+    }
+
+    // 移除用户的某个标签
+    public void removeTag(String userId, String tag) {
+        Query query = new Query(Criteria.where(&quot;_id&quot;).is(userId));
+        Update update = new Update().pull(&quot;tags&quot;, tag);
+        mongoTemplate.updateFirst(query, update, User.class);
+    }
+
+    // 批量更新：将所有超过60岁的用户状态设置为 SENIOR
+    public long markSeniorUsers() {
+        Query query = new Query(Criteria.where(&quot;age&quot;).gte(60));
+        Update update = new Update()
+            .set(&quot;status&quot;, &quot;SENIOR&quot;)
+            .set(&quot;updatedAt&quot;, LocalDateTime.now());
+        UpdateResult result = mongoTemplate.updateMulti(query, update, User.class);
+        return result.getModifiedCount();
+    }
+}
+</code></pre>
+<h3 id="543-findandmodify--原子操作">5.4.3 findAndModify —— 原子操作</h3>
+<p><code>findAndModify</code> 可以在一次原子操作中查找并修改文档，常用于实现计数器、抢锁等场景。</p>
+<pre><code class="language-java">import org.springframework.data.mongodb.core.FindAndModifyOptions;
+
+// 自增序列号生成器 —— 经典用法
+public long getNextSequence(String sequenceName) {
+    Query query = new Query(Criteria.where(&quot;_id&quot;).is(sequenceName));
+    Update update = new Update().inc(&quot;value&quot;, 1);
+
+    // returnNew(true)：返回修改后的文档（而不是修改前的）
+    // upsert(true)：如果不存在则自动创建
+    FindAndModifyOptions options = FindAndModifyOptions.options()
+        .returnNew(true)
+        .upsert(true);
+
+    Sequence sequence = mongoTemplate.findAndModify(
+        query, update, options, Sequence.class
+    );
+    return sequence != null ? sequence.getValue() : 1;
+}
+
+// Sequence 实体
+@Document(collection = &quot;sequences&quot;)
+public class Sequence {
+    @Id
+    private String id;
+    private long value;
+
+    // getter / setter
+    public long getValue() { return value; }
+    public void setValue(long value) { this.value = value; }
+}
+</code></pre>
+<p><strong>带条件的原子更新：</strong></p>
+<pre><code class="language-java">// 抢购场景：库存大于 0 时才扣减
+public Product decrementStock(String productId) {
+    Query query = new Query(
+        Criteria.where(&quot;_id&quot;).is(productId).and(&quot;stock&quot;).gt(0)
+    );
+    Update update = new Update().inc(&quot;stock&quot;, -1);
+    FindAndModifyOptions options = FindAndModifyOptions.options().returnNew(true);
+
+    return mongoTemplate.findAndModify(query, update, options, Product.class);
+    // 返回 null 表示库存不足（条件不匹配）
+}
+</code></pre>
+<h3 id="544-upsert-操作">5.4.4 Upsert 操作</h3>
+<p>Upsert = Update + Insert：如果匹配到文档则更新，否则插入新文档。</p>
+<pre><code class="language-java">// 用户设备信息管理：存在则更新登录时间，不存在则创建
+public void upsertDeviceInfo(String userId, String deviceId, String deviceName) {
+    Query query = new Query(
+        Criteria.where(&quot;userId&quot;).is(userId).and(&quot;deviceId&quot;).is(deviceId)
+    );
+    Update update = new Update()
+        .set(&quot;deviceName&quot;, deviceName)
+        .set(&quot;lastLoginTime&quot;, LocalDateTime.now())
+        .setOnInsert(&quot;createdAt&quot;, LocalDateTime.now()); // 仅在插入时设置
+
+    UpdateResult result = mongoTemplate.upsert(query, update, &quot;user_devices&quot;);
+    if (result.getUpsertedId() != null) {
+        System.out.println(&quot;新设备已记录: &quot; + result.getUpsertedId());
+    } else {
+        System.out.println(&quot;设备信息已更新&quot;);
+    }
+}
+</code></pre>
+<blockquote>
+<p><strong><code>setOnInsert</code></strong> 是一个非常有用的方法：只在 upsert 导致插入新文档时才设置该字段，更新已有文档时不会触发。</p>
+</blockquote>
+<h3 id="545-批量操作-bulkoperations">5.4.5 批量操作 BulkOperations</h3>
+<p>当需要执行大量更新操作时，使用 <code>BulkOperations</code> 比循环调用 <code>updateFirst</code> 效率高很多：</p>
+<pre><code class="language-java">import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.util.Pair;
+import com.mongodb.bulk.BulkWriteResult;
+
+public void bulkUpdateUserStatus(Map&lt;String, String&gt; userStatusMap) {
+    BulkOperations bulkOps = mongoTemplate.bulkOps(
+        BulkOperations.BulkMode.UNORDERED, User.class
+    );
+
+    for (Map.Entry&lt;String, String&gt; entry : userStatusMap.entrySet()) {
+        Query query = new Query(Criteria.where(&quot;_id&quot;).is(entry.getKey()));
+        Update update = new Update().set(&quot;status&quot;, entry.getValue());
+        bulkOps.updateOne(query, update);
+    }
+
+    BulkWriteResult result = bulkOps.execute();
+    System.out.println(&quot;匹配: &quot; + result.getMatchedCount());
+    System.out.println(&quot;修改: &quot; + result.getModifiedCount());
+}
+
+// 使用 Pair 列表的方式
+public void bulkUpdateWithPairs(List&lt;Pair&lt;Query, Update&gt;&gt; updates) {
+    BulkOperations bulkOps = mongoTemplate.bulkOps(
+        BulkOperations.BulkMode.ORDERED, User.class
+    );
+    bulkOps.updateMulti(updates);
+    bulkOps.execute();
+}
+</code></pre>
+<blockquote>
+<p><strong>BulkMode.ORDERED</strong>：顺序执行，一个失败后续停止。
+<strong>BulkMode.UNORDERED</strong>：并行执行，一个失败不影响其他操作。</p>
+</blockquote>
+<hr />
+<h2 id="55-分页与排序的实现">5.5 分页与排序的实现</h2>
+<h3 id="551-排序">5.5.1 排序</h3>
+<pre><code class="language-java">import org.springframework.data.domain.Sort;
+
+// 单字段排序
+public List&lt;User&gt; findUsersSortedByAge() {
+    Query query = new Query(Criteria.where(&quot;status&quot;).is(&quot;ACTIVE&quot;));
+    query.with(Sort.by(Sort.Direction.ASC, &quot;age&quot;));
+    return mongoTemplate.find(query, User.class);
+}
+
+// 多字段排序
+public List&lt;User&gt; findUsersSortedByMultipleFields() {
+    Query query = new Query();
+    query.with(Sort.by(
+        Sort.Order.desc(&quot;createdAt&quot;),
+        Sort.Order.asc(&quot;name&quot;)
+    ));
+    return mongoTemplate.find(query, User.class);
+}
+</code></pre>
+<h3 id="552-基本分页">5.5.2 基本分页</h3>
+<p>使用 <code>skip</code> 和 <code>limit</code> 实现分页：</p>
+<pre><code class="language-java">// 基本分页
+public List&lt;User&gt; findUsersWithPage(int page, int size) {
+    Query query = new Query(Criteria.where(&quot;status&quot;).is(&quot;ACTIVE&quot;));
+    query.with(Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));
+    query.skip((long) page * size);
+    query.limit(size);
+    return mongoTemplate.find(query, User.class);
+}
+</code></pre>
+<h3 id="553-使用-pagerequest-分页">5.5.3 使用 PageRequest 分页</h3>
+<p>使用 Spring Data 的 <code>PageRequest</code> 对象，可以同时封装页码、每页大小和排序信息：</p>
+<pre><code class="language-java">import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+public List&lt;User&gt; findUsersWithPageRequest(int page, int size) {
+    Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));
+    Query query = new Query(Criteria.where(&quot;status&quot;).is(&quot;ACTIVE&quot;)).with(pageable);
+    return mongoTemplate.find(query, User.class);
+}
+</code></pre>
+<h3 id="554-封装完整的分页查询从-controller-到-service">5.5.4 封装完整的分页查询（从 Controller 到 Service）</h3>
+<p>下面实现一个完整的分页查询功能，包含分页信息的返回。</p>
+<p><strong>1) 通用分页响应类：</strong></p>
+<pre><code class="language-java">package com.example.mongo.common;
+
+import java.util.List;
+
+public class PageResult&lt;T&gt; {
+
+    private List&lt;T&gt; content;       // 当前页数据
+    private long totalElements;    // 总记录数
+    private int totalPages;        // 总页数
+    private int currentPage;       // 当前页码（从0开始）
+    private int pageSize;          // 每页大小
+    private boolean hasNext;       // 是否有下一页
+    private boolean hasPrevious;   // 是否有上一页
+
+    public PageResult(List&lt;T&gt; content, long totalElements, int currentPage, int pageSize) {
+        this.content = content;
+        this.totalElements = totalElements;
+        this.currentPage = currentPage;
+        this.pageSize = pageSize;
+        this.totalPages = (int) Math.ceil((double) totalElements / pageSize);
+        this.hasNext = currentPage &lt; totalPages - 1;
+        this.hasPrevious = currentPage &gt; 0;
+    }
+
+    // getter 方法
+    public List&lt;T&gt; getContent() { return content; }
+    public long getTotalElements() { return totalElements; }
+    public int getTotalPages() { return totalPages; }
+    public int getCurrentPage() { return currentPage; }
+    public int getPageSize() { return pageSize; }
+    public boolean isHasNext() { return hasNext; }
+    public boolean isHasPrevious() { return hasPrevious; }
+}
+</code></pre>
+<p><strong>2) Service 层 —— 分页查询方法：</strong></p>
+<pre><code class="language-java">package com.example.mongo.service;
+
+import com.example.mongo.common.PageResult;
+import com.example.mongo.entity.User;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class UserService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public UserService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    /**
+     * 分页查询用户列表（支持多条件筛选）
+     *
+     * @param name   用户名（模糊匹配，可为 null）
+     * @param status 状态（精确匹配，可为 null）
+     * @param minAge 最小年龄（可为 null）
+     * @param maxAge 最大年龄（可为 null）
+     * @param page   页码（从 0 开始）
+     * @param size   每页大小
+     * @return 分页结果
+     */
+    public PageResult&lt;User&gt; findUsersPage(String name, String status,
+                                          Integer minAge, Integer maxAge,
+                                          int page, int size) {
+        // 构建查询条件
+        Query query = new Query();
+
+        if (name != null &amp;&amp; !name.isBlank()) {
+            query.addCriteria(Criteria.where(&quot;name&quot;).regex(name, &quot;i&quot;));
+        }
+        if (status != null &amp;&amp; !status.isBlank()) {
+            query.addCriteria(Criteria.where(&quot;status&quot;).is(status));
+        }
+        if (minAge != null &amp;&amp; maxAge != null) {
+            query.addCriteria(Criteria.where(&quot;age&quot;).gte(minAge).lte(maxAge));
+        } else if (minAge != null) {
+            query.addCriteria(Criteria.where(&quot;age&quot;).gte(minAge));
+        } else if (maxAge != null) {
+            query.addCriteria(Criteria.where(&quot;age&quot;).lte(maxAge));
+        }
+
+        // 先查询总数（使用相同的条件）
+        long total = mongoTemplate.count(query, User.class);
+
+        // 添加排序和分页
+        query.with(Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));
+        query.skip((long) page * size);
+        query.limit(size);
+
+        // 查询当前页数据
+        List&lt;User&gt; users = mongoTemplate.find(query, User.class);
+
+        return new PageResult&lt;&gt;(users, total, page, size);
+    }
+}
+</code></pre>
+<p><strong>3) Controller 层 —— 接收请求参数并返回分页结果：</strong></p>
+<pre><code class="language-java">package com.example.mongo.controller;
+
+import com.example.mongo.common.PageResult;
+import com.example.mongo.entity.User;
+import com.example.mongo.service.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping(&quot;/api/users&quot;)
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    /**
+     * GET /api/users?name=张&amp;status=ACTIVE&amp;minAge=18&amp;maxAge=60&amp;page=0&amp;size=10
+     */
+    @GetMapping
+    public ResponseEntity&lt;PageResult&lt;User&gt;&gt; listUsers(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Integer minAge,
+            @RequestParam(required = false) Integer maxAge,
+            @RequestParam(defaultValue = &quot;0&quot;) int page,
+            @RequestParam(defaultValue = &quot;10&quot;) int size) {
+
+        PageResult&lt;User&gt; result = userService.findUsersPage(
+            name, status, minAge, maxAge, page, size
+        );
+        return ResponseEntity.ok(result);
+    }
+}
+</code></pre>
+<p><strong>4) 返回的 JSON 示例：</strong></p>
+<pre><code class="language-json">{
+  &quot;content&quot;: [
+    {
+      &quot;id&quot;: &quot;665a1b2c3d4e5f6a7b8c9d0e&quot;,
+      &quot;name&quot;: &quot;张三&quot;,
+      &quot;age&quot;: 25,
+      &quot;email&quot;: &quot;zhangsan@example.com&quot;,
+      &quot;status&quot;: &quot;ACTIVE&quot;,
+      &quot;tags&quot;: [&quot;Java&quot;, &quot;MongoDB&quot;],
+      &quot;created_at&quot;: &quot;2024-06-01T10:30:00&quot;
+    },
+    {
+      &quot;id&quot;: &quot;665a1b2c3d4e5f6a7b8c9d0f&quot;,
+      &quot;name&quot;: &quot;张伟&quot;,
+      &quot;age&quot;: 32,
+      &quot;email&quot;: &quot;zhangwei@example.com&quot;,
+      &quot;status&quot;: &quot;ACTIVE&quot;,
+      &quot;tags&quot;: [&quot;Python&quot;],
+      &quot;created_at&quot;: &quot;2024-05-28T15:20:00&quot;
+    }
+  ],
+  &quot;totalElements&quot;: 56,
+  &quot;totalPages&quot;: 6,
+  &quot;currentPage&quot;: 0,
+  &quot;pageSize&quot;: 10,
+  &quot;hasNext&quot;: true,
+  &quot;hasPrevious&quot;: false
+}
+</code></pre>
+<h3 id="555-分页性能提示">5.5.5 分页性能提示</h3>
+<p>在数据量较大时（数十万以上），<code>skip</code> + <code>limit</code> 的分页方式性能会下降，因为 MongoDB 需要遍历跳过的文档。优化方案：</p>
+<ol>
+<li><strong>确保排序字段有索引</strong>：分页查询的排序字段必须建立索引。</li>
+<li><strong>基于游标的分页</strong>（适合&quot;加载更多&quot;场景）：</li>
+</ol>
+<pre><code class="language-java">// 使用上一页最后一条记录的 createdAt 作为游标，避免 skip
+public List&lt;User&gt; findUsersAfter(LocalDateTime lastCreatedAt, int size) {
+    Query query = new Query();
+    if (lastCreatedAt != null) {
+        query.addCriteria(Criteria.where(&quot;createdAt&quot;).lt(lastCreatedAt));
+    }
+    query.with(Sort.by(Sort.Direction.DESC, &quot;createdAt&quot;));
+    query.limit(size);
+    return mongoTemplate.find(query, User.class);
+}
+</code></pre>
+<ol start="3">
+<li><strong>限制最大页码</strong>：对深度分页做限制，如最多允许翻到第 100 页。</li>
+</ol>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>核心内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MongoTemplate vs Repository</td>
+<td>Repository 适合简单 CRUD，MongoTemplate 适合复杂查询，可混合使用</td>
+</tr>
+<tr>
+<td>CRUD 操作</td>
+<td>insert / find / save / updateFirst / updateMulti / remove</td>
+</tr>
+<tr>
+<td>Criteria 查询</td>
+<td>丰富的操作符（is/gt/lt/in/regex/exists/elemMatch...），支持 AND/OR 组合</td>
+</tr>
+<tr>
+<td>Update 更新</td>
+<td>set / unset / inc / push / pull / addToSet 等精细操作</td>
+</tr>
+<tr>
+<td>findAndModify</td>
+<td>原子操作，适合计数器、抢购等场景</td>
+</tr>
+<tr>
+<td>Upsert</td>
+<td>存在则更新，不存在则插入</td>
+</tr>
+<tr>
+<td>BulkOperations</td>
+<td>高效批量操作</td>
+</tr>
+<tr>
+<td>分页排序</td>
+<td>skip/limit 分页 + Sort 排序，封装 PageResult 返回完整分页信息</td>
+</tr>
+</tbody>
+</table>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

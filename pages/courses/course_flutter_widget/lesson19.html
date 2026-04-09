@@ -1,0 +1,2745 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第19课-装饰与裁剪变换组件">第19课 装饰与裁剪变换组件</h1>
+<blockquote>
+<p><strong>课程系列</strong>：Flutter 常用组件系统学习<br />
+<strong>适用人群</strong>：有 Dart 语言基础，了解 Flutter 基本概念的开发者<br />
+<strong>课程目标</strong>：掌握 Flutter 中的裁剪、变换、透明度、显隐控制、模糊与着色器遮罩等视觉效果组件，并能灵活运用它们实现常见的 UI 特效</p>
+</blockquote>
+<hr />
+<h2 id="1-cliprrect圆角裁剪">1. ClipRRect：圆角裁剪</h2>
+<h3 id="11-基本概念">1.1 基本概念</h3>
+<p><code>ClipRRect</code> 用于将子组件裁剪为圆角矩形。它会<strong>真正裁剪</strong>子组件的绘制区域，超出圆角部分的像素不会被渲染。</p>
+<h3 id="12-核心属性">1.2 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>borderRadius</code></td>
+<td><code>BorderRadiusGeometry</code></td>
+<td>圆角半径，默认为 <code>BorderRadius.zero</code></td>
+</tr>
+<tr>
+<td><code>clipBehavior</code></td>
+<td><code>Clip</code></td>
+<td>裁剪行为，默认 <code>Clip.antiAlias</code></td>
+</tr>
+<tr>
+<td><code>child</code></td>
+<td><code>Widget?</code></td>
+<td>被裁剪的子组件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13-cliprrect-与-containerboxdecoration-圆角的区别">1.3 ClipRRect 与 Container(BoxDecoration) 圆角的区别</h3>
+<p>这是一个非常常见的误区：</p>
+<ul>
+<li><strong><code>Container</code> + <code>BoxDecoration(borderRadius:)</code></strong>：只是给 Container 自身的装饰（背景色、边框等）加上圆角，<strong>不会裁剪子组件</strong>。如果子组件（如图片）超出圆角区域，仍然会显示出来。</li>
+<li><strong><code>ClipRRect</code></strong>：真正裁剪子组件的绘制区域，超出圆角的部分会被完全剪掉。</li>
+</ul>
+<h3 id="14-代码示例">1.4 代码示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class ClipRRectDemo extends StatelessWidget {
+  const ClipRRectDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('ClipRRect 圆角裁剪')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ❌ Container 的 borderRadius 不会裁剪子组件
+            const Text('Container + BoxDecoration（不裁剪子组件）：',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Container(
+              width: 200,
+              height: 150,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.blue,
+              ),
+              // 图片超出圆角区域仍然可见
+              child: Image.network(
+                'https://picsum.photos/200/150',
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // ✅ ClipRRect 真正裁剪子组件
+            const Text('ClipRRect（真正裁剪子组件）：',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: SizedBox(
+                width: 200,
+                height: 150,
+                child: Image.network(
+                  'https://picsum.photos/200/150',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 不同圆角半径
+            const Text('不同圆角半径：',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                // 四个角不同的圆角
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
+                  ),
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    color: Colors.orange,
+                    child: const Center(child: Text('对角圆角')),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // 完全圆形（半径 &gt;= 宽高的一半）
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    color: Colors.purple,
+                    child: const Center(
+                      child: Text('圆形', style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：<code>ClipRRect</code> 的裁剪操作有一定的性能开销。如果只是需要给 <code>Container</code> 的背景加圆角，且不需要裁剪子组件，使用 <code>BoxDecoration(borderRadius:)</code> 即可，性能更好。只有当子组件确实会溢出圆角区域时（如图片），才需要使用 <code>ClipRRect</code>。</p>
+</blockquote>
+<hr />
+<h2 id="2-clipoval椭圆圆形裁剪">2. ClipOval：椭圆/圆形裁剪</h2>
+<h3 id="21-基本概念">2.1 基本概念</h3>
+<p><code>ClipOval</code> 将子组件裁剪为椭圆形。如果子组件是正方形，则裁剪结果为圆形。这是实现圆形头像最常用的方式之一。</p>
+<h3 id="22-代码示例">2.2 代码示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class ClipOvalDemo extends StatelessWidget {
+  const ClipOvalDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('ClipOval 椭圆裁剪')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // 正方形 → 圆形
+            const Text('正方形容器 → 圆形裁剪：'),
+            const SizedBox(height: 8),
+            ClipOval(
+              child: Container(
+                width: 120,
+                height: 120,
+                color: Colors.blue,
+                child: Image.network(
+                  'https://picsum.photos/120',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 矩形 → 椭圆形
+            const Text('矩形容器 → 椭圆裁剪：'),
+            const SizedBox(height: 8),
+            ClipOval(
+              child: Container(
+                width: 200,
+                height: 120,
+                color: Colors.green,
+                child: const Center(
+                  child: Text('椭圆', style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 圆形头像的常见写法
+            const Text('圆形头像（推荐用 CircleAvatar）：'),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // 方式一：ClipOval
+                ClipOval(
+                  child: Image.network(
+                    'https://picsum.photos/100',
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                // 方式二：CircleAvatar（内置方案，更方便）
+                const CircleAvatar(
+                  radius: 40,
+                  backgroundImage: NetworkImage('https://picsum.photos/100'),
+                ),
+                // 方式三：Container + BoxDecoration（需配合 clipBehavior）
+                Container(
+                  width: 80,
+                  height: 80,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: const BoxDecoration(shape: BoxShape.circle),
+                  child: Image.network(
+                    'https://picsum.photos/100',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：对于圆形头像场景，推荐使用 <code>CircleAvatar</code>，它内部已经处理好了裁剪逻辑且语义更清晰。<code>ClipOval</code> 更适合需要将任意子组件裁剪为椭圆/圆形的通用场景。</p>
+</blockquote>
+<hr />
+<h2 id="3-clippath自定义路径裁剪">3. ClipPath：自定义路径裁剪</h2>
+<h3 id="31-基本概念">3.1 基本概念</h3>
+<p><code>ClipPath</code> 允许你使用自定义路径（<code>Path</code>）来裁剪子组件，是三种 Clip 组件中最灵活的。你需要通过实现 <code>CustomClipper&lt;Path&gt;</code> 来定义裁剪路径。</p>
+<h3 id="32-customclipper-详解">3.2 CustomClipper<Path> 详解</h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Path getClip(Size size)</code></td>
+<td>返回裁剪路径。<code>size</code> 为子组件的尺寸，用于计算路径坐标</td>
+</tr>
+<tr>
+<td><code>bool shouldReclip(covariant CustomClipper&lt;Path&gt; oldClipper)</code></td>
+<td>当 Clipper 被替换时是否需要重新计算裁剪路径。返回 <code>true</code> 则重新裁剪</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-代码示例波浪裁剪">3.3 代码示例：波浪裁剪</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+/// 波浪形裁剪器
+class WaveClipper extends CustomClipper&lt;Path&gt; {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    // 从左上角开始
+    path.lineTo(0, size.height * 0.75);
+
+    // 第一段波浪（向上凸起）
+    path.quadraticBezierTo(
+      size.width * 0.25,  // 控制点 x
+      size.height,        // 控制点 y
+      size.width * 0.5,   // 终点 x
+      size.height * 0.75, // 终点 y
+    );
+
+    // 第二段波浪（向下凹陷）
+    path.quadraticBezierTo(
+      size.width * 0.75,  // 控制点 x
+      size.height * 0.5,  // 控制点 y
+      size.width,         // 终点 x
+      size.height * 0.75, // 终点 y
+    );
+
+    // 连接到右上角并闭合
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(WaveClipper oldClipper) =&gt; false;
+}
+
+/// 三角形裁剪器
+class TriangleClipper extends CustomClipper&lt;Path&gt; {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.moveTo(size.width / 2, 0);         // 顶部中间
+    path.lineTo(size.width, size.height);    // 右下角
+    path.lineTo(0, size.height);             // 左下角
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(TriangleClipper oldClipper) =&gt; false;
+}
+
+class ClipPathDemo extends StatelessWidget {
+  const ClipPathDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('ClipPath 自定义裁剪')),
+      body: Column(
+        children: [
+          // 波浪裁剪头部
+          ClipPath(
+            clipper: WaveClipper(),
+            child: Container(
+              height: 200,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.deepPurple, Colors.purpleAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: const Center(
+                child: Text(
+                  '波浪裁剪头部',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 32),
+
+          // 三角形裁剪
+          ClipPath(
+            clipper: TriangleClipper(),
+            child: Container(
+              width: 150,
+              height: 150,
+              color: Colors.teal,
+              child: const Center(
+                child: Text('三角形',
+                    style: TextStyle(color: Colors.white)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>shouldReclip</code> 返回 <code>false</code> 表示路径不会变化，可以避免不必要的重计算。如果裁剪路径依赖于外部参数（如动画值），则应返回 <code>true</code> 或比较参数是否变化。</li>
+<li><code>ClipPath</code> 的性能开销比 <code>ClipRRect</code> 和 <code>ClipOval</code> 更大，因为自定义路径裁剪无法利用硬件加速的圆角裁剪优化。仅在必要时使用。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="4-transform变换组件">4. Transform：变换组件</h2>
+<h3 id="41-基本概念">4.1 基本概念</h3>
+<p><code>Transform</code> 在绘制阶段对子组件施加矩阵变换，包括旋转、缩放、平移和倾斜。它<strong>不影响布局</strong>——子组件在布局阶段仍然占据变换前的空间。</p>
+<h3 id="42-核心属性">4.2 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>transform</code></td>
+<td><code>Matrix4</code></td>
+<td>4x4 变换矩阵</td>
+</tr>
+<tr>
+<td><code>origin</code></td>
+<td><code>Offset?</code></td>
+<td>变换原点偏移（相对于 alignment 计算后的位置）</td>
+</tr>
+<tr>
+<td><code>alignment</code></td>
+<td><code>AlignmentGeometry?</code></td>
+<td>变换原点对齐方式，默认为子组件左上角</td>
+</tr>
+<tr>
+<td><code>transformHitTests</code></td>
+<td><code>bool</code></td>
+<td>是否对命中测试也施加变换，默认 <code>true</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-旋转transformrotate">4.3 旋转：Transform.rotate</h3>
+<pre><code class="language-dart">import 'dart:math' as math;
+import 'package:flutter/material.dart';
+
+class TransformRotateDemo extends StatelessWidget {
+  const TransformRotateDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Transform.rotate 旋转')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 旋转 45 度（弧度制：π/4）
+            Transform.rotate(
+              angle: math.pi / 4, // 45度
+              child: Container(
+                width: 100,
+                height: 100,
+                color: Colors.blue,
+                child: const Center(
+                  child: Text('45°', style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 60),
+
+            // 指定旋转原点为左上角
+            Transform.rotate(
+              angle: math.pi / 6, // 30度
+              origin: const Offset(-50, -50), // 左上角（相对于中心点的偏移）
+              child: Container(
+                width: 100,
+                height: 100,
+                color: Colors.red,
+                child: const Center(
+                  child: Text('左上角旋转', style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 60),
+
+            // 通过 alignment 设置旋转锚点
+            Transform.rotate(
+              angle: -math.pi / 4, // -45度
+              alignment: Alignment.bottomRight, // 以右下角为锚点旋转
+              child: Container(
+                width: 100,
+                height: 100,
+                color: Colors.green,
+                child: const Center(
+                  child: Text('右下角锚点',
+                      style: TextStyle(color: Colors.white, fontSize: 12)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="44-缩放transformscale">4.4 缩放：Transform.scale</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class TransformScaleDemo extends StatelessWidget {
+  const TransformScaleDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Transform.scale 缩放')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 等比缩放
+            Transform.scale(
+              scale: 1.5, // 放大 1.5 倍
+              child: Container(
+                width: 80,
+                height: 80,
+                color: Colors.blue,
+                child: const Center(
+                  child: Text('1.5x', style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 60),
+
+            // 分别指定 X 和 Y 轴的缩放比例
+            Transform.scale(
+              scaleX: 2.0, // 水平方向放大 2 倍
+              scaleY: 0.5, // 垂直方向缩小为 0.5 倍
+              child: Container(
+                width: 80,
+                height: 80,
+                color: Colors.orange,
+                child: const Center(
+                  child: Text('X:2 Y:0.5',
+                      style: TextStyle(color: Colors.white, fontSize: 12)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 60),
+
+            // 镜像翻转（scaleX 为 -1）
+            Transform.scale(
+              scaleX: -1, // 水平镜像
+              child: Container(
+                width: 120,
+                height: 60,
+                color: Colors.purple,
+                child: const Center(
+                  child: Text('水平镜像',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="45-平移transformtranslate">4.5 平移：Transform.translate</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class TransformTranslateDemo extends StatelessWidget {
+  const TransformTranslateDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Transform.translate 平移')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 原始位置（灰色虚线框表示原位置）
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 1),
+              ),
+              child: const Center(child: Text('原始位置')),
+            ),
+            const SizedBox(height: 20),
+
+            // 平移后的组件
+            Transform.translate(
+              offset: const Offset(80, -30), // 向右 80，向上 30
+              child: Container(
+                width: 100,
+                height: 100,
+                color: Colors.blue.withOpacity(0.8),
+                child: const Center(
+                  child: Text('平移(80,-30)',
+                      style: TextStyle(color: Colors.white, fontSize: 12)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 40),
+
+            // 演示 Transform 不影响布局
+            const Text('注意：Transform 不影响布局，'),
+            const Text('下方文字仍然紧跟原始位置排列'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="46-倾斜matrix4">4.6 倾斜：Matrix4</h3>
+<p>Flutter 没有提供 <code>Transform.skew</code> 快捷构造函数，但可以通过 <code>Matrix4.skewX</code> 和 <code>Matrix4.skewY</code> 实现倾斜效果。</p>
+<pre><code class="language-dart">import 'dart:math' as math;
+import 'package:flutter/material.dart';
+
+class TransformSkewDemo extends StatelessWidget {
+  const TransformSkewDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Transform + Matrix4 倾斜')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // X 轴倾斜
+            Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.skewX(0.3), // X 轴倾斜 0.3 弧度
+              child: Container(
+                width: 120,
+                height: 80,
+                color: Colors.blue,
+                child: const Center(
+                  child: Text('skewX(0.3)',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 40),
+
+            // Y 轴倾斜
+            Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.skewY(0.2), // Y 轴倾斜 0.2 弧度
+              child: Container(
+                width: 120,
+                height: 80,
+                color: Colors.red,
+                child: const Center(
+                  child: Text('skewY(0.2)',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 40),
+
+            // 组合变换：旋转 + 缩放 + 平移
+            Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..rotateZ(math.pi / 12)  // 旋转 15度
+                ..scale(1.2)              // 缩放 1.2 倍
+                ..translate(10.0, 5.0),   // 平移
+              child: Container(
+                width: 120,
+                height: 80,
+                color: Colors.green,
+                child: const Center(
+                  child: Text('组合变换',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 40),
+
+            // 透视效果（3D 感）
+            Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.002) // 透视参数
+                ..rotateX(0.5),          // 绕 X 轴旋转
+              child: Container(
+                width: 150,
+                height: 100,
+                color: Colors.purple,
+                child: const Center(
+                  child: Text('3D 透视',
+                      style: TextStyle(color: Colors.white, fontSize: 18)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>Transform</code> 的变换发生在绘制阶段，<strong>不影响布局</strong>。这意味着变换后的组件仍然占据变换前的空间，可能与其他组件重叠。</li>
+<li><code>Matrix4</code> 的链式调用顺序很重要——矩阵乘法不满足交换律。<code>rotateZ</code> 再 <code>translate</code> 与 <code>translate</code> 再 <code>rotateZ</code> 结果不同。</li>
+<li>使用 <code>..setEntry(3, 2, value)</code> 设置透视参数时，值通常在 <code>0.001 ~ 0.003</code> 之间，值越大透视效果越明显。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="5-rotatedbox布局级旋转">5. RotatedBox：布局级旋转</h2>
+<h3 id="51-基本概念">5.1 基本概念</h3>
+<p><code>RotatedBox</code> 以 90 度的倍数旋转子组件。与 <code>Transform.rotate</code> 不同，<code>RotatedBox</code> 的旋转<strong>参与布局计算</strong>——旋转后的尺寸会被正确计算并传递给父组件。</p>
+<h3 id="52-rotatedbox-与-transformrotate-的区别">5.2 RotatedBox 与 Transform.rotate 的区别</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>RotatedBox</th>
+<th>Transform.rotate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>旋转角度</td>
+<td>仅支持 90° 的倍数</td>
+<td>支持任意角度</td>
+</tr>
+<tr>
+<td>是否影响布局</td>
+<td>✅ 旋转后参与布局计算</td>
+<td>❌ 布局阶段仍用旋转前尺寸</td>
+</tr>
+<tr>
+<td>旋转阶段</td>
+<td>布局（layout）阶段</td>
+<td>绘制（paint）阶段</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>侧边栏文字、旋转 Tab 等</td>
+<td>装饰性旋转、动画旋转</td>
+</tr>
+</tbody>
+</table>
+<h3 id="53-代码示例">5.3 代码示例</h3>
+<pre><code class="language-dart">import 'dart:math' as math;
+import 'package:flutter/material.dart';
+
+class RotatedBoxDemo extends StatelessWidget {
+  const RotatedBoxDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('RotatedBox 布局级旋转')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('RotatedBox（参与布局计算）：',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                // quarterTurns: 1 → 顺时针旋转 90°
+                Container(
+                  color: Colors.grey.shade200,
+                  child: const RotatedBox(
+                    quarterTurns: 1,
+                    child: Text('顺时针 90°',
+                        style: TextStyle(fontSize: 18, color: Colors.blue)),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // quarterTurns: 2 → 旋转 180°
+                Container(
+                  color: Colors.grey.shade200,
+                  child: const RotatedBox(
+                    quarterTurns: 2,
+                    child: Text('旋转 180°',
+                        style: TextStyle(fontSize: 18, color: Colors.red)),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // quarterTurns: 3 → 顺时针旋转 270°（逆时针 90°）
+                Container(
+                  color: Colors.grey.shade200,
+                  child: const RotatedBox(
+                    quarterTurns: 3,
+                    child: Text('逆时针 90°',
+                        style: TextStyle(fontSize: 18, color: Colors.green)),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+
+            // 对比：Transform.rotate 不影响布局
+            const Text('Transform.rotate（不参与布局计算）：',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Container(
+                  color: Colors.grey.shade200,
+                  child: Transform.rotate(
+                    angle: math.pi / 2, // 90°
+                    child: const Text('旋转 90°',
+                        style: TextStyle(fontSize: 18, color: Colors.blue)),
+                  ),
+                ),
+                const SizedBox(width: 60), // 需要更大间距，否则会重叠
+                const Text('← 注意灰色背景大小的区别'),
+              ],
+            ),
+            const SizedBox(height: 32),
+
+            // 实用场景：侧边标签
+            const Text('实用场景 —— 侧边标签：',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  color: Colors.blue,
+                  child: const RotatedBox(
+                    quarterTurns: 3,
+                    child: Text('NEW',
+                        style: TextStyle(color: Colors.white,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    height: 80,
+                    margin: const EdgeInsets.only(left: 4),
+                    color: Colors.grey.shade100,
+                    child: const Center(child: Text('卡片内容')),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="6-opacity-与-animatedopacity透明度控制">6. Opacity 与 AnimatedOpacity：透明度控制</h2>
+<h3 id="61-opacity">6.1 Opacity</h3>
+<p><code>Opacity</code> 组件通过设置 <code>opacity</code> 参数（0.0 ~ 1.0）控制子组件的透明度。</p>
+<h3 id="62-animatedopacity">6.2 AnimatedOpacity</h3>
+<p><code>AnimatedOpacity</code> 是 <code>Opacity</code> 的隐式动画版本，当 <code>opacity</code> 值改变时会自动执行过渡动画。</p>
+<h3 id="63-代码示例">6.3 代码示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class OpacityDemo extends StatefulWidget {
+  const OpacityDemo({super.key});
+
+  @override
+  State&lt;OpacityDemo&gt; createState() =&gt; _OpacityDemoState();
+}
+
+class _OpacityDemoState extends State&lt;OpacityDemo&gt; {
+  double _opacity = 1.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Opacity 透明度控制')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 静态 Opacity
+            const Text('Opacity（无动画）：'),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Opacity(
+                  opacity: 1.0,
+                  child: Container(width: 60, height: 60, color: Colors.blue),
+                ),
+                Opacity(
+                  opacity: 0.6,
+                  child: Container(width: 60, height: 60, color: Colors.blue),
+                ),
+                Opacity(
+                  opacity: 0.3,
+                  child: Container(width: 60, height: 60, color: Colors.blue),
+                ),
+                Opacity(
+                  opacity: 0.0, // 完全透明，但仍参与布局和命中测试
+                  child: Container(width: 60, height: 60, color: Colors.blue),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            const Text('1.0      0.6      0.3      0.0'),
+            const SizedBox(height: 40),
+
+            // AnimatedOpacity（带动画效果）
+            const Text('AnimatedOpacity（带过渡动画）：'),
+            const SizedBox(height: 8),
+            AnimatedOpacity(
+              opacity: _opacity,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  color: Colors.purple,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Center(
+                  child: Text('渐隐渐现',
+                      style: TextStyle(color: Colors.white, fontSize: 18)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 使用 Slider 控制透明度
+            Slider(
+              value: _opacity,
+              onChanged: (value) =&gt; setState(() =&gt; _opacity = value),
+            ),
+            Text('当前透明度: ${_opacity.toStringAsFixed(2)}'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>性能注意事项</strong>：</p>
+<ol>
+<li><code>Opacity</code> 组件会将子组件绘制到一个离屏缓冲区（offscreen buffer）中，然后再以指定透明度合成到屏幕上。对于简单的颜色透明度，直接使用 <code>Color.withOpacity()</code> 性能更好。</li>
+<li>当 <code>opacity</code> 为 <code>0.0</code> 时，子组件虽然不可见但仍然参与布局和命中测试。如果需要完全移除，应使用 <code>Visibility</code> 或 <code>Offstage</code>。</li>
+<li>当 <code>opacity</code> 为 <code>1.0</code> 时，Flutter 会优化跳过离屏缓冲区步骤。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="7-visibility-与-offstage显示隐藏策略">7. Visibility 与 Offstage：显示/隐藏策略</h2>
+<h3 id="71-对比">7.1 对比</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Visibility</th>
+<th>Offstage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>隐藏时是否保留空间</td>
+<td>可选（<code>maintainSize</code> 参数）</td>
+<td>不保留（完全移出布局）</td>
+</tr>
+<tr>
+<td>隐藏时是否保留状态</td>
+<td>可选（<code>maintainState</code> 参数）</td>
+<td>✅ 保留状态</td>
+</tr>
+<tr>
+<td>隐藏时是否响应交互</td>
+<td>可选（<code>maintainInteractivity</code>）</td>
+<td>❌ 不响应</td>
+</tr>
+<tr>
+<td>替换组件</td>
+<td>支持 <code>replacement</code> 参数</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>控制参数</td>
+<td><code>visible</code>（true/false）</td>
+<td><code>offstage</code>（true/false）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="72-visibility-详解">7.2 Visibility 详解</h3>
+<p><code>Visibility</code> 提供了非常细粒度的控制：</p>
+<ul>
+<li><code>visible: false</code> 时默认完全移除子组件（类似条件渲染）</li>
+<li><code>maintainSize: true</code> → 保留空间但不可见（类似 CSS 的 <code>visibility: hidden</code>）</li>
+<li><code>maintainState: true</code> → 保留子组件的 State（不会触发 dispose）</li>
+<li><code>maintainAnimation: true</code> → 保留动画状态</li>
+<li><code>maintainInteractivity: true</code> → 隐藏时仍然可以响应手势</li>
+</ul>
+<h3 id="73-代码示例">7.3 代码示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class VisibilityDemo extends StatefulWidget {
+  const VisibilityDemo({super.key});
+
+  @override
+  State&lt;VisibilityDemo&gt; createState() =&gt; _VisibilityDemoState();
+}
+
+class _VisibilityDemoState extends State&lt;VisibilityDemo&gt; {
+  bool _isVisible = true;
+  bool _isOnstage = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Visibility 与 Offstage')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // --- Visibility 示例 ---
+            const Text('Visibility（保留空间）：',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  color: Colors.green,
+                  child: const Center(child: Text('A')),
+                ),
+                Visibility(
+                  visible: _isVisible,
+                  maintainSize: true,     // 隐藏后保留原来的空间
+                  maintainState: true,    // 保留子组件的 State
+                  maintainAnimation: true,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.blue,
+                    child: const Center(
+                      child: Text('B', style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 80,
+                  height: 80,
+                  color: Colors.red,
+                  child: const Center(
+                    child: Text('C', style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () =&gt; setState(() =&gt; _isVisible = !_isVisible),
+              child: Text(_isVisible ? '隐藏 B（保留空间）' : '显示 B'),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Visibility 使用 replacement
+            const Text('Visibility（使用 replacement）：',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 8),
+            Visibility(
+              visible: _isVisible,
+              replacement: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text('内容已隐藏，这是替代组件'),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text('这是原始内容'),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // --- Offstage 示例 ---
+            const Text('Offstage（完全移出布局，保留状态）：',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  color: Colors.green,
+                  child: const Center(child: Text('A')),
+                ),
+                Offstage(
+                  offstage: !_isOnstage, // true = 隐藏
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    color: Colors.orange,
+                    child: const Center(
+                      child: Text('B', style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 80,
+                  height: 80,
+                  color: Colors.red,
+                  child: const Center(
+                    child: Text('C', style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () =&gt; setState(() =&gt; _isOnstage = !_isOnstage),
+              child: Text(_isOnstage ? '隐藏 B（Offstage）' : '显示 B'),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              '注意观察：Offstage 隐藏后 C 会紧挨 A，不保留空间',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>需要隐藏但保留空间 → <code>Visibility(maintainSize: true)</code></li>
+<li>需要隐藏且不占空间，但保留状态 → <code>Offstage</code></li>
+<li>需要隐藏且不需要保留状态 → 直接用条件表达式 <code>if (show) widget</code></li>
+<li><code>Offstage</code> 虽然不可见，子组件的 State 仍然存活，定时器、动画等仍在运行，注意资源管理。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="8-backdropfilter高斯模糊与毛玻璃效果">8. BackdropFilter：高斯模糊与毛玻璃效果</h2>
+<h3 id="81-基本概念">8.1 基本概念</h3>
+<p><code>BackdropFilter</code> 对其<strong>下方已绘制的内容</strong>（而非子组件）施加滤镜效果，最常见的用途是创建毛玻璃（frosted glass）效果。</p>
+<p>关键要点：</p>
+<ul>
+<li><code>BackdropFilter</code> 模糊的是它下方的图层，不是它的子组件</li>
+<li>通常需要配合 <code>Stack</code> 使用，将 <code>BackdropFilter</code> 叠在背景内容之上</li>
+<li>子组件（<code>child</code>）会被绘制在滤镜效果之上</li>
+</ul>
+<h3 id="82-核心属性">8.2 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>filter</code></td>
+<td><code>ImageFilter</code></td>
+<td>滤镜效果，通常使用 <code>ImageFilter.blur(sigmaX:, sigmaY:)</code></td>
+</tr>
+<tr>
+<td><code>blendMode</code></td>
+<td><code>BlendMode</code></td>
+<td>混合模式，默认 <code>BlendMode.srcOver</code></td>
+</tr>
+<tr>
+<td><code>child</code></td>
+<td><code>Widget?</code></td>
+<td>绘制在滤镜之上的子组件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="83-代码示例">8.3 代码示例</h3>
+<pre><code class="language-dart">import 'dart:ui';
+import 'package:flutter/material.dart';
+
+class BackdropFilterDemo extends StatelessWidget {
+  const BackdropFilterDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('BackdropFilter 高斯模糊')),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // 底层：背景图片
+          Image.network(
+            'https://picsum.photos/800/1200',
+            fit: BoxFit.cover,
+          ),
+
+          // 中层：底部毛玻璃区域
+          Positioned(
+            left: 16,
+            right: 16,
+            bottom: 40,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    // 半透明白色叠加在模糊效果上
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                    ),
+                  ),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '毛玻璃效果',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'BackdropFilter 会模糊其下方已绘制的内容，'
+                        '配合半透明背景实现毛玻璃效果。',
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // 顶部也加一个小的毛玻璃标签
+          Positioned(
+            top: 16,
+            right: 16,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 8),
+                  color: Colors.black.withOpacity(0.2),
+                  child: const Text(
+                    '标签',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ol>
+<li><code>BackdropFilter</code> 必须配合 <code>ClipRRect</code>（或其他裁剪组件）使用，否则模糊效果会扩展到整个父组件区域。</li>
+<li>高斯模糊的 <code>sigma</code> 值越大，模糊效果越明显，性能开销也越大。建议 <code>sigma</code> 不超过 <code>20</code>。</li>
+<li><code>BackdropFilter</code> 是相对昂贵的操作，会触发离屏渲染。避免在列表中大量使用。</li>
+<li>iOS 风格的毛玻璃效果也可以直接使用 <code>CupertinoNavigationBar</code> 等 Cupertino 组件，它们内置了模糊效果。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="9-shadermask着色器遮罩效果">9. ShaderMask：着色器遮罩效果</h2>
+<h3 id="91-基本概念">9.1 基本概念</h3>
+<p><code>ShaderMask</code> 用一个着色器（<code>Shader</code>）对子组件的绘制结果进行遮罩混合。最常见的用途是实现<strong>渐变文字</strong>和<strong>渐变图标</strong>效果。</p>
+<h3 id="92-核心属性">9.2 核心属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>shaderCallback</code></td>
+<td><code>ShaderCallback</code></td>
+<td>回调函数，接收子组件的绘制区域 <code>Rect</code>，返回一个 <code>Shader</code></td>
+</tr>
+<tr>
+<td><code>blendMode</code></td>
+<td><code>BlendMode</code></td>
+<td>混合模式，默认 <code>BlendMode.modulate</code></td>
+</tr>
+<tr>
+<td><code>child</code></td>
+<td><code>Widget?</code></td>
+<td>被遮罩的子组件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="93-blendmode-常用值">9.3 blendMode 常用值</h3>
+<ul>
+<li><code>BlendMode.srcIn</code>：只保留着色器与子组件重叠的部分（常用于渐变文字）</li>
+<li><code>BlendMode.srcATop</code>：在子组件上叠加着色器</li>
+<li><code>BlendMode.modulate</code>：将着色器颜色与子组件颜色相乘</li>
+</ul>
+<h3 id="94-代码示例">9.4 代码示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+class ShaderMaskDemo extends StatelessWidget {
+  const ShaderMaskDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('ShaderMask 着色器遮罩')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 渐变文字
+            const Text('渐变文字效果：',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            ShaderMask(
+              blendMode: BlendMode.srcIn, // 关键：只保留文字区域的渐变
+              shaderCallback: (Rect bounds) {
+                return const LinearGradient(
+                  colors: [Colors.blue, Colors.purple, Colors.red],
+                ).createShader(bounds);
+              },
+              child: const Text(
+                'Flutter 渐变文字',
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 渐变图标
+            const Text('渐变图标效果：',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (Rect bounds) {
+                return const LinearGradient(
+                  colors: [Colors.orange, Colors.pink],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds);
+              },
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.favorite, size: 48),
+                  SizedBox(width: 8),
+                  Icon(Icons.star, size: 48),
+                  SizedBox(width: 8),
+                  Icon(Icons.thumb_up, size: 48),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 径向渐变效果
+            const Text('径向渐变效果：',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            ShaderMask(
+              blendMode: BlendMode.srcATop,
+              shaderCallback: (Rect bounds) {
+                return RadialGradient(
+                  center: Alignment.center,
+                  radius: 0.8,
+                  colors: [
+                    Colors.yellow.withOpacity(0.8),
+                    Colors.transparent,
+                  ],
+                ).createShader(bounds);
+              },
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Center(
+                  child: Text('径向高光',
+                      style: TextStyle(color: Colors.white, fontSize: 18)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 渐变淡出效果（列表底部渐隐）
+            const Text('底部渐隐效果：',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 120,
+              child: ShaderMask(
+                blendMode: BlendMode.dstIn,
+                shaderCallback: (Rect bounds) {
+                  return const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.white, Colors.transparent],
+                    stops: [0.6, 1.0], // 前 60% 完全可见，后 40% 渐隐
+                  ).createShader(bounds);
+                },
+                child: ListView(
+                  children: List.generate(
+                    10,
+                    (i) =&gt; ListTile(title: Text('列表项 $i')),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>渐变文字务必使用 <code>BlendMode.srcIn</code>，它会将渐变限制在文字的不透明像素区域内。</li>
+<li><code>shaderCallback</code> 中的 <code>bounds</code> 是子组件的绘制区域，可以直接传给 <code>Gradient.createShader()</code>。</li>
+<li>ShaderMask 的性能开销中等，对于简单渐变效果可以放心使用，但避免在高频重建的组件中使用复杂着色器。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="10-实战视觉效果综合应用">10. 实战：视觉效果综合应用</h2>
+<h3 id="101-实战一毛玻璃卡片">10.1 实战一：毛玻璃卡片</h3>
+<p>一个带有毛玻璃效果的个人信息卡片，常用于社交应用或音乐播放器界面。</p>
+<pre><code class="language-dart">import 'dart:ui';
+import 'package:flutter/material.dart';
+
+class FrostedGlassCard extends StatelessWidget {
+  const FrostedGlassCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // 背景图
+          Image.network(
+            'https://picsum.photos/800/1600',
+            fit: BoxFit.cover,
+          ),
+          // 渐变遮罩层，增强背景氛围
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.2),
+                  Colors.black.withOpacity(0.6),
+                ],
+              ),
+            ),
+          ),
+          // 居中的毛玻璃卡片
+          Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: Container(
+                  width: 320,
+                  padding: const EdgeInsets.all(28),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.2),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // 圆形头像
+                      ClipOval(
+                        child: Image.network(
+                          'https://picsum.photos/120',
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Flutter 开发者',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '热爱技术，享受编程的乐趣',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // 统计信息行
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildStat('关注', '128'),
+                          Container(
+                            height: 30,
+                            width: 1,
+                            color: Colors.white.withOpacity(0.3),
+                          ),
+                          _buildStat('粉丝', '1.2k'),
+                          Container(
+                            height: 30,
+                            width: 1,
+                            color: Colors.white.withOpacity(0.3),
+                          ),
+                          _buildStat('获赞', '5.6k'),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      // 关注按钮
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white.withOpacity(0.3),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          child: const Text('关注',
+                              style: TextStyle(fontSize: 16)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStat(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.7),
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="102-实战二渐变文字标题栏">10.2 实战二：渐变文字标题栏</h3>
+<p>一个带有渐变文字和装饰性变换元素的标题区域。</p>
+<pre><code class="language-dart">import 'dart:math' as math;
+import 'package:flutter/material.dart';
+
+class GradientTitleHeader extends StatelessWidget {
+  const GradientTitleHeader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey.shade900,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 装饰性几何图形（Transform 变换）
+              Stack(
+                children: [
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Transform.rotate(
+                      angle: math.pi / 6,
+                      child: Opacity(
+                        opacity: 0.15,
+                        child: Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.blue, width: 3),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 40,
+                    top: 30,
+                    child: Transform.rotate(
+                      angle: -math.pi / 8,
+                      child: Opacity(
+                        opacity: 0.1,
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: Colors.purpleAccent, width: 2),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // 主标题：渐变文字
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ShaderMask(
+                        blendMode: BlendMode.srcIn,
+                        shaderCallback: (bounds) {
+                          return const LinearGradient(
+                            colors: [
+                              Color(0xFF6366F1), // indigo
+                              Color(0xFFA855F7), // purple
+                              Color(0xFFEC4899), // pink
+                            ],
+                          ).createShader(bounds);
+                        },
+                        child: const Text(
+                          'Hello,\nFlutter!',
+                          style: TextStyle(
+                            fontSize: 48,
+                            fontWeight: FontWeight.w900,
+                            height: 1.2,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        '探索无限可能的 UI 世界',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
+
+              // 渐变图标按钮行
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildGradientIconButton(
+                    Icons.code,
+                    '编程',
+                    [Colors.blue, Colors.cyan],
+                  ),
+                  _buildGradientIconButton(
+                    Icons.palette,
+                    '设计',
+                    [Colors.purple, Colors.pink],
+                  ),
+                  _buildGradientIconButton(
+                    Icons.rocket_launch,
+                    '发布',
+                    [Colors.orange, Colors.red],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGradientIconButton(
+      IconData icon, String label, List&lt;Color&gt; colors) {
+    return Column(
+      children: [
+        ShaderMask(
+          blendMode: BlendMode.srcIn,
+          shaderCallback: (bounds) {
+            return LinearGradient(
+              colors: colors,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ).createShader(bounds);
+          },
+          child: Icon(icon, size: 40),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white70, fontSize: 12),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+<h3 id="103-实战三波浪裁剪头部">10.3 实战三：波浪裁剪头部</h3>
+<p>一个应用常见的波浪形顶部区域，带有渐变背景和用户信息。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+/// 波浪裁剪器
+class WaveHeaderClipper extends CustomClipper&lt;Path&gt; {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0, size.height - 50);
+
+    // 使用三次贝塞尔曲线绘制平滑波浪
+    final firstControlPoint = Offset(size.width * 0.25, size.height);
+    final firstEndPoint = Offset(size.width * 0.5, size.height - 30);
+    path.cubicTo(
+      firstControlPoint.dx, firstControlPoint.dy,
+      firstEndPoint.dx - 30, firstEndPoint.dy,
+      firstEndPoint.dx, firstEndPoint.dy,
+    );
+
+    final secondControlPoint = Offset(size.width * 0.75, size.height - 80);
+    final secondEndPoint = Offset(size.width, size.height - 40);
+    path.cubicTo(
+      secondControlPoint.dx - 30, secondControlPoint.dy,
+      secondControlPoint.dx, secondControlPoint.dy,
+      secondEndPoint.dx, secondEndPoint.dy,
+    );
+
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(WaveHeaderClipper oldClipper) =&gt; false;
+}
+
+/// 倒圆弧裁剪器
+class CurvedBottomClipper extends CustomClipper&lt;Path&gt; {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0, size.height - 40);
+
+    // 一条平滑的弧线
+    path.quadraticBezierTo(
+      size.width / 2, size.height + 20,
+      size.width, size.height - 40,
+    );
+
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CurvedBottomClipper oldClipper) =&gt; false;
+}
+
+class WaveHeaderDemo extends StatelessWidget {
+  const WaveHeaderDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey.shade100,
+      body: Column(
+        children: [
+          // 波浪形头部
+          ClipPath(
+            clipper: WaveHeaderClipper(),
+            child: Container(
+              height: 280,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    // 顶部操作栏
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back,
+                                color: Colors.white),
+                            onPressed: () {},
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.settings,
+                                color: Colors.white),
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                    ),
+                    // 用户信息
+                    ClipOval(
+                      child: Image.network(
+                        'https://picsum.photos/100',
+                        width: 72,
+                        height: 72,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      '用户名',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Flutter 爱好者',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // 内容区域
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                _buildInfoCard(Icons.email, '邮箱', 'user@example.com'),
+                _buildInfoCard(Icons.phone, '电话', '138-0000-0000'),
+                _buildInfoCard(Icons.location_on, '地址', '北京市朝阳区'),
+                _buildInfoCard(Icons.work, '职业', 'Flutter 开发工程师'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(IconData icon, String title, String subtitle) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: const Color(0xFF6366F1).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: const Color(0xFF6366F1)),
+        ),
+        title: Text(title, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+        subtitle: Text(subtitle, style: const TextStyle(fontSize: 16)),
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="11-本课小结">11. 本课小结</h2>
+<p>本课涵盖了 Flutter 中用于视觉效果处理的关键组件：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>核心用途</th>
+<th>重点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ClipRRect</strong></td>
+<td>圆角裁剪</td>
+<td>与 Container 装饰圆角的区别：真正裁剪 vs 只装饰</td>
+</tr>
+<tr>
+<td><strong>ClipOval</strong></td>
+<td>椭圆/圆形裁剪</td>
+<td>圆形头像可优先用 CircleAvatar</td>
+</tr>
+<tr>
+<td><strong>ClipPath</strong></td>
+<td>自定义路径裁剪</td>
+<td>CustomClipper、shouldReclip 优化</td>
+</tr>
+<tr>
+<td><strong>Transform</strong></td>
+<td>旋转/缩放/平移/倾斜</td>
+<td>不影响布局，Matrix4 链式调用顺序敏感</td>
+</tr>
+<tr>
+<td><strong>RotatedBox</strong></td>
+<td>90° 倍数旋转</td>
+<td>参与布局计算，适合侧边文字</td>
+</tr>
+<tr>
+<td><strong>Opacity / AnimatedOpacity</strong></td>
+<td>透明度控制</td>
+<td>opacity=0 仍占空间和参与命中测试</td>
+</tr>
+<tr>
+<td><strong>Visibility / Offstage</strong></td>
+<td>显示/隐藏</td>
+<td>各有不同的空间、状态保留策略</td>
+</tr>
+<tr>
+<td><strong>BackdropFilter</strong></td>
+<td>高斯模糊/毛玻璃</td>
+<td>需配合 Stack 和 ClipRRect 使用</td>
+</tr>
+<tr>
+<td><strong>ShaderMask</strong></td>
+<td>着色器遮罩</td>
+<td>渐变文字用 BlendMode.srcIn</td>
+</tr>
+</tbody>
+</table>
+<h3 id="性能建议速查">性能建议速查</h3>
+<ol>
+<li>只在子组件溢出时才用 Clip 系列组件，否则用 <code>BoxDecoration</code> 足够</li>
+<li><code>Opacity</code> 适合动态变化场景，静态透明度优先用 <code>Color.withOpacity()</code></li>
+<li><code>BackdropFilter</code> 开销大，避免在列表或频繁重建的组件中使用</li>
+<li><code>Transform</code> 不影响布局，如需布局跟随旋转用 <code>RotatedBox</code></li>
+<li>隐藏组件时优先考虑条件渲染 <code>if</code>，仅在需要保留状态时使用 <code>Offstage</code></li>
+</ol>
+<hr />
+<h2 id="12-练习题">12. 练习题</h2>
+<h3 id="练习一圆角图片卡片">练习一：圆角图片卡片</h3>
+<p>创建一个图片卡片组件，要求：</p>
+<ul>
+<li>图片顶部为圆角，底部为直角</li>
+<li>图片下方有标题和描述文字</li>
+<li>整体有阴影效果</li>
+</ul>
+<p>提示：使用 <code>ClipRRect</code> 配合 <code>BorderRadius.only()</code>。</p>
+<h3 id="练习二3d-翻转卡片">练习二：3D 翻转卡片</h3>
+<p>使用 <code>Transform</code> 和 <code>Matrix4</code> 实现一个卡片翻转效果：</p>
+<ul>
+<li>使用 <code>GestureDetector</code> 监听点击事件</li>
+<li>点击后卡片绕 Y 轴旋转 180°（使用 <code>Matrix4..setEntry(3, 2, 0.002)..rotateY(angle)</code>）</li>
+<li>正面显示图片，反面显示文字信息</li>
+</ul>
+<p>提示：通过 <code>AnimationController</code> 控制旋转角度。</p>
+<h3 id="练习三个性化个人主页">练习三：个性化个人主页</h3>
+<p>综合运用本课所学内容，创建一个个人主页，要求包含：</p>
+<ol>
+<li>波浪形裁剪头部（<code>ClipPath</code>）</li>
+<li>圆形头像（<code>ClipOval</code>）</li>
+<li>毛玻璃效果的统计卡片（<code>BackdropFilter</code>）</li>
+<li>渐变文字的用户名（<code>ShaderMask</code>）</li>
+<li>隐藏/显示个人简介的按钮（<code>Visibility</code> 或 <code>AnimatedOpacity</code>）</li>
+</ol>
+<h3 id="练习四思考题">练习四（思考题）</h3>
+<p>请回答以下问题：</p>
+<ol>
+<li><code>ClipRRect</code> 和 <code>Container(decoration: BoxDecoration(borderRadius:))</code> 在什么场景下效果相同？什么场景下效果不同？</li>
+<li><code>Transform.rotate</code> 和 <code>RotatedBox</code> 分别适合什么场景？</li>
+<li><code>Visibility(visible: false, maintainSize: true)</code>、<code>Offstage(offstage: true)</code> 和 <code>Opacity(opacity: 0)</code> 三者的行为有什么区别？</li>
+<li>使用 <code>BackdropFilter</code> 时，为什么通常需要在外层包一个 <code>ClipRRect</code>？</li>
+</ol>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

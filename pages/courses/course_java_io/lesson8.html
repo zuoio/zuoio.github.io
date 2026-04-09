@@ -1,0 +1,1165 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第八章netty-入门为什么不直接用-nio">第八章：Netty 入门——为什么不直接用 NIO？</h1>
+<blockquote>
+<p><strong>学习目标</strong>：理解 Netty 存在的意义，掌握其核心概念和线程模型，知道它解决了原生 NIO 的哪些问题。</p>
+</blockquote>
+<hr />
+<h2 id="前言">前言</h2>
+<p>前面我们学了原生 NIO，你可能已经感受到了——代码量大、容易出错、要自己处理的东西太多。实际项目中，几乎不会直接使用 Java 原生 NIO，而是使用 <strong>Netty</strong> 框架。</p>
+<p>面试中 Netty 是高频考点，即使你没深入用过，也需要了解它的核心概念和设计理念。</p>
+<hr />
+<h2 id="81-原生-nio-有什么问题">8.1 原生 NIO 有什么问题？</h2>
+<h3 id="问题一api-复杂容易出错">问题一：API 复杂，容易出错</h3>
+<p>Buffer 的 <code>flip()</code>、<code>clear()</code>、<code>compact()</code> 容易搞混。忘了 flip 就写不出数据，忘了 clear 就读不到新数据。</p>
+<pre><code class="language-java">buffer.put(data);
+// 忘了 flip()...
+channel.write(buffer);  // 写出去的是空的！因为 position 还在末尾
+</code></pre>
+<h3 id="问题二需要自己处理-tcp-粘包拆包">问题二：需要自己处理 TCP 粘包/拆包</h3>
+<p>TCP 是流协议，没有消息边界。发送方发了两条消息 &quot;Hello&quot; 和 &quot;World&quot;，接收方可能一次性收到 &quot;HelloWorld&quot;（粘包），也可能分两次收到 &quot;Hel&quot; 和 &quot;loWorld&quot;（拆包）。</p>
+<p>原生 NIO 需要你自己实现消息的拆分和组装逻辑，这非常容易出 bug。</p>
+<h3 id="问题三selector-空轮询-bug">问题三：Selector 空轮询 Bug</h3>
+<p>这是 Java NIO 在 Linux 上的一个著名 bug：</p>
+<p>正常情况下，<code>selector.select()</code> 应该阻塞到有事件就绪才返回。但由于底层 epoll 的 bug，<code>select()</code> 可能在没有任何事件的情况下返回 0，导致 while 循环空转，<strong>CPU 飙到 100%</strong>。</p>
+<p>这个 bug 从 JDK 1.6 就存在，在 JDK 的 bug 追踪系统中编号为 6670302 和 2147719，至今没有完全修复。</p>
+<h3 id="问题四缺少高级功能">问题四：缺少高级功能</h3>
+<p>原生 NIO 没有提供：</p>
+<ul>
+<li>编解码框架（JSON、Protobuf、自定义协议）</li>
+<li>心跳检测</li>
+<li>连接超时管理</li>
+<li>异常处理和重连机制</li>
+<li>SSL/TLS 支持</li>
+<li>HTTP/WebSocket 协议支持</li>
+</ul>
+<p>所有这些都需要自己从零实现。</p>
+<hr />
+<h2 id="82-netty-是什么">8.2 Netty 是什么？</h2>
+<p>Netty 是一个<strong>高性能、异步事件驱动的网络应用框架</strong>，基于 Java NIO 封装，极大地简化了 TCP/UDP 网络编程。</p>
+<h3 id="netty-的定位">Netty 的定位</h3>
+<pre><code>┌─────────────────────────────────────────────┐
+│            你的业务代码                        │
+├─────────────────────────────────────────────┤
+│               Netty                          │
+│  编解码 | 线程模型 | 连接管理 | 异常处理 | SSL  │
+├─────────────────────────────────────────────┤
+│            Java NIO                          │
+│  Channel | Buffer | Selector                 │
+├─────────────────────────────────────────────┤
+│           操作系统                             │
+│  epoll (Linux) | kqueue (macOS)              │
+└─────────────────────────────────────────────┘
+</code></pre>
+<p>Netty 在 NIO 之上提供了一层优雅的抽象，让你只需关注业务逻辑。</p>
+<h3 id="谁在用-netty">谁在用 Netty？</h3>
+<ul>
+<li><strong>Dubbo</strong>：阿里的 RPC 框架，底层通信用 Netty</li>
+<li><strong>gRPC</strong>：Google 的 RPC 框架，Java 版底层用 Netty</li>
+<li><strong>Elasticsearch</strong>：节点间通信用 Netty</li>
+<li><strong>RocketMQ</strong>：消息通信用 Netty</li>
+<li><strong>Spark</strong>：节点间数据传输用 Netty</li>
+<li><strong>Zookeeper</strong>：客户端与服务端通信可选 Netty</li>
+</ul>
+<p>可以说，<strong>Netty 是 Java 网络编程的事实标准</strong>。</p>
+<hr />
+<h2 id="83-netty-核心概念">8.3 Netty 核心概念</h2>
+<h3 id="核心组件一览">核心组件一览</h3>
+<pre><code>EventLoopGroup（线程组）
+├── EventLoop（事件循环 = 一个线程）
+│   ├── 管理多个 Channel
+│   └── 处理 IO 事件 + 定时任务
+│
+Channel（通道）
+├── 对 Java NIO Channel 的封装
+├── NioServerSocketChannel
+├── NioSocketChannel
+└── 关联一个 ChannelPipeline
+│
+ChannelPipeline（处理器链）
+├── ChannelHandler（处理器）
+│   ├── ChannelInboundHandler（入站处理：解码、业务逻辑）
+│   └── ChannelOutboundHandler（出站处理：编码、发送）
+│
+ByteBuf（缓冲区）
+└── 增强版 Buffer，读写双指针，不需要 flip
+</code></pre>
+<h3 id="eventloopgroup-和-eventloop">EventLoopGroup 和 EventLoop</h3>
+<p><strong>EventLoop</strong> = 一个线程 + 一个 Selector + 一个任务队列</p>
+<p>一个 EventLoop 负责处理多个 Channel 的 IO 事件。这就是 NIO 中&quot;一个线程管多个连接&quot;的封装。</p>
+<p><strong>EventLoopGroup</strong> = 一组 EventLoop（线程池）</p>
+<pre><code class="language-java">// 创建两个 EventLoopGroup
+EventLoopGroup bossGroup = new NioEventLoopGroup(1);    // 1 个线程，负责 accept
+EventLoopGroup workerGroup = new NioEventLoopGroup(4);  // 4 个线程，负责 IO
+</code></pre>
+<h3 id="channel">Channel</h3>
+<p>Netty 的 Channel 是对 Java NIO Channel 的封装，常用的有：</p>
+<table>
+<thead>
+<tr>
+<th>Netty Channel</th>
+<th>对应 NIO Channel</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NioServerSocketChannel</td>
+<td>ServerSocketChannel</td>
+<td>TCP 服务端监听</td>
+</tr>
+<tr>
+<td>NioSocketChannel</td>
+<td>SocketChannel</td>
+<td>TCP 客户端/服务端连接</td>
+</tr>
+<tr>
+<td>NioDatagramChannel</td>
+<td>DatagramChannel</td>
+<td>UDP</td>
+</tr>
+</tbody>
+</table>
+<h3 id="channelhandler-和-channelpipeline">ChannelHandler 和 ChannelPipeline</h3>
+<p>这是 Netty 最精妙的设计——<strong>责任链模式</strong>。</p>
+<p>每个 Channel 都有一个 ChannelPipeline，Pipeline 中包含多个 ChannelHandler，数据流经 Pipeline 时依次被每个 Handler 处理：</p>
+<pre><code>入站（接收数据）方向 →
+┌─────┐   ┌──────┐   ┌──────┐   ┌──────┐   ┌──────┐
+│网络  │──→│解码器 │──→│日志   │──→│业务   │──→│...   │
+│数据  │   │Handler│   │Handler│   │Handler│   │      │
+└─────┘   └──────┘   └──────┘   └──────┘   └──────┘
+
+← 出站（发送数据）方向
+┌──────┐   ┌──────┐   ┌─────┐
+│编码器 │←──│日志   │←──│业务  │
+│Handler│   │Handler│   │数据  │
+└──────┘   └──────┘   └─────┘
+</code></pre>
+<p><strong>好处</strong>：每个 Handler 只关注一件事（解码、编码、业务逻辑、日志等），通过组合实现复杂功能。想加功能？往 Pipeline 里加一个 Handler 就行。</p>
+<h3 id="bytebuf比-bytebuffer-好用-100-倍">ByteBuf：比 ByteBuffer 好用 100 倍</h3>
+<p>原生 NIO 的 ByteBuffer 需要手动 flip/clear，容易出错。Netty 的 ByteBuf 用<strong>读写双指针</strong>解决了这个问题：</p>
+<pre><code>ByteBuffer（NIO）：一个 position 指针，读写需要 flip 切换
+
+ByteBuf（Netty）：两个指针，读写独立
+┌──────────────────────────────────────────────────┐
+│  已读区域    │     可读区域      │    可写区域      │
+│ (discardable)│   (readable)     │   (writable)    │
+└──────────────────────────────────────────────────┘
+0          readerIndex      writerIndex         capacity
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>ByteBuffer (NIO)</th>
+<th>ByteBuf (Netty)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>读写切换</td>
+<td>需要 flip()</td>
+<td>不需要，读写指针独立</td>
+</tr>
+<tr>
+<td>动态扩容</td>
+<td>不支持，固定大小</td>
+<td>支持自动扩容</td>
+</tr>
+<tr>
+<td>引用计数</td>
+<td>不支持</td>
+<td>支持（手动管理内存释放）</td>
+</tr>
+<tr>
+<td>池化</td>
+<td>不支持</td>
+<td>支持（PooledByteBufAllocator）</td>
+</tr>
+<tr>
+<td>零拷贝</td>
+<td>有限支持</td>
+<td>CompositeByteBuf、slice 等</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="84-netty-的线程模型">8.4 Netty 的线程模型</h2>
+<h3 id="reactor-模式回顾">Reactor 模式回顾</h3>
+<p>第二章讲过 Reactor 模式有三种变体。Netty 默认使用的是最强的一种——<strong>主从多线程 Reactor</strong>。</p>
+<h3 id="主从多线程-reactor">主从多线程 Reactor</h3>
+<pre><code>                    ┌──────────────────────────────────┐
+                    │         Boss Group                │
+                    │   (1个线程，负责 accept)            │
+  客户端连接 ──────→│   EventLoop: selector.select()    │
+                    │         ↓ 新连接到达               │
+                    └─────────┼────────────────────────┘
+                              │ 将新连接分配给 Worker
+                    ┌─────────▼────────────────────────┐
+                    │         Worker Group               │
+                    │   (N个线程，负责 IO 读写)           │
+                    │                                    │
+                    │   EventLoop-1: channel A, B, C     │
+                    │   EventLoop-2: channel D, E, F     │
+                    │   EventLoop-3: channel G, H, I     │
+                    │   EventLoop-N: ...                  │
+                    │                                    │
+                    │   每个 EventLoop 处理分配给它的      │
+                    │   Channel 的所有 IO 事件             │
+                    └────────────────────────────────────┘
+</code></pre>
+<p><strong>工作流程</strong>：</p>
+<ol>
+<li>Boss Group 中有一个 EventLoop（线程），只负责监听 <code>OP_ACCEPT</code> 事件（接收新连接）</li>
+<li>新连接到达后，Boss 把这个连接分配给 Worker Group 中的某个 EventLoop</li>
+<li>Worker EventLoop 负责这个连接后续所有的 IO 操作（读、写、编解码、业务处理）</li>
+<li>一个 Worker EventLoop 可以管理多个 Channel，但一个 Channel 的整个生命周期只由一个 EventLoop 负责（避免并发问题）</li>
+</ol>
+<p><strong>为什么高效</strong>：</p>
+<ul>
+<li>Boss 和 Worker 分离，accept 不会阻塞 IO 处理</li>
+<li>Worker 线程数通常设为 CPU 核数 × 2</li>
+<li>一个 Channel 绑定一个 EventLoop，不需要加锁</li>
+</ul>
+<hr />
+<h2 id="85-netty-服务器示例">8.5 Netty 服务器示例</h2>
+<pre><code class="language-java">import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
+
+public class NettyServer {
+    public static void main(String[] args) throws InterruptedException {
+        // Boss 线程组：接收连接
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        // Worker 线程组：处理 IO
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        
+        try {
+            ServerBootstrap bootstrap = new ServerBootstrap();
+            bootstrap.group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class)         // 使用 NIO
+                .childHandler(new ChannelInitializer&lt;SocketChannel&gt;() {
+                    @Override
+                    protected void initChannel(SocketChannel ch) {
+                        ChannelPipeline pipeline = ch.pipeline();
+                        pipeline.addLast(new StringDecoder());  // 解码器
+                        pipeline.addLast(new StringEncoder());  // 编码器
+                        pipeline.addLast(new BusinessHandler()); // 业务处理器
+                    }
+                });
+            
+            // 绑定端口并启动
+            ChannelFuture future = bootstrap.bind(8080).sync();
+            System.out.println(&quot;Netty 服务器启动，监听 8080 端口...&quot;);
+            
+            // 等待服务器关闭
+            future.channel().closeFuture().sync();
+        } finally {
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
+        }
+    }
+}
+
+class BusinessHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        String message = (String) msg;
+        System.out.println(&quot;收到消息：&quot; + message);
+        ctx.writeAndFlush(&quot;Echo: &quot; + message);
+    }
+    
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+</code></pre>
+<p>对比第四章的原生 NIO 服务器代码——Netty 版本更简洁、更清晰、更健壮。</p>
+<hr />
+<h2 id="86-netty-如何解决-nio-的问题">8.6 Netty 如何解决 NIO 的问题</h2>
+<table>
+<thead>
+<tr>
+<th>NIO 的问题</th>
+<th>Netty 的解决方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Buffer flip/clear 容易出错</td>
+<td>ByteBuf 读写双指针，不需要 flip</td>
+</tr>
+<tr>
+<td>TCP 粘包/拆包</td>
+<td>内置多种解码器：LineBasedFrameDecoder、LengthFieldBasedFrameDecoder 等</td>
+</tr>
+<tr>
+<td>Selector 空轮询 bug</td>
+<td>检测空轮询次数，超过阈值自动重建 Selector</td>
+</tr>
+<tr>
+<td>缺少编解码支持</td>
+<td>内置 String、JSON、Protobuf 等编解码器</td>
+</tr>
+<tr>
+<td>需要自己管理线程模型</td>
+<td>内置主从 Reactor 模型，开箱即用</td>
+</tr>
+<tr>
+<td>缺少连接管理</td>
+<td>内置心跳检测、超时管理</td>
+</tr>
+<tr>
+<td>缺少 SSL 支持</td>
+<td>SslHandler 一行代码搞定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="netty-如何解决空轮询-bug">Netty 如何解决空轮询 Bug？</h3>
+<pre><code>Netty 的策略：
+1. 记录 select() 返回 0 的次数（空轮询计数器）
+2. 如果连续空轮询次数超过阈值（默认 512 次），认为触发了 bug
+3. 重建一个新的 Selector，把旧 Selector 上的所有 Channel 迁移过去
+4. 关闭旧 Selector
+</code></pre>
+<h3 id="netty-如何解决粘包拆包">Netty 如何解决粘包/拆包？</h3>
+<p>Netty 提供了多种开箱即用的解码器：</p>
+<table>
+<thead>
+<tr>
+<th>解码器</th>
+<th>策略</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FixedLengthFrameDecoder</td>
+<td>固定长度</td>
+<td>每条消息长度固定</td>
+</tr>
+<tr>
+<td>LineBasedFrameDecoder</td>
+<td>换行符分割</td>
+<td>文本协议（按行）</td>
+</tr>
+<tr>
+<td>DelimiterBasedFrameDecoder</td>
+<td>自定义分隔符</td>
+<td>自定义文本协议</td>
+</tr>
+<tr>
+<td>LengthFieldBasedFrameDecoder</td>
+<td>长度字段</td>
+<td>二进制协议（最常用）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="87-为什么-netty-选择-nio-而不是-aio">8.7 为什么 Netty 选择 NIO 而不是 AIO？</h2>
+<p>这个问题前面章节提过，这里做一个完整的总结：</p>
+<ol>
+<li><strong>Linux 上 AIO 没有性能优势</strong>：Java AIO 在 Linux 底层还是 epoll，和 NIO 一样</li>
+<li><strong>Netty 的线程模型已经足够高效</strong>：主从 Reactor + EventLoop，一个线程管理多个 Channel</li>
+<li><strong>AIO 增加了编程复杂度</strong>：回调嵌套、状态管理更复杂</li>
+<li><strong>Netty 的历史验证</strong>：4.0 版本曾实现 AIO 支持，实测无性能提升后移除</li>
+</ol>
+<hr />
+<h2 id="本章小结">本章小结</h2>
+<table>
+<thead>
+<tr>
+<th>知识点</th>
+<th>面试考察频率</th>
+<th>关键记忆</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原生 NIO 的问题</td>
+<td>⭐⭐⭐⭐</td>
+<td>API 复杂、粘包拆包、空轮询 bug</td>
+</tr>
+<tr>
+<td>Netty 核心组件</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>EventLoopGroup + Channel + Pipeline + ByteBuf</td>
+</tr>
+<tr>
+<td>主从 Reactor 模型</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>Boss 负责 accept，Worker 负责 IO</td>
+</tr>
+<tr>
+<td>Pipeline 和 Handler</td>
+<td>⭐⭐⭐⭐</td>
+<td>责任链模式，入站/出站</td>
+</tr>
+<tr>
+<td>ByteBuf vs ByteBuffer</td>
+<td>⭐⭐⭐⭐</td>
+<td>读写双指针、自动扩容、池化</td>
+</tr>
+<tr>
+<td>空轮询 bug 解决</td>
+<td>⭐⭐⭐⭐</td>
+<td>计数 + 重建 Selector</td>
+</tr>
+<tr>
+<td>粘包拆包解决</td>
+<td>⭐⭐⭐⭐</td>
+<td>LengthFieldBasedFrameDecoder</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>下一章预告</strong>：所有知识点都学完了！最后一章我们进入面试实战模式，用标准的面试回答格式，把每个知识点组织成面试官喜欢听的答案。</p>
+</blockquote>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>

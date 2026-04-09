@@ -1,0 +1,3950 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link rel="stylesheet" href="../../../prism/prism.css" />
+    <style>
+      /* ===== Theme Tokens ===== */
+      :root[data-theme="light"] {
+        --bg: #ffffff;
+        --bg-secondary: #f7f6f3;
+        --bg-hover: #efefef;
+        --bg-code: #f3f2f0;
+        --bg-code-block: #f7f6f3;
+        --bg-callout: #f7f6f3;
+        --text: #37352f;
+        --text-secondary: #6b6b6b;
+        --text-tertiary: #9b9a97;
+        --text-link: #2383e2;
+        --text-code: #eb5757;
+        --border: #e3e2de;
+        --border-light: #eeedea;
+        --sidebar-bg: #fbfbfa;
+        --sidebar-hover: #ededec;
+        --sidebar-active: #e3e2df;
+        --scrollbar: #d3d1cb;
+        --toggle-bg: #e8e7e4;
+        --toggle-knob: #fff;
+        --checkbox-accent: #2383e2;
+      }
+      :root[data-theme="dark"] {
+        --bg: #191919;
+        --bg-secondary: #202020;
+        --bg-hover: #2c2c2c;
+        --bg-code: #2f2f2f;
+        --bg-code-block: #1e1e1e;
+        --bg-callout: #242424;
+        --text: #e6e6e4;
+        --text-secondary: #9b9b9b;
+        --text-tertiary: #6b6b6b;
+        --text-link: #529cca;
+        --text-code: #e06c75;
+        --border: #333;
+        --border-light: #2a2a2a;
+        --sidebar-bg: #1c1c1c;
+        --sidebar-hover: #2a2a2a;
+        --sidebar-active: #333;
+        --scrollbar: #444;
+        --toggle-bg: #393939;
+        --toggle-knob: #191919;
+        --checkbox-accent: #529cca;
+      }
+
+      /* ===== Reset ===== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          "Noto Sans SC",
+          "PingFang SC",
+          "Microsoft YaHei",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 256px;
+        height: 100vh;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+        transition:
+          background 0.2s,
+          transform 0.3s;
+      }
+      .sidebar-head {
+        padding: 18px 16px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .sidebar-head span {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      /* outline nav */
+      .outline {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px 24px;
+      }
+      .outline::-webkit-scrollbar {
+        width: 4px;
+      }
+      .outline::-webkit-scrollbar-thumb {
+        background: var(--scrollbar);
+        border-radius: 4px;
+      }
+      .outline a {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        line-height: 1.45;
+        transition:
+          background 0.12s,
+          color 0.12s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .outline a:hover {
+        background: var(--sidebar-hover);
+        color: var(--text);
+      }
+      .outline a.active {
+        background: var(--sidebar-active);
+        color: var(--text);
+        font-weight: 500;
+      }
+      .outline a[data-level="1"] {
+        padding-left: 10px;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+      .outline a[data-level="2"] {
+        padding-left: 10px;
+      }
+      .outline a[data-level="3"] {
+        padding-left: 26px;
+        font-size: 0.82rem;
+      }
+      .outline a[data-level="4"] {
+        padding-left: 42px;
+        font-size: 0.8rem;
+      }
+      .outline a[data-level="5"] {
+        padding-left: 58px;
+        font-size: 0.78rem;
+      }
+      .outline a[data-level="6"] {
+        padding-left: 74px;
+        font-size: 0.78rem;
+      }
+
+      /* ===== Toggle Button ===== */
+      .toggle {
+        width: 38px;
+        height: 20px;
+        border-radius: 10px;
+        background: var(--toggle-bg);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--toggle-knob);
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      [data-theme="dark"] .toggle::after {
+        transform: translateX(18px);
+      }
+      .toggle .ic {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 10px;
+        line-height: 1;
+      }
+      .toggle .ic-s {
+        left: 4px;
+      }
+      .toggle .ic-m {
+        right: 4px;
+      }
+
+      /* ===== Main ===== */
+      .main {
+        flex: 1;
+        margin-left: 256px;
+        min-width: 0;
+        transition: margin 0.3s;
+      }
+
+      /* ===== Article (content styles) ===== */
+      .article {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 52px 48px 100px;
+      }
+
+      /* --- headings --- */
+      .article h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 0;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .article h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 48px;
+        margin-bottom: 6px;
+        padding-top: 12px;
+        scroll-margin-top: 20px;
+      }
+      .article h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 32px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-top: 28px;
+        margin-bottom: 4px;
+        scroll-margin-top: 20px;
+      }
+      .article h5 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 24px;
+        margin-bottom: 4px;
+        color: var(--text-secondary);
+        scroll-margin-top: 20px;
+      }
+      .article h6 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 4px;
+        color: var(--text-tertiary);
+        scroll-margin-top: 20px;
+      }
+
+      /* --- paragraph --- */
+      .article p {
+        margin: 6px 0;
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+
+      /* --- inline --- */
+      .article strong {
+        font-weight: 600;
+      }
+      .article em {
+        font-style: italic;
+      }
+      .article del {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+      }
+      .article a {
+        color: var(--text-link);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: rgba(35, 131, 226, 0.4);
+        transition: text-decoration-color 0.15s;
+      }
+      .article a:hover {
+        text-decoration-color: var(--text-link);
+      }
+
+      /* --- inline code --- */
+      .article code {
+        font-family: "SFMono-Regular", "Fira Code", Menlo, Consolas, monospace;
+        font-size: 0.88em;
+        background: var(--bg-code);
+        color: var(--text-code);
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+
+      /* --- code block (Prism integration) --- */
+      .article pre[class*="language-"],
+      .article pre {
+        background: var(--bg-code-block);
+        border-radius: 6px;
+        padding: 16px 18px;
+        margin: 12px 0;
+        overflow-x: auto;
+        border: 1px solid var(--border-light);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+      .article pre code,
+      .article pre[class*="language-"] code {
+        background: none;
+        color: var(--text);
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        text-shadow: none;
+      }
+
+      /* Prism light overrides */
+      :root[data-theme="light"] code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        color: #37352f;
+        text-shadow: none;
+      }
+      :root[data-theme="light"] :not(pre) > code[class*="language-"],
+      :root[data-theme="light"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="light"] .token.comment,
+      :root[data-theme="light"] .token.prolog,
+      :root[data-theme="light"] .token.doctype,
+      :root[data-theme="light"] .token.cdata { color: #8b949e; }
+      :root[data-theme="light"] .token.punctuation { color: #57606a; }
+      :root[data-theme="light"] .token.property,
+      :root[data-theme="light"] .token.tag,
+      :root[data-theme="light"] .token.boolean,
+      :root[data-theme="light"] .token.number,
+      :root[data-theme="light"] .token.constant,
+      :root[data-theme="light"] .token.symbol,
+      :root[data-theme="light"] .token.deleted { color: #cf222e; }
+      :root[data-theme="light"] .token.selector,
+      :root[data-theme="light"] .token.attr-name,
+      :root[data-theme="light"] .token.string,
+      :root[data-theme="light"] .token.char,
+      :root[data-theme="light"] .token.builtin,
+      :root[data-theme="light"] .token.inserted { color: #116329; }
+      :root[data-theme="light"] .token.operator,
+      :root[data-theme="light"] .token.entity,
+      :root[data-theme="light"] .token.url,
+      :root[data-theme="light"] .language-css .token.string,
+      :root[data-theme="light"] .style .token.string { color: #57606a; background: none; }
+      :root[data-theme="light"] .token.atrule,
+      :root[data-theme="light"] .token.attr-value,
+      :root[data-theme="light"] .token.keyword { color: #0550ae; }
+      :root[data-theme="light"] .token.function,
+      :root[data-theme="light"] .token.class-name { color: #8250df; }
+      :root[data-theme="light"] .token.regex,
+      :root[data-theme="light"] .token.important,
+      :root[data-theme="light"] .token.variable { color: #953800; }
+
+      /* Prism dark overrides */
+      :root[data-theme="dark"] code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        color: #e6e6e4;
+        text-shadow: none;
+      }
+      :root[data-theme="dark"] :not(pre) > code[class*="language-"],
+      :root[data-theme="dark"] pre[class*="language-"] {
+        background: var(--bg-code-block);
+      }
+      :root[data-theme="dark"] .token.comment,
+      :root[data-theme="dark"] .token.prolog,
+      :root[data-theme="dark"] .token.doctype,
+      :root[data-theme="dark"] .token.cdata { color: #6a737d; }
+      :root[data-theme="dark"] .token.punctuation { color: #aab1b9; }
+      :root[data-theme="dark"] .token.property,
+      :root[data-theme="dark"] .token.tag,
+      :root[data-theme="dark"] .token.boolean,
+      :root[data-theme="dark"] .token.number,
+      :root[data-theme="dark"] .token.constant,
+      :root[data-theme="dark"] .token.symbol,
+      :root[data-theme="dark"] .token.deleted { color: #f97583; }
+      :root[data-theme="dark"] .token.selector,
+      :root[data-theme="dark"] .token.attr-name,
+      :root[data-theme="dark"] .token.string,
+      :root[data-theme="dark"] .token.char,
+      :root[data-theme="dark"] .token.builtin,
+      :root[data-theme="dark"] .token.inserted { color: #a5d6a7; }
+      :root[data-theme="dark"] .token.operator,
+      :root[data-theme="dark"] .token.entity,
+      :root[data-theme="dark"] .token.url,
+      :root[data-theme="dark"] .language-css .token.string,
+      :root[data-theme="dark"] .style .token.string { color: #aab1b9; background: none; }
+      :root[data-theme="dark"] .token.atrule,
+      :root[data-theme="dark"] .token.attr-value,
+      :root[data-theme="dark"] .token.keyword { color: #79c0ff; }
+      :root[data-theme="dark"] .token.function,
+      :root[data-theme="dark"] .token.class-name { color: #d2a8ff; }
+      :root[data-theme="dark"] .token.regex,
+      :root[data-theme="dark"] .token.important,
+      :root[data-theme="dark"] .token.variable { color: #ffa657; }
+
+      /* Prism line-numbers plugin */
+      .article pre[class*="language-"].line-numbers {
+        padding-left: 3.8em;
+      }
+      .line-numbers .line-numbers-rows {
+        border-right-color: var(--border-light);
+      }
+      .line-numbers-rows > span::before {
+        color: var(--text-tertiary);
+      }
+
+      /* Prism toolbar & copy button */
+      div.code-toolbar > .toolbar {
+        top: 8px;
+        right: 10px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      div.code-toolbar:hover > .toolbar { opacity: 1; }
+      div.code-toolbar > .toolbar > .toolbar-item > a,
+      div.code-toolbar > .toolbar > .toolbar-item > button,
+      div.code-toolbar > .toolbar > .toolbar-item > span {
+        background: var(--bg-hover);
+        color: var(--text-secondary);
+        border-radius: 4px;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        box-shadow: none;
+        font-family: inherit;
+      }
+      div.code-toolbar > .toolbar > .toolbar-item > a:hover,
+      div.code-toolbar > .toolbar > .toolbar-item > button:hover {
+        background: var(--sidebar-active);
+        color: var(--text);
+      }
+
+      /* --- blockquote --- */
+      .article blockquote {
+        border-left: 3px solid var(--border);
+        padding: 4px 0 4px 16px;
+        margin: 10px 0;
+        color: var(--text-secondary);
+      }
+      .article blockquote blockquote {
+        margin: 6px 0;
+      }
+      .article blockquote p {
+        margin: 2px 0;
+      }
+
+      /* --- hr --- */
+      .article hr {
+        border: none;
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
+      }
+
+      /* --- lists --- */
+      .article ul,
+      .article ol {
+        padding-left: 1.6em;
+        margin: 6px 0 10px;
+      }
+      .article li {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 2px;
+      }
+      .article li::marker {
+        color: var(--text-tertiary);
+      }
+      .article li ul,
+      .article li ol {
+        margin: 2px 0 2px;
+      }
+
+      /* checkbox */
+      .article li input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-radius: 3px;
+        vertical-align: middle;
+        margin-right: 6px;
+        position: relative;
+        top: -1px;
+        cursor: default;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .article li input[type="checkbox"]:checked {
+        background: var(--checkbox-accent);
+        border-color: var(--checkbox-accent);
+      }
+      .article li input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: -1px;
+        left: 1px;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 700;
+      }
+
+      /* --- table --- */
+      .article table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 10px 0 16px;
+      }
+      .article th {
+        text-align: left;
+        padding: 8px 12px;
+        font-weight: 600;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+      }
+      .article td {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+      }
+
+      /* --- image --- */
+      .article img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+
+      /* ===== Mobile ===== */
+      .topbar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 46px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        z-index: 200;
+        align-items: center;
+        padding: 0 14px;
+        gap: 10px;
+        transition: background 0.2s;
+      }
+      .topbar-title {
+        flex: 1;
+        font-size: 0.84rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .menu-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        padding: 4px;
+        line-height: 1;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 99;
+      }
+      .overlay.open {
+        display: block;
+      }
+
+      @media (max-width: 840px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+        }
+        .main {
+          margin-left: 0;
+        }
+        .topbar {
+          display: flex;
+        }
+        .article {
+          padding: 64px 22px 80px;
+        }
+        .article h1 {
+          font-size: 1.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Mobile Top Bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="topbarTitle"></span>
+      <button class="toggle" onclick="toggleTheme()">
+        <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+      </button>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>大纲</span>
+        <button class="toggle" onclick="toggleTheme()">
+          <span class="ic ic-s">☀</span><span class="ic ic-m">☾</span>
+        </button>
+      </div>
+      <nav class="outline" id="outline"></nav>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="article" id="article">
+        <h1 id="第14课-输入组件与表单">第14课 输入组件与表单</h1>
+<blockquote>
+<p>本课将系统学习 Flutter 中的输入组件与表单体系。从最基础的 TextField 到完整的 Form 表单验证，我们将深入掌握 InputDecoration 的丰富配置、文本控制器、焦点管理、输入格式化等核心知识，最终构建一个生产级别的登录/注册表单。<br />
+前置要求：已掌握 Dart 语言基础，了解 StatefulWidget 的生命周期和基本用法。</p>
+</blockquote>
+<hr />
+<h2 id="目录">目录</h2>
+<ol>
+<li><a href="#1-textfield--基础输入框">TextField — 基础输入框</a></li>
+<li><a href="#2-inputdecoration-详解">InputDecoration 详解</a></li>
+<li><a href="#3-texteditingcontroller--文本控制器">TextEditingController — 文本控制器</a></li>
+<li><a href="#4-focusnode--焦点管理">FocusNode — 焦点管理</a></li>
+<li><a href="#5-键盘类型与输入行为">键盘类型与输入行为</a></li>
+<li><a href="#6-输入格式化--textinputformatter">输入格式化 — TextInputFormatter</a></li>
+<li><a href="#7-textformfield--表单验证输入框">TextFormField — 表单验证输入框</a></li>
+<li><a href="#8-form-与-globalkeyformstate">Form 与 GlobalKey&lt;FormState&gt;</a></li>
+<li><a href="#9-实战构建完整的登录注册表单">实战：构建完整的登录/注册表单</a></li>
+<li><a href="#10-本课小结">本课小结</a></li>
+<li><a href="#11-练习题">练习题</a></li>
+</ol>
+<hr />
+<h2 id="1-textfield--基础输入框">1. TextField — 基础输入框</h2>
+<h3 id="11-简介">1.1 简介</h3>
+<p><code>TextField</code> 是 Flutter 中最基本的文本输入组件，对应 Material Design 的文本输入框。用户可以通过键盘在 <code>TextField</code> 中输入文本，开发者可以通过各种属性控制其外观和行为。</p>
+<h3 id="12-基本用法">1.2 基本用法</h3>
+<p>最简单的 <code>TextField</code> 不需要任何参数即可使用：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('TextField 基础示例')),
+        body: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // 最简单的输入框
+              TextField(),
+
+              SizedBox(height: 16),
+
+              // 带提示文本的输入框
+              TextField(
+                decoration: InputDecoration(
+                  labelText: '用户名',
+                  hintText: '请输入用户名',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="13-textfield-的常用属性概览">1.3 TextField 的常用属性概览</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>controller</code></td>
+<td><code>TextEditingController</code></td>
+<td>文本控制器，用于获取/设置文本</td>
+</tr>
+<tr>
+<td><code>decoration</code></td>
+<td><code>InputDecoration</code></td>
+<td>输入框装饰（标签、提示、图标、边框等）</td>
+</tr>
+<tr>
+<td><code>keyboardType</code></td>
+<td><code>TextInputType</code></td>
+<td>键盘类型（文本、数字、邮箱等）</td>
+</tr>
+<tr>
+<td><code>textInputAction</code></td>
+<td><code>TextInputAction</code></td>
+<td>键盘回车键行为</td>
+</tr>
+<tr>
+<td><code>obscureText</code></td>
+<td><code>bool</code></td>
+<td>是否隐藏输入内容（密码模式）</td>
+</tr>
+<tr>
+<td><code>maxLines</code></td>
+<td><code>int?</code></td>
+<td>最大行数，<code>null</code> 表示不限制</td>
+</tr>
+<tr>
+<td><code>maxLength</code></td>
+<td><code>int?</code></td>
+<td>最大字符长度</td>
+</tr>
+<tr>
+<td><code>onChanged</code></td>
+<td><code>ValueChanged&lt;String&gt;</code></td>
+<td>文本变化时的回调</td>
+</tr>
+<tr>
+<td><code>onSubmitted</code></td>
+<td><code>ValueChanged&lt;String&gt;</code></td>
+<td>按下键盘确认键时的回调</td>
+</tr>
+<tr>
+<td><code>focusNode</code></td>
+<td><code>FocusNode</code></td>
+<td>焦点节点，用于控制焦点</td>
+</tr>
+<tr>
+<td><code>inputFormatters</code></td>
+<td><code>List&lt;TextInputFormatter&gt;</code></td>
+<td>输入格式化器列表</td>
+</tr>
+<tr>
+<td><code>enabled</code></td>
+<td><code>bool?</code></td>
+<td>是否启用</td>
+</tr>
+<tr>
+<td><code>readOnly</code></td>
+<td><code>bool</code></td>
+<td>是否只读</td>
+</tr>
+<tr>
+<td><code>style</code></td>
+<td><code>TextStyle</code></td>
+<td>输入文字的样式</td>
+</tr>
+<tr>
+<td><code>textAlign</code></td>
+<td><code>TextAlign</code></td>
+<td>文本对齐方式</td>
+</tr>
+<tr>
+<td><code>cursorColor</code></td>
+<td><code>Color</code></td>
+<td>光标颜色</td>
+</tr>
+<tr>
+<td><code>cursorWidth</code></td>
+<td><code>double</code></td>
+<td>光标宽度</td>
+</tr>
+</tbody>
+</table>
+<h3 id="14-onchanged-与-onsubmitted">1.4 onChanged 与 onSubmitted</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const TextFieldCallbackDemo(),
+    );
+  }
+}
+
+class TextFieldCallbackDemo extends StatefulWidget {
+  const TextFieldCallbackDemo({super.key});
+
+  @override
+  State&lt;TextFieldCallbackDemo&gt; createState() =&gt; _TextFieldCallbackDemoState();
+}
+
+class _TextFieldCallbackDemoState extends State&lt;TextFieldCallbackDemo&gt; {
+  String _currentText = '';
+  String _submittedText = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('回调示例')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                labelText: '搜索',
+                hintText: '输入关键词后按回车搜索',
+                prefixIcon: Icon(Icons.search),
+              ),
+              textInputAction: TextInputAction.search,
+              // 每次文本变化都会触发
+              onChanged: (value) {
+                setState(() {
+                  _currentText = value;
+                });
+              },
+              // 按下键盘确认键时触发
+              onSubmitted: (value) {
+                setState(() {
+                  _submittedText = value;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            Text('实时输入：$_currentText'),
+            Text('已提交：$_submittedText'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>onChanged</code> 在每次文本变化时都会触发，适合实时搜索、字数统计等场景。</li>
+<li><code>onSubmitted</code> 在用户按下键盘上的确认键（回车/搜索/完成等）时触发，适合提交操作。</li>
+<li>如果需要更精细地控制文本，推荐使用 <code>TextEditingController</code> 而非 <code>onChanged</code>。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="2-inputdecoration-详解">2. InputDecoration 详解</h2>
+<p><code>InputDecoration</code> 是 <code>TextField</code> 中最重要的属性之一，它控制输入框的<strong>所有装饰性外观</strong>，包括标签、提示、图标、边框、错误信息等。由于属性众多，我们按功能分类讲解。</p>
+<h3 id="21-文本类属性">2.1 文本类属性</h3>
+<p>这组属性控制输入框中显示的各种提示文本：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>显示时机</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>labelText</code></td>
+<td>标签文本，浮动在输入框上方</td>
+<td>聚焦或有内容时浮动到上方，否则显示在输入区域</td>
+</tr>
+<tr>
+<td><code>hintText</code></td>
+<td>占位提示文本</td>
+<td>输入框为空且获得焦点时显示</td>
+</tr>
+<tr>
+<td><code>helperText</code></td>
+<td>帮助文本</td>
+<td>始终显示在输入框下方</td>
+</tr>
+<tr>
+<td><code>errorText</code></td>
+<td>错误提示文本</td>
+<td>设置后显示在输入框下方，同时输入框变为错误样式</td>
+</tr>
+<tr>
+<td><code>counterText</code></td>
+<td>计数器文本</td>
+<td>显示在输入框右下方</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('文本类属性')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // labelText：标签文本
+              // 未聚焦时显示在输入区域，聚焦时浮动到上方
+              const TextField(
+                decoration: InputDecoration(
+                  labelText: '邮箱地址',
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // hintText：占位提示
+              // 输入框为空且聚焦时显示
+              const TextField(
+                decoration: InputDecoration(
+                  labelText: '手机号码',
+                  hintText: '请输入11位手机号码',
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // helperText：帮助说明
+              // 始终显示在输入框下方
+              const TextField(
+                decoration: InputDecoration(
+                  labelText: '密码',
+                  helperText: '密码长度至少8位，需包含字母和数字',
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // errorText：错误提示
+              // 设置后输入框变为错误状态
+              const TextField(
+                decoration: InputDecoration(
+                  labelText: '用户名',
+                  errorText: '用户名已被占用',
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // counterText：计数器文本
+              const TextField(
+                decoration: InputDecoration(
+                  labelText: '个人简介',
+                  counterText: '0/200',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li>当 <code>errorText</code> 不为 <code>null</code> 时，<code>helperText</code> 会被替换为错误文本显示。</li>
+<li><code>labelText</code> 和 <code>hintText</code> 可以同时使用，Flutter 会智能地管理它们的显示时机。</li>
+<li>如果同时设置了 <code>maxLength</code>，TextField 会自动显示字符计数器（如 &quot;5/20&quot;），此时 <code>counterText</code> 可用于自定义计数文本或设置为空字符串来隐藏默认计数器。</li>
+</ul>
+</blockquote>
+<h3 id="22-图标类属性">2.2 图标类属性</h3>
+<p><code>InputDecoration</code> 提供了多种方式在输入框中添加图标或自定义组件：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>位置</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>icon</code></td>
+<td>输入框<strong>外部</strong>左侧</td>
+<td>显示在整个输入框左侧</td>
+</tr>
+<tr>
+<td><code>prefixIcon</code></td>
+<td>输入框<strong>内部</strong>左侧</td>
+<td>常用于搜索图标、手机图标等</td>
+</tr>
+<tr>
+<td><code>suffixIcon</code></td>
+<td>输入框<strong>内部</strong>右侧</td>
+<td>常用于清除按钮、密码可见切换等</td>
+</tr>
+<tr>
+<td><code>prefix</code></td>
+<td>输入文字前方</td>
+<td>自定义前缀 Widget，仅在聚焦时显示</td>
+</tr>
+<tr>
+<td><code>suffix</code></td>
+<td>输入文字后方</td>
+<td>自定义后缀 Widget，仅在聚焦时显示</td>
+</tr>
+<tr>
+<td><code>prefixText</code></td>
+<td>输入文字前方</td>
+<td>前缀文本，仅在聚焦时显示</td>
+</tr>
+<tr>
+<td><code>suffixText</code></td>
+<td>输入文字后方</td>
+<td>后缀文本，仅在聚焦时显示</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const IconDecorationDemo(),
+    );
+  }
+}
+
+class IconDecorationDemo extends StatefulWidget {
+  const IconDecorationDemo({super.key});
+
+  @override
+  State&lt;IconDecorationDemo&gt; createState() =&gt; _IconDecorationDemoState();
+}
+
+class _IconDecorationDemoState extends State&lt;IconDecorationDemo&gt; {
+  bool _obscureText = true;
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('图标类属性')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // icon：输入框外部左侧图标
+            const TextField(
+              decoration: InputDecoration(
+                icon: Icon(Icons.person),
+                labelText: '用户名',
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // prefixIcon：输入框内部左侧图标
+            // suffixIcon：输入框内部右侧图标（此处用作清除按钮）
+            TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () =&gt; _searchController.clear(),
+                ),
+                labelText: '搜索',
+                hintText: '输入搜索关键词',
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // 密码输入框：suffixIcon 切换密码可见性
+            TextField(
+              obscureText: _obscureText,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.lock),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureText ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                ),
+                labelText: '密码',
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // prefix 与 suffix：自定义前后缀 Widget
+            const TextField(
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: '金额',
+                prefixText: '¥ ',
+                suffixText: '元',
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // prefix 使用自定义 Widget
+            const TextField(
+              decoration: InputDecoration(
+                labelText: '网站地址',
+                prefix: Text(
+                  'https://',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li><code>prefixIcon</code> / <code>suffixIcon</code> 适合放置固定图标，它们始终可见。</li>
+<li><code>prefix</code> / <code>suffix</code> 适合放置与输入内容紧密相关的前后缀（如货币符号、单位），它们仅在输入框获得焦点或有内容时才显示。</li>
+<li>清除按钮是 <code>suffixIcon</code> 最常见的用途之一，记得在文本为空时隐藏它。</li>
+</ul>
+</blockquote>
+<h3 id="23-边框类属性">2.3 边框类属性</h3>
+<p><code>InputDecoration</code> 支持为不同状态设置不同的边框样式：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>border</code></td>
+<td>默认边框样式（所有状态的基础）</td>
+</tr>
+<tr>
+<td><code>enabledBorder</code></td>
+<td>启用但未聚焦时的边框</td>
+</tr>
+<tr>
+<td><code>focusedBorder</code></td>
+<td>聚焦时的边框</td>
+</tr>
+<tr>
+<td><code>errorBorder</code></td>
+<td>错误状态未聚焦时的边框</td>
+</tr>
+<tr>
+<td><code>focusedErrorBorder</code></td>
+<td>错误状态且聚焦时的边框</td>
+</tr>
+<tr>
+<td><code>disabledBorder</code></td>
+<td>禁用状态的边框</td>
+</tr>
+</tbody>
+</table>
+<p>Flutter 提供了三种边框类型：</p>
+<table>
+<thead>
+<tr>
+<th>边框类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OutlineInputBorder</code></td>
+<td>四周包围的边框（最常用）</td>
+</tr>
+<tr>
+<td><code>UnderlineInputBorder</code></td>
+<td>仅底部下划线（默认样式）</td>
+</tr>
+<tr>
+<td><code>InputBorder.none</code></td>
+<td>无边框</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('边框样式')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // 默认样式：下划线边框
+              const TextField(
+                decoration: InputDecoration(
+                  labelText: '下划线边框（默认）',
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // OutlineInputBorder：四周包围的圆角边框
+              const TextField(
+                decoration: InputDecoration(
+                  labelText: '圆角边框',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // 为不同状态设置不同边框颜色
+              TextField(
+                decoration: InputDecoration(
+                  labelText: '多状态边框',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.grey, width: 1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.blue, width: 2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.red, width: 1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.red, width: 2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // 无边框样式
+              const TextField(
+                decoration: InputDecoration(
+                  labelText: '无边框',
+                  border: InputBorder.none,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="24-填充与间距属性">2.4 填充与间距属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>filled</code></td>
+<td>是否填充背景色，默认 <code>false</code></td>
+</tr>
+<tr>
+<td><code>fillColor</code></td>
+<td>背景填充颜色，需 <code>filled: true</code> 才生效</td>
+</tr>
+<tr>
+<td><code>contentPadding</code></td>
+<td>输入区域的内边距</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('填充与间距')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // 带背景填充的输入框
+              TextField(
+                decoration: InputDecoration(
+                  labelText: '用户名',
+                  hintText: '请输入用户名',
+                  filled: true,
+                  fillColor: Colors.grey.shade100,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // 自定义 contentPadding 调整内间距
+              TextField(
+                decoration: InputDecoration(
+                  labelText: '紧凑输入框',
+                  filled: true,
+                  fillColor: Colors.blue.shade50,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // 大间距的输入框
+              TextField(
+                decoration: InputDecoration(
+                  labelText: '宽松输入框',
+                  filled: true,
+                  fillColor: Colors.green.shade50,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 20,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="25-综合示例自定义精美输入框">2.5 综合示例：自定义精美输入框</h3>
+<p>将上述所有装饰属性组合起来，创建一个视觉效果完善的输入框：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        useMaterial3: true,
+      ),
+      home: const CustomInputDemo(),
+    );
+  }
+}
+
+class CustomInputDemo extends StatefulWidget {
+  const CustomInputDemo({super.key});
+
+  @override
+  State&lt;CustomInputDemo&gt; createState() =&gt; _CustomInputDemoState();
+}
+
+class _CustomInputDemoState extends State&lt;CustomInputDemo&gt; {
+  final _emailController = TextEditingController();
+  String? _errorText;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  void _validateEmail(String value) {
+    setState(() {
+      if (value.isEmpty) {
+        _errorText = null;
+      } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+        _errorText = '请输入有效的邮箱地址';
+      } else {
+        _errorText = null;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('精美输入框')),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: TextField(
+          controller: _emailController,
+          keyboardType: TextInputType.emailAddress,
+          onChanged: _validateEmail,
+          decoration: InputDecoration(
+            // 文本类
+            labelText: '邮箱地址',
+            hintText: 'example@email.com',
+            helperText: '我们不会向第三方分享您的邮箱',
+            errorText: _errorText,
+
+            // 图标类
+            prefixIcon: const Icon(Icons.email_outlined),
+            suffixIcon: _emailController.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _emailController.clear();
+                      _validateEmail('');
+                    },
+                  )
+                : null,
+
+            // 填充
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+
+            // 边框
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Colors.grey.shade300,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.primary,
+                width: 2,
+              ),
+            ),
+
+            // 间距
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>在实际项目中，建议通过 <code>ThemeData</code> 中的 <code>InputDecorationTheme</code> 统一配置输入框样式，避免在每个 <code>TextField</code> 中重复设置。</li>
+<li>使用 <code>filled: true</code> + <code>borderSide: BorderSide.none</code> 可以创建现代风格的无边框填充输入框。</li>
+<li><code>contentPadding</code> 对触控体验很重要——太小会导致用户难以点击，推荐最小高度为 48dp。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="3-texteditingcontroller--文本控制器">3. TextEditingController — 文本控制器</h2>
+<h3 id="31-基本概念">3.1 基本概念</h3>
+<p><code>TextEditingController</code> 是管理 <code>TextField</code> 文本内容的控制器。相比 <code>onChanged</code> 回调，它提供了更强大的文本操作能力：</p>
+<ul>
+<li>获取和设置文本内容</li>
+<li>监听文本变化</li>
+<li>控制光标位置和文本选择</li>
+</ul>
+<h3 id="32-基本用法获取与设置文本">3.2 基本用法：获取与设置文本</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: const ControllerBasicDemo());
+  }
+}
+
+class ControllerBasicDemo extends StatefulWidget {
+  const ControllerBasicDemo({super.key});
+
+  @override
+  State&lt;ControllerBasicDemo&gt; createState() =&gt; _ControllerBasicDemoState();
+}
+
+class _ControllerBasicDemoState extends State&lt;ControllerBasicDemo&gt; {
+  // 创建控制器，可传入初始文本
+  final _controller = TextEditingController(text: '初始文本');
+
+  @override
+  void dispose() {
+    // 必须在 dispose 中释放控制器，防止内存泄漏
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('TextEditingController')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                labelText: '输入内容',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              children: [
+                // 获取文本
+                ElevatedButton(
+                  onPressed: () {
+                    final text = _controller.text;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('当前文本：$text')),
+                    );
+                  },
+                  child: const Text('获取文本'),
+                ),
+
+                // 设置文本
+                ElevatedButton(
+                  onPressed: () {
+                    _controller.text = 'Hello Flutter!';
+                  },
+                  child: const Text('设置文本'),
+                ),
+
+                // 清空文本
+                ElevatedButton(
+                  onPressed: () {
+                    _controller.clear();
+                  },
+                  child: const Text('清空'),
+                ),
+
+                // 追加文本
+                ElevatedButton(
+                  onPressed: () {
+                    _controller.text += ' 追加内容';
+                  },
+                  child: const Text('追加文本'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="33-监听文本变化addlistener">3.3 监听文本变化：addListener</h3>
+<p>除了 <code>onChanged</code> 回调，还可以通过 <code>TextEditingController</code> 的 <code>addListener</code> 来监听变化：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: const ListenerDemo());
+  }
+}
+
+class ListenerDemo extends StatefulWidget {
+  const ListenerDemo({super.key});
+
+  @override
+  State&lt;ListenerDemo&gt; createState() =&gt; _ListenerDemoState();
+}
+
+class _ListenerDemoState extends State&lt;ListenerDemo&gt; {
+  final _controller = TextEditingController();
+  int _charCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // 添加监听器
+    _controller.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    setState(() {
+      _charCount = _controller.text.length;
+    });
+  }
+
+  @override
+  void dispose() {
+    // 移除监听器并释放控制器
+    _controller.removeListener(_onTextChanged);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('监听文本变化')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                labelText: '输入内容',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '已输入 $_charCount 个字符',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>addListener</code> 会在文本或选区（selection）变化时都触发，粒度比 <code>onChanged</code> 更细。</li>
+<li>如果只关心文本内容的变化，使用 <code>onChanged</code> 更简洁；如果还需要监听光标位置变化，使用 <code>addListener</code>。</li>
+</ul>
+</blockquote>
+<h3 id="34-selection--光标位置与文本选区">3.4 selection — 光标位置与文本选区</h3>
+<p><code>TextEditingController.selection</code> 属性返回一个 <code>TextSelection</code> 对象，可用于获取和设置光标位置：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: const SelectionDemo());
+  }
+}
+
+class SelectionDemo extends StatefulWidget {
+  const SelectionDemo({super.key});
+
+  @override
+  State&lt;SelectionDemo&gt; createState() =&gt; _SelectionDemoState();
+}
+
+class _SelectionDemoState extends State&lt;SelectionDemo&gt; {
+  final _controller = TextEditingController(text: 'Hello Flutter World');
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('光标与选区')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                labelText: '点击按钮操作光标',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                // 将光标移动到文本末尾
+                ElevatedButton(
+                  onPressed: () {
+                    _controller.selection = TextSelection.collapsed(
+                      offset: _controller.text.length,
+                    );
+                  },
+                  child: const Text('光标到末尾'),
+                ),
+
+                // 将光标移动到文本开头
+                ElevatedButton(
+                  onPressed: () {
+                    _controller.selection = const TextSelection.collapsed(
+                      offset: 0,
+                    );
+                  },
+                  child: const Text('光标到开头'),
+                ),
+
+                // 选中全部文本
+                ElevatedButton(
+                  onPressed: () {
+                    _controller.selection = TextSelection(
+                      baseOffset: 0,
+                      extentOffset: _controller.text.length,
+                    );
+                  },
+                  child: const Text('选中全部'),
+                ),
+
+                // 选中 &quot;Flutter&quot; 部分
+                ElevatedButton(
+                  onPressed: () {
+                    final start = _controller.text.indexOf('Flutter');
+                    if (start != -1) {
+                      _controller.selection = TextSelection(
+                        baseOffset: start,
+                        extentOffset: start + 'Flutter'.length,
+                      );
+                    }
+                  },
+                  child: const Text('选中 Flutter'),
+                ),
+
+                // 获取当前光标位置
+                ElevatedButton(
+                  onPressed: () {
+                    final selection = _controller.selection;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '光标位置：${selection.baseOffset} ~ ${selection.extentOffset}',
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text('获取光标位置'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>TextSelection.collapsed(offset: n)</code> 表示光标在位置 n，没有选中任何文本。</li>
+<li><code>TextSelection(baseOffset: a, extentOffset: b)</code> 表示选中从 a 到 b 的文本。</li>
+<li>操作 <code>selection</code> 前需确保 TextField 已获取焦点，否则设置可能不生效。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="4-focusnode--焦点管理">4. FocusNode — 焦点管理</h2>
+<h3 id="41-基本概念">4.1 基本概念</h3>
+<p>在表单应用中，管理焦点（即哪个输入框当前处于&quot;激活&quot;状态）非常重要。<code>FocusNode</code> 是 Flutter 焦点系统的核心类，允许开发者：</p>
+<ul>
+<li>编程式地请求或释放焦点</li>
+<li>监听焦点变化</li>
+<li>在多个输入框之间移动焦点</li>
+</ul>
+<h3 id="42-基本用法请求与释放焦点">4.2 基本用法：请求与释放焦点</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: const FocusBasicDemo());
+  }
+}
+
+class FocusBasicDemo extends StatefulWidget {
+  const FocusBasicDemo({super.key});
+
+  @override
+  State&lt;FocusBasicDemo&gt; createState() =&gt; _FocusBasicDemoState();
+}
+
+class _FocusBasicDemoState extends State&lt;FocusBasicDemo&gt; {
+  final _nameFocusNode = FocusNode();
+  final _emailFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    // FocusNode 也需要在 dispose 中释放
+    _nameFocusNode.dispose();
+    _emailFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('焦点管理')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              focusNode: _nameFocusNode,
+              decoration: const InputDecoration(
+                labelText: '用户名',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              focusNode: _emailFocusNode,
+              decoration: const InputDecoration(
+                labelText: '邮箱',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              children: [
+                // 请求焦点到用户名输入框
+                ElevatedButton(
+                  onPressed: () =&gt; _nameFocusNode.requestFocus(),
+                  child: const Text('聚焦用户名'),
+                ),
+
+                // 请求焦点到邮箱输入框
+                ElevatedButton(
+                  onPressed: () =&gt; _emailFocusNode.requestFocus(),
+                  child: const Text('聚焦邮箱'),
+                ),
+
+                // 取消所有焦点（收起键盘）
+                ElevatedButton(
+                  onPressed: () {
+                    // 方式一：使用 FocusNode.unfocus()
+                    _nameFocusNode.unfocus();
+                    _emailFocusNode.unfocus();
+
+                    // 方式二（推荐）：使用 FocusScope 取消当前焦点
+                    // FocusScope.of(context).unfocus();
+                  },
+                  child: const Text('取消焦点'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="43-监听焦点变化onfocuschange">4.3 监听焦点变化：onFocusChange</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: const FocusListenerDemo());
+  }
+}
+
+class FocusListenerDemo extends StatefulWidget {
+  const FocusListenerDemo({super.key});
+
+  @override
+  State&lt;FocusListenerDemo&gt; createState() =&gt; _FocusListenerDemoState();
+}
+
+class _FocusListenerDemoState extends State&lt;FocusListenerDemo&gt; {
+  final _focusNode = FocusNode();
+  bool _isFocused = false;
+  String _statusText = '输入框未聚焦';
+
+  @override
+  void initState() {
+    super.initState();
+    // 监听焦点变化
+    _focusNode.addListener(() {
+      setState(() {
+        _isFocused = _focusNode.hasFocus;
+        _statusText = _isFocused ? '输入框已聚焦' : '输入框已失焦';
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('焦点监听')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // 根据焦点状态动态改变外观
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: _isFocused
+                    ? [
+                        BoxShadow(
+                          color: Colors.blue.withOpacity(0.3),
+                          blurRadius: 8,
+                          spreadRadius: 2,
+                        ),
+                      ]
+                    : [],
+              ),
+              child: TextField(
+                focusNode: _focusNode,
+                decoration: InputDecoration(
+                  labelText: '带焦点动效的输入框',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _statusText,
+              style: TextStyle(
+                color: _isFocused ? Colors.blue : Colors.grey,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="44-focusscope--焦点域管理">4.4 FocusScope — 焦点域管理</h3>
+<p><code>FocusScope</code> 可以管理一组焦点节点，常用于在多个输入框之间移动焦点：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: const FocusScopeDemo());
+  }
+}
+
+class FocusScopeDemo extends StatefulWidget {
+  const FocusScopeDemo({super.key});
+
+  @override
+  State&lt;FocusScopeDemo&gt; createState() =&gt; _FocusScopeDemoState();
+}
+
+class _FocusScopeDemoState extends State&lt;FocusScopeDemo&gt; {
+  final _field1Focus = FocusNode();
+  final _field2Focus = FocusNode();
+  final _field3Focus = FocusNode();
+
+  @override
+  void dispose() {
+    _field1Focus.dispose();
+    _field2Focus.dispose();
+    _field3Focus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('焦点域示例')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // 点击键盘&quot;下一步&quot;自动跳转到下一个输入框
+            TextField(
+              focusNode: _field1Focus,
+              textInputAction: TextInputAction.next,
+              onSubmitted: (_) =&gt; _field2Focus.requestFocus(),
+              decoration: const InputDecoration(
+                labelText: '第一个字段',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              focusNode: _field2Focus,
+              textInputAction: TextInputAction.next,
+              onSubmitted: (_) =&gt; _field3Focus.requestFocus(),
+              decoration: const InputDecoration(
+                labelText: '第二个字段',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              focusNode: _field3Focus,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) {
+                _field3Focus.unfocus();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('所有字段已填写完毕！')),
+                );
+              },
+              decoration: const InputDecoration(
+                labelText: '第三个字段',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 使用 FocusScope 收起键盘
+            ElevatedButton(
+              onPressed: () {
+                // 最简洁的收起键盘方式
+                FocusScope.of(context).unfocus();
+              },
+              child: const Text('收起键盘'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>在多字段表单中，使用 <code>textInputAction: TextInputAction.next</code> 配合 <code>onSubmitted</code> 实现字段间的跳转，这是优秀的用户体验。</li>
+<li>最后一个字段使用 <code>TextInputAction.done</code>，按下后收起键盘或触发提交。</li>
+<li>收起键盘的推荐方式：<code>FocusScope.of(context).unfocus()</code>。</li>
+<li>记住在 <code>dispose</code> 中释放所有 <code>FocusNode</code>，否则会导致内存泄漏。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="5-键盘类型与输入行为">5. 键盘类型与输入行为</h2>
+<h3 id="51-keyboardtype--键盘类型">5.1 keyboardType — 键盘类型</h3>
+<p><code>keyboardType</code> 属性控制弹出的键盘类型，方便用户输入不同格式的数据：</p>
+<table>
+<thead>
+<tr>
+<th>TextInputType</th>
+<th>说明</th>
+<th>键盘特征</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TextInputType.text</code></td>
+<td>普通文本（默认）</td>
+<td>标准字母键盘</td>
+</tr>
+<tr>
+<td><code>TextInputType.number</code></td>
+<td>数字</td>
+<td>数字键盘</td>
+</tr>
+<tr>
+<td><code>TextInputType.phone</code></td>
+<td>电话号码</td>
+<td>数字键盘，可能带 +、*、#</td>
+</tr>
+<tr>
+<td><code>TextInputType.emailAddress</code></td>
+<td>邮箱地址</td>
+<td>带 @ 和 . 的键盘</td>
+</tr>
+<tr>
+<td><code>TextInputType.url</code></td>
+<td>网址</td>
+<td>带 / 和 .com 的键盘</td>
+</tr>
+<tr>
+<td><code>TextInputType.multiline</code></td>
+<td>多行文本</td>
+<td>标准键盘，回车键换行</td>
+</tr>
+<tr>
+<td><code>TextInputType.datetime</code></td>
+<td>日期时间</td>
+<td>数字键盘，可能带 / 和 :</td>
+</tr>
+<tr>
+<td><code>TextInputType.name</code></td>
+<td>人名</td>
+<td>带自动大写的键盘</td>
+</tr>
+<tr>
+<td><code>TextInputType.streetAddress</code></td>
+<td>街道地址</td>
+<td>标准键盘</td>
+</tr>
+<tr>
+<td><code>TextInputType.visiblePassword</code></td>
+<td>可见密码</td>
+<td>不自动建议的键盘</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-输入行为属性">5.2 输入行为属性</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: const InputBehaviorDemo());
+  }
+}
+
+class InputBehaviorDemo extends StatelessWidget {
+  const InputBehaviorDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('键盘类型与输入行为')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // 数字键盘
+            const TextField(
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: '年龄',
+                hintText: '仅限数字',
+                prefixIcon: Icon(Icons.cake),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 邮箱键盘
+            const TextField(
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                labelText: '邮箱',
+                hintText: 'user@example.com',
+                prefixIcon: Icon(Icons.email),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 密码输入：obscureText 隐藏字符
+            const TextField(
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: '密码',
+                prefixIcon: Icon(Icons.lock),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 多行输入
+            const TextField(
+              maxLines: 5,
+              minLines: 3,
+              keyboardType: TextInputType.multiline,
+              decoration: InputDecoration(
+                labelText: '个人简介',
+                hintText: '介绍一下自己...',
+                alignLabelWithHint: true,
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // maxLength：限制最大长度，自动显示计数器
+            const TextField(
+              maxLength: 20,
+              decoration: InputDecoration(
+                labelText: '昵称',
+                hintText: '最多20个字符',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // textInputAction：控制键盘确认键行为
+            TextField(
+              textInputAction: TextInputAction.search,
+              onSubmitted: (value) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('搜索：$value')),
+                );
+              },
+              decoration: const InputDecoration(
+                labelText: '搜索',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>obscureText: true</code> 会隐藏输入字符（显示为圆点），通常用于密码字段。设置后 <code>maxLines</code> 固定为 1。</li>
+<li><code>maxLines</code> 设为 <code>null</code> 表示不限行数，输入框高度会自动扩展。设为大于 1 的值可创建多行输入框。</li>
+<li><code>maxLength</code> 设置后会自动在右下角显示字符计数器（如 &quot;5/20&quot;），无需手动实现。</li>
+<li><code>keyboardType</code> 只是建议系统弹出对应类型的键盘，<strong>并不会阻止用户输入其他字符</strong>。若要限制输入内容，需配合 <code>inputFormatters</code> 使用。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="6-输入格式化--textinputformatter">6. 输入格式化 — TextInputFormatter</h2>
+<h3 id="61-基本概念">6.1 基本概念</h3>
+<p><code>TextInputFormatter</code> 用于在用户输入时拦截和转换文本。Flutter 内置了几种常用的格式化器：</p>
+<table>
+<thead>
+<tr>
+<th>格式化器</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FilteringTextInputFormatter.digitsOnly</code></td>
+<td>仅允许输入数字</td>
+</tr>
+<tr>
+<td><code>FilteringTextInputFormatter.allow(RegExp)</code></td>
+<td>仅允许匹配正则的字符</td>
+</tr>
+<tr>
+<td><code>FilteringTextInputFormatter.deny(RegExp)</code></td>
+<td>禁止匹配正则的字符</td>
+</tr>
+<tr>
+<td><code>LengthLimitingTextInputFormatter(max)</code></td>
+<td>限制最大输入长度</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-内置格式化器示例">6.2 内置格式化器示例</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: const FormatterDemo());
+  }
+}
+
+class FormatterDemo extends StatelessWidget {
+  const FormatterDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('输入格式化')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // 仅允许输入数字
+            const TextField(
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              decoration: InputDecoration(
+                labelText: '手机号码',
+                hintText: '仅允许输入数字',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 仅允许字母和数字
+            TextField(
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
+              ],
+              decoration: const InputDecoration(
+                labelText: '用户名',
+                hintText: '仅允许字母和数字',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 禁止输入空格
+            TextField(
+              inputFormatters: [
+                FilteringTextInputFormatter.deny(RegExp(r'\s')),
+              ],
+              decoration: const InputDecoration(
+                labelText: '密码',
+                hintText: '不允许包含空格',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 限制最大长度为 6（验证码场景）
+            const TextField(
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(6),
+              ],
+              decoration: InputDecoration(
+                labelText: '验证码',
+                hintText: '6位数字验证码',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 允许输入小数（数字和小数点）
+            TextField(
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+              ],
+              decoration: const InputDecoration(
+                labelText: '金额',
+                hintText: '支持小数',
+                prefixText: '¥ ',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="63-自定义-textinputformatter">6.3 自定义 TextInputFormatter</h3>
+<p>当内置格式化器无法满足需求时，可以自定义 <code>TextInputFormatter</code>。以下示例实现一个手机号码格式化器，自动将 &quot;13812345678&quot; 格式化为 &quot;138 1234 5678&quot;：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: const CustomFormatterDemo());
+  }
+}
+
+/// 手机号码格式化器：138 1234 5678
+class PhoneNumberFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // 移除所有非数字字符
+    final digitsOnly = newValue.text.replaceAll(RegExp(r'\D'), '');
+
+    // 限制最多 11 位数字
+    final limited = digitsOnly.length &gt; 11
+        ? digitsOnly.substring(0, 11)
+        : digitsOnly;
+
+    // 按 3-4-4 格式化
+    final buffer = StringBuffer();
+    for (int i = 0; i &lt; limited.length; i++) {
+      if (i == 3 || i == 7) buffer.write(' ');
+      buffer.write(limited[i]);
+    }
+    final formatted = buffer.toString();
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+}
+
+/// 银行卡号格式化器：每4位加一个空格
+class BankCardFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digitsOnly = newValue.text.replaceAll(RegExp(r'\D'), '');
+    final limited = digitsOnly.length &gt; 19
+        ? digitsOnly.substring(0, 19)
+        : digitsOnly;
+
+    final buffer = StringBuffer();
+    for (int i = 0; i &lt; limited.length; i++) {
+      if (i &gt; 0 &amp;&amp; i % 4 == 0) buffer.write(' ');
+      buffer.write(limited[i]);
+    }
+    final formatted = buffer.toString();
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+}
+
+class CustomFormatterDemo extends StatelessWidget {
+  const CustomFormatterDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('自定义格式化')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // 手机号格式化：138 1234 5678
+            TextField(
+              keyboardType: TextInputType.phone,
+              inputFormatters: [PhoneNumberFormatter()],
+              decoration: const InputDecoration(
+                labelText: '手机号码',
+                hintText: '138 1234 5678',
+                prefixIcon: Icon(Icons.phone),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 银行卡号格式化：6222 0200 1234 5678
+            TextField(
+              keyboardType: TextInputType.number,
+              inputFormatters: [BankCardFormatter()],
+              decoration: const InputDecoration(
+                labelText: '银行卡号',
+                hintText: '6222 0200 1234 5678',
+                prefixIcon: Icon(Icons.credit_card),
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>自定义格式化器时，<code>formatEditUpdate</code> 方法接收旧值和新值，返回格式化后的值。需要同时处理好 <code>text</code> 和 <code>selection</code>（光标位置）。</li>
+<li>多个格式化器可以串联使用，会按列表顺序依次执行。</li>
+<li><code>keyboardType</code> 与 <code>inputFormatters</code> 应配合使用：前者提供合适的键盘布局，后者确保输入内容的合法性。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="7-textformfield--表单验证输入框">7. TextFormField — 表单验证输入框</h2>
+<h3 id="71-textfield-vs-textformfield">7.1 TextField vs TextFormField</h3>
+<p><code>TextFormField</code> 是 <code>TextField</code> 的包装，专为 <code>Form</code> 表单设计。它在 <code>TextField</code> 基础上增加了表单验证能力：</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>TextField</th>
+<th>TextFormField</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>基础输入</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>InputDecoration</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>controller</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>表单验证（validator）</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>表单保存（onSaved）</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>自动验证模式</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>与 Form 联动</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<h3 id="72-validator--验证函数">7.2 validator — 验证函数</h3>
+<p><code>validator</code> 是 <code>TextFormField</code> 最核心的属性，它接收当前文本值，返回错误信息字符串（返回 <code>null</code> 表示验证通过）：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: const ValidatorDemo());
+  }
+}
+
+class ValidatorDemo extends StatefulWidget {
+  const ValidatorDemo({super.key});
+
+  @override
+  State&lt;ValidatorDemo&gt; createState() =&gt; _ValidatorDemoState();
+}
+
+class _ValidatorDemoState extends State&lt;ValidatorDemo&gt; {
+  final _formKey = GlobalKey&lt;FormState&gt;();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('TextFormField 验证')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              // 用户名验证：非空 + 长度限制
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: '用户名',
+                  hintText: '3~20个字符',
+                  prefixIcon: Icon(Icons.person),
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '请输入用户名';
+                  }
+                  if (value.length &lt; 3) {
+                    return '用户名至少3个字符';
+                  }
+                  if (value.length &gt; 20) {
+                    return '用户名不能超过20个字符';
+                  }
+                  return null; // 验证通过
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // 邮箱验证：非空 + 格式校验
+              TextFormField(
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: '邮箱',
+                  hintText: 'user@example.com',
+                  prefixIcon: Icon(Icons.email),
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '请输入邮箱地址';
+                  }
+                  final emailRegex = RegExp(
+                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                  );
+                  if (!emailRegex.hasMatch(value)) {
+                    return '请输入有效的邮箱地址';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // 密码验证：非空 + 复杂度要求
+              TextFormField(
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: '密码',
+                  hintText: '至少8位，包含字母和数字',
+                  prefixIcon: Icon(Icons.lock),
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '请输入密码';
+                  }
+                  if (value.length &lt; 8) {
+                    return '密码至少8位';
+                  }
+                  if (!RegExp(r'[a-zA-Z]').hasMatch(value)) {
+                    return '密码必须包含字母';
+                  }
+                  if (!RegExp(r'[0-9]').hasMatch(value)) {
+                    return '密码必须包含数字';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // 触发表单验证
+                    if (_formKey.currentState!.validate()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('验证通过！')),
+                      );
+                    }
+                  },
+                  child: const Text('提交'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<h3 id="73-autovalidatemode--自动验证模式">7.3 autovalidateMode — 自动验证模式</h3>
+<p><code>autovalidateMode</code> 控制何时自动触发验证：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AutovalidateMode.disabled</code></td>
+<td>禁用自动验证（默认），仅在调用 <code>validate()</code> 时触发</td>
+</tr>
+<tr>
+<td><code>AutovalidateMode.always</code></td>
+<td>始终自动验证（每次文本变化都验证）</td>
+</tr>
+<tr>
+<td><code>AutovalidateMode.onUserInteraction</code></td>
+<td>用户首次交互后自动验证（推荐）</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-dart">TextFormField(
+  // 用户输入后自动验证，体验最佳
+  autovalidateMode: AutovalidateMode.onUserInteraction,
+  decoration: const InputDecoration(
+    labelText: '邮箱',
+    border: OutlineInputBorder(),
+  ),
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return '请输入邮箱';
+    }
+    if (!value.contains('@')) {
+      return '请输入有效的邮箱地址';
+    }
+    return null;
+  },
+)
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>推荐使用 <code>AutovalidateMode.onUserInteraction</code>，这样用户在首次输入前不会看到错误提示，避免页面一打开就满屏红字的糟糕体验。</li>
+<li><code>validator</code> 函数应保持纯函数特性——不要在其中产生副作用（如网络请求），仅做本地校验。</li>
+</ul>
+</blockquote>
+<h3 id="74-onsaved--保存表单数据">7.4 onSaved — 保存表单数据</h3>
+<p><code>onSaved</code> 在调用 <code>FormState.save()</code> 时触发，常用于将表单数据收集到一个数据模型中：</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: const OnSavedDemo());
+  }
+}
+
+class OnSavedDemo extends StatefulWidget {
+  const OnSavedDemo({super.key});
+
+  @override
+  State&lt;OnSavedDemo&gt; createState() =&gt; _OnSavedDemoState();
+}
+
+class _OnSavedDemoState extends State&lt;OnSavedDemo&gt; {
+  final _formKey = GlobalKey&lt;FormState&gt;();
+
+  // 存储表单数据
+  String _name = '';
+  String _email = '';
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      // 触发所有 TextFormField 的 onSaved 回调
+      _formKey.currentState!.save();
+
+      showDialog(
+        context: context,
+        builder: (context) =&gt; AlertDialog(
+          title: const Text('提交成功'),
+          content: Text('姓名：$_name\n邮箱：$_email'),
+          actions: [
+            TextButton(
+              onPressed: () =&gt; Navigator.pop(context),
+              child: const Text('确定'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('onSaved 示例')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: '姓名',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) =&gt;
+                    value == null || value.isEmpty ? '请输入姓名' : null,
+                // 调用 FormState.save() 时，此回调被触发
+                onSaved: (value) =&gt; _name = value ?? '',
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: '邮箱',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) =&gt;
+                    value == null || value.isEmpty ? '请输入邮箱' : null,
+                onSaved: (value) =&gt; _email = value ?? '',
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _submitForm,
+                  child: const Text('提交'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<hr />
+<h2 id="8-form-与-globalkeyformstate">8. Form 与 GlobalKey&lt;FormState&gt;</h2>
+<h3 id="81-form-组件的作用">8.1 Form 组件的作用</h3>
+<p><code>Form</code> 是一个容器组件，它将多个 <code>TextFormField</code> 组织在一起，统一管理验证、保存和重置操作。</p>
+<p>核心要素：</p>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Form</code></td>
+<td>表单容器，包裹所有表单字段</td>
+</tr>
+<tr>
+<td><code>GlobalKey&lt;FormState&gt;</code></td>
+<td>用于获取 <code>FormState</code> 的全局 Key</td>
+</tr>
+<tr>
+<td><code>FormState.validate()</code></td>
+<td>触发所有字段的 <code>validator</code>，返回是否全部通过</td>
+</tr>
+<tr>
+<td><code>FormState.save()</code></td>
+<td>触发所有字段的 <code>onSaved</code></td>
+</tr>
+<tr>
+<td><code>FormState.reset()</code></td>
+<td>重置所有字段到初始值</td>
+</tr>
+</tbody>
+</table>
+<h3 id="82-完整的-form-工作流">8.2 完整的 Form 工作流</h3>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const FormWorkflowDemo(),
+    );
+  }
+}
+
+class FormWorkflowDemo extends StatefulWidget {
+  const FormWorkflowDemo({super.key});
+
+  @override
+  State&lt;FormWorkflowDemo&gt; createState() =&gt; _FormWorkflowDemoState();
+}
+
+class _FormWorkflowDemoState extends State&lt;FormWorkflowDemo&gt; {
+  // 1. 创建 GlobalKey 来获取 FormState
+  final _formKey = GlobalKey&lt;FormState&gt;();
+
+  // 存储表单数据的变量
+  String _username = '';
+  String _email = '';
+  String _phone = '';
+
+  void _handleSubmit() {
+    // 2. 通过 _formKey.currentState 获取 FormState
+    final formState = _formKey.currentState!;
+
+    // 3. 调用 validate() 触发所有字段的验证
+    if (formState.validate()) {
+      // 4. 验证通过后，调用 save() 收集数据
+      formState.save();
+
+      // 5. 使用收集到的数据
+      showDialog(
+        context: context,
+        builder: (context) =&gt; AlertDialog(
+          title: const Text('表单数据'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('用户名：$_username'),
+              Text('邮箱：$_email'),
+              Text('手机：$_phone'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () =&gt; Navigator.pop(context),
+              child: const Text('确定'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  void _handleReset() {
+    // 重置所有字段到初始值
+    _formKey.currentState!.reset();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Form 工作流')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          // 可选：Form 级别的变更回调
+          onChanged: () {
+            // 表单中任意字段变化时触发
+            debugPrint('表单内容发生变化');
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: '用户名',
+                  prefixIcon: Icon(Icons.person),
+                  border: OutlineInputBorder(),
+                ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value == null || value.isEmpty) return '请输入用户名';
+                  if (value.length &lt; 3) return '用户名至少3个字符';
+                  return null;
+                },
+                onSaved: (value) =&gt; _username = value ?? '',
+              ),
+              const SizedBox(height: 16),
+
+              TextFormField(
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: '邮箱',
+                  prefixIcon: Icon(Icons.email),
+                  border: OutlineInputBorder(),
+                ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value == null || value.isEmpty) return '请输入邮箱';
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                      .hasMatch(value)) {
+                    return '邮箱格式不正确';
+                  }
+                  return null;
+                },
+                onSaved: (value) =&gt; _email = value ?? '',
+              ),
+              const SizedBox(height: 16),
+
+              TextFormField(
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  labelText: '手机号码',
+                  prefixIcon: Icon(Icons.phone),
+                  border: OutlineInputBorder(),
+                ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value == null || value.isEmpty) return '请输入手机号码';
+                  if (!RegExp(r'^1[3-9]\d{9}$').hasMatch(value)) {
+                    return '请输入有效的11位手机号码';
+                  }
+                  return null;
+                },
+                onSaved: (value) =&gt; _phone = value ?? '',
+              ),
+              const SizedBox(height: 24),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: _handleReset,
+                      child: const Text('重置'),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: _handleSubmit,
+                      child: const Text('提交'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>GlobalKey&lt;FormState&gt;</code> 必须在 State 的生命周期内保持不变（作为成员变量），不要在 <code>build</code> 方法中创建。</li>
+<li><code>validate()</code> 返回 <code>bool</code>：<code>true</code> 表示所有字段验证通过，<code>false</code> 表示存在验证失败的字段。</li>
+<li>调用顺序应为 <code>validate()</code> → <code>save()</code>，先验证通过再收集数据。</li>
+<li><code>reset()</code> 会清空所有字段的文本并移除错误提示。如果 <code>TextFormField</code> 设置了 <code>initialValue</code>，<code>reset()</code> 会恢复到初始值。</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="9-实战构建完整的登录注册表单">9. 实战：构建完整的登录/注册表单</h2>
+<p>下面我们综合运用本课所学知识，构建一个包含登录和注册两个 Tab 页的完整表单。该示例涵盖：用户名、邮箱、密码、确认密码字段，完整的验证逻辑，焦点管理，输入格式化，密码可见切换，以及提交加载状态。</p>
+<pre><code class="language-dart">import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+void main() =&gt; runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '登录/注册表单',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        useMaterial3: true,
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
+        ),
+      ),
+      home: const AuthPage(),
+    );
+  }
+}
+
+// ==================== 主页面 ====================
+
+class AuthPage extends StatelessWidget {
+  const AuthPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('欢迎'),
+          centerTitle: true,
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: '登录'),
+              Tab(text: '注册'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            LoginForm(),
+            RegisterForm(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ==================== 登录表单 ====================
+
+class LoginForm extends StatefulWidget {
+  const LoginForm({super.key});
+
+  @override
+  State&lt;LoginForm&gt; createState() =&gt; _LoginFormState();
+}
+
+class _LoginFormState extends State&lt;LoginForm&gt; {
+  final _formKey = GlobalKey&lt;FormState&gt;();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
+
+  bool _obscurePassword = true;
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
+    super.dispose();
+  }
+
+  Future&lt;void&gt; _handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    // 收起键盘
+    FocusScope.of(context).unfocus();
+
+    setState(() =&gt; _isLoading = true);
+
+    // 模拟网络请求
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+    setState(() =&gt; _isLoading = false);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('登录成功！邮箱：${_emailController.text}'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 32),
+
+            // 顶部图标
+            Icon(
+              Icons.account_circle,
+              size: 80,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(height: 32),
+
+            // 邮箱输入
+            TextFormField(
+              controller: _emailController,
+              focusNode: _emailFocus,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              onFieldSubmitted: (_) =&gt; _passwordFocus.requestFocus(),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              decoration: const InputDecoration(
+                labelText: '邮箱',
+                hintText: 'your@email.com',
+                prefixIcon: Icon(Icons.email_outlined),
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return '请输入邮箱地址';
+                }
+                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                    .hasMatch(value.trim())) {
+                  return '请输入有效的邮箱地址';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // 密码输入
+            TextFormField(
+              controller: _passwordController,
+              focusNode: _passwordFocus,
+              obscureText: _obscurePassword,
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) =&gt; _handleLogin(),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              decoration: InputDecoration(
+                labelText: '密码',
+                prefixIcon: const Icon(Icons.lock_outlined),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                  ),
+                  onPressed: () {
+                    setState(() =&gt; _obscurePassword = !_obscurePassword);
+                  },
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return '请输入密码';
+                }
+                if (value.length &lt; 6) {
+                  return '密码至少6位';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 8),
+
+            // 忘记密码链接
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  // 忘记密码逻辑
+                },
+                child: const Text('忘记密码？'),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 登录按钮
+            FilledButton(
+              onPressed: _isLoading ? null : _handleLogin,
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(double.infinity, 52),
+              ),
+              child: _isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Text('登录', style: TextStyle(fontSize: 16)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ==================== 注册表单 ====================
+
+class RegisterForm extends StatefulWidget {
+  const RegisterForm({super.key});
+
+  @override
+  State&lt;RegisterForm&gt; createState() =&gt; _RegisterFormState();
+}
+
+class _RegisterFormState extends State&lt;RegisterForm&gt; {
+  final _formKey = GlobalKey&lt;FormState&gt;();
+  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  final _usernameFocus = FocusNode();
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
+  final _confirmPasswordFocus = FocusNode();
+
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+  bool _isLoading = false;
+  bool _agreeToTerms = false;
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _usernameFocus.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
+    _confirmPasswordFocus.dispose();
+    super.dispose();
+  }
+
+  /// 密码强度检测（0~4 级）
+  int _getPasswordStrength(String password) {
+    int strength = 0;
+    if (password.length &gt;= 8) strength++;
+    if (RegExp(r'[a-z]').hasMatch(password)) strength++;
+    if (RegExp(r'[A-Z]').hasMatch(password)) strength++;
+    if (RegExp(r'[0-9]').hasMatch(password)) strength++;
+    if (RegExp(r'[!@#$%^&amp;*(),.?&quot;:{}|&lt;&gt;]').hasMatch(password)) strength++;
+    return strength.clamp(0, 4);
+  }
+
+  String _getStrengthLabel(int strength) {
+    switch (strength) {
+      case 0:
+        return '极弱';
+      case 1:
+        return '弱';
+      case 2:
+        return '中等';
+      case 3:
+        return '强';
+      case 4:
+        return '极强';
+      default:
+        return '';
+    }
+  }
+
+  Color _getStrengthColor(int strength) {
+    switch (strength) {
+      case 0:
+        return Colors.grey;
+      case 1:
+        return Colors.red;
+      case 2:
+        return Colors.orange;
+      case 3:
+        return Colors.lightGreen;
+      case 4:
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Future&lt;void&gt; _handleRegister() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (!_agreeToTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('请先同意用户协议'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    FocusScope.of(context).unfocus();
+
+    setState(() =&gt; _isLoading = true);
+
+    _formKey.currentState!.save();
+
+    // 模拟网络请求
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+    setState(() =&gt; _isLoading = false);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('注册成功！欢迎 ${_usernameController.text}'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final passwordStrength = _getPasswordStrength(_passwordController.text);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 16),
+
+            // 顶部图标
+            Icon(
+              Icons.person_add,
+              size: 80,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(height: 24),
+
+            // -------- 用户名 --------
+            TextFormField(
+              controller: _usernameController,
+              focusNode: _usernameFocus,
+              textInputAction: TextInputAction.next,
+              onFieldSubmitted: (_) =&gt; _emailFocus.requestFocus(),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              inputFormatters: [
+                // 用户名仅允许字母、数字和下划线
+                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9_]')),
+                LengthLimitingTextInputFormatter(20),
+              ],
+              decoration: const InputDecoration(
+                labelText: '用户名',
+                hintText: '3~20位，字母、数字或下划线',
+                prefixIcon: Icon(Icons.person_outlined),
+                helperText: '仅允许字母、数字和下划线',
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return '请输入用户名';
+                }
+                if (value.trim().length &lt; 3) {
+                  return '用户名至少3个字符';
+                }
+                if (!RegExp(r'^[a-zA-Z][a-zA-Z0-9_]*$').hasMatch(value)) {
+                  return '用户名必须以字母开头';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // -------- 邮箱 --------
+            TextFormField(
+              controller: _emailController,
+              focusNode: _emailFocus,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              onFieldSubmitted: (_) =&gt; _passwordFocus.requestFocus(),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              decoration: const InputDecoration(
+                labelText: '邮箱地址',
+                hintText: 'your@email.com',
+                prefixIcon: Icon(Icons.email_outlined),
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return '请输入邮箱地址';
+                }
+                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                    .hasMatch(value.trim())) {
+                  return '请输入有效的邮箱地址';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // -------- 密码 --------
+            TextFormField(
+              controller: _passwordController,
+              focusNode: _passwordFocus,
+              obscureText: _obscurePassword,
+              textInputAction: TextInputAction.next,
+              onFieldSubmitted: (_) =&gt; _confirmPasswordFocus.requestFocus(),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              onChanged: (_) =&gt; setState(() {}),
+              inputFormatters: [
+                // 密码不允许空格
+                FilteringTextInputFormatter.deny(RegExp(r'\s')),
+              ],
+              decoration: InputDecoration(
+                labelText: '密码',
+                hintText: '至少8位，包含字母和数字',
+                prefixIcon: const Icon(Icons.lock_outlined),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                  ),
+                  onPressed: () {
+                    setState(() =&gt; _obscurePassword = !_obscurePassword);
+                  },
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return '请输入密码';
+                }
+                if (value.length &lt; 8) {
+                  return '密码至少8位';
+                }
+                if (!RegExp(r'[a-zA-Z]').hasMatch(value)) {
+                  return '密码必须包含至少一个字母';
+                }
+                if (!RegExp(r'[0-9]').hasMatch(value)) {
+                  return '密码必须包含至少一个数字';
+                }
+                return null;
+              },
+            ),
+
+            // 密码强度指示器
+            if (_passwordController.text.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: passwordStrength / 4,
+                        backgroundColor: Colors.grey.shade200,
+                        color: _getStrengthColor(passwordStrength),
+                        minHeight: 4,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    _getStrengthLabel(passwordStrength),
+                    style: TextStyle(
+                      color: _getStrengthColor(passwordStrength),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            const SizedBox(height: 16),
+
+            // -------- 确认密码 --------
+            TextFormField(
+              controller: _confirmPasswordController,
+              focusNode: _confirmPasswordFocus,
+              obscureText: _obscureConfirmPassword,
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) =&gt; _handleRegister(),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              inputFormatters: [
+                FilteringTextInputFormatter.deny(RegExp(r'\s')),
+              ],
+              decoration: InputDecoration(
+                labelText: '确认密码',
+                hintText: '再次输入密码',
+                prefixIcon: const Icon(Icons.lock_outlined),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureConfirmPassword
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureConfirmPassword = !_obscureConfirmPassword;
+                    });
+                  },
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return '请再次输入密码';
+                }
+                if (value != _passwordController.text) {
+                  return '两次输入的密码不一致';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // -------- 用户协议 --------
+            Row(
+              children: [
+                Checkbox(
+                  value: _agreeToTerms,
+                  onChanged: (value) {
+                    setState(() =&gt; _agreeToTerms = value ?? false);
+                  },
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() =&gt; _agreeToTerms = !_agreeToTerms);
+                    },
+                    child: Text.rich(
+                      TextSpan(
+                        text: '我已阅读并同意',
+                        children: [
+                          TextSpan(
+                            text: '《用户服务协议》',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          const TextSpan(text: '和'),
+                          TextSpan(
+                            text: '《隐私政策》',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+
+            // -------- 注册按钮 --------
+            FilledButton(
+              onPressed: _isLoading ? null : _handleRegister,
+              style: FilledButton.styleFrom(
+                minimumSize: const Size(double.infinity, 52),
+              ),
+              child: _isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Text('注册', style: TextStyle(fontSize: 16)),
+            ),
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+<p>这个实战示例涵盖了以下核心技术点：</p>
+<table>
+<thead>
+<tr>
+<th>技术点</th>
+<th>在示例中的应用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TextFormField</code> + <code>validator</code></td>
+<td>每个字段都有完整的验证逻辑</td>
+</tr>
+<tr>
+<td><code>TextEditingController</code></td>
+<td>获取字段值，确认密码比对</td>
+</tr>
+<tr>
+<td><code>FocusNode</code> + <code>textInputAction</code></td>
+<td>字段间焦点跳转</td>
+</tr>
+<tr>
+<td><code>InputDecoration</code></td>
+<td>labelText、hintText、prefixIcon、suffixIcon 等</td>
+</tr>
+<tr>
+<td><code>obscureText</code></td>
+<td>密码和确认密码的隐藏/显示切换</td>
+</tr>
+<tr>
+<td><code>inputFormatters</code></td>
+<td>用户名限制字符，密码禁止空格</td>
+</tr>
+<tr>
+<td><code>Form</code> + <code>GlobalKey&lt;FormState&gt;</code></td>
+<td>表单统一验证和提交</td>
+</tr>
+<tr>
+<td><code>autovalidateMode</code></td>
+<td>用户交互后自动验证</td>
+</tr>
+<tr>
+<td>密码强度指示器</td>
+<td>实时计算并展示密码安全等级</td>
+</tr>
+<tr>
+<td>加载状态</td>
+<td>提交时显示 loading，禁用按钮防重复提交</td>
+</tr>
+<tr>
+<td>用户协议勾选</td>
+<td>注册前的协议确认</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>最佳实践总结</strong>：</p>
+<ol>
+<li><strong>资源释放</strong>：所有 <code>TextEditingController</code> 和 <code>FocusNode</code> 都必须在 <code>dispose()</code> 中释放。</li>
+<li><strong>焦点跳转</strong>：使用 <code>TextInputAction.next</code> + <code>onFieldSubmitted</code> 实现字段间的流畅跳转。</li>
+<li><strong>自动验证</strong>：使用 <code>AutovalidateMode.onUserInteraction</code>，避免表单一打开就显示错误。</li>
+<li><strong>防重复提交</strong>：在网络请求期间禁用按钮并显示加载指示器。</li>
+<li><strong>密码确认</strong>：确认密码的 <code>validator</code> 直接与密码 <code>controller</code> 比对。</li>
+<li><strong>mounted 检查</strong>：异步操作完成后调用 <code>setState</code> 前，先检查 <code>mounted</code> 避免在页面销毁后更新状态。</li>
+<li><strong>统一主题</strong>：通过 <code>InputDecorationTheme</code> 统一输入框样式，减少重复代码。</li>
+</ol>
+</blockquote>
+<hr />
+<h2 id="10-本课小结">10. 本课小结</h2>
+<p>本课系统学习了 Flutter 中输入组件与表单的完整知识体系：</p>
+<ol>
+<li>
+<p><strong>TextField</strong> 是最基础的输入组件，通过 <code>InputDecoration</code> 可以实现丰富的视觉效果。</p>
+</li>
+<li>
+<p><strong>InputDecoration</strong> 是重点中的重点，其属性按功能可分为四大类：</p>
+<ul>
+<li><strong>文本类</strong>：<code>labelText</code>、<code>hintText</code>、<code>helperText</code>、<code>errorText</code>、<code>counterText</code></li>
+<li><strong>图标类</strong>：<code>icon</code>、<code>prefixIcon</code>、<code>suffixIcon</code>、<code>prefix</code>、<code>suffix</code></li>
+<li><strong>边框类</strong>：<code>border</code>、<code>enabledBorder</code>、<code>focusedBorder</code>、<code>errorBorder</code></li>
+<li><strong>填充类</strong>：<code>filled</code>、<code>fillColor</code>、<code>contentPadding</code></li>
+</ul>
+</li>
+<li>
+<p><strong>TextEditingController</strong> 提供了编程式的文本操控能力：获取/设置文本、监听变化、控制光标位置。</p>
+</li>
+<li>
+<p><strong>FocusNode</strong> 用于焦点管理：请求焦点、释放焦点、监听焦点变化、字段间跳转。</p>
+</li>
+<li>
+<p><strong>TextInputFormatter</strong> 可在输入时拦截和格式化文本，内置了数字过滤、正则过滤、长度限制等常用格式化器，也支持自定义。</p>
+</li>
+<li>
+<p><strong>TextFormField</strong> 是为表单设计的增强版 TextField，增加了 <code>validator</code>、<code>onSaved</code>、<code>autovalidateMode</code> 等表单能力。</p>
+</li>
+<li>
+<p><strong>Form</strong> + <strong>GlobalKey&lt;FormState&gt;</strong> 将多个表单字段统一管理，提供 <code>validate()</code>、<code>save()</code>、<code>reset()</code> 三大操作。</p>
+</li>
+</ol>
+<p><strong>核心原则</strong>：在实际项目中，始终注意资源释放（<code>dispose</code>）、焦点管理（提升用户体验）、输入验证（安全性），以及通过 <code>InputDecorationTheme</code> 统一项目样式。</p>
+<hr />
+<h2 id="11-练习题">11. 练习题</h2>
+<h3 id="练习一个人信息编辑表单">练习一：个人信息编辑表单</h3>
+<p>构建一个个人信息编辑页面，包含以下字段：</p>
+<ul>
+<li>姓名（必填，2~10个中文字符）</li>
+<li>手机号码（必填，11位数字，自动格式化为 &quot;138 1234 5678&quot; 格式）</li>
+<li>年龄（选填，数字，范围 1~150）</li>
+<li>个人简介（选填，多行输入，最多 200 字，显示字符计数）</li>
+</ul>
+<p>要求：</p>
+<ol>
+<li>使用 <code>Form</code> + <code>TextFormField</code> 实现完整的验证</li>
+<li>手机号码使用自定义 <code>TextInputFormatter</code> 实现自动格式化</li>
+<li>字段间支持焦点跳转</li>
+<li>提交后弹窗显示所有已填信息</li>
+</ol>
+<h3 id="练习二搜索输入框">练习二：搜索输入框</h3>
+<p>实现一个搜索输入框组件，包含以下功能：</p>
+<ul>
+<li>左侧搜索图标</li>
+<li>右侧清除按钮（文本为空时隐藏）</li>
+<li>输入框有圆角填充背景、无明显边框</li>
+<li>实时显示搜索结果数量（模拟数据即可）</li>
+<li>按下键盘搜索按钮时弹出 SnackBar 显示搜索内容</li>
+</ul>
+<h3 id="练习三修改密码表单">练习三：修改密码表单</h3>
+<p>构建一个修改密码页面，包含三个字段：</p>
+<ul>
+<li>当前密码</li>
+<li>新密码</li>
+<li>确认新密码</li>
+</ul>
+<p>要求：</p>
+<ol>
+<li>新密码不能与当前密码相同</li>
+<li>确认新密码必须与新密码一致</li>
+<li>新密码强度至少为&quot;中等&quot;才允许提交</li>
+<li>每个密码字段都支持显示/隐藏切换</li>
+<li>提交时显示加载状态</li>
+</ol>
+
+      </div>
+    </div>
+
+    <script src="../../../prism/prism.js" data-manual></script>
+    <script>
+      (function () {
+        // Theme
+        const saved = localStorage.getItem("blog-theme");
+        if (saved) document.documentElement.dataset.theme = saved;
+        else if (matchMedia("(prefers-color-scheme:dark)").matches)
+          document.documentElement.dataset.theme = "dark";
+
+        window.toggleTheme = function () {
+          const t =
+            document.documentElement.dataset.theme === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+          localStorage.setItem("blog-theme", t);
+        };
+
+        // Sidebar
+        window.toggleSidebar = function () {
+          document.getElementById("sidebar").classList.toggle("open");
+          document.getElementById("overlay").classList.toggle("open");
+        };
+
+        // Build outline from headings
+        const article = document.getElementById("article");
+        const nav = document.getElementById("outline");
+        const headings = article.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        headings.forEach(function (h, i) {
+          if (!h.id) h.id = "heading-" + i;
+          const a = document.createElement("a");
+          a.href = "#" + h.id;
+          a.textContent = h.textContent;
+          a.dataset.level = h.tagName[1];
+          a.dataset.id = h.id;
+          nav.appendChild(a);
+        });
+
+        // Mobile title
+        var h1 = article.querySelector("h1");
+        if (h1)
+          document.getElementById("topbarTitle").textContent = h1.textContent;
+
+        // Page title
+        if (h1) document.title = h1.textContent;
+
+        // Scroll spy
+        var links = nav.querySelectorAll("a");
+        function updateActive() {
+          var cur = "";
+          headings.forEach(function (h) {
+            if (scrollY >= h.offsetTop - 80) cur = h.id;
+          });
+          links.forEach(function (a) {
+            a.classList.toggle("active", a.dataset.id === cur);
+          });
+        }
+        addEventListener("scroll", updateActive, { passive: true });
+        updateActive();
+
+        // Close sidebar on mobile after click
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            if (innerWidth <= 840) toggleSidebar();
+          });
+        });
+
+        // Prism: add line-numbers class and trigger highlight
+        article.querySelectorAll("pre").forEach(function (pre) {
+          pre.classList.add("line-numbers");
+          var code = pre.querySelector("code");
+          if (code && !code.className.match(/language-/)) {
+            code.classList.add("language-none");
+          }
+        });
+        Prism.highlightAllUnder(article);
+      })();
+    </script>
+  </body>
+</html>
